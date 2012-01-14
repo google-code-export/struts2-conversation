@@ -13,7 +13,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
- * @author chll.cdr
+ * @author rees.byars
  *
  */
 public class SessionFieldConfigBuilderImpl implements SessionFieldConfigBuilder {

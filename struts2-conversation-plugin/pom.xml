@@ -3,25 +3,33 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation-scope-plugin</artifactId>
-	<version>1.0</version>
+	<version>0.1</version>
 	<packaging>jar</packaging>
-	
+
 	<name>Struts2 Conversation Scope Plugin</name>
 	<description>A Struts2 plugin for leveraging conversation scopes in Struts2</description>
 	<url>http://code.google.com/p/struts2-conversation/</url>
-	
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<scm>
-    	<url>https://struts2-conversation.googlecode.com/svn/trunk/</url>
-  	</scm>
-	
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/trunk/</url>
+	</scm>
+
 	<licenses>
-	    <license>
-	      <name>The Apache Software License, Version 2.0</name>
-	      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-	      <distribution>repo</distribution>
-	    </license>
-  	</licenses>
-	
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<asm.version>3.1</asm.version>
@@ -29,8 +37,8 @@
 		<struts2.version>2.2.3</struts2.version>
 	</properties>
 
-	<dependencies> 
-	
+	<dependencies>
+
 		<!-- Provided Scope Dependencies -->
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -62,8 +70,8 @@
 			<version>${struts2.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		
+
+
 		<!-- Compile Scope Dependencies -->
 		<dependency>
 			<groupId>org.apache.struts</groupId>
@@ -71,8 +79,8 @@
 			<version>${struts2.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
-		
+
+
 		<!-- Test Scope Dependencies -->
 		<dependency>
 			<groupId>org.ow2.util.asm</groupId>
@@ -115,7 +123,7 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.16</version>
 			<scope>test</scope>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
@@ -196,6 +204,38 @@
 		</dependency>
 	</dependencies>
 
+	<!-- 
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	-->
+
 	<build>
 		<plugins>
 			<plugin>
@@ -216,6 +256,24 @@
 					</additionalClasspathElements>
 				</configuration>
 			</plugin>
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mavenExecutorId>forked-path</mavenExecutorId>
+				</configuration>
+			</plugin>
+			-->
 		</plugins>
 	</build>
 </project>

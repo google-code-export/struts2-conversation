@@ -27,7 +27,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
- * @author chll.cdr with code from the struts2 convention package
+ * @author rees.byars with code from the struts2 convention package
  * 
  */
 public class ActionFinderImpl implements ActionFinder {

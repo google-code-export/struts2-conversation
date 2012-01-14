@@ -17,7 +17,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
- * @author Rees Byars
+ * @author rees.byars
  */
 public class ConversationInterceptor extends AbstractScopeInterceptor {
 

@@ -13,6 +13,11 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
+/**
+ * 
+ * @author rees.byars
+ *
+ */
 public class ConversationUtil {
 	
 	private static final Logger LOG = LoggerFactory
