@@ -28,20 +28,6 @@ public class ConversationUtil {
 		.getLogger(ConversationUtil.class);
 	
 	/**
-	 * Given the name of a conversation-scoped field and its class, this method
-	 * returns the appropriate key that is used to identify instances of the 
-	 * field in the conversation maps for the conversations of which it is a
-	 * member.
-	 * 
-	 * @param name
-	 * @param clazz
-	 * @return
-	 */
-	public static String buildKey(String name, Class<?> clazz) {
-		return clazz.getName() + "." + name;
-	}
-	
-	/**
 	 * Given a conversation name, returns the ID of the conversation for the currently
 	 * executing thread.  
 	 * 
@@ -91,13 +77,12 @@ public class ConversationUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T getConversationField(String fieldName, Class<T> fieldClass, String[] conversations) {
 		T field = null;
-		String key = buildKey(fieldName, fieldClass);
 		for (String conversationName : conversations) {
 			String id = getConversationId(conversationName);
 			if (id != null) {
 				Map<String, Object> conversationFieldMap = (Map<String, Object>) ActionContext.getContext().getSession().get(id);
 				if (conversationFieldMap != null) {
-					field = (T) conversationFieldMap.get(key);
+					field = (T) conversationFieldMap.get(fieldName);
 					if (field != null) break;
 				}
 			}
@@ -114,7 +99,6 @@ public class ConversationUtil {
 	 */
 	public static void setConversationField(String fieldName, Object fieldValue) {
 		Map<String, Object> session = ActionContext.getContext().getSession();
-		String key = buildKey(fieldName, fieldValue.getClass());
 		for (String conversationName : getConversations()) {
 			String convoId = getConversationId(conversationName);
 			@SuppressWarnings("unchecked")
@@ -122,7 +106,7 @@ public class ConversationUtil {
 			if (conversationFieldMap == null) {
 				conversationFieldMap = new HashMap<String, Object>();
 			}
-			conversationFieldMap.put(key, fieldValue);
+			conversationFieldMap.put(fieldName, fieldValue);
 			session.put(convoId, conversationFieldMap);
 		}
 	}
@@ -211,14 +195,19 @@ public class ConversationUtil {
 	}
 	
 	/**
-	 * Returns the name of the given field's ConversationField
+	 * Returns the given field's ConversationField name
 	 * 
 	 * @param field
 	 * @return
 	 */
-	protected static String getConversationFieldName(Field field) {
-		String name = field.getAnnotation(ConversationField.class).name();
-		if (name.equals(ConversationField.DEFAULT)) {
+	public static String getConversationFieldName(Field field) {
+		String name = null;
+		if (field.isAnnotationPresent(ConversationField.class)) {
+			name = field.getAnnotation(ConversationField.class).name();
+			if (name.equals(ConversationField.DEFAULT)) {
+				name = field.getName();
+			}
+		} else {
 			name = field.getName();
 		}
 		return name;
