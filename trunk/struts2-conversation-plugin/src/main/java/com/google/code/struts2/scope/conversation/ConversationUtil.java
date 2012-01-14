@@ -15,6 +15,10 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
+ * A utility class that provides static methods that are used internally and
+ * for unit testing.  Usage of this utility in a outside of these contexts is
+ * discouraged.  Most of the methods are not optimized for other uses.
+ * 
  * @author rees.byars
  *
  */
@@ -23,10 +27,27 @@ public class ConversationUtil {
 	private static final Logger LOG = LoggerFactory
 		.getLogger(ConversationUtil.class);
 	
+	/**
+	 * Given the name of a conversation-scoped field and its class, this method
+	 * returns the appropriate key that is used to identify instances of the 
+	 * field in the conversation maps for the conversations of which it is a
+	 * member.
+	 * 
+	 * @param name
+	 * @param clazz
+	 * @return
+	 */
 	public static String buildKey(String name, Class<?> clazz) {
 		return clazz.getName() + "." + name;
 	}
 	
+	/**
+	 * Given a conversation name, returns the ID of the conversation for the currently
+	 * executing thread.  
+	 * 
+	 * @param conversationName
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static String getConversationId(String conversationName) {
 		if (!conversationName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
@@ -43,10 +64,30 @@ public class ConversationUtil {
 		return id;
 	}
 	
+	/**
+	 * Given a conversation field's name and class, the value of the field is
+	 * returned from a conversation map in the current thread.
+	 * 
+	 * @param <T>
+	 * @param fieldName
+	 * @param fieldClass
+	 * @return
+	 */
 	public static <T> T getConversationField(String fieldName, Class<T> fieldClass) {
 		return getConversationField(fieldName, fieldClass, getConversations());
 	}
 	
+	/**
+	 * Given a conversation field's name and class and an Array of conversation names, 
+	 * the value of the field is returned from the first conversation in the Array
+	 * that contains an instance of the field.
+	 * 
+	 * @param <T>
+	 * @param fieldName
+	 * @param fieldClass
+	 * @param conversations
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getConversationField(String fieldName, Class<T> fieldClass, String[] conversations) {
 		T field = null;
@@ -64,6 +105,13 @@ public class ConversationUtil {
 		return field;
 	}
 	
+	/**
+	 * Given a conversation field' name and an instance, the value is set
+	 * for the field in all active conversations of which the field is a member.
+	 * 
+	 * @param fieldName
+	 * @param fieldValue
+	 */
 	public static void setConversationField(String fieldName, Object fieldValue) {
 		Map<String, Object> session = ActionContext.getContext().getSession();
 		String key = buildKey(fieldName, fieldValue.getClass());
@@ -79,6 +127,11 @@ public class ConversationUtil {
 		}
 	}
 	
+	/**
+	 * An array of all active conversations for the currently executing thread.
+	 * 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static String[] getConversations() {
 		
@@ -100,6 +153,13 @@ public class ConversationUtil {
 		return convos.toArray(new String[convos.size()]);
 	}
 	
+	/**
+	 * The current values of conversation fields annotated with {@link ConversationField} 
+	 * are extracted from the target object and placed into the conversation maps
+	 * for the currently executing thread. 
+	 * 
+	 * @param target
+	 */
 	public static void extractConversationFields(Object target) {
 		Class<?> clazz = target.getClass();
 		for (Field field : ReflectionUtil.getFields(clazz)) {
@@ -120,6 +180,13 @@ public class ConversationUtil {
 		}
 	}
 	
+	/**
+	 * The target object's Conversation fields that are annotated with 
+	 * {@link ConversationField} are injected from any active conversations
+	 * in the current thread of which the fields are members. 
+	 * 
+	 * @param target
+	 */
 	public static void injectConversationFields(Object target) {
 		for (Field field : ReflectionUtil.getFields(target.getClass())) {
 			if (field.isAnnotationPresent(ConversationField.class)) {
@@ -143,6 +210,12 @@ public class ConversationUtil {
 		}
 	}
 	
+	/**
+	 * Returns the name of the given field's ConversationField
+	 * 
+	 * @param field
+	 * @return
+	 */
 	protected static String getConversationFieldName(Field field) {
 		String name = field.getAnnotation(ConversationField.class).name();
 		if (name.equals(ConversationField.DEFAULT)) {

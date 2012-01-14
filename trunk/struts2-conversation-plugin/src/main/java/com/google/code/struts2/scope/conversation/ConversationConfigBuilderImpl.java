@@ -185,6 +185,9 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				ConversationAction conversationAction = method
 						.getAnnotation(ConversationAction.class);
 				String[] conversations = conversationAction.conversations();
+				if (conversations.length == 0) {
+					conversations = getConversationControllerConversations(clazz);
+				}
 				addConversationMethod(method, conversations, conversationConfigs);
 			}
 			if (method.isAnnotationPresent(BeginConversation.class)) {
