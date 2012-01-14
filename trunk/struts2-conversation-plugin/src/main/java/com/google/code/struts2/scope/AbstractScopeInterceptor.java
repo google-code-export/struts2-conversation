@@ -11,7 +11,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
- * @author chll.cdr
+ * @author rees.byars
  * 
  */
 public abstract class AbstractScopeInterceptor implements Interceptor {
