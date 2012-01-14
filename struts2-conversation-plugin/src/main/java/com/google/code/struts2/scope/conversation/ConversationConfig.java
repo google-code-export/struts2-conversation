@@ -10,8 +10,6 @@ import java.util.Set;
 public class ConversationConfig {
 	
 	private Map<Class<?>, Map<String, Field>> fields;
-	//private Map<Class<?>, Map<String, Method>> setters;
-	//private Map<Class<?>, Map<String, Method>> getters;
 	private Set<String> methods;
 	private Set<String> beginMethods;
 	private Set<String> endMethods;
@@ -30,41 +28,13 @@ public class ConversationConfig {
 		if (classFields == null) {
 			classFields = new HashMap<String, Field>();
 		}
-		classFields.put(ConversationUtil.buildKey(name, field.getType()), field);
+		classFields.put(name, field);
 		fields.put(clazz, classFields);
 	}
 	
 	public Map<String, Field> getFields(Class<?> clazz) {
 		return fields.get(clazz);
 	}
-	
-	/*
-	public void addSetterMethod(Class<?> actionClass, Class<?> fieldClass, String fieldName, Method method) {
-		Map<String, Method> classSetters = setters.get(actionClass);
-		if (classSetters == null) {
-			classSetters = new HashMap<String, Method>();
-		}
-		classSetters.put(ConversationUtil.buildKey(fieldName, fieldClass), method);
-		setters.put(actionClass, classSetters);
-	}
-	
-	public Map<String, Method> getSetterMethods(Class<?> clazz) {
-		return setters.get(clazz);
-	}
-	
-	public void addGetterMethod(Class<?> actionClass, Class<?> fieldClass, String fieldName, Method method) {
-		Map<String, Method> classGetters = getters.get(actionClass);
-		if (classGetters == null) {
-			classGetters = new HashMap<String, Method>();
-		}
-		classGetters.put(ConversationUtil.buildKey(fieldName, fieldClass), method);
-		getters.put(actionClass, classGetters);
-	}
-	
-	public Map<String, Method> getGetterMethods(Class<?> clazz) {
-		return getters.get(clazz);
-	}
-	*/
 	
 	public void addMethod(Method method) {
 		methods.add(method.getName());

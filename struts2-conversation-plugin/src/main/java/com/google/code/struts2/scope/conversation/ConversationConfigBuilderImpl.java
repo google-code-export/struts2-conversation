@@ -132,6 +132,9 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 					name = field.getName();
 				}
 				String[] conversations = conversationField.conversations();
+				if (conversations.length == 0) {
+					conversations = getConversationControllerConversations(clazz);
+				}
 				ReflectionUtil.makeAccessible(field);
 				for (String conversation : conversations) {
 					conversation = this.sanitizeConversationName(conversation);
@@ -153,7 +156,9 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 		String[] conversations = getConversationControllerConversations(clazz);
 		if (conversations.length > 0) {
 			for (Field field : ReflectionUtil.getFields(clazz)) {
-				if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
+				if (!Modifier.isStatic(field.getModifiers()) 
+						&& !Modifier.isFinal(field.getModifiers())
+						&& !field.isAnnotationPresent(ConversationField.class)) {
 					boolean overridden = false;
 					for (Class<? extends Annotation> annotation : overridingAnnotations) {
 						if (field.isAnnotationPresent(annotation)) {

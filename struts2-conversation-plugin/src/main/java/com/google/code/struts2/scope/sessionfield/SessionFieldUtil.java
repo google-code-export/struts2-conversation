@@ -3,7 +3,6 @@ package com.google.code.struts2.scope.sessionfield;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import com.google.code.struts2.scope.conversation.ConversationField;
 import com.google.code.struts2.scope.util.ReflectionUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -90,9 +89,9 @@ public class SessionFieldUtil {
 						setSessionField(name, value);
 					}
 				} catch (IllegalArgumentException e) {
-					LOG.info("Illegal Argument on conversation field " + field.getName());
+					LOG.info("Illegal Argument on session field " + field.getName());
 				} catch (IllegalAccessException e) {
-					LOG.info("Illegal Access on conversation field " + field.getName());
+					LOG.info("Illegal Access on session field " + field.getName());
 				}
 			}
 		}
@@ -112,9 +111,9 @@ public class SessionFieldUtil {
 				try {
 					field.set(target, value);
 				} catch (IllegalArgumentException e) {
-					LOG.info("Illegal Argument on conversation field " + field.getName());
+					LOG.info("Illegal Argument on session field " + field.getName());
 				} catch (IllegalAccessException e) {
-					LOG.info("Illegal Access on conversation field " + field.getName());
+					LOG.info("Illegal Access on session field " + field.getName());
 				}
 			}
 		}
