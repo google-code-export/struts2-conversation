@@ -41,6 +41,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 
 	private ActionFinder finder;
 	private Map<String, ConversationConfig> conversationConfigs;
+	private Set<Class<?>> classesProcessed;
 	private Set<Class<? extends Annotation>> overridingAnnotations;
 	private boolean followsConvention;
 	private boolean actionAnnotationExists;
@@ -75,7 +76,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 	}
 	
 	@Override
-	public Map<String, ConversationConfig> getConversationConfigs() {
+	public synchronized Map<String, ConversationConfig> getConversationConfigs() {
 		if (conversationConfigs == null) {
 			buildConversationConfigMap();
 		}
@@ -96,6 +97,19 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				addConversationControllerMethods(clazz, conversationConfigs, followsConvention, actionAnnotationExists);
 			}
 		}
+		classesProcessed = actionClasses;
+	}
+	
+	@Override
+	public synchronized Map<String, ConversationConfig> addClassConfig(Class<?> clazz) {
+		if (!this.classesProcessed.contains(clazz)) {
+			addConversationFields(clazz, conversationConfigs);
+			addConversationControllerFields(clazz, conversationConfigs, this.getOverridingAnnotations());
+			addConversationActionMethods(clazz, conversationConfigs);
+			addConversationControllerMethods(clazz, conversationConfigs, followsConvention, actionAnnotationExists);
+			classesProcessed.add(clazz);
+		}
+		return Collections.unmodifiableMap(conversationConfigs);
 	}
 	
 	protected void initOverridingAnnotations() {

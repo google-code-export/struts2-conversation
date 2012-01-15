@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.struts2.ServletActionContext;
+import javax.servlet.http.HttpServletRequest;
 
-import com.google.code.struts2.scope.util.ReflectionUtil;
+import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
@@ -23,9 +21,6 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  *
  */
 public class ConversationUtil {
-	
-	private static final Logger LOG = LoggerFactory
-		.getLogger(ConversationUtil.class);
 	
 	/**
 	 * Given a conversation name, returns the ID of the conversation for the currently
@@ -127,71 +122,17 @@ public class ConversationUtil {
 		if (convoMap != null) {
 			convos.addAll(convoMap.keySet());
 		} else {
-			for (String paramName : ServletActionContext.getRequest().getParameterMap().keySet()) {
-				if (paramName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-					convos.add(paramName);
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request != null) {
+				for (String paramName : request.getParameterMap().keySet()) {
+					if (paramName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+						convos.add(paramName);
+					}
 				}
 			}
 		}
 		
 		return convos.toArray(new String[convos.size()]);
-	}
-	
-	/**
-	 * The current values of conversation fields annotated with {@link ConversationField} 
-	 * are extracted from the target object and placed into the conversation maps
-	 * for the currently executing thread. 
-	 * 
-	 * @param target
-	 */
-	public static void extractConversationFields(Object target) {
-		Class<?> clazz = target.getClass();
-		for (Field field : ReflectionUtil.getFields(clazz)) {
-			if (field.isAnnotationPresent(ConversationField.class)) {
-				String name = getConversationFieldName(field);
-				ReflectionUtil.makeAccessible(field);
-				try {
-					Object value = field.get(target);
-					if (value != null) {
-						setConversationField(name, value);
-					}
-				} catch (IllegalArgumentException e) {
-					LOG.info("Illegal Argument on conversation field " + field.getName());
-				} catch (IllegalAccessException e) {
-					LOG.info("Illegal Access on conversation field " + field.getName());
-				}
-			}
-		}
-	}
-	
-	/**
-	 * The target object's Conversation fields that are annotated with 
-	 * {@link ConversationField} are injected from any active conversations
-	 * in the current thread of which the fields are members. 
-	 * 
-	 * @param target
-	 */
-	public static void injectConversationFields(Object target) {
-		for (Field field : ReflectionUtil.getFields(target.getClass())) {
-			if (field.isAnnotationPresent(ConversationField.class)) {
-				ConversationField cField = field.getAnnotation(ConversationField.class);
-				String[] conversations = cField.conversations();
-				Object value;
-				if (conversations.length == 0) {
-					value = getConversationField(field.getName(), field.getType());
-				} else {
-					value = getConversationField(field.getName(), field.getType(), conversations);
-				} 
-				ReflectionUtil.makeAccessible(field);
-				try {
-					field.set(target, value);
-				} catch (IllegalArgumentException e) {
-					LOG.info("Illegal Argument on conversation field " + field.getName());
-				} catch (IllegalAccessException e) {
-					LOG.info("Illegal Access on conversation field " + field.getName());
-				}
-			}
-		}
 	}
 	
 	/**
