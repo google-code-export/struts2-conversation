@@ -4,9 +4,10 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.struts2.scope.AbstractScopeInterceptor;
+import com.google.code.struts2.scope.ScopeUtil;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
+import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
@@ -16,7 +17,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * @author rees.byars
  * 
  */
-public class SessionFieldInterceptor extends AbstractScopeInterceptor {
+public class SessionFieldInterceptor implements Interceptor {
 	
 	private static final long serialVersionUID = -4878720217458532949L;
 	private static final Logger LOG = LoggerFactory
@@ -42,6 +43,11 @@ public class SessionFieldInterceptor extends AbstractScopeInterceptor {
 		} else {
 			sessionFieldConfig = configBuilder.getSessionFieldConfig();
 		}
+	}
+	
+	@Override
+	public void destroy() {
+		LOG.info("Destroying the SessionFieldInterceptor...");
 	}
 
 	@Override
@@ -72,7 +78,7 @@ public class SessionFieldInterceptor extends AbstractScopeInterceptor {
 							+ invocation.getProxy().getActionName());
 				}
 
-				setFieldValues(action,
+				ScopeUtil.setFieldValues(action,
 						sessionFieldConfig.getFields(actionClass),
 						sessionFieldMap);
 			} else {
@@ -116,7 +122,7 @@ public class SessionFieldInterceptor extends AbstractScopeInterceptor {
 							+ action.getClass());
 				}
 
-				Map<String, Object> classSessionFieldMap = getFieldValues(
+				Map<String, Object> classSessionFieldMap = ScopeUtil.getFieldValues(
 						action, classFieldMap);
 
 				sessionFieldMap.putAll(classSessionFieldMap);

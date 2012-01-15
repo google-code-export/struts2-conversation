@@ -65,6 +65,10 @@
 	<bean name="struts.conversation.conversationConfigBuilder"
 		type="com.google.code.struts2.scope.conversation.ConversationConfigBuilder"
 		class="com.google.code.struts2.scope.conversation.ConversationConfigBuilderImpl" />
+		
+	<bean name="struts.conversation.conversationManager"
+		type="com.google.code.struts2.scope.conversation.ConversationManager"
+		class="com.google.code.struts2.scope.conversation.ConversationManagerImpl" />
 
 	<package name="annotated-scope-default" extends="struts-default">
 	

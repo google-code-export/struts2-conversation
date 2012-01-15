@@ -1,40 +1,78 @@
 package com.google.code.struts2.scope;
 
-import com.google.code.struts2.scope.conversation.ConversationUtil;
-import com.google.code.struts2.scope.sessionfield.SessionField;
-import com.google.code.struts2.scope.sessionfield.SessionFieldUtil;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
- * A utility class that provides static methods that are used internally and
- * for unit testing.  Usage of this utility in a outside of these contexts is
- * discouraged.  Most of the methods are not optimized for other uses.
+ * A utility class that provides static methods that are used internally.
  * 
  * @author rees.byars
  */
 public class ScopeUtil {
 	
-	/**
-	 * The current values of session and conversation fields that are annotated with 
-	 * {@link SessionField} and {@link ConversationField} 
-	 * are extracted from the target object and placed into the session
-	 * and the active conversations available in the current thread. 
-	 * 
-	 * @param target
-	 */
-	public static void extractSessionFields(Object target) {
-		SessionFieldUtil.extractSessionFields(target);
-		ConversationUtil.extractConversationFields(target);
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(ScopeUtil.class);
 	
-	/**
-	 * The target object's session and conversation fields that are annotated with 
-	 * {@link SessionField} and {@link ConversationField} are injected from the session
-	 * and the active conversations available in the current thread. 
-	 * 
-	 * @param target
-	 */
-	public static void injectScopeFields(Object target) {
-		SessionFieldUtil.injectSessionFields(target);
-		ConversationUtil.injectConversationFields(target);
+	public static Map<String, Object> getFieldValues(Object action,
+			Map<String, Field> classFieldMap) {
+		
+		Map<String, Object> scopedValuesMap = new HashMap<String, Object>();
+		for (Entry<String,Field> fieldEntry: classFieldMap.entrySet()) {
+			Field field = fieldEntry.getValue();
+			String fieldName = fieldEntry.getKey();
+			try {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Getting value from session for field with name "
+							+ fieldName);
+				}
+				Object value = field.get(action);
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Got value from session, toString() of this value is:  "
+							+ value);
+				}
+				scopedValuesMap.put(fieldName, value);
+			} catch (IllegalArgumentException e) {
+				LOG.warn("Illegal argument exception while trying to obtain field named "
+						+ fieldName
+						+ " from action of class "
+						+ action.getClass());
+			} catch (IllegalAccessException e) {
+				LOG.warn("Illegal access exception while trying to obtain field named "
+						+ fieldName
+						+ " from action of class "
+						+ action.getClass());
+			}
+		}
+		return scopedValuesMap;
+	}
+
+	public static void setFieldValues(Object action,
+			Map<String, Field> classFieldMap,
+			Map<String, Object> scopedValuesMap) {
+		
+		for (Entry<String,Field> fieldEntry: classFieldMap.entrySet()) {
+			Field field = fieldEntry.getValue();
+			String fieldName = fieldEntry.getKey();
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Setting field by the name of " + fieldName);
+			}
+			Object value = scopedValuesMap.get(fieldName);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Setting field with value from session with toString() of "
+						+ value);
+			}
+			try {
+				field.set(action, value);
+			} catch (IllegalAccessException ex) {
+				LOG.warn("Illegal access exception while trying to set field named "
+						+ fieldName
+						+ " from action of class "
+						+ action.getClass());
+			}
+		}
 	}
 }

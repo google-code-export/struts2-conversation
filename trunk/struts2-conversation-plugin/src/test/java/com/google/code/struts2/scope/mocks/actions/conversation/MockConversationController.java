@@ -5,7 +5,7 @@ import com.google.code.struts2.scope.conversation.ConversationController;
 import com.google.code.struts2.scope.sessionfield.SessionField;
 import com.opensymphony.xwork2.ActionSupport;
 
-@ConversationController("sdf:sdfsf,fff")
+@ConversationController("oopy")
 public class MockConversationController extends ActionSupport {
 	
 	private static final long serialVersionUID = 1L;
