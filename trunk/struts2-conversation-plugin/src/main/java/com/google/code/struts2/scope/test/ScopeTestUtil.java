@@ -38,7 +38,7 @@ public class ScopeTestUtil {
 			}
 		} else {
 			for (String c : getconversationManager().getAllConversationNames()) {
-				request.addParameter(c + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, c);
+				request.addParameter(c + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, c + "-test-id");
 			}
 		}
 	}

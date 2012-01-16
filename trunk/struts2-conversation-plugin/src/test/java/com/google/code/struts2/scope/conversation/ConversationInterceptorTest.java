@@ -2,19 +2,28 @@ package com.google.code.struts2.scope.conversation;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.code.struts2.scope.mocks.actions.conversation.MockConversationController;
+import com.google.code.struts2.scope.mocks.beans.TestBean;
 import com.google.code.struts2.scope.sessionfield.SessionField;
 import com.google.code.struts2.scope.test.ScopeTestUtil;
-import com.google.code.struts2.scope.testutil.ScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
+import com.google.code.struts2.test.junit.StrutsSpringTest;
 import com.opensymphony.xwork2.Action;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
 
-@StrutsConfiguration(locations = "struts-convention.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath*:*applicationContext.xml")
+@StrutsConfiguration(locations = "struts-conversation.xml")
 public class ConversationInterceptorTest extends
-		ScopeTestCase<MockConversationController> {
+		StrutsSpringTest<MockConversationController> {
 
 	static final String CONVERSATION_NAME = "oopy-conversation";
 	static final String CONVERSATION_FIELD = "conversationString";
@@ -27,26 +36,42 @@ public class ConversationInterceptorTest extends
 	
 	@SessionField
 	String chubby;
+	
+	@Autowired
+	TestBean bean;
 
 	@Test
 	public void testContinueRegistration() throws Exception {
 
 		conversationString = "shit";
-
+		
+		this.getActionProxy("/conversation/begin").execute();
+		System.out.println(this.getAction().getBean().getEcho());
+		
 		ScopeTestUtil.setConversationIdsOnRequest(request);
+		this.getActionProxy("/conversation/do1").execute();
+		System.out.println(this.getAction().getBean().getEcho());
 		
-		ActionProxy proxy = this.getActionProxy("/conversation/do1");
+		ScopeTestUtil.setConversationIdsOnRequest(request);
+		this.getActionProxy("/conversation/do2").execute();
+		System.out.println(this.getAction().getBean().getEcho());
 		
-		ScopeTestUtil.extractScopeFields(this);
 		
-		String result = proxy.execute();
+		String id = ConversationUtil.getConversationId("oopy");
 		
-		assertEquals(Action.SUCCESS, result);
 		
-		ScopeTestUtil.injectScopeFields(this);
-
-		System.out.println(conversationString);
-		System.out.println(chubby);
+		this.getActionProxy("begin").execute();
+		
+		this.getActionProxy("/conversation/begin").execute();
+		System.out.println(this.getAction().getBean().getEcho());
+		
+		request.addParameter("oopy-conversation", id);
+		this.getActionProxy("/conversation/do2").execute();
+		System.out.println(this.getAction().getBean().getEcho());
+		
+		request.addParameter("oopy-conversation", id);
+		this.getActionProxy("/conversation/do2").execute();
+		System.out.println(this.getAction().getBean().getEcho());
 	}
 
 	@Test
@@ -77,7 +102,6 @@ public class ConversationInterceptorTest extends
 		request.addParameter(CONVERSATION_NAME, id1);
 		this.getActionProxy("/conversation/end").execute();
 
-		request.addParameter(CONVERSATION_NAME, id1);
 		this.getActionProxy("/conversation/do2").execute();
 		assertEquals("initialState", this.getAction().getConversationString());
 

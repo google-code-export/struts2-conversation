@@ -66,7 +66,9 @@ public class ScopeUtil {
 						+ value);
 			}
 			try {
-				field.set(action, value);
+				if (!(field.getType().isPrimitive() && value == null)) {
+					field.set(action, value);
+				}
 			} catch (IllegalAccessException ex) {
 				LOG.warn("Illegal access exception while trying to set field named "
 						+ fieldName

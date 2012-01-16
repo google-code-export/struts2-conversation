@@ -1,7 +1,10 @@
 package com.google.code.struts2.scope.mocks.actions.conversation;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.code.struts2.scope.conversation.ConversationController;
+import com.google.code.struts2.scope.mocks.beans.TestBean;
 import com.google.code.struts2.scope.sessionfield.SessionField;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -11,6 +14,9 @@ public class MockConversationController extends ActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String conversationString = "initialState";
 	@SessionField String chubby;
+	
+	@Autowired
+	private TestBean bean;
 
 	@Action("begin")
 	public String begin() {
@@ -20,6 +26,7 @@ public class MockConversationController extends ActionSupport {
 	
 	@Action("do1")
 	public String doThing1() {
+		bean.setEcho("hello spring");
 		return SUCCESS;
 	}
 
@@ -39,5 +46,13 @@ public class MockConversationController extends ActionSupport {
 
 	public String getConversationString() {
 		return conversationString;
+	}
+
+	public void setBean(TestBean bean) {
+		this.bean = bean;
+	}
+
+	public TestBean getBean() {
+		return bean;
 	}
 }
