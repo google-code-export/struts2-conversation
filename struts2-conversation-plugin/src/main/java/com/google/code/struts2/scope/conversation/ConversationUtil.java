@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,6 +44,23 @@ public class ConversationUtil {
 			}
 		}
 		return id;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T getConversationField(String fieldName) {
+		T field = null;
+		ActionContext context = ActionContext.getContext();
+		if (context != null) {
+			Map<String, Object> session = context.getSession();
+			for (String conversationId : getConversationIds()) {
+				Map<String, Object> conversationFieldMap = (Map<String, Object>) session.get(conversationId);
+				if (conversationFieldMap != null) {
+					field = (T) conversationFieldMap.get(fieldName);
+					if (field != null) break;
+				}
+			}
+		}
+		return field;
 	}
 	
 	/**
@@ -93,16 +111,19 @@ public class ConversationUtil {
 	 * @param fieldValue
 	 */
 	public static void setConversationField(String fieldName, Object fieldValue) {
-		Map<String, Object> session = ActionContext.getContext().getSession();
-		for (String conversationName : getConversations()) {
-			String convoId = getConversationId(conversationName);
-			@SuppressWarnings("unchecked")
-			Map<String, Object> conversationFieldMap = (Map<String, Object>) session.get(convoId);
-			if (conversationFieldMap == null) {
-				conversationFieldMap = new HashMap<String, Object>();
+		ActionContext context = ActionContext.getContext();
+		if (context != null) {
+			Map<String, Object> session = ActionContext.getContext().getSession();
+			for (String conversationName : getConversations()) {
+				String convoId = getConversationId(conversationName);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> conversationFieldMap = (Map<String, Object>) session.get(convoId);
+				if (conversationFieldMap == null) {
+					conversationFieldMap = new HashMap<String, Object>();
+				}
+				conversationFieldMap.put(fieldName, fieldValue);
+				session.put(convoId, conversationFieldMap);
 			}
-			conversationFieldMap.put(fieldName, fieldValue);
-			session.put(convoId, conversationFieldMap);
 		}
 	}
 	
@@ -133,6 +154,33 @@ public class ConversationUtil {
 		}
 		
 		return convos.toArray(new String[convos.size()]);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String[] getConversationIds() {
+		
+		List<String> convoIds = new ArrayList<String>();
+		
+		Map<String, String> convoMap = (Map<String, String>) ActionContext.getContext().getValueStack()
+			.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY + "jj");
+		
+		if (convoMap != null) {
+			System.out.println("kkkk" + convoMap);
+			convoIds.addAll(convoMap.values());
+		} else {
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request != null) {
+				Map<String, String[]> params = request.getParameterMap();
+				for (Entry<String, String[]> param : params.entrySet()) {
+					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+						System.out.println("wwww" + param.getValue()[0]);
+						convoIds.add(param.getValue()[0]);
+					}
+				}
+			}
+		}
+		
+		return convoIds.toArray(new String[convoIds.size()]);
 	}
 	
 	/**

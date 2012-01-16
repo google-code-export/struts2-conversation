@@ -186,8 +186,13 @@ public class ConversationManagerImpl implements ConversationManager {
 				}
 				
 				Map<String, Object> session = invocation.getInvocationContext().getSession();
-				Map<String, Object> conversationFieldValues = ScopeUtil.getFieldValues(action,
-						classFieldMap);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> conversationFieldValues = (Map<String, Object>) session.get(conversationId);
+				if (conversationFieldValues == null) {
+					conversationFieldValues = new HashMap<String, Object>();
+				}
+				conversationFieldValues.putAll(ScopeUtil.getFieldValues(action,
+						classFieldMap));
 				
 				session.put(this.conversationId, conversationFieldValues);
 			}
