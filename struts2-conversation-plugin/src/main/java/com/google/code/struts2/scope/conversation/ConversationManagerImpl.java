@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,67 +22,65 @@ public class ConversationManagerImpl implements ConversationManager {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ConversationManagerImpl.class);
 
-	protected Collection<ConversationConfig> conversationConfigs;
+	protected Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
 	protected ConversationConfigBuilder configBuilder;
 	
 	@Inject(ConversationConstants.CONFIG_BUILDER_KEY) 
 	public void setConfigBuilder(ConversationConfigBuilder configBuilder) {
 		this.configBuilder = configBuilder;
-		conversationConfigs = configBuilder.getConversationConfigs().values();
-	}
-	
-	@Override
-	public Set<String> getAllConversationNames() {
-		return configBuilder.getConversationConfigs().keySet();
+		conversationConfigs = configBuilder.getConversationConfigs();
 	}
 
 	@Override
-	public void processConversationFields(ActionInvocation invocation) {
-		for (ConversationConfig conversation : conversationConfigs) {
-			processConversation(conversation, invocation);
+	public void processConversations(ActionInvocation invocation) {
+		Object action = invocation.getAction();
+		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		if (actionConversationConfigs != null) {
+			for (ConversationConfig conversationConfig : actionConversationConfigs) {
+				processConversation(conversationConfig, invocation, action);
+			}
 		}
 	}
 	
-	protected void processConversation(ConversationConfig conversation, ActionInvocation invocation) {
+	protected void processConversation(ConversationConfig conversationConfig, ActionInvocation invocation, Object action) {
 		String methodName = invocation.getProxy().getMethod();
 		Map<String, Object> session = invocation.getInvocationContext().getSession();
-		String conversationName = conversation.getConversationName();
+		String conversationName = conversationConfig.getConversationName();
 		String conversationId = (String) ServletActionContext.getRequest().getParameter(conversationName);
 		
 		if (conversationId != null) {
 			
-			if (conversation.containsMethod(methodName)) {
+			if (conversationConfig.containsAction(methodName)) {
 				
 				@SuppressWarnings("unchecked")
-				Map<String, Object> conversationFieldValueMap = (Map<String, Object>) session.get(conversationId);
+				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
 
-				if (conversationFieldValueMap != null) {
-					Object action = invocation.getAction();
+				if (conversationContext != null) {
 					if (LOG.isDebugEnabled()) {
 						LOG.debug("In Conversation " + conversationName + ".  Setting Conversation Field values for method "
 								+ methodName + " of class " + action.getClass());
 					}
-					Map<String, Field> classFields = conversation.getFields(action.getClass());
+					Map<String, Field> classFields = conversationConfig.getFields();
 					if (classFields != null) {
-						ScopeUtil.setFieldValues(action, classFields, conversationFieldValueMap);
+						ScopeUtil.setFieldValues(action, classFields, conversationContext);
 					}
 				}
 				
-				if (conversation.isEndMethod(methodName)) {
+				if (conversationConfig.isEndAction(methodName)) {
 					if (LOG.isDebugEnabled()) {
 						LOG.debug("In Conversation " + conversationName + ", removing conversation map from session following conversation end.");
 					}
 					session.remove(conversationId);
 				} else {
-					invocation.addPreResultListener(new ConversationResultListener(conversation, conversationId));
+					invocation.addPreResultListener(new ConversationResultListener(conversationConfig, conversationId));
 				}
 			}
-		} else if (conversation.isBeginMethod(methodName)) {
+		} else if (conversationConfig.isBeginAction(methodName)) {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Beginning new " + conversationName + " conversation.");
 			}
 			conversationId = java.util.UUID.randomUUID().toString();
-			invocation.addPreResultListener(new ConversationResultListener(conversation, conversationId));
+			invocation.addPreResultListener(new ConversationResultListener(conversationConfig, conversationId));
 		}
 	}
 
@@ -91,16 +88,21 @@ public class ConversationManagerImpl implements ConversationManager {
 	public void injectConversationFields(Object action) {
 		Class<?> actionClass = action.getClass();
 		synchronized (conversationConfigs) {
-			conversationConfigs = configBuilder.addClassConfig(actionClass).values();
+			this.configBuilder.addClassConfig(actionClass);
+			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		for (ConversationConfig conversation : conversationConfigs) {
-			String conversationId = ConversationUtil.getConversationId(conversation.getConversationName());
-			@SuppressWarnings("unchecked")
-			Map<String, Object> conversationFieldValueMap = (Map<String, Object>) ActionContext.getContext().getSession().get(conversationId);
-			if (conversationFieldValueMap != null) {
-				Map<String, Field> classFields = conversation.getFields(action.getClass());
-				if (classFields != null) {
-					ScopeUtil.setFieldValues(action, classFields, conversationFieldValueMap);
+		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		if (actionConversationConfigs != null) {
+			Map<String, Object> session = ActionContext.getContext().getSession();
+			for (ConversationConfig conversation : actionConversationConfigs) {
+				String conversationId = ConversationUtil.getConversationId(conversation.getConversationName());
+				@SuppressWarnings("unchecked")
+				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
+				if (conversationContext != null) {
+					Map<String, Field> cachedConversationFields = conversation.getFields();
+					if (cachedConversationFields != null) {
+						ScopeUtil.setFieldValues(action, cachedConversationFields, conversationContext);
+					}
 				}
 			}
 		}
@@ -110,32 +112,38 @@ public class ConversationManagerImpl implements ConversationManager {
 	public void extractConversationFields(Object action) {
 		Class<?> actionClass = action.getClass();
 		synchronized (conversationConfigs) {
-			conversationConfigs = configBuilder.addClassConfig(actionClass).values();
+			this.configBuilder.addClassConfig(actionClass);
+			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		for (ConversationConfig conversation : conversationConfigs) {
-			
-			Map<String, Field> classFieldMap = conversation.getFields(action.getClass());
-			String conversationId = null;
-			HttpServletRequest request = ServletActionContext.getRequest();
-			
-			if (request != null) {
-				conversationId = (String) request.getParameter(conversation.getConversationName());
-			}
-			
-			if (conversationId == null) {
-				conversationId = java.util.UUID.randomUUID().toString();
-			}
-			
-			if (classFieldMap != null) {
+		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		if (actionConversationConfigs != null) {
+			for (ConversationConfig conversation : actionConversationConfigs) {
 				
-				Map<String, Object> session = ActionContext.getContext().getSession();
-				Map<String, Object> conversationFieldValues = ScopeUtil.getFieldValues(action,
-						classFieldMap);
+				Map<String, Field> cachedConversationFields = conversation.getFields();
+				String conversationId = null;
+				String conversationName = conversation.getConversationName();
+				HttpServletRequest request = ServletActionContext.getRequest();
 				
-				session.put(conversationId, conversationFieldValues);
+				if (request != null) {
+					conversationId = (String) request.getParameter(conversationName);
+				}
+				
+				if (conversationId == null) {
+					conversationId = java.util.UUID.randomUUID().toString();
+				}
+				
+				ActionContext actionContext = ActionContext.getContext();
+				if (cachedConversationFields != null) {
+					
+					Map<String, Object> session = actionContext.getSession();
+					Map<String, Object> conversationContext = ScopeUtil.getFieldValues(action,
+							cachedConversationFields);
+					
+					session.put(conversationId, conversationContext);
+				}
+				ActionInvocation invocation = actionContext.getActionInvocation();
+				pushConversationIdOntoStack(conversationName, conversationId, invocation); 
 			}
-			ActionInvocation invocation = ActionContext.getContext().getActionInvocation();
-			pushConversationIdOntoStack(conversation.getConversationName(), conversationId, invocation); 
 		}
 	}
 	
@@ -148,16 +156,16 @@ public class ConversationManagerImpl implements ConversationManager {
 		
 		ValueStack stack = invocation.getStack();
 		
-		Map<String, String> conversationIdMap = (Map<String, String>) stack.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY);
+		Map<String, String> stackConversationIds = (Map<String, String>) stack.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY);
 		
-		if (conversationIdMap == null) {
+		if (stackConversationIds == null) {
 			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-			conversationIdMap = new HashMap<String, String>();
-			stackItem.put(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY, conversationIdMap);
+			stackConversationIds = new HashMap<String, String>();
+			stackItem.put(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY, stackConversationIds);
 			stack.push(stackItem);
 		}
 		
-		conversationIdMap.put(conversationName, conversationId);
+		stackConversationIds.put(conversationName, conversationId);
 		
 	}
 
@@ -176,9 +184,9 @@ public class ConversationManagerImpl implements ConversationManager {
 			
 			Object action = invocation.getAction();
 			
-			Map<String, Field> classFieldMap = this.conversation.getFields(action.getClass());
+			Map<String, Field> cachedConversationFields = this.conversation.getFields();
 			
-			if (classFieldMap != null) {
+			if (cachedConversationFields != null) {
 				
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Getting conversation fields for Conversation " + conversation.getConversationName() 
@@ -187,14 +195,13 @@ public class ConversationManagerImpl implements ConversationManager {
 				
 				Map<String, Object> session = invocation.getInvocationContext().getSession();
 				@SuppressWarnings("unchecked")
-				Map<String, Object> conversationFieldValues = (Map<String, Object>) session.get(conversationId);
-				if (conversationFieldValues == null) {
-					conversationFieldValues = new HashMap<String, Object>();
+				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
+				if (conversationContext == null) {
+					conversationContext = new HashMap<String, Object>();
 				}
-				conversationFieldValues.putAll(ScopeUtil.getFieldValues(action,
-						classFieldMap));
+				conversationContext.putAll(ScopeUtil.getFieldValues(action,cachedConversationFields));
 				
-				session.put(this.conversationId, conversationFieldValues);
+				session.put(this.conversationId, conversationContext);
 			}
 			
 			pushConversationIdOntoStack(conversation.getConversationName(), conversationId, invocation); 

@@ -9,7 +9,8 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
- * A utility class that provides static methods that are used internally.
+ * A utility class that provides static methods that are used internally
+ * for accessing cached fields reflectively.
  * 
  * @author rees.byars
  */
@@ -18,10 +19,10 @@ public class ScopeUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(ScopeUtil.class);
 	
 	public static Map<String, Object> getFieldValues(Object action,
-			Map<String, Field> classFieldMap) {
+			Map<String, Field> classScopeConfig) {
 		
-		Map<String, Object> scopedValuesMap = new HashMap<String, Object>();
-		for (Entry<String,Field> fieldEntry: classFieldMap.entrySet()) {
+		Map<String, Object> scopedValues = new HashMap<String, Object>();
+		for (Entry<String,Field> fieldEntry: classScopeConfig.entrySet()) {
 			Field field = fieldEntry.getValue();
 			String fieldName = fieldEntry.getKey();
 			try {
@@ -34,7 +35,7 @@ public class ScopeUtil {
 					LOG.debug("Got value from session, toString() of this value is:  "
 							+ value);
 				}
-				scopedValuesMap.put(fieldName, value);
+				scopedValues.put(fieldName, value);
 			} catch (IllegalArgumentException e) {
 				LOG.warn("Illegal argument exception while trying to obtain field named "
 						+ fieldName
@@ -47,20 +48,20 @@ public class ScopeUtil {
 						+ action.getClass());
 			}
 		}
-		return scopedValuesMap;
+		return scopedValues;
 	}
 
 	public static void setFieldValues(Object action,
-			Map<String, Field> classFieldMap,
-			Map<String, Object> scopedValuesMap) {
+			Map<String, Field> classScopeConfig,
+			Map<String, Object> scopedValues) {
 		
-		for (Entry<String,Field> fieldEntry: classFieldMap.entrySet()) {
+		for (Entry<String,Field> fieldEntry: classScopeConfig.entrySet()) {
 			Field field = fieldEntry.getValue();
 			String fieldName = fieldEntry.getKey();
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Setting field by the name of " + fieldName);
 			}
-			Object value = scopedValuesMap.get(fieldName);
+			Object value = scopedValues.get(fieldName);
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Setting field with value from session with toString() of "
 						+ value);

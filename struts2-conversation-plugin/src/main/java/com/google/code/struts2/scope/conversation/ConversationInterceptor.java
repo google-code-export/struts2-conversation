@@ -35,7 +35,7 @@ public class ConversationInterceptor implements Interceptor {
 	}
 
 	public String intercept(ActionInvocation invocation) throws Exception {
-		manager.processConversationFields(invocation);
+		manager.processConversations(invocation);
 		return invocation.invoke();
 	}
 

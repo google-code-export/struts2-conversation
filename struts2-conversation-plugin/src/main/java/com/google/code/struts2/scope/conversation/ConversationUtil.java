@@ -16,12 +16,14 @@ import com.opensymphony.xwork2.ActionContext;
  * 
  * A utility class that provides static methods that are used internally and
  * for unit testing.  Usage of this utility in a outside of these contexts is
- * discouraged.  Most of the methods are not optimized for other uses.
+ * discouraged.
  * 
  * @author rees.byars
  *
  */
 public class ConversationUtil {
+	
+	public static final String ACTION_CONTEXT_REQUEST_KEY = "com.opensymphony.xwork2.dispatcher.HttpServletRequest";
 	
 	/**
 	 * Given a conversation name, returns the ID of the conversation for the currently
@@ -46,17 +48,30 @@ public class ConversationUtil {
 		return id;
 	}
 	
+	/**
+	 * Given a conversation field's name, the value of the field is
+	 * returned from a conversation map in the current thread.
+	 * 
+	 * @param fieldName
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getConversationField(String fieldName) {
-		T field = null;
-		ActionContext context = ActionContext.getContext();
-		if (context != null) {
-			Map<String, Object> session = context.getSession();
-			for (String conversationId : getConversationIds()) {
-				Map<String, Object> conversationFieldMap = (Map<String, Object>) session.get(conversationId);
-				if (conversationFieldMap != null) {
-					field = (T) conversationFieldMap.get(fieldName);
-					if (field != null) break;
+	public static Object getConversationField(String fieldName) {
+		Object field = null;
+		ActionContext actionContext = ActionContext.getContext();
+		if (actionContext != null) {
+			Map<String, Object> session = actionContext.getSession();
+			HttpServletRequest request = ((HttpServletRequest)actionContext.get(ACTION_CONTEXT_REQUEST_KEY));
+			if (request != null) {
+				Map<String, String[]> params = request.getParameterMap();
+				for (Entry<String, String[]> param : params.entrySet()) {
+					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+						Map<String, Object> conversationContext = (Map<String, Object>) session.get(param.getValue()[0]);
+						if (conversationContext != null) {
+							field = (Object) conversationContext.get(fieldName);
+							if (field != null) break;
+						}
+					}
 				}
 			}
 		}
@@ -90,13 +105,17 @@ public class ConversationUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T getConversationField(String fieldName, Class<T> fieldClass, String[] conversations) {
 		T field = null;
-		for (String conversationName : conversations) {
-			String id = getConversationId(conversationName);
-			if (id != null) {
-				Map<String, Object> conversationFieldMap = (Map<String, Object>) ActionContext.getContext().getSession().get(id);
-				if (conversationFieldMap != null) {
-					field = (T) conversationFieldMap.get(fieldName);
-					if (field != null) break;
+		ActionContext actionContext = ActionContext.getContext();
+		if (actionContext != null) {
+			Map<String, Object> session = actionContext.getSession();
+			for (String conversationName : conversations) {
+				String id = getConversationId(conversationName);
+				if (id != null) {
+					Map<String, Object> conversationContext = (Map<String, Object>) session.get(id);
+					if (conversationContext != null) {
+						field = (T) conversationContext.get(fieldName);
+						if (field != null) break;
+					}
 				}
 			}
 		}
@@ -111,18 +130,24 @@ public class ConversationUtil {
 	 * @param fieldValue
 	 */
 	public static void setConversationField(String fieldName, Object fieldValue) {
-		ActionContext context = ActionContext.getContext();
-		if (context != null) {
-			Map<String, Object> session = ActionContext.getContext().getSession();
-			for (String conversationName : getConversations()) {
-				String convoId = getConversationId(conversationName);
-				@SuppressWarnings("unchecked")
-				Map<String, Object> conversationFieldMap = (Map<String, Object>) session.get(convoId);
-				if (conversationFieldMap == null) {
-					conversationFieldMap = new HashMap<String, Object>();
+		ActionContext actionContext = ActionContext.getContext();
+		if (actionContext != null) {
+			Map<String, Object> session = actionContext.getSession();
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request != null) {
+				Map<String, String[]> params = request.getParameterMap();
+				for (Entry<String, String[]> param : params.entrySet()) {
+					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+						String conversationId = param.getValue()[0];
+						@SuppressWarnings("unchecked")
+						Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
+						if (conversationContext == null) {
+							conversationContext = new HashMap<String, Object>();
+						}
+						conversationContext.put(fieldName, fieldValue);
+						session.put(conversationId, conversationContext);
+					}
 				}
-				conversationFieldMap.put(fieldName, fieldValue);
-				session.put(convoId, conversationFieldMap);
 			}
 		}
 	}
@@ -132,50 +157,38 @@ public class ConversationUtil {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static String[] getConversations() {
 		
-		List<String> convos = new ArrayList<String>();
-		
-		Map<String, String> convoMap = (Map<String, String>) ActionContext.getContext().getValueStack()
-			.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY);
-		
-		if (convoMap != null) {
-			convos.addAll(convoMap.keySet());
-		} else {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request != null) {
-				for (String paramName : request.getParameterMap().keySet()) {
-					if (paramName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-						convos.add(paramName);
-					}
+		List<String> convoIds = new ArrayList<String>();
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		if (request != null) {
+			Map<String, String[]> params = request.getParameterMap();
+			for (Entry<String, String[]> param : params.entrySet()) {
+				String paramKey = param.getKey();
+				if (paramKey.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+					convoIds.add(paramKey);
 				}
 			}
 		}
 		
-		return convos.toArray(new String[convos.size()]);
+		return convoIds.toArray(new String[convoIds.size()]);
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * Returns an array of all the conversation IDs on the current request
+	 * @return
+	 */
 	public static String[] getConversationIds() {
 		
 		List<String> convoIds = new ArrayList<String>();
-		
-		Map<String, String> convoMap = (Map<String, String>) ActionContext.getContext().getValueStack()
-			.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY + "jj");
-		
-		if (convoMap != null) {
-			System.out.println("kkkk" + convoMap);
-			convoIds.addAll(convoMap.values());
-		} else {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request != null) {
-				Map<String, String[]> params = request.getParameterMap();
-				for (Entry<String, String[]> param : params.entrySet()) {
-					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-						System.out.println("wwww" + param.getValue()[0]);
-						convoIds.add(param.getValue()[0]);
-					}
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		if (request != null) {
+			Map<String, String[]> params = request.getParameterMap();
+			for (Entry<String, String[]> param : params.entrySet()) {
+				if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+					convoIds.add(param.getValue()[0]);
 				}
 			}
 		}

@@ -11,8 +11,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 /**
  * 
  * A utility class that provides static methods that are used internally and
- * for unit testing.  Usage of this utility in a outside of these contexts is
- * discouraged.  Most of the methods are not optimized for other uses.
+ * for unit testing.
  * 
  * @author rees.byars
  *
@@ -47,11 +46,11 @@ public class SessionFieldUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T getSessionField(String name, Class<T> clazz) {
 		String key = buildKey(name, clazz);
-		Map<String, Object> sessionFieldMap = (Map<String, Object>) ActionContext.getContext().getSession().get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
-		if (sessionFieldMap == null) {
+		Map<String, Object> sessionContext = (Map<String, Object>) ActionContext.getContext().getSession().get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
+		if (sessionContext == null) {
 			return null;
 		}
-		return (T) sessionFieldMap.get(key);
+		return (T) sessionContext.get(key);
 	}
 	
 	/**
@@ -64,16 +63,17 @@ public class SessionFieldUtil {
 	public static void setSessionField(String name, Object sessionField) {
 		String key = buildKey(name, sessionField.getClass());
 		@SuppressWarnings("unchecked")
-		Map<String, Object> sessionFieldMap = (Map<String, Object>) ActionContext.getContext().getSession().get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
-		if (sessionFieldMap == null) {
+		Map<String, Object> sessionContext = (Map<String, Object>) ActionContext.getContext().getSession().get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
+		if (sessionContext == null) {
 			return;
 		}
-		sessionFieldMap.put(key, sessionField);
+		sessionContext.put(key, sessionField);
 	}
 	
 	/**
 	 * The current values of session fields annotated with {@link SessionField} 
-	 * are extracted from the target object and placed into the session. 
+	 * are extracted from the target object and placed into the session. No caching
+	 * is performed, for use only in unit testing.
 	 * 
 	 * @param target
 	 */
@@ -99,7 +99,8 @@ public class SessionFieldUtil {
 	
 	/**
 	 * The target object's session fields that are annotated with 
-	 * {@link SessionField} are injected from the session. 
+	 * {@link SessionField} are injected from the session. No caching
+	 * is performed, for use only in unit testing.
 	 * 
 	 * @param target
 	 */
