@@ -274,7 +274,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addAction(method);
+			conversationConfig.addAction(method.getName());
 		}
 	}
 	
@@ -288,7 +288,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding Begin method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addBeginAction(method);
+			conversationConfig.addBeginAction(method.getName());
 		}
 	}
 	
@@ -302,7 +302,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding End method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addEndAction(method);
+			conversationConfig.addEndAction(method.getName());
 		}
 	}
 	

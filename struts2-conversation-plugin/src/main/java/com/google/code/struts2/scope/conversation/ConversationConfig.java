@@ -1,7 +1,6 @@
 package com.google.code.struts2.scope.conversation;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,16 +9,16 @@ import java.util.Set;
 public class ConversationConfig {
 	
 	private Map<String, Field> fields;
-	private Set<String> actionMethodNames;
-	private Set<String> beginActionMethodNames;
-	private Set<String> endActionMethodNames;
+	private Set<String> actionIds;
+	private Set<String> beginActionIds;
+	private Set<String> endActionIds;
 	private String conversationName;
 	
 	public ConversationConfig(String conversationName) {
 		fields = new HashMap<String, Field>();
-		actionMethodNames = new HashSet<String>();
-		beginActionMethodNames = new HashSet<String>();
-		endActionMethodNames = new HashSet<String>();
+		actionIds = new HashSet<String>();
+		beginActionIds = new HashSet<String>();
+		endActionIds = new HashSet<String>();
 		this.conversationName = conversationName + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
 	}
 
@@ -31,28 +30,28 @@ public class ConversationConfig {
 		return fields;
 	}
 	
-	public void addAction(Method method) {
-		actionMethodNames.add(method.getName());
+	public void addAction(String actionId) {
+		actionIds.add(actionId);
 	}
 	
-	public void addBeginAction(Method method) {
-		beginActionMethodNames.add(method.getName());
+	public void addBeginAction(String actionId) {
+		beginActionIds.add(actionId);
 	}
 	
-	public void addEndAction(Method method) {
-		endActionMethodNames.add(method.getName());
+	public void addEndAction(String actionId) {
+		endActionIds.add(actionId);
 	}
 	
-	public boolean containsAction(String methodName) {
-		return actionMethodNames.contains(methodName);
+	public boolean containsAction(String actionId) {
+		return actionIds.contains(actionId);
 	}
 	
-	public boolean isBeginAction(String methodName) {
-		return beginActionMethodNames.contains(methodName);
+	public boolean isBeginAction(String actionId) {
+		return beginActionIds.contains(actionId);
 	}
 	
-	public boolean isEndAction(String methodName) {
-		return endActionMethodNames.contains(methodName);
+	public boolean isEndAction(String actionId) {
+		return endActionIds.contains(actionId);
 	}
 	
 	public String getConversationName() {

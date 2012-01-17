@@ -51,7 +51,7 @@ public class ConversationInterceptorTest extends
 		ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
 		this.getActionProxy("/conversation/do2").execute();
 		System.out.println(this.getAction().getBean().getEcho());
-		
+		System.out.println(ConversationAdapter.getAdapter().getActionId());
 		
 		String id = ConversationUtil.getConversationId("oopy");
 		

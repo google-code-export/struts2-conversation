@@ -9,9 +9,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts2.ServletActionContext;
-import com.opensymphony.xwork2.ActionContext;
-
 /**
  * 
  * A utility class that provides static methods that are used internally and
@@ -23,8 +20,6 @@ import com.opensymphony.xwork2.ActionContext;
  */
 public class ConversationUtil {
 	
-	public static final String ACTION_CONTEXT_REQUEST_KEY = "com.opensymphony.xwork2.dispatcher.HttpServletRequest";
-	
 	/**
 	 * Given a conversation name, returns the ID of the conversation for the currently
 	 * executing thread.  
@@ -32,19 +27,12 @@ public class ConversationUtil {
 	 * @param conversationName
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static String getConversationId(String conversationName) {
 		if (!conversationName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
 			conversationName += ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
 		}
-		String id = (String) ServletActionContext.getRequest().getParameter(conversationName);
-		if (id == null) {
-			Map<String, String> convoIdMap = ((Map<String, String>) ActionContext.getContext().getValueStack()
-					.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY));
-			if (convoIdMap != null) {
-				id =  convoIdMap.get(conversationName);
-			}
-		}
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		String id = (String) adapter.getRequest().getParameter(conversationName);
 		return id;
 	}
 	
@@ -58,10 +46,10 @@ public class ConversationUtil {
 	@SuppressWarnings("unchecked")
 	public static Object getConversationField(String fieldName) {
 		Object field = null;
-		ActionContext actionContext = ActionContext.getContext();
-		if (actionContext != null) {
-			Map<String, Object> session = actionContext.getSession();
-			HttpServletRequest request = ((HttpServletRequest)actionContext.get(ACTION_CONTEXT_REQUEST_KEY));
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		if (adapter != null) {
+			Map<String, Object> session = adapter.getSessionContext();
+			HttpServletRequest request = adapter.getRequest();
 			if (request != null) {
 				Map<String, String[]> params = request.getParameterMap();
 				for (Entry<String, String[]> param : params.entrySet()) {
@@ -105,9 +93,9 @@ public class ConversationUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T getConversationField(String fieldName, Class<T> fieldClass, String[] conversations) {
 		T field = null;
-		ActionContext actionContext = ActionContext.getContext();
-		if (actionContext != null) {
-			Map<String, Object> session = actionContext.getSession();
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		if (adapter != null) {
+			Map<String, Object> session = adapter.getSessionContext();
 			for (String conversationName : conversations) {
 				String id = getConversationId(conversationName);
 				if (id != null) {
@@ -130,10 +118,10 @@ public class ConversationUtil {
 	 * @param fieldValue
 	 */
 	public static void setConversationField(String fieldName, Object fieldValue) {
-		ActionContext actionContext = ActionContext.getContext();
-		if (actionContext != null) {
-			Map<String, Object> session = actionContext.getSession();
-			HttpServletRequest request = ServletActionContext.getRequest();
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		if (adapter != null) {
+			Map<String, Object> session = adapter.getSessionContext();
+			HttpServletRequest request = adapter.getRequest();
 			if (request != null) {
 				Map<String, String[]> params = request.getParameterMap();
 				for (Entry<String, String[]> param : params.entrySet()) {
@@ -161,7 +149,7 @@ public class ConversationUtil {
 		
 		List<String> convoIds = new ArrayList<String>();
 
-		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletRequest request = ConversationAdapter.getAdapter().getRequest();
 		if (request != null) {
 			Map<String, String[]> params = request.getParameterMap();
 			for (Entry<String, String[]> param : params.entrySet()) {
@@ -183,7 +171,7 @@ public class ConversationUtil {
 		
 		List<String> convoIds = new ArrayList<String>();
 
-		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletRequest request = ConversationAdapter.getAdapter().getRequest();
 		if (request != null) {
 			Map<String, String[]> params = request.getParameterMap();
 			for (Entry<String, String[]> param : params.entrySet()) {
