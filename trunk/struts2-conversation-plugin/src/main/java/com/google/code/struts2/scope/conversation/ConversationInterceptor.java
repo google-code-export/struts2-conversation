@@ -18,6 +18,12 @@ public class ConversationInterceptor implements Interceptor {
 			.getLogger(ConversationInterceptor.class);
 
 	protected ConversationManager manager;
+	protected ConversationConfigBuilder configBuilder;
+	
+	@Inject(ConversationConstants.CONFIG_BUILDER_KEY) 
+	public void setConversationConfigBuilder(ConversationConfigBuilder configBuilder) {
+		this.configBuilder = configBuilder;
+	}
 	
 	@Inject(ConversationConstants.MANAGER_KEY)
 	public void setConversationManager(ConversationManager manager) {
@@ -27,6 +33,7 @@ public class ConversationInterceptor implements Interceptor {
 	@Override
 	public void init() {
 		LOG.info("Initializing the ConversationInterceptor...");
+		manager.setConversationConfigBuilder(configBuilder);
 	}
 	
 	@Override
@@ -35,7 +42,7 @@ public class ConversationInterceptor implements Interceptor {
 	}
 
 	public String intercept(ActionInvocation invocation) throws Exception {
-		manager.processConversations(invocation);
+		manager.processConversations(new StrutsConversationAdapter(invocation));
 		return invocation.invoke();
 	}
 

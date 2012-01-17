@@ -6,9 +6,11 @@ import java.util.Map.Entry;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.code.struts2.scope.conversation.ConversationAdapter;
 import com.google.code.struts2.scope.conversation.ConversationConfigBuilderImpl;
 import com.google.code.struts2.scope.conversation.ConversationConstants;
 import com.google.code.struts2.scope.conversation.ConversationManager;
+import com.google.code.struts2.scope.conversation.StrutsConversationAdapter;
 import com.google.code.struts2.scope.sessionfield.SessionFieldUtil;
 import com.opensymphony.xwork2.ActionContext;
 
@@ -55,7 +57,8 @@ public class ScopeTestUtil {
      */
     public static void extractScopeFields(Object target) {
             SessionFieldUtil.extractSessionFields(target);
-            getconversationManager().extractConversationFields(target);
+            ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
+            getconversationManager().extractConversationFields(adapater);
     }
     
     /**
@@ -67,7 +70,8 @@ public class ScopeTestUtil {
      */
     public static void injectScopeFields(Object target) {
             SessionFieldUtil.injectSessionFields(target);
-            getconversationManager().injectConversationFields(target);
+            ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
+            getconversationManager().injectConversationFields(adapater);
     }
 
 }
