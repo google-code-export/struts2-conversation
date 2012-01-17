@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.code.struts2.scope.conversation.ConversationConfigBuilderImpl;
 import com.google.code.struts2.scope.conversation.ConversationConstants;
 import com.google.code.struts2.scope.conversation.ConversationManager;
 import com.google.code.struts2.scope.sessionfield.SessionFieldUtil;
@@ -28,16 +29,17 @@ public class ScopeTestUtil {
 	 * 
 	 * @param request
 	 */
-	public static void setConversationIdsOnRequest(MockHttpServletRequest request) {
+	public static void setConversationIdsOnRequest(MockHttpServletRequest request, Class<?> actionClass) {
+		ActionContext actionContext = ActionContext.getContext();
 		@SuppressWarnings("unchecked")
-		Map<String, String> convoIdMap = ((Map<String, String>) ActionContext.getContext().getValueStack()
+		Map<String, String> convoIdMap = ((Map<String, String>) actionContext.getValueStack()
 				.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY));
 		if (convoIdMap != null) {
 			for (Entry<String, String> entry : convoIdMap.entrySet()) {
 				request.addParameter(entry.getKey(), new String[]{entry.getValue()});
 			}
 		} else {
-			for (String c : getconversationManager().getAllConversationNames()) {
+			for (String c : ConversationConfigBuilderImpl.getConversationNames(actionClass)) {
 				request.addParameter(c + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, c + "-test-id");
 			}
 		}

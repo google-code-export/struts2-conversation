@@ -2,6 +2,7 @@ package com.google.code.struts2.scope.conversation;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	public void testGetConversationConfig() {
 		
-		Map<String, ConversationConfig> configs = builder.getConversationConfigs();
+		Map<Class<?>, Collection<ConversationConfig>> configs = builder.getConversationConfigs();
 		assertNotNull(configs);
 		//TODO
 	}
@@ -30,7 +31,7 @@ public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	public void testConversationNaming() throws Exception {
 		
-		Map<String, ConversationConfig> configs = builder.getConversationConfigs();
+		Map<Class<?>, Collection<ConversationConfig>> configs = builder.getConversationConfigs();
 		assertNotNull(configs);
 		//TODO
 	}

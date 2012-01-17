@@ -2,7 +2,6 @@ package com.google.code.struts2.scope.conversation;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,6 @@ import com.google.code.struts2.scope.sessionfield.SessionField;
 import com.google.code.struts2.scope.test.ScopeTestUtil;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.google.code.struts2.test.junit.StrutsSpringTest;
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,11 +44,11 @@ public class ConversationInterceptorTest extends
 		this.getActionProxy("/conversation/begin").execute();
 		System.out.println(this.getAction().getBean().getEcho());
 		
-		ScopeTestUtil.setConversationIdsOnRequest(request);
+		ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
 		this.getActionProxy("/conversation/do1").execute();
 		System.out.println(this.getAction().getBean().getEcho());
 		
-		ScopeTestUtil.setConversationIdsOnRequest(request);
+		ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
 		this.getActionProxy("/conversation/do2").execute();
 		System.out.println(this.getAction().getBean().getEcho());
 		

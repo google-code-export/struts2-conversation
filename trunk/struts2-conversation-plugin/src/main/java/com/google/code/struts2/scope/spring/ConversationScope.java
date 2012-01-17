@@ -9,8 +9,7 @@ public class ConversationScope implements Scope {
 
 	@Override
 	public Object get(String name, ObjectFactory<?> objectFactory) {
-		
-		Object object = SpringConversationUtil.getConversationField(name);
+		Object object = ConversationUtil.getConversationField(name);
 		if (object == null) {
 			object = objectFactory.getObject();
 			ConversationUtil.setConversationField(name, object);
@@ -20,7 +19,7 @@ public class ConversationScope implements Scope {
 
 	@Override
 	public String getConversationId() {
-		return ConversationUtil.getConversationIds()[0];
+		return null;
 	}
 
 	@Override

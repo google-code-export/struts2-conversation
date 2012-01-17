@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,9 +39,9 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ConversationConfigBuilderImpl.class);
-
+	private static Map<Class<?>, String[]> classConversationNamesMap;
 	private ActionFinder finder;
-	private Map<String, ConversationConfig> conversationConfigs;
+	private Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
 	private Set<Class<?>> classesProcessed;
 	private Set<Class<? extends Annotation>> overridingAnnotations;
 	private boolean followsConvention;
@@ -76,7 +77,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 	}
 	
 	@Override
-	public synchronized Map<String, ConversationConfig> getConversationConfigs() {
+	public synchronized Map<Class<?>, Collection<ConversationConfig>> getConversationConfigs() {
 		if (conversationConfigs == null) {
 			buildConversationConfigMap();
 		}
@@ -84,32 +85,34 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 	}
 	
 	protected void buildConversationConfigMap() {
-		conversationConfigs = new HashMap<String, ConversationConfig>();
+		conversationConfigs = new HashMap<Class<?>, Collection<ConversationConfig>>();
+		this.classesProcessed = new HashSet<Class<?>>();
+		classConversationNamesMap = new HashMap<Class<?>, String[]>();
 		Set<Class<?>> actionClasses = finder.getActionClasses();
 		for (Class<?> clazz : actionClasses) {
-			if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotation()) {
-				
-				LOG.info("Loading Annotated Conversation Configs from " + clazz.getSimpleName());
-				
-				addConversationFields(clazz, conversationConfigs);
-				addConversationControllerFields(clazz, conversationConfigs, this.getOverridingAnnotations());
-				addConversationActionMethods(clazz, conversationConfigs);
-				addConversationControllerMethods(clazz, conversationConfigs, followsConvention, actionAnnotationExists);
-			}
+			addClassConfig(clazz);
 		}
-		classesProcessed = actionClasses;
 	}
 	
 	@Override
-	public synchronized Map<String, ConversationConfig> addClassConfig(Class<?> clazz) {
-		if (!this.classesProcessed.contains(clazz)) {
-			addConversationFields(clazz, conversationConfigs);
-			addConversationControllerFields(clazz, conversationConfigs, this.getOverridingAnnotations());
-			addConversationActionMethods(clazz, conversationConfigs);
-			addConversationControllerMethods(clazz, conversationConfigs, followsConvention, actionAnnotationExists);
+	public synchronized Collection<ConversationConfig> addClassConfig(Class<?> clazz) {
+		if (!this.classesProcessed.contains(clazz) && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotation()) {
+			Map<String, ConversationConfig> classConversationConfigs = new HashMap<String, ConversationConfig>();
+			addConversationFields(clazz, classConversationConfigs);
+			addConversationControllerFields(clazz, classConversationConfigs, this.getOverridingAnnotations());
+			addConversationActionMethods(clazz, classConversationConfigs);
+			addConversationControllerMethods(clazz, classConversationConfigs, followsConvention, actionAnnotationExists);
 			classesProcessed.add(clazz);
+			List<String> cNamesList = new ArrayList<String>();
+			cNamesList.addAll(classConversationConfigs.keySet());
+			classConversationNamesMap.put(clazz, cNamesList.toArray(new String[cNamesList.size()]));
+			conversationConfigs.put(clazz, Collections.unmodifiableCollection(classConversationConfigs.values()));
 		}
-		return Collections.unmodifiableMap(conversationConfigs);
+		return conversationConfigs.get(clazz);
+	}
+	
+	public static String[] getConversationNames(Class<?> actionClass) {
+		return classConversationNamesMap.get(actionClass);
 	}
 	
 	protected void initOverridingAnnotations() {
@@ -158,7 +161,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 						conversationConfigs.put(conversation, conversationConfig);
 					}
 					LOG.debug("Adding field " + name + " to conversation " + conversation + " for class " + clazz.getSimpleName());
-					conversationConfig.addField(clazz, name, field);
+					conversationConfig.addField(name, field);
 				}
 			}
 		}
@@ -190,7 +193,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 								conversationConfigs.put(conversation, conversationConfig);
 							}
 							LOG.debug("Adding field " + field.getName() + " to conversation " + conversation + " for class " + clazz.getSimpleName());
-							conversationConfig.addField(clazz, field.getName(), field);
+							conversationConfig.addField(field.getName(), field);
 						}
 					}
 				}
@@ -271,7 +274,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addMethod(method);
+			conversationConfig.addAction(method);
 		}
 	}
 	
@@ -285,7 +288,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding Begin method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addBeginMethod(method);
+			conversationConfig.addBeginAction(method);
 		}
 	}
 	
@@ -299,7 +302,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding End method " + method.getName() + " to conversation " + conversation);
-			conversationConfig.addEndMethod(method);
+			conversationConfig.addEndAction(method);
 		}
 	}
 	
