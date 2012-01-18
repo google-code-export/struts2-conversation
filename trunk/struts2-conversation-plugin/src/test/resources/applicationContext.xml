@@ -11,12 +11,12 @@
         <property name="scopes">
             <map>
                 <entry key="conversation">
-                    <bean class="com.google.code.struts2.scope.spring.ConversationScope"/>
+                    <bean class="com.google.code.rees.scope.spring.ConversationScope"/>
                 </entry>
             </map>
         </property>
     </bean>
     
-    <bean id="shite" class="com.google.code.struts2.scope.mocks.beans.TestBean" autowire="byType" scope="conversation"/>
+    <bean id="shite" class="com.google.code.rees.scope.mocks.beans.TestBean" autowire="byType" scope="conversation"/>
 	
 </beans>
