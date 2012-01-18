@@ -5,8 +5,8 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.code.struts2.scope.ActionFinder;
-import com.google.code.struts2.scope.ScopeConstants;
+import com.google.code.struts2.scope.struts2.ActionFinder;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 import com.google.code.struts2.scope.testutil.ScopeTestCase;
 import com.google.code.struts2.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
@@ -14,7 +14,7 @@ import com.opensymphony.xwork2.inject.Inject;
 
 public class ActionFinderImplTest extends ScopeTestCase<Object> {
 	
-	@Inject(value=ScopeConstants.ACTION_FINDER_KEY)
+	@Inject(value=StrutsScopeConstants.ACTION_FINDER_KEY)
 	ActionFinder finder;
 
 	/**

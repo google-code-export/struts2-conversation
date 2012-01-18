@@ -1,11 +1,13 @@
-package com.google.code.struts2.scope.sessionfield;
+package com.google.code.struts2.scope.struts2;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import com.google.code.struts2.scope.ActionFinder;
-import com.google.code.struts2.scope.ScopeConstants;
+import com.google.code.struts2.scope.sessionfield.SessionField;
+import com.google.code.struts2.scope.sessionfield.SessionFieldConfig;
+import com.google.code.struts2.scope.sessionfield.SessionFieldConfigBuilder;
+import com.google.code.struts2.scope.sessionfield.SessionFieldUtil;
 import com.google.code.struts2.scope.util.ReflectionUtil;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -16,14 +18,14 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * @author rees.byars
  *
  */
-public class SessionFieldConfigBuilderImpl implements SessionFieldConfigBuilder {
+public class StrutsSessionFieldConfigBuilder implements SessionFieldConfigBuilder {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SessionFieldConfigBuilderImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StrutsSessionFieldConfigBuilder.class);
 
 	private ActionFinder finder;
 	private SessionFieldConfig config;
 	
-	@Inject(ScopeConstants.ACTION_FINDER_KEY)
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
 	public void setActionClassFinder(ActionFinder finder) {
 		this.finder = finder;
 	}
@@ -34,7 +36,7 @@ public class SessionFieldConfigBuilderImpl implements SessionFieldConfigBuilder 
 			if (finder == null) {
 				LOG.error("No ActionFinder was found.  " +
 						"Please make sure that a bean named " + 
-						ScopeConstants.ACTION_FINDER_KEY +
+						StrutsScopeConstants.ACTION_FINDER_KEY +
 						" of type " + ActionFinder.class.getName() + 
 						" is defined in a configuration file such as struts.xml. " +
 						"No @SessionField annotations can be processed.");

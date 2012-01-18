@@ -1,10 +1,10 @@
-package com.google.code.struts2.scope.ui;
+package com.google.code.struts2.scope.struts2.ui;
 
 import java.util.Map;
 
 import org.apache.struts2.views.jsp.URLTag;
 
-import com.google.code.struts2.scope.conversation.ConversationConstants;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 
 public class ConversationUrlTag extends URLTag {
 
@@ -15,7 +15,7 @@ public class ConversationUrlTag extends URLTag {
 		super.populateParams();
 		@SuppressWarnings("unchecked")
 		Map<String, String> convoIdMap = 
-			(Map<String, String>) this.component.getStack().findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY);
+			(Map<String, String>) this.component.getStack().findValue(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY);
 		this.component.addAllParameters(convoIdMap);
 	}
 

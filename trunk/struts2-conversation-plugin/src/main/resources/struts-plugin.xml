@@ -50,35 +50,34 @@
 		value="true" />
 		
 		
-		
 	<!-- SCOPE -->
 	<constant name="struts.scope.followsConvention" value="true" />
 	<constant name="struts.conversation.overridingAnnotations" value="org.springframework.beans.factory.annotation.Autowired"/>
 
-	<bean name="struts.scope.actionFinder" type="com.google.code.struts2.scope.ActionFinder"
-		class="com.google.code.struts2.scope.ActionFinderImpl" />
+	<bean name="struts.scope.actionFinder" type="com.google.code.struts2.scope.struts2.ActionFinder"
+		class="com.google.code.struts2.scope.struts2.ActionFinderImpl" />
 
 	<bean name="struts.sessionfield.sessionFieldConfigBuilder"
 		type="com.google.code.struts2.scope.sessionfield.SessionFieldConfigBuilder"
-		class="com.google.code.struts2.scope.sessionfield.SessionFieldConfigBuilderImpl" />
+		class="com.google.code.struts2.scope.struts2.StrutsSessionFieldConfigBuilder" />
 		
 	<bean name="struts.conversation.conversationConfigBuilder"
 		type="com.google.code.struts2.scope.conversation.ConversationConfigBuilder"
-		class="com.google.code.struts2.scope.conversation.ConversationConfigBuilderImpl" />
+		class="com.google.code.struts2.scope.struts2.StrutsConversationConfigBuilder" />
 		
 	<bean name="struts.conversation.conversationManager"
 		type="com.google.code.struts2.scope.conversation.ConversationManager"
-		class="com.google.code.struts2.scope.conversation.ConversationManagerImpl" />
+		class="com.google.code.struts2.scope.conversation.DefaultConversationManager" />
 
 	<package name="annotated-scope-default" extends="struts-default">
 	
 		<interceptors>
 			
 			<interceptor name="sessionField"
-				class="com.google.code.struts2.scope.sessionfield.SessionFieldInterceptor" />
+				class="com.google.code.struts2.scope.struts2.SessionFieldInterceptor" />
 				
 			<interceptor name="conversation"
-				class="com.google.code.struts2.scope.conversation.ConversationInterceptor" />
+				class="com.google.code.struts2.scope.struts2.ConversationInterceptor" />
 			
 			<interceptor-stack name="defaultAnnotatedScopeStack">
 				<interceptor-ref name="sessionField" />

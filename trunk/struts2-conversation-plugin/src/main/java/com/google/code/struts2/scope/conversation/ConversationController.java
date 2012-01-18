@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * specified by this annotation.
  * <p>
  * In order for a field not to become a member of the conversations,
- * the fields must be annotated either with {@link com.google.code.struts2.scope.RequestField 
+ * the fields must be annotated either with {@link com.google.code.struts2.scope.request.RequestField 
  * RequestField} or {@link com.google.code.struts2.scope.sessionfield.SessionField 
  * SessionField} or Spring's @Autowired.  As well, <code>static</code> 
  * and <code>final</code> fields are ignored.

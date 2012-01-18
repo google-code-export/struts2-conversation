@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope;
+package com.google.code.struts2.scope.struts2;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,7 +11,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.StrutsConstants;
 
-import com.google.code.struts2.scope.convention.ConventionConstants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.TextParseUtil;
@@ -177,7 +176,7 @@ public class ActionFinderImpl implements ActionFinder {
 	 *            If true, only classes that follow the convention for action classes will
 	 *            be scanned for the scope annotations.
 	 */
-	@Inject(value = ScopeConstants.REQUIRE_FOLLOWS_CONVENTION)
+	@Inject(value = StrutsScopeConstants.REQUIRE_FOLLOWS_CONVENTION)
 	public void setRequireFollowsConvention(String requireFollowsConvention) {
 		this.requireFollowsConvention = "true".equals(requireFollowsConvention);
 	}

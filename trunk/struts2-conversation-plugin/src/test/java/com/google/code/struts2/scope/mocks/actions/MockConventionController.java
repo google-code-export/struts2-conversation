@@ -2,7 +2,7 @@ package com.google.code.struts2.scope.mocks.actions;
 
 import org.apache.struts2.convention.annotation.Action;
 
-import com.google.code.struts2.scope.RequestField;
+import com.google.code.struts2.scope.request.RequestField;
 import com.google.code.struts2.scope.sessionfield.SessionField;
 
 public class MockConventionController extends AbstractController {

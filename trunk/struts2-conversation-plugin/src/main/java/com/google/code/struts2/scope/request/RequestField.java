@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope;
+package com.google.code.struts2.scope.request;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

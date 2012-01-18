@@ -7,11 +7,12 @@ import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.google.code.struts2.scope.conversation.ConversationAdapter;
-import com.google.code.struts2.scope.conversation.ConversationConfigBuilderImpl;
 import com.google.code.struts2.scope.conversation.ConversationConstants;
 import com.google.code.struts2.scope.conversation.ConversationManager;
-import com.google.code.struts2.scope.conversation.StrutsConversationAdapter;
 import com.google.code.struts2.scope.sessionfield.SessionFieldUtil;
+import com.google.code.struts2.scope.struts2.StrutsConversationConfigBuilder;
+import com.google.code.struts2.scope.struts2.StrutsConversationAdapter;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
 
 public class ScopeTestUtil {
@@ -20,7 +21,7 @@ public class ScopeTestUtil {
 	
 	protected static ConversationManager getconversationManager() {
 		if (manager == null) {
-			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, ConversationConstants.MANAGER_KEY);
+			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.MANAGER_KEY);
 		}
 		return manager;
 	}
@@ -35,13 +36,13 @@ public class ScopeTestUtil {
 		ActionContext actionContext = ActionContext.getContext();
 		@SuppressWarnings("unchecked")
 		Map<String, String> convoIdMap = ((Map<String, String>) actionContext.getValueStack()
-				.findValue(ConversationConstants.CONVERSATION_ID_MAP_STACK_KEY));
+				.findValue(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY));
 		if (convoIdMap != null) {
 			for (Entry<String, String> entry : convoIdMap.entrySet()) {
 				request.addParameter(entry.getKey(), new String[]{entry.getValue()});
 			}
 		} else {
-			for (String c : ConversationConfigBuilderImpl.getConversationNames(actionClass)) {
+			for (String c : StrutsConversationConfigBuilder.getConversationNames(actionClass)) {
 				request.addParameter(c + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, c + "-test-id");
 			}
 		}

@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.code.struts2.scope.mocks.actions.conversation.MockConversationController;
 import com.google.code.struts2.scope.mocks.beans.TestBean;
 import com.google.code.struts2.scope.sessionfield.SessionField;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 import com.google.code.struts2.scope.test.ScopeTestUtil;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.google.code.struts2.test.junit.StrutsSpringTest;
@@ -24,7 +25,7 @@ public class ConversationInterceptorTest extends
 	static final String CONVERSATION_NAME = "oopy-conversation";
 	static final String CONVERSATION_FIELD = "conversationString";
 
-	@Inject(ConversationConstants.MANAGER_KEY)
+	@Inject(StrutsScopeConstants.MANAGER_KEY)
 	ConversationManager manager;
 	
 	@ConversationField(conversations = "oopy")
