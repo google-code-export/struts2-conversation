@@ -17,7 +17,7 @@
 	<package name="session-field-configuration-test-default" extends="annotated-scope-default">
 		
 		<action name="configuration-action"
-			class="com.google.code.struts2.scope.mocks.actions.MockActionByConfiguration">
+			class="com.google.code.rees.scope.mocks.actions.MockActionByConfiguration">
 			<result name="success">/mock.jsp</result>
 		</action>
 
