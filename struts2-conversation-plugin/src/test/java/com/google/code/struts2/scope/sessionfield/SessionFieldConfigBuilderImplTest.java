@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.google.code.struts2.scope.mocks.actions.MockPojoController;
 import com.google.code.struts2.scope.sessionfield.SessionFieldConfig;
 import com.google.code.struts2.scope.sessionfield.SessionFieldConfigBuilder;
-import com.google.code.struts2.scope.sessionfield.SessionFieldConstants;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 import com.google.code.struts2.scope.testutil.ScopeTestCase;
 import com.google.code.struts2.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
@@ -22,7 +22,7 @@ import com.opensymphony.xwork2.inject.Inject;
 @StrutsConfiguration(locations = "struts.xml")
 public class SessionFieldConfigBuilderImplTest extends ScopeTestCase<Object> {
 	
-	@Inject(value=SessionFieldConstants.CONFIG_BUILDER_KEY)
+	@Inject(value=StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
 	SessionFieldConfigBuilder builder;
 	
 	@Test
@@ -55,7 +55,7 @@ public class SessionFieldConfigBuilderImplTest extends ScopeTestCase<Object> {
 		proxy.execute();
 		
 		@SuppressWarnings("unchecked")
-		Map<String, Object> sessionFieldMap = (Map<String, Object>)session.get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
+		Map<String, Object> sessionFieldMap = (Map<String, Object>)session.get(StrutsScopeConstants.SESSION_FIELD_MAP_KEY);
 		assertTrue(sessionFieldMap.containsKey("java.lang.String.sessionString"));
 	}
 

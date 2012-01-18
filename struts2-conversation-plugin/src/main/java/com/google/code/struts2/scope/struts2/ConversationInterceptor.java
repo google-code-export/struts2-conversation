@@ -1,5 +1,7 @@
-package com.google.code.struts2.scope.conversation;
+package com.google.code.struts2.scope.struts2;
 
+import com.google.code.struts2.scope.conversation.ConversationConfigBuilder;
+import com.google.code.struts2.scope.conversation.ConversationManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
@@ -20,12 +22,12 @@ public class ConversationInterceptor implements Interceptor {
 	protected ConversationManager manager;
 	protected ConversationConfigBuilder configBuilder;
 	
-	@Inject(ConversationConstants.CONFIG_BUILDER_KEY) 
+	@Inject(StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY) 
 	public void setConversationConfigBuilder(ConversationConfigBuilder configBuilder) {
 		this.configBuilder = configBuilder;
 	}
 	
-	@Inject(ConversationConstants.MANAGER_KEY)
+	@Inject(StrutsScopeConstants.MANAGER_KEY)
 	public void setConversationManager(ConversationManager manager) {
 		this.manager = manager;
 	}

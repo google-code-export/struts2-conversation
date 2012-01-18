@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope.conversation;
+package com.google.code.struts2.scope.struts2;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -19,10 +19,14 @@ import javax.annotation.Resource;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.util.ClassLoaderUtils;
 
-import com.google.code.struts2.scope.ActionFinder;
-import com.google.code.struts2.scope.RequestField;
-import com.google.code.struts2.scope.ScopeConstants;
-import com.google.code.struts2.scope.convention.ConventionConstants;
+import com.google.code.struts2.scope.conversation.BeginConversation;
+import com.google.code.struts2.scope.conversation.ConversationAction;
+import com.google.code.struts2.scope.conversation.ConversationConfig;
+import com.google.code.struts2.scope.conversation.ConversationConfigBuilder;
+import com.google.code.struts2.scope.conversation.ConversationController;
+import com.google.code.struts2.scope.conversation.ConversationField;
+import com.google.code.struts2.scope.conversation.EndConversation;
+import com.google.code.struts2.scope.request.RequestField;
 import com.google.code.struts2.scope.sessionfield.SessionField;
 import com.google.code.struts2.scope.util.NamingUtil;
 import com.google.code.struts2.scope.util.ReflectionUtil;
@@ -35,10 +39,10 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * @author rees.byars
  * 
  */
-public class ConversationConfigBuilderImpl implements ConversationConfigBuilder {
+public class StrutsConversationConfigBuilder implements ConversationConfigBuilder {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ConversationConfigBuilderImpl.class);
+			.getLogger(StrutsConversationConfigBuilder.class);
 	private static Map<Class<?>, String[]> classConversationNamesMap;
 	private ActionFinder finder;
 	private Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
@@ -48,20 +52,20 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 	private boolean actionAnnotationExists;
 	private String actionSuffix;
 	
-	public ConversationConfigBuilderImpl() {
+	public StrutsConversationConfigBuilder() {
 		this.followsConvention = true;
 		this.initOverridingAnnotations();
 		this.actionAnnotationExists = ReflectionUtil.classExists("org.apache.struts2.convention.annotation.Action");
 	}
 	
-	@Inject(ConversationConstants.OVERRIDING_ANNOTATIONS)
+	@Inject(StrutsScopeConstants.OVERRIDING_ANNOTATIONS)
 	public void setOverridingAnnotations(String commaSeparatedAnnotationNames) {
 		for (String annotationName : commaSeparatedAnnotationNames.split(",")) {
 			addAnnotation(annotationName.trim(), this.overridingAnnotations);
 		}
 	}
 
-	@Inject(ScopeConstants.ACTION_FINDER_KEY)
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
 	public void setActionClassFinder(ActionFinder finder) {
 		this.finder = finder;
 	}
@@ -71,7 +75,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 		this.actionSuffix = suffix;
 	}
 	
-	@Inject(value = ScopeConstants.REQUIRE_FOLLOWS_CONVENTION)
+	@Inject(value = StrutsScopeConstants.REQUIRE_FOLLOWS_CONVENTION)
 	public void setRequireFollowsConvention(String requireFollowsConvention) {
 		this.followsConvention = "true".equals(requireFollowsConvention);
 	}
@@ -130,7 +134,7 @@ public class ConversationConfigBuilderImpl implements ConversationConfigBuilder 
 	@SuppressWarnings("unchecked")
 	protected void addAnnotation(String className, Set<Class<? extends Annotation>> annotationSet) {
 		try {
-			annotationSet.add(ClassLoaderUtils.loadClass(className, ConversationConfigBuilderImpl.class));
+			annotationSet.add(ClassLoaderUtils.loadClass(className, StrutsConversationConfigBuilder.class));
 		} catch (ClassNotFoundException e) {
 			LOG.warn("Annotation class not found:  " + className);
 		} catch (ClassCastException cce) {

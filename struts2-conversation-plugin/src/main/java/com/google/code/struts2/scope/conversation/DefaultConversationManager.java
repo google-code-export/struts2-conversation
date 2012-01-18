@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.struts2.scope.ScopeUtil;
+import com.google.code.struts2.scope.util.ScopeUtil;
 
-public class ConversationManagerImpl implements ConversationManager, ConversationPostProcessor {
+public class DefaultConversationManager implements ConversationManager, ConversationPostProcessor {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(ConversationManagerImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationManager.class);
 	public static final String ACTIVE_CONVERSATIONS_REQUEST_ATTRIBUTE_KEY = "byars.active.conversations.request.attribute.key";
 	
 	protected Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;

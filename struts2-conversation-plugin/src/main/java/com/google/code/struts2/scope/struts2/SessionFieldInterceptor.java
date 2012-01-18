@@ -1,10 +1,12 @@
-package com.google.code.struts2.scope.sessionfield;
+package com.google.code.struts2.scope.struts2;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.struts2.scope.ScopeUtil;
+import com.google.code.struts2.scope.sessionfield.SessionFieldConfig;
+import com.google.code.struts2.scope.sessionfield.SessionFieldConfigBuilder;
+import com.google.code.struts2.scope.util.ScopeUtil;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
@@ -26,7 +28,7 @@ public class SessionFieldInterceptor implements Interceptor {
 	protected SessionFieldConfigBuilder configBuilder;
 	protected SessionFieldConfig sessionFieldConfig;
 
-	@Inject(SessionFieldConstants.CONFIG_BUILDER_KEY)
+	@Inject(StrutsScopeConstants.SESSION_FIELD_CONFIG_BUILDER_KEY)
 	public void setSessionFieldConfigBuilder(SessionFieldConfigBuilder configBuilder) {
 		this.configBuilder = configBuilder;
 	}
@@ -37,7 +39,7 @@ public class SessionFieldInterceptor implements Interceptor {
 		if (configBuilder == null) {
 			LOG.error("No SessionFieldConfigBuilder was found.  " +
 					"Please make sure that a bean named " + 
-					SessionFieldConstants.CONFIG_BUILDER_KEY +
+					StrutsScopeConstants.SESSION_FIELD_CONFIG_BUILDER_KEY +
 					" of type " + SessionFieldConfigBuilder.class.getName() + 
 					" is defined in a configuration file such as struts.xml.");
 		} else {
@@ -70,7 +72,7 @@ public class SessionFieldInterceptor implements Interceptor {
 					.getSession();
 
 			Map<String, Object> sessionFieldMap = (Map<String, Object>) session
-					.get(SessionFieldConstants.SESSION_FIELD_MAP_KEY);
+					.get(StrutsScopeConstants.SESSION_FIELD_MAP_KEY);
 
 			if (sessionFieldMap != null) {
 				if (LOG.isDebugEnabled()) {
@@ -130,7 +132,7 @@ public class SessionFieldInterceptor implements Interceptor {
 				Map<String, Object> session = invocation.getInvocationContext()
 						.getSession();
 
-				session.put(SessionFieldConstants.SESSION_FIELD_MAP_KEY, sessionFieldMap);
+				session.put(StrutsScopeConstants.SESSION_FIELD_MAP_KEY, sessionFieldMap);
 
 			} else {
 				if (LOG.isDebugEnabled()) {

@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope;
+package com.google.code.struts2.scope.util;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.google.code.struts2.scope.conversation.ConversationConfig;
 import com.google.code.struts2.scope.conversation.ConversationConfigBuilder;
-import com.google.code.struts2.scope.conversation.ConversationConstants;
+import com.google.code.struts2.scope.struts2.StrutsScopeConstants;
 import com.google.code.struts2.scope.testutil.ScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.inject.Inject;
@@ -17,7 +17,7 @@ import com.opensymphony.xwork2.inject.Inject;
 @StrutsConfiguration(locations = "struts.xml")
 public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
 	
-	@Inject(value=ConversationConstants.CONFIG_BUILDER_KEY)
+	@Inject(value=StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
 	ConversationConfigBuilder builder;
 	
 	@Test

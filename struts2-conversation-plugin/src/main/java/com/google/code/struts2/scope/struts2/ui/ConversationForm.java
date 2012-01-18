@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope.ui;
+package com.google.code.struts2.scope.struts2.ui;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

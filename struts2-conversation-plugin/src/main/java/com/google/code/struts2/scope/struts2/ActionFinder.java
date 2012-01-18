@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope;
+package com.google.code.struts2.scope.struts2;
 
 import java.util.Set;
 

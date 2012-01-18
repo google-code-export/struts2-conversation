@@ -1,4 +1,4 @@
-package com.google.code.struts2.scope.convention;
+package com.google.code.struts2.scope.struts2;
 
 public interface ConventionConstants {
 	
