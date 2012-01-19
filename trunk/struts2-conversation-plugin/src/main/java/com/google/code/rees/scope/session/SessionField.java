@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

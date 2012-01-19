@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -17,7 +17,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
 			.getLogger(DefaultSessionManager.class);
 
 	protected SessionFieldConfigBuilder configBuilder;
-	protected SessionFieldConfig sessionFieldConfig;
+	protected SessionConfiguration sessionFieldConfig;
 	
 	@Override
 	public void setSessionFieldConfigBuilder(SessionFieldConfigBuilder sessionFieldConfigBuilder) {
