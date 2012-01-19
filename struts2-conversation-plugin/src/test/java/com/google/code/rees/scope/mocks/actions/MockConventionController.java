@@ -3,7 +3,7 @@ package com.google.code.rees.scope.mocks.actions;
 import org.apache.struts2.convention.annotation.Action;
 
 import com.google.code.rees.scope.request.RequestField;
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 
 public class MockConventionController extends AbstractController {
 	

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.code.rees.scope.conversation.ConversationController;
 import com.google.code.rees.scope.mocks.beans.TestBean;
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 import com.opensymphony.xwork2.ActionSupport;
 
 @ConversationController("oopy")

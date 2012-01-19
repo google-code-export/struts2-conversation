@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.google.code.rees.scope.conversation.ConversationConfig;
+import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.google.code.rees.scope.testutil.ScopeTestCase;
@@ -23,7 +23,7 @@ public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	public void testGetConversationConfig() {
 		
-		Map<Class<?>, Collection<ConversationConfig>> configs = builder.getConversationConfigs();
+		Map<Class<?>, Collection<ConversationConfiguration>> configs = builder.getConversationConfigs();
 		assertNotNull(configs);
 		//TODO
 	}
@@ -31,7 +31,7 @@ public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	public void testConversationNaming() throws Exception {
 		
-		Map<Class<?>, Collection<ConversationConfig>> configs = builder.getConversationConfigs();
+		Map<Class<?>, Collection<ConversationConfiguration>> configs = builder.getConversationConfigs();
 		assertNotNull(configs);
 		//TODO
 	}

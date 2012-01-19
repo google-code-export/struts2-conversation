@@ -58,7 +58,7 @@
 		class="com.google.code.rees.scope.struts2.ActionFinderImpl" />
 
 	<bean name="struts.sessionfield.sessionFieldConfigBuilder"
-		type="com.google.code.rees.scope.sessionfield.SessionFieldConfigBuilder"
+		type="com.google.code.rees.scope.session.SessionFieldConfigBuilder"
 		class="com.google.code.rees.scope.struts2.StrutsSessionFieldConfigBuilder" />
 		
 	<bean name="struts.conversation.conversationConfigBuilder"
@@ -70,18 +70,18 @@
 		class="com.google.code.rees.scope.conversation.DefaultConversationManager" />
 
 	<bean name="struts.scope.sessionManager"
-		type="com.google.code.rees.scope.sessionfield.SessionManager"
-		class="com.google.code.rees.scope.sessionfield.DefaultSessionManager" />
+		type="com.google.code.rees.scope.session.SessionManager"
+		class="com.google.code.rees.scope.session.DefaultSessionManager" />
 
 	<package name="annotated-scope-default" extends="struts-default">
 	
 		<interceptors>
 		
-			<interceptor name="jVersa"
+			<interceptor name="jChronic"
 				class="com.google.code.rees.scope.struts2.ScopeInterceptor" />
 			
 			<interceptor-stack name="defaultAnnotatedScopeStack">
-				<interceptor-ref name="jVersa" />
+				<interceptor-ref name="jChronic" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 			

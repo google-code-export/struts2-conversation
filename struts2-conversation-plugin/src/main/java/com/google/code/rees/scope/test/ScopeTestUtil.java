@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationManager;
-import com.google.code.rees.scope.sessionfield.SessionFieldUtil;
+import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.StrutsConversationAdapter;
 import com.google.code.rees.scope.struts2.StrutsConversationConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
@@ -57,7 +57,7 @@ public class ScopeTestUtil {
      * @param target
      */
     public static void extractScopeFields(Object target) {
-            SessionFieldUtil.extractSessionFields(target);
+            SessionUtil.extractSessionFields(target);
             ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
             getconversationManager().extractConversationFields(adapater);
     }
@@ -70,7 +70,7 @@ public class ScopeTestUtil {
      * @param target
      */
     public static void injectScopeFields(Object target) {
-            SessionFieldUtil.injectSessionFields(target);
+            SessionUtil.injectSessionFields(target);
             ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
             getconversationManager().injectConversationFields(adapater);
     }

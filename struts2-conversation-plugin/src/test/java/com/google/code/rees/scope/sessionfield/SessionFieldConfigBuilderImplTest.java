@@ -10,8 +10,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
-import com.google.code.rees.scope.sessionfield.SessionFieldConfig;
-import com.google.code.rees.scope.sessionfield.SessionFieldConfigBuilder;
+import com.google.code.rees.scope.session.SessionConfiguration;
+import com.google.code.rees.scope.session.SessionFieldConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.google.code.rees.scope.testutil.ScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
@@ -28,7 +28,7 @@ public class SessionFieldConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public void testGetSessionFieldConfig() {
-		SessionFieldConfig config = builder.getSessionFieldConfig();
+		SessionConfiguration config = builder.getSessionFieldConfig();
 		assertNotNull(config);
 		for (Class clazz : TestConstants.SESSION_FIELD_ACTION_CLASSES) {
 			String failMessage = "SessionFieldConfigBuilder failed to provide config for class:  " + clazz.getName();
@@ -44,7 +44,7 @@ public class SessionFieldConfigBuilderImplTest extends ScopeTestCase<Object> {
 	@Test
 	public void testSessionFieldNaming() throws Exception {
 		
-		SessionFieldConfig config = builder.getSessionFieldConfig();
+		SessionConfiguration config = builder.getSessionFieldConfig();
 		assertNotNull(config);
 		Set<String> fieldNames = config.getFields(MockPojoController.class).keySet();
 		assertTrue(fieldNames.contains("java.lang.String.sessionField"));

@@ -3,8 +3,8 @@ package com.google.code.rees.scope.struts2;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.rees.scope.sessionfield.SessionAdapter;
-import com.google.code.rees.scope.sessionfield.SessionPostProcessor;
+import com.google.code.rees.scope.session.SessionAdapter;
+import com.google.code.rees.scope.session.SessionPostProcessor;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.PreResultListener;

@@ -1,7 +1,7 @@
 package com.google.code.rees.scope.mocks.actions;
 
 
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 import com.opensymphony.xwork2.Action;
 
 public class MockActionInterfaceImpl implements Action {

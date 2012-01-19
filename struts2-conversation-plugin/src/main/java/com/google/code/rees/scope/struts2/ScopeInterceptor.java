@@ -2,8 +2,8 @@ package com.google.code.rees.scope.struts2;
 
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
 import com.google.code.rees.scope.conversation.ConversationManager;
-import com.google.code.rees.scope.sessionfield.SessionFieldConfigBuilder;
-import com.google.code.rees.scope.sessionfield.SessionManager;
+import com.google.code.rees.scope.session.SessionFieldConfigBuilder;
+import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;

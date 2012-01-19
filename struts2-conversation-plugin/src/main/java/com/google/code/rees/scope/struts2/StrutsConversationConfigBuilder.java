@@ -21,13 +21,13 @@ import org.apache.struts2.util.ClassLoaderUtils;
 
 import com.google.code.rees.scope.conversation.BeginConversation;
 import com.google.code.rees.scope.conversation.ConversationAction;
-import com.google.code.rees.scope.conversation.ConversationConfig;
+import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
 import com.google.code.rees.scope.conversation.ConversationController;
 import com.google.code.rees.scope.conversation.ConversationField;
 import com.google.code.rees.scope.conversation.EndConversation;
 import com.google.code.rees.scope.request.RequestField;
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.util.NamingUtil;
 import com.google.code.rees.scope.util.ReflectionUtil;
 import com.opensymphony.xwork2.inject.Inject;
@@ -45,7 +45,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 			.getLogger(StrutsConversationConfigBuilder.class);
 	private static Map<Class<?>, String[]> classConversationNamesMap;
 	private ActionFinder finder;
-	private Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
+	private Map<Class<?>, Collection<ConversationConfiguration>> conversationConfigs;
 	private Set<Class<?>> classesProcessed;
 	private Set<Class<? extends Annotation>> overridingAnnotations;
 	private boolean followsConvention;
@@ -81,7 +81,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 	}
 	
 	@Override
-	public synchronized Map<Class<?>, Collection<ConversationConfig>> getConversationConfigs() {
+	public synchronized Map<Class<?>, Collection<ConversationConfiguration>> getConversationConfigs() {
 		if (conversationConfigs == null) {
 			buildConversationConfigMap();
 		}
@@ -89,7 +89,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 	}
 	
 	protected void buildConversationConfigMap() {
-		conversationConfigs = new HashMap<Class<?>, Collection<ConversationConfig>>();
+		conversationConfigs = new HashMap<Class<?>, Collection<ConversationConfiguration>>();
 		this.classesProcessed = new HashSet<Class<?>>();
 		classConversationNamesMap = new HashMap<Class<?>, String[]>();
 		Set<Class<?>> actionClasses = finder.getActionClasses();
@@ -99,9 +99,9 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 	}
 	
 	@Override
-	public synchronized Collection<ConversationConfig> addClassConfig(Class<?> clazz) {
+	public synchronized Collection<ConversationConfiguration> addClassConfig(Class<?> clazz) {
 		if (!this.classesProcessed.contains(clazz) && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotation()) {
-			Map<String, ConversationConfig> classConversationConfigs = new HashMap<String, ConversationConfig>();
+			Map<String, ConversationConfiguration> classConversationConfigs = new HashMap<String, ConversationConfiguration>();
 			addConversationFields(clazz, classConversationConfigs);
 			addConversationControllerFields(clazz, classConversationConfigs, this.getOverridingAnnotations());
 			addConversationActionMethods(clazz, classConversationConfigs);
@@ -142,7 +142,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationFields(Class<?> clazz, Map<String, ConversationConfig> conversationConfigs) {
+	protected void addConversationFields(Class<?> clazz, Map<String, ConversationConfiguration> conversationConfigs) {
 		
 		for (Field field : ReflectionUtil.getFields(clazz)) {
 			if (field.isAnnotationPresent(ConversationField.class)) {
@@ -159,9 +159,9 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 				ReflectionUtil.makeAccessible(field);
 				for (String conversation : conversations) {
 					conversation = this.sanitizeConversationName(conversation);
-					ConversationConfig conversationConfig = conversationConfigs.get(conversation);
+					ConversationConfiguration conversationConfig = conversationConfigs.get(conversation);
 					if (conversationConfig == null) {
-						conversationConfig = new ConversationConfig(conversation);
+						conversationConfig = new ConversationConfiguration(conversation);
 						conversationConfigs.put(conversation, conversationConfig);
 					}
 					LOG.debug("Adding field " + name + " to conversation " + conversation + " for class " + clazz.getSimpleName());
@@ -171,7 +171,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationControllerFields(Class<?> clazz, Map<String, ConversationConfig> conversationConfigs,
+	protected void addConversationControllerFields(Class<?> clazz, Map<String, ConversationConfiguration> conversationConfigs,
 			Set<Class<? extends Annotation>> overridingAnnotations) {
 		
 		String[] conversations = getConversationControllerConversations(clazz);
@@ -191,9 +191,9 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 						ReflectionUtil.makeAccessible(field);
 						for (String conversation : conversations) {
 							conversation = this.sanitizeConversationName(conversation);
-							ConversationConfig conversationConfig = conversationConfigs.get(conversation);
+							ConversationConfiguration conversationConfig = conversationConfigs.get(conversation);
 							if (conversationConfig == null) {
-								conversationConfig = new ConversationConfig(conversation);
+								conversationConfig = new ConversationConfiguration(conversation);
 								conversationConfigs.put(conversation, conversationConfig);
 							}
 							LOG.debug("Adding field " + field.getName() + " to conversation " + conversation + " for class " + clazz.getSimpleName());
@@ -205,7 +205,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 
-	protected void addConversationActionMethods(Class<?> clazz, Map<String, ConversationConfig> conversationConfigs) {
+	protected void addConversationActionMethods(Class<?> clazz, Map<String, ConversationConfiguration> conversationConfigs) {
 		for (Method method : ReflectionUtil.getMethods(clazz)) {
 			if (method.isAnnotationPresent(ConversationAction.class)) {
 				ConversationAction conversationAction = method
@@ -237,7 +237,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationControllerMethods(Class<?> clazz, Map<String, ConversationConfig> conversationConfigs,
+	protected void addConversationControllerMethods(Class<?> clazz, Map<String, ConversationConfiguration> conversationConfigs,
 			boolean followsConvention, boolean actionAnnotationExists) {
 
 		String[] conversations = getConversationControllerConversations(clazz);
@@ -268,13 +268,13 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationMethod(Method method, String[] conversations, Map<String, ConversationConfig> conversationConfigs) {
+	protected void addConversationMethod(Method method, String[] conversations, Map<String, ConversationConfiguration> conversationConfigs) {
 		for (String conversation : conversations) {
 			conversation = this.sanitizeConversationName(conversation);
-			ConversationConfig conversationConfig = conversationConfigs
+			ConversationConfiguration conversationConfig = conversationConfigs
 					.get(conversation);
 			if (conversationConfig == null) {
-				conversationConfig = new ConversationConfig(conversation);
+				conversationConfig = new ConversationConfiguration(conversation);
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding method " + method.getName() + " to conversation " + conversation);
@@ -282,13 +282,13 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationBeginMethod(Method method, String[] conversations, Map<String, ConversationConfig> conversationConfigs) {
+	protected void addConversationBeginMethod(Method method, String[] conversations, Map<String, ConversationConfiguration> conversationConfigs) {
 		for (String conversation : conversations) {
 			conversation = this.sanitizeConversationName(conversation);
-			ConversationConfig conversationConfig = conversationConfigs
+			ConversationConfiguration conversationConfig = conversationConfigs
 					.get(conversation);
 			if (conversationConfig == null) {
-				conversationConfig = new ConversationConfig(conversation);
+				conversationConfig = new ConversationConfiguration(conversation);
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding Begin method " + method.getName() + " to conversation " + conversation);
@@ -296,13 +296,13 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 		}
 	}
 	
-	protected void addConversationEndMethod(Method method, String[] conversations, Map<String, ConversationConfig> conversationConfigs) {
+	protected void addConversationEndMethod(Method method, String[] conversations, Map<String, ConversationConfiguration> conversationConfigs) {
 		for (String conversation : conversations) {
 			conversation = this.sanitizeConversationName(conversation);
-			ConversationConfig conversationConfig = conversationConfigs
+			ConversationConfiguration conversationConfig = conversationConfigs
 					.get(conversation);
 			if (conversationConfig == null) {
-				conversationConfig = new ConversationConfig(conversation);
+				conversationConfig = new ConversationConfiguration(conversation);
 				conversationConfigs.put(conversation, conversationConfig);
 			}
 			LOG.debug("Adding End method " + method.getName() + " to conversation " + conversation);
