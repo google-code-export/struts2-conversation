@@ -18,7 +18,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	
 	public static final String ACTIVE_CONVERSATIONS_REQUEST_ATTRIBUTE_KEY = "byars.active.conversations.request.attribute.key";
 	
-	protected Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
+	protected Map<Class<?>, Collection<ConversationConfiguration>> conversationConfigs;
 	protected ConversationConfigBuilder configBuilder;
 	
 	public void setConversationConfigBuilder(ConversationConfigBuilder configBuilder) {
@@ -29,15 +29,15 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	@Override
 	public void processConversations(ConversationAdapter conversationAdapter) {
 		Object action = conversationAdapter.getAction();
-		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
 		if (actionConversationConfigs != null) {
-			for (ConversationConfig conversationConfig : actionConversationConfigs) {
+			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
 				processConversation(conversationConfig, conversationAdapter, action);
 			}
 		}
 	}
 	
-	protected void processConversation(ConversationConfig conversationConfig, ConversationAdapter conversationAdapter, Object action) {
+	protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
 		
 		String actionId = conversationAdapter.getActionId();
 		Map<String, Object> sessionContext = conversationAdapter.getSessionContext();
@@ -88,10 +88,10 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 			this.configBuilder.addClassConfig(actionClass);
 			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
 		if (actionConversationConfigs != null) {
 			Map<String, Object> session = conversationAdapter.getSessionContext();
-			for (ConversationConfig conversation : actionConversationConfigs) {
+			for (ConversationConfiguration conversation : actionConversationConfigs) {
 				String conversationId = conversationAdapter.getRequestContext().get(conversation.getConversationName());
 				@SuppressWarnings("unchecked")
 				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
@@ -113,9 +113,9 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 			this.configBuilder.addClassConfig(actionClass);
 			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		Collection<ConversationConfig> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
 		if (actionConversationConfigs != null) {
-			for (ConversationConfig conversation : actionConversationConfigs) {
+			for (ConversationConfiguration conversation : actionConversationConfigs) {
 				
 				Map<String, Field> actionConversationFields = conversation.getFields();
 				String conversationName = conversation.getConversationName();
@@ -142,7 +142,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	@Override
 	public void postProcessConversation(
 			ConversationAdapter conversationAdapter,
-			ConversationConfig conversationConfig, String conversationId) {
+			ConversationConfiguration conversationConfig, String conversationId) {
 		
 		Object action = conversationAdapter.getAction();
 		

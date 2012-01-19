@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface ConversationConfigBuilder {
 
-	public Map<Class<?>, Collection<ConversationConfig>> getConversationConfigs();
-	public Collection<ConversationConfig> addClassConfig(Class<?> clazz);
+	public Map<Class<?>, Collection<ConversationConfiguration>> getConversationConfigs();
+	public Collection<ConversationConfiguration> addClassConfig(Class<?> clazz);
 
 }

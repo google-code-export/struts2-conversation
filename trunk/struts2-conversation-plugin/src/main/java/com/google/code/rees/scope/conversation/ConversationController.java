@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * <p>
  * In order for a field not to become a member of the conversations,
  * the fields must be annotated either with {@link com.google.code.rees.scope.request.RequestField 
- * RequestField} or {@link com.google.code.rees.scope.sessionfield.SessionField 
+ * RequestField} or {@link com.google.code.rees.scope.session.SessionField 
  * SessionField} or Spring's @Autowired.  As well, <code>static</code> 
  * and <code>final</code> fields are ignored.
  * <p>
