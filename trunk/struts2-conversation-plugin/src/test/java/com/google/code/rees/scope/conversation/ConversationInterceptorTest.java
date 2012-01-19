@@ -30,7 +30,7 @@ public class ConversationInterceptorTest extends
 	static final String CONVERSATION_NAME = "oopy-conversation";
 	static final String CONVERSATION_FIELD = "conversationString";
 
-	@Inject(StrutsScopeConstants.MANAGER_KEY)
+	@Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
 	ConversationManager manager;
 	
 	@ConversationField(conversations = "oopy")

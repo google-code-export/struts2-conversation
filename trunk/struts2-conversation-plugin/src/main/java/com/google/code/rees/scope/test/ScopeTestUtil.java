@@ -21,7 +21,7 @@ public class ScopeTestUtil {
 	
 	protected static ConversationManager getconversationManager() {
 		if (manager == null) {
-			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.MANAGER_KEY);
+			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
 		}
 		return manager;
 	}

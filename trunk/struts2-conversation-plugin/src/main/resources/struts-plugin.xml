@@ -69,19 +69,19 @@
 		type="com.google.code.rees.scope.conversation.ConversationManager"
 		class="com.google.code.rees.scope.conversation.DefaultConversationManager" />
 
+	<bean name="struts.scope.sessionManager"
+		type="com.google.code.rees.scope.sessionfield.SessionManager"
+		class="com.google.code.rees.scope.sessionfield.DefaultSessionManager" />
+
 	<package name="annotated-scope-default" extends="struts-default">
 	
 		<interceptors>
-			
-			<interceptor name="sessionField"
-				class="com.google.code.rees.scope.struts2.SessionFieldInterceptor" />
-				
-			<interceptor name="conversation"
-				class="com.google.code.rees.scope.struts2.ConversationInterceptor" />
+		
+			<interceptor name="jVersa"
+				class="com.google.code.rees.scope.struts2.ScopeInterceptor" />
 			
 			<interceptor-stack name="defaultAnnotatedScopeStack">
-				<interceptor-ref name="sessionField" />
-				<interceptor-ref name="conversation" />
+				<interceptor-ref name="jVersa" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 			
