@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
  * A utility class that provides static methods that are used internally and
- * for unit testing.  Usage of this utility in a outside of these contexts is
+ * for unit testing.  Usage of this utility outside of these contexts is
  * discouraged.
  * 
  * @author rees.byars
@@ -32,7 +29,7 @@ public class ConversationUtil {
 			conversationName += ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
 		}
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
-		String id = (String) adapter.getRequest().getParameter(conversationName);
+		String id = (String) adapter.getRequestContext().get(conversationName);
 		return id;
 	}
 	
@@ -43,23 +40,18 @@ public class ConversationUtil {
 	 * @param fieldName
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static Object getConversationField(String fieldName) {
 		Object field = null;
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
 		if (adapter != null) {
-			Map<String, Object> session = adapter.getSessionContext();
-			HttpServletRequest request = adapter.getRequest();
-			if (request != null) {
-				Map<String, String[]> params = request.getParameterMap();
-				for (Entry<String, String[]> param : params.entrySet()) {
-					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-						Map<String, Object> conversationContext = (Map<String, Object>) session.get(param.getValue()[0]);
-						if (conversationContext != null) {
-							field = (Object) conversationContext.get(fieldName);
-							if (field != null) break;
-						}
-					}
+			Map<String, Object> sessionContext = adapter.getSessionContext();
+			Map<String, String> requestContext = adapter.getRequestContext();
+			for (String conversationId : requestContext.values()) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> conversationContext = (Map<String, Object>) sessionContext.get(conversationId);
+				if (conversationContext != null) {
+					field = (Object) conversationContext.get(fieldName);
+					if (field != null) break;
 				}
 			}
 		}
@@ -120,22 +112,16 @@ public class ConversationUtil {
 	public static void setConversationField(String fieldName, Object fieldValue) {
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
 		if (adapter != null) {
-			Map<String, Object> session = adapter.getSessionContext();
-			HttpServletRequest request = adapter.getRequest();
-			if (request != null) {
-				Map<String, String[]> params = request.getParameterMap();
-				for (Entry<String, String[]> param : params.entrySet()) {
-					if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-						String conversationId = param.getValue()[0];
-						@SuppressWarnings("unchecked")
-						Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
-						if (conversationContext == null) {
-							conversationContext = new HashMap<String, Object>();
-						}
-						conversationContext.put(fieldName, fieldValue);
-						session.put(conversationId, conversationContext);
-					}
+			Map<String, Object> sessionContext = adapter.getSessionContext();
+			Map<String, String> requestContext = adapter.getRequestContext();
+			for (String conversationId : requestContext.values()) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> conversationContext = (Map<String, Object>) sessionContext.get(conversationId);
+				if (conversationContext == null) {
+					conversationContext = new HashMap<String, Object>();
 				}
+				conversationContext.put(fieldName, fieldValue);
+				sessionContext.put(conversationId, conversationContext);
 			}
 		}
 	}
@@ -149,15 +135,10 @@ public class ConversationUtil {
 		
 		List<String> convoIds = new ArrayList<String>();
 
-		HttpServletRequest request = ConversationAdapter.getAdapter().getRequest();
-		if (request != null) {
-			Map<String, String[]> params = request.getParameterMap();
-			for (Entry<String, String[]> param : params.entrySet()) {
-				String paramKey = param.getKey();
-				if (paramKey.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-					convoIds.add(paramKey);
-				}
-			}
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		if (adapter != null) {
+			Map<String, String> requestContext = adapter.getRequestContext();
+			convoIds.addAll(requestContext.keySet());
 		}
 		
 		return convoIds.toArray(new String[convoIds.size()]);
@@ -171,14 +152,10 @@ public class ConversationUtil {
 		
 		List<String> convoIds = new ArrayList<String>();
 
-		HttpServletRequest request = ConversationAdapter.getAdapter().getRequest();
-		if (request != null) {
-			Map<String, String[]> params = request.getParameterMap();
-			for (Entry<String, String[]> param : params.entrySet()) {
-				if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-					convoIds.add(param.getValue()[0]);
-				}
-			}
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		if (adapter != null) {
+			Map<String, String> requestContext = adapter.getRequestContext();
+			convoIds.addAll(requestContext.values());
 		}
 		
 		return convoIds.toArray(new String[convoIds.size()]);
