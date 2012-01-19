@@ -2,8 +2,6 @@ package com.google.code.rees.scope.conversation;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 public abstract class ConversationAdapter {
 	
 	protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();
@@ -15,7 +13,7 @@ public abstract class ConversationAdapter {
 	public abstract Object getAction();
 	public abstract String getActionId();
 	public abstract Map<String, Object> getSessionContext();
-	public abstract HttpServletRequest getRequest();
+	public abstract Map<String, String> getRequestContext();
 	public abstract void dispatchPostProcessor(ConversationPostProcessor postProcessor, ConversationConfig conversationConfig, String conversationId);
 	public abstract void addConversation(String conversationName, String conversationId);
 	

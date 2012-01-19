@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 		String actionId = conversationAdapter.getActionId();
 		Map<String, Object> sessionContext = conversationAdapter.getSessionContext();
 		String conversationName = conversationConfig.getConversationName();
-		String conversationId = (String) conversationAdapter.getRequest().getParameter(conversationName);
+		String conversationId = (String) conversationAdapter.getRequestContext().get(conversationName);
 		
 		if (conversationId != null) {
 			
@@ -94,7 +92,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 		if (actionConversationConfigs != null) {
 			Map<String, Object> session = conversationAdapter.getSessionContext();
 			for (ConversationConfig conversation : actionConversationConfigs) {
-				String conversationId = conversationAdapter.getRequest().getParameter(conversation.getConversationName());
+				String conversationId = conversationAdapter.getRequestContext().get(conversation.getConversationName());
 				@SuppressWarnings("unchecked")
 				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
 				if (conversationContext != null) {
@@ -120,13 +118,8 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 			for (ConversationConfig conversation : actionConversationConfigs) {
 				
 				Map<String, Field> actionConversationFields = conversation.getFields();
-				String conversationId = null;
 				String conversationName = conversation.getConversationName();
-				HttpServletRequest request = conversationAdapter.getRequest();
-				
-				if (request != null) {
-					conversationId = (String) request.getParameter(conversationName);
-				}
+				String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 				
 				if (conversationId == null) {
 					conversationId = java.util.UUID.randomUUID().toString();

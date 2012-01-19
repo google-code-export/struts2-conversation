@@ -1,6 +1,5 @@
 package com.google.code.rees.scope.struts2;
 
-import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.sessionfield.SessionFieldConfigBuilder;

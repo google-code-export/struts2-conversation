@@ -10,6 +10,7 @@ import org.apache.struts2.StrutsStatics;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConfig;
 import com.google.code.rees.scope.conversation.ConversationPostProcessor;
+import com.google.code.rees.scope.util.RequestContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
@@ -20,6 +21,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
 	protected ActionInvocation invocation;
 	protected ActionContext actionContext;
+	protected Map<String, String> requestContext;
 	protected ValueStack valueStack;
 
 	public StrutsConversationAdapter(ActionInvocation invocation) {
@@ -42,12 +44,15 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 	public Map<String, Object> getSessionContext() {
 		return this.actionContext.getSession();
 	}
-
+	
 	@Override
-	public HttpServletRequest getRequest() {
-		HttpServletRequest request = (HttpServletRequest) 
-			this.actionContext.get(StrutsStatics.HTTP_REQUEST);
-		return request;
+	public Map<String, String> getRequestContext() {
+		if (requestContext == null) {
+			HttpServletRequest request = (HttpServletRequest) 
+				this.actionContext.get(StrutsStatics.HTTP_REQUEST);
+			requestContext = RequestContextUtil.getRequestContext(request);
+		}
+		return requestContext;
 	}
 
 	@Override
