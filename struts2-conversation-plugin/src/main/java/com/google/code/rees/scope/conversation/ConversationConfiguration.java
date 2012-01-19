@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ConversationConfig {
+public class ConversationConfiguration {
 	
 	private Map<String, Field> fields;
 	private Set<String> actionIds;
@@ -14,7 +14,7 @@ public class ConversationConfig {
 	private Set<String> endActionIds;
 	private String conversationName;
 	
-	public ConversationConfig(String conversationName) {
+	public ConversationConfiguration(String conversationName) {
 		fields = new HashMap<String, Field>();
 		actionIds = new HashSet<String>();
 		beginActionIds = new HashSet<String>();

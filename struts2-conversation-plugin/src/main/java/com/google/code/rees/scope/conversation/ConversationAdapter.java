@@ -14,7 +14,7 @@ public abstract class ConversationAdapter {
 	public abstract String getActionId();
 	public abstract Map<String, Object> getSessionContext();
 	public abstract Map<String, String> getRequestContext();
-	public abstract void dispatchPostProcessor(ConversationPostProcessor postProcessor, ConversationConfig conversationConfig, String conversationId);
+	public abstract void dispatchPostProcessor(ConversationPostProcessor postProcessor, ConversationConfiguration conversationConfig, String conversationId);
 	public abstract void addConversation(String conversationName, String conversationId);
 	
 	public static void setAdapter(ConversationAdapter adapter) {

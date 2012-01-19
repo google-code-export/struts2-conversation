@@ -1,6 +1,8 @@
 package com.google.code.rees.scope.conversation;
 
-public interface ConversationManager {
+import java.io.Serializable;
+
+public interface ConversationManager extends Serializable {
 	
 	public void setConversationConfigBuilder(ConversationConfigBuilder configBuilder);
 	public void processConversations(ConversationAdapter conversationAdapter);
