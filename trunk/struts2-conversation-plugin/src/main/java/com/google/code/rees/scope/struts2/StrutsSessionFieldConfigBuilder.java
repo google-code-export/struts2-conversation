@@ -4,10 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import com.google.code.rees.scope.sessionfield.SessionField;
-import com.google.code.rees.scope.sessionfield.SessionFieldConfig;
-import com.google.code.rees.scope.sessionfield.SessionFieldConfigBuilder;
-import com.google.code.rees.scope.sessionfield.SessionFieldUtil;
+import com.google.code.rees.scope.session.SessionConfiguration;
+import com.google.code.rees.scope.session.SessionField;
+import com.google.code.rees.scope.session.SessionFieldConfigBuilder;
+import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.util.ReflectionUtil;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -23,16 +23,16 @@ public class StrutsSessionFieldConfigBuilder implements SessionFieldConfigBuilde
 	private static final Logger LOG = LoggerFactory.getLogger(StrutsSessionFieldConfigBuilder.class);
 
 	private ActionFinder finder;
-	private SessionFieldConfig config;
+	private SessionConfiguration config;
 	
 	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
 	public void setActionClassFinder(ActionFinder finder) {
 		this.finder = finder;
 	}
 	
-	public SessionFieldConfig getSessionFieldConfig() {
+	public SessionConfiguration getSessionFieldConfig() {
 		if (config == null) {
-			config = new SessionFieldConfig();
+			config = new SessionConfiguration();
 			if (finder == null) {
 				LOG.error("No ActionFinder was found.  " +
 						"Please make sure that a bean named " + 
@@ -54,17 +54,17 @@ public class StrutsSessionFieldConfigBuilder implements SessionFieldConfigBuilde
 		return config;
 	}
 
-	protected static void addFields(Class<?> clazz, SessionFieldConfig sessionFieldConfig) {
+	protected static void addFields(Class<?> clazz, SessionConfiguration sessionFieldConfig) {
 		for (Field field : ReflectionUtil.getFields(clazz)) {
 			if (field.isAnnotationPresent(SessionField.class)) {
-				LOG.info("Adding @SessionField " + field.getName() + " from class " + clazz.getName() + " to the SessionFieldConfig");
+				LOG.info("Adding @SessionField " + field.getName() + " from class " + clazz.getName() + " to the SessionConfiguration");
 				SessionField sessionField = (SessionField) field
 						.getAnnotation(SessionField.class);
 				String name = sessionField.name();
 				if (name.equals(SessionField.DEFAULT)) {
 					name = field.getName();
 				}
-				String key = SessionFieldUtil.buildKey(name, field.getType());
+				String key = SessionUtil.buildKey(name, field.getType());
 				ReflectionUtil.makeAccessible(field);
 				sessionFieldConfig.addField(clazz, key, field);
 			}

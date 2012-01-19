@@ -14,7 +14,7 @@ import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.mocks.actions.conversation.MockConversationController;
 import com.google.code.rees.scope.mocks.beans.TestBean;
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.google.code.rees.scope.test.ScopeTestUtil;
 import com.google.code.struts2.test.junit.StrutsConfiguration;

@@ -1,6 +1,6 @@
 package com.google.code.rees.scope.mocks.actions;
 
-import com.google.code.rees.scope.sessionfield.SessionField;
+import com.google.code.rees.scope.session.SessionField;
 
 public class MockPojoController {
 	

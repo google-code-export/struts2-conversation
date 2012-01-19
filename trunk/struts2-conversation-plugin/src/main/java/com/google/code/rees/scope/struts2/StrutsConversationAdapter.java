@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConfig;
+import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationPostProcessor;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.opensymphony.xwork2.ActionContext;
@@ -57,7 +57,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
 	@Override
 	public void dispatchPostProcessor(ConversationPostProcessor postProcessor,
-			ConversationConfig conversationConfig, String conversationId) {
+			ConversationConfiguration conversationConfig, String conversationId) {
 		invocation.addPreResultListener(new ConversationResultListener(this,
 				postProcessor, conversationConfig, conversationId));
 	}
@@ -82,14 +82,14 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
 	class ConversationResultListener implements PreResultListener {
 
-		private ConversationConfig conversationConfig;
+		private ConversationConfiguration conversationConfig;
 		private String conversationId;
 		private ConversationPostProcessor postProcessor;
 		private ConversationAdapter conversationAdapter;
 
 		ConversationResultListener(ConversationAdapter conversationAdapter,
 				ConversationPostProcessor postProcessor,
-				ConversationConfig conversationConfig, String conversationId) {
+				ConversationConfiguration conversationConfig, String conversationId) {
 			this.conversationAdapter = conversationAdapter;
 			this.postProcessor = postProcessor;
 			this.conversationConfig = conversationConfig;
