@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import java.util.Map;
 

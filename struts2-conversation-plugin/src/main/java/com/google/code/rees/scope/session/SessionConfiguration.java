@@ -1,14 +1,14 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SessionFieldConfig {
+public class SessionConfiguration {
 	
 	private Map<Class<?>, Map<String, Field>> fields;
 	
-	public SessionFieldConfig() {
+	public SessionConfiguration() {
 		fields = new HashMap<Class<?>, Map<String, Field>>();
 	}
 

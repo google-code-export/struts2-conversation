@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -17,10 +17,10 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * @author rees.byars
  *
  */
-public class SessionFieldUtil {
+public class SessionUtil {
 	
 	private static final Logger LOG = LoggerFactory
-		.getLogger(SessionFieldUtil.class);
+		.getLogger(SessionUtil.class);
 	
 	/**
 	 * Given the name of a session-scoped field and its class, this method
