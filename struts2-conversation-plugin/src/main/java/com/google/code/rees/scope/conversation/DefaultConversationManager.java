@@ -1,5 +1,6 @@
 package com.google.code.rees.scope.conversation;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,9 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.util.ScopeUtil;
 
-public class DefaultConversationManager implements ConversationManager, ConversationPostProcessor {
+public class DefaultConversationManager implements ConversationManager, ConversationPostProcessor, Serializable {
 	
+	private static final long serialVersionUID = -5155592774429186182L;
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationManager.class);
+	
 	public static final String ACTIVE_CONVERSATIONS_REQUEST_ATTRIBUTE_KEY = "byars.active.conversations.request.attribute.key";
 	
 	protected Map<Class<?>, Collection<ConversationConfig>> conversationConfigs;
