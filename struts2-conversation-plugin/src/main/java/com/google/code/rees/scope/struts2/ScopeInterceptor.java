@@ -20,6 +20,7 @@ public class ScopeInterceptor implements Interceptor {
 	protected SessionManager sessionManager;
 	protected ConversationConfigBuilder conversationConfigBuilder;
 	protected SessionFieldConfigBuilder sessionFieldConfigBuilder;
+	protected StrutsConversationAdapterFactory adapterFactory;
 
 	@Inject(StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
 	public void setConversationConfigBuilder(
@@ -42,6 +43,11 @@ public class ScopeInterceptor implements Interceptor {
 			SessionFieldConfigBuilder configBuilder) {
 		this.sessionFieldConfigBuilder = configBuilder;
 	}
+	
+	@Inject(StrutsScopeConstants.CONVERSATION_ADAPTER_FACTORY_KEY)
+	public void setConversationAdapterFactory(StrutsConversationAdapterFactory adapterFactory) {
+		this.adapterFactory = adapterFactory;
+	}
 
 	@Override
 	public void destroy() {
@@ -58,7 +64,7 @@ public class ScopeInterceptor implements Interceptor {
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		sessionManager.processSessionFields(new StrutsSessionAdapter(invocation));
-		conversationManager.processConversations(new StrutsConversationAdapter(invocation));
+		conversationManager.processConversations(adapterFactory.create(invocation));
 		return invocation.invoke();
 	}
 

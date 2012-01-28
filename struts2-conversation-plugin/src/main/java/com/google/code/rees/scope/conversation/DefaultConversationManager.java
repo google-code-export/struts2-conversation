@@ -81,24 +81,25 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	}
 
 	@Override
-	public void injectConversationFields(ConversationAdapter conversationAdapter) {
-		Object action = conversationAdapter.getAction();
-		Class<?> actionClass = action.getClass();
+	public void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
+		Class<?> actionClass = target.getClass();
 		synchronized (conversationConfigs) {
 			this.configBuilder.addClassConfig(actionClass);
 			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(target.getClass());
 		if (actionConversationConfigs != null) {
 			Map<String, Object> session = conversationAdapter.getSessionContext();
 			for (ConversationConfiguration conversation : actionConversationConfigs) {
 				String conversationId = conversationAdapter.getRequestContext().get(conversation.getConversationName());
-				@SuppressWarnings("unchecked")
-				Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
-				if (conversationContext != null) {
-					Map<String, Field> actionConversationFields = conversation.getFields();
-					if (actionConversationFields != null) {
-						ScopeUtil.setFieldValues(action, actionConversationFields, conversationContext);
+				if (conversationId != null) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
+					if (conversationContext != null) {
+						Map<String, Field> actionConversationFields = conversation.getFields();
+						if (actionConversationFields != null) {
+							ScopeUtil.setFieldValues(target, actionConversationFields, conversationContext);
+						}
 					}
 				}
 			}
@@ -106,14 +107,13 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	}
 
 	@Override
-	public void extractConversationFields(ConversationAdapter conversationAdapter) {
-		Object action = conversationAdapter.getAction();
-		Class<?> actionClass = action.getClass();
+	public void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
+		Class<?> actionClass = target.getClass();
 		synchronized (conversationConfigs) {
 			this.configBuilder.addClassConfig(actionClass);
 			this.conversationConfigs = this.configBuilder.getConversationConfigs();
 		}
-		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(target.getClass());
 		if (actionConversationConfigs != null) {
 			for (ConversationConfiguration conversation : actionConversationConfigs) {
 				
@@ -128,7 +128,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				if (actionConversationFields != null) {
 					
 					Map<String, Object> session = conversationAdapter.getSessionContext();
-					Map<String, Object> conversationContext = ScopeUtil.getFieldValues(action,
+					Map<String, Object> conversationContext = ScopeUtil.getFieldValues(target,
 							actionConversationFields);
 					
 					session.put(conversationId, conversationContext);

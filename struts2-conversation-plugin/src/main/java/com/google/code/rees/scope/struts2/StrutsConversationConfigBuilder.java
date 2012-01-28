@@ -19,13 +19,13 @@ import javax.annotation.Resource;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.util.ClassLoaderUtils;
 
-import com.google.code.rees.scope.conversation.BeginConversation;
-import com.google.code.rees.scope.conversation.ConversationAction;
 import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
-import com.google.code.rees.scope.conversation.ConversationController;
-import com.google.code.rees.scope.conversation.ConversationField;
-import com.google.code.rees.scope.conversation.EndConversation;
+import com.google.code.rees.scope.conversation.annotations.BeginConversation;
+import com.google.code.rees.scope.conversation.annotations.ConversationAction;
+import com.google.code.rees.scope.conversation.annotations.ConversationController;
+import com.google.code.rees.scope.conversation.annotations.ConversationField;
+import com.google.code.rees.scope.conversation.annotations.EndConversation;
 import com.google.code.rees.scope.request.RequestField;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.util.NamingUtil;
@@ -43,6 +43,7 @@ public class StrutsConversationConfigBuilder implements ConversationConfigBuilde
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(StrutsConversationConfigBuilder.class);
+	
 	private static Map<Class<?>, String[]> classConversationNamesMap;
 	private ActionFinder finder;
 	private Map<Class<?>, Collection<ConversationConfiguration>> conversationConfigs;

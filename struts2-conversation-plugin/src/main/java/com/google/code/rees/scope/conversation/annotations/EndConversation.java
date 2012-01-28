@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
