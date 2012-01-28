@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.test;
+package com.google.code.rees.scope.struts2.test;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,11 +9,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationManager;
+import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.session.SessionUtil;
-import com.google.code.rees.scope.struts2.StrutsConversationAdapter;
 import com.google.code.rees.scope.struts2.StrutsConversationConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.ValueStack;
 
 public class ScopeTestUtil {
 	
@@ -24,6 +25,23 @@ public class ScopeTestUtil {
 			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
 		}
 		return manager;
+	}
+	
+	/**
+	 * Given a conversation name, returns the ID of the conversation for the currently
+	 * executing thread.  
+	 * 
+	 * @param conversationName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static String getConversationId(String conversationName) {
+		String id = ConversationUtil.getConversationId(conversationName);
+		if (id == null) {
+			ValueStack stack = ActionContext.getContext().getValueStack();
+			id = (String) ((Map<String, Object>) stack.findValue(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY)).get(conversationName);
+		}
+		return id;
 	}
 
 	/**
@@ -58,8 +76,7 @@ public class ScopeTestUtil {
      */
     public static void extractScopeFields(Object target) {
             SessionUtil.extractSessionFields(target);
-            ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
-            getconversationManager().extractConversationFields(adapater);
+            getconversationManager().extractConversationFields(target, ConversationAdapter.getAdapter());
     }
     
     /**
@@ -71,8 +88,7 @@ public class ScopeTestUtil {
      */
     public static void injectScopeFields(Object target) {
             SessionUtil.injectSessionFields(target);
-            ConversationAdapter adapater = new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
-            getconversationManager().injectConversationFields(adapater);
+            getconversationManager().injectConversationFields(target, ConversationAdapter.getAdapter());
     }
 
 }

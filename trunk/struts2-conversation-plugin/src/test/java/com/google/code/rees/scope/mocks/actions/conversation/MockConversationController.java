@@ -3,7 +3,7 @@ package com.google.code.rees.scope.mocks.actions.conversation;
 import org.apache.struts2.convention.annotation.Action;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.code.rees.scope.conversation.ConversationController;
+import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.mocks.beans.TestBean;
 import com.google.code.rees.scope.session.SessionField;
 import com.opensymphony.xwork2.ActionSupport;

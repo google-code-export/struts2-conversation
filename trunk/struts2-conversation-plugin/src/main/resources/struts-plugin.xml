@@ -72,6 +72,10 @@
 	<bean name="struts.scope.sessionManager"
 		type="com.google.code.rees.scope.session.SessionManager"
 		class="com.google.code.rees.scope.session.DefaultSessionManager" />
+		
+	<bean name="struts.conversation.adapterFactory"
+		type="com.google.code.rees.scope.struts2.StrutsConversationAdapterFactory"
+		class="com.google.code.rees.scope.struts2.DefaultStrutsConversationAdapterFactory" />
 
 	<package name="annotated-scope-default" extends="struts-default">
 	

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.code.rees.scope.conversation.annotations.ConversationField;
+
 /**
  * 
  * A utility class that provides static methods that are used internally and
@@ -159,6 +161,14 @@ public class ConversationUtil {
 		}
 		
 		return convoIds.toArray(new String[convoIds.size()]);
+	}
+	
+	/**
+	 * The conversations associated with a field
+	 */
+	public static String[] getConversations(Field field) {
+		//TODO
+		return null;
 	}
 	
 	/**
