@@ -86,6 +86,12 @@
 
 		<!-- Compile Scope Dependencies -->
 		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>struts2-junit4-plugin</artifactId>
+			<version>1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
   			<groupId>org.apache.commons</groupId>
   			<artifactId>commons-jci-core</artifactId>
   			<version>1.0</version>
@@ -193,12 +199,6 @@
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-junit-plugin</artifactId>
 			<version>${struts2.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google</groupId>
-			<artifactId>struts2-junit4-plugin</artifactId>
-			<version>1.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

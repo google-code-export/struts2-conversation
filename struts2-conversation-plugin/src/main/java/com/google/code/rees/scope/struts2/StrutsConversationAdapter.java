@@ -21,6 +21,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
 	protected ActionInvocation invocation;
 	protected ActionContext actionContext;
+	protected HttpServletRequest request;
 	protected Map<String, String> requestContext;
 	protected ValueStack valueStack;
 
@@ -47,10 +48,16 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 	
 	@Override
 	public Map<String, String> getRequestContext() {
-		if (requestContext == null) {
-			HttpServletRequest request = (HttpServletRequest) 
-				this.actionContext.get(StrutsStatics.HTTP_REQUEST);
-			requestContext = RequestContextUtil.getRequestContext(request);
+		ActionContext actionContext = ActionContext.getContext();
+		if (actionContext != null) {
+			HttpServletRequest currentRequest = ((HttpServletRequest)ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
+			if (!currentRequest.equals(this.request)){
+				this.request = currentRequest;
+				requestContext = RequestContextUtil.getRequestContext(currentRequest);
+			}
+		} else {
+			//TODO:  this is a hack to get unit tests to work with spring autowiring - revisit to determine more optimal solution
+			requestContext = new HashMap<String, String>();
 		}
 		return requestContext;
 	}

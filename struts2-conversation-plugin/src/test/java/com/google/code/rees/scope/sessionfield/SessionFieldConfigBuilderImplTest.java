@@ -13,16 +13,16 @@ import com.google.code.rees.scope.mocks.actions.MockPojoController;
 import com.google.code.rees.scope.session.SessionConfiguration;
 import com.google.code.rees.scope.session.SessionFieldConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
-import com.google.code.rees.scope.testutil.ScopeTestCase;
+import com.google.code.rees.scope.struts2.test.StrutsScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
 
 @StrutsConfiguration(locations = "struts.xml")
-public class SessionFieldConfigBuilderImplTest extends ScopeTestCase<Object> {
+public class SessionFieldConfigBuilderImplTest extends StrutsScopeTestCase<Object> {
 	
-	@Inject(value=StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
+	@Inject(value=StrutsScopeConstants.SESSION_FIELD_CONFIG_BUILDER_KEY)
 	SessionFieldConfigBuilder builder;
 	
 	@Test
