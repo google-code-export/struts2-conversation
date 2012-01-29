@@ -1,9 +1,11 @@
 package com.google.code.rees.scope.conversation;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public abstract class ConversationAdapter {
+public abstract class ConversationAdapter implements Serializable {
 	
+	private static final long serialVersionUID = -8006640931436858515L;
 	protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();
 	
 	public ConversationAdapter() {

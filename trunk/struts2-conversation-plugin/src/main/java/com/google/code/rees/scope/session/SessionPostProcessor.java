@@ -1,6 +1,8 @@
 package com.google.code.rees.scope.session;
 
-public interface SessionPostProcessor {
+import java.io.Serializable;
+
+public interface SessionPostProcessor extends Serializable {
 
 	public void postProcessSession(SessionAdapter sessionAdapter);
 	

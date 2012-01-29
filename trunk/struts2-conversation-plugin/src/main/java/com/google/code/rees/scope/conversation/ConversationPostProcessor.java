@@ -1,6 +1,8 @@
 package com.google.code.rees.scope.conversation;
 
-public interface ConversationPostProcessor {
+import java.io.Serializable;
+
+public interface ConversationPostProcessor extends Serializable {
 
 	public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId);
 	

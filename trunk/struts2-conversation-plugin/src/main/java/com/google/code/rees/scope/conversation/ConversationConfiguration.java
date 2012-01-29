@@ -1,12 +1,15 @@
 package com.google.code.rees.scope.conversation;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ConversationConfiguration {
+public class ConversationConfiguration implements Serializable {
+	
+	private static final long serialVersionUID = -4462332285717898280L;
 	
 	private Map<String, Field> fields;
 	private Set<String> actionIds;
@@ -19,7 +22,8 @@ public class ConversationConfiguration {
 		actionIds = new HashSet<String>();
 		beginActionIds = new HashSet<String>();
 		endActionIds = new HashSet<String>();
-		this.conversationName = conversationName + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
+		this.conversationName = ConversationUtil.sanitizeConversationName(conversationName) 
+			+ ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
 	}
 
 	public void addField(String name, Field field) {

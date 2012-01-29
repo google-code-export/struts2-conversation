@@ -190,4 +190,8 @@ public class ConversationUtil {
 		return name;
 	}
 	
+	public static String sanitizeConversationName(String conversationName) {
+		return conversationName.replaceAll(":", "").replaceAll(",", "");
+	}
+	
 }
