@@ -10,12 +10,12 @@ import org.junit.Test;
 import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
-import com.google.code.rees.scope.testutil.ScopeTestCase;
+import com.google.code.rees.scope.struts2.test.StrutsSpringScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.inject.Inject;
 
 @StrutsConfiguration(locations = "struts.xml")
-public class ConversationConfigBuilderImplTest extends ScopeTestCase<Object> {
+public class ConversationConfigBuilderImplTest extends StrutsSpringScopeTestCase<Object> {
 	
 	@Inject(value=StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
 	ConversationConfigBuilder builder;

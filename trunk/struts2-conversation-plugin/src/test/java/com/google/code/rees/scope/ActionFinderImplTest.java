@@ -4,15 +4,20 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.code.rees.scope.struts2.ActionFinder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
-import com.google.code.rees.scope.testutil.ScopeTestCase;
+import com.google.code.rees.scope.struts2.test.StrutsSpringScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class ActionFinderImplTest extends ScopeTestCase<Object> {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath*:*applicationContext.xml")
+public class ActionFinderImplTest extends StrutsSpringScopeTestCase<Object> {
 	
 	@Inject(value=StrutsScopeConstants.ACTION_FINDER_KEY)
 	ActionFinder finder;

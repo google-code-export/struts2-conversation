@@ -16,8 +16,8 @@ import com.google.code.rees.scope.mocks.actions.conversation.MockConversationCon
 import com.google.code.rees.scope.mocks.beans.TestBean;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
+import com.google.code.rees.scope.struts2.test.StrutsSpringScopeTestCase;
 import com.google.code.rees.scope.struts2.test.ScopeTestUtil;
-import com.google.code.rees.scope.testutil.ScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.inject.Inject;
 
@@ -25,7 +25,7 @@ import com.opensymphony.xwork2.inject.Inject;
 @ContextConfiguration(locations = "classpath*:*applicationContext.xml")
 @StrutsConfiguration(locations = "struts-conversation.xml")
 public class ConversationInterceptorTest extends
-		ScopeTestCase<MockConversationController> {
+		StrutsSpringScopeTestCase<MockConversationController> {
 
 	static final String CONVERSATION_NAME = "oopy-conversation";
 	static final String CONVERSATION_FIELD = "conversationString";

@@ -16,8 +16,6 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	private static final long serialVersionUID = -5155592774429186182L;
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationManager.class);
 	
-	public static final String ACTIVE_CONVERSATIONS_REQUEST_ATTRIBUTE_KEY = "byars.active.conversations.request.attribute.key";
-	
 	protected Map<Class<?>, Collection<ConversationConfiguration>> conversationConfigs;
 	protected ConversationConfigBuilder configBuilder;
 	

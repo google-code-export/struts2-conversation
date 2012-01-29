@@ -6,10 +6,10 @@ import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.MockConventionController;
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
-import com.google.code.rees.scope.testutil.ScopeTestCase;
+import com.google.code.rees.scope.struts2.test.StrutsScopeTestCase;
 import com.opensymphony.xwork2.ActionProxy;
 
-public class SessionFieldInterceptorTest extends ScopeTestCase<MockConventionController> {
+public class SessionFieldInterceptorTest extends StrutsScopeTestCase<MockConventionController> {
 	
 	@Test
 	public void testBeforeInvocation() throws Exception {
