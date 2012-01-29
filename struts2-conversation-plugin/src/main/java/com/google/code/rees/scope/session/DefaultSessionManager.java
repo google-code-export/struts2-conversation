@@ -1,6 +1,5 @@
 package com.google.code.rees.scope.session;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -9,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.util.ScopeUtil;
 
-public class DefaultSessionManager implements SessionManager, SessionPostProcessor, Serializable {
+public class DefaultSessionManager implements SessionManager, SessionPostProcessor {
 	
 	private static final long serialVersionUID = -4835858908197930639L;
 

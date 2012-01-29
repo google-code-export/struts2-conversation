@@ -11,6 +11,8 @@ import com.opensymphony.xwork2.interceptor.PreResultListener;
 
 public class StrutsSessionAdapter extends SessionAdapter {
 
+	private static final long serialVersionUID = -5521071699714160473L;
+	
 	protected ActionInvocation invocation;
 	protected ActionContext actionContext;
 	protected Map<String, Object> sessionContext;

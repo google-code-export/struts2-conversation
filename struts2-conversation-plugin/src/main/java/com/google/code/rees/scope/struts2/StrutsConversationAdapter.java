@@ -19,6 +19,8 @@ import com.opensymphony.xwork2.util.ValueStack;
 
 public class StrutsConversationAdapter extends ConversationAdapter {
 
+	private static final long serialVersionUID = -907192380776385729L;
+	
 	protected ActionInvocation invocation;
 	protected ActionContext actionContext;
 	protected HttpServletRequest request;

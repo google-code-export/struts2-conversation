@@ -1,11 +1,17 @@
 package com.google.code.rees.scope.conversation;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
-public interface ConversationArbitrator {
-	public boolean isConversationField(Class<?> actionClass, Field field);
-	public boolean isConversationAction(Class<?> actionClass, Method method);
-	public boolean isBeginAction(Class<?> actionClass, Method method);
-	public boolean isEndAction(Class<?> actionClass, Method method);
+public interface ConversationArbitrator extends Serializable {
+	public Collection<Field> getCandidateConversationFields(Class<?> clazz);
+	public Collection<Method> getCandidateConversationMethods(Class<?> clazz);
+	public Collection<String> getConversations(Class<?> clazz, Field field);
+	public Collection<String> getConversations(Class<?> clazz, Method method);
+	public String getName(Field field);
+	public String getName(Method method);
+	public Collection<String> getBeginConversations(Class<?> clazz, Method method);
+	public Collection<String> getEndConversations(Class<?> clazz, Method method);
 }

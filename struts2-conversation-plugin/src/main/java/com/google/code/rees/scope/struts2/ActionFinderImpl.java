@@ -30,6 +30,8 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * 
  */
 public class ActionFinderImpl implements ActionFinder {
+	
+	private static final long serialVersionUID = 6728107973559862449L;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActionFinderImpl.class);

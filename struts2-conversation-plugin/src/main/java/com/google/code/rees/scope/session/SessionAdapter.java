@@ -1,9 +1,11 @@
 package com.google.code.rees.scope.session;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public abstract class SessionAdapter {
+public abstract class SessionAdapter implements Serializable {
 
+	private static final long serialVersionUID = -3486485156666333845L;
 	protected static ThreadLocal<SessionAdapter> sessionAdapter = new ThreadLocal<SessionAdapter>();
 	
 	public abstract Object getAction();
