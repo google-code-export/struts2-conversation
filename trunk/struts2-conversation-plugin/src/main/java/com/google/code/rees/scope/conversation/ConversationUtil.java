@@ -164,14 +164,6 @@ public class ConversationUtil {
 	}
 	
 	/**
-	 * The conversations associated with a field
-	 */
-	public static String[] getConversations(Field field) {
-		//TODO
-		return null;
-	}
-	
-	/**
 	 * Returns the given field's ConversationField name
 	 * 
 	 * @param field
