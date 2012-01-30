@@ -23,21 +23,17 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 	protected Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations;
 
 	@Override
-	public void init() {
+	public void init(ConversationArbitrator arbitrator) {
+		this.arbitrator = arbitrator;
 		classConfigurations = new HashMap<Class<?>, Collection<ConversationConfiguration>>();
 	}
 	
 	@Override
-	public void init(Set<Class<?>> actionClasses) {
-		this.init();
+	public void init(ConversationArbitrator arbitrator, Set<Class<?>> actionClasses) {
+		this.init(arbitrator);
 		for (Class<?> clazz : actionClasses) {
 			processClass(clazz, classConfigurations);
 		}
-	}
-
-	@Override
-	public void setArbitrator(ConversationArbitrator arbitrator) {
-		this.arbitrator = arbitrator;
 	}
 
 	@Override

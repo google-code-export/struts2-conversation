@@ -15,20 +15,19 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DefaultSessionManager.class);
 
-	protected SessionFieldConfigBuilder configBuilder;
-	protected SessionConfiguration sessionFieldConfig;
+	protected SessionConfigurationProvider configurationProvider;
 	
 	@Override
-	public void setSessionFieldConfigBuilder(SessionFieldConfigBuilder sessionFieldConfigBuilder) {
-		this.configBuilder = sessionFieldConfigBuilder;
-		this.sessionFieldConfig = this.configBuilder.getSessionFieldConfig();
+	public void init(SessionConfigurationProvider configurationProvider) {
+		this.configurationProvider = configurationProvider;
 	}
 	
 	@Override
 	public void processSessionFields(SessionAdapter sessionAdapter) {
 		Object action = sessionAdapter.getAction();
 		Class<?> actionClass = action.getClass();
-		Map<String, Field> classSessionFields = sessionFieldConfig
+		SessionConfiguration configuration = this.configurationProvider.getSessionConfiguration(actionClass);
+		Map<String, Field> classSessionFields = configuration
 				.getFields(actionClass);
 
 		if (classSessionFields != null) {
@@ -41,7 +40,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
 			Map<String, Object> sessionContext = sessionAdapter.getSessionContext();
 			
 			ScopeUtil.setFieldValues(action,
-						sessionFieldConfig.getFields(actionClass),
+					classSessionFields,
 						sessionContext);
 
 			sessionAdapter.dispatchPostProcessor(this);
@@ -57,9 +56,10 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
 	public void postProcessSession(SessionAdapter sessionAdapter) {
 		
 		Object action = sessionAdapter.getAction();
-		
-		Map<String, Field> classSessionFields = sessionFieldConfig
-				.getFields(action.getClass());
+		Class<?> actionClass = action.getClass();
+		SessionConfiguration configuration = this.configurationProvider.getSessionConfiguration(actionClass);
+		Map<String, Field> classSessionFields = configuration
+				.getFields(actionClass);
 
 		if (classSessionFields != null) {
 

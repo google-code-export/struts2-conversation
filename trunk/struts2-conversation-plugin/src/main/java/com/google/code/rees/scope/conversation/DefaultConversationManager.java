@@ -15,19 +15,17 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 	
 	private static final long serialVersionUID = -5155592774429186182L;
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationManager.class);
+	protected ConversationConfigurationProvider configurationProvider;
 	
-	protected Map<Class<?>, Collection<ConversationConfiguration>> conversationConfigs;
-	protected ConversationConfigBuilder configBuilder;
-	
-	public void setConversationConfigBuilder(ConversationConfigBuilder configBuilder) {
-		this.configBuilder = configBuilder;
-		conversationConfigs = configBuilder.getConversationConfigs();
+	@Override
+	public void init(ConversationConfigurationProvider configurationProvider) {
+		this.configurationProvider = configurationProvider;
 	}
 
 	@Override
 	public void processConversations(ConversationAdapter conversationAdapter) {
 		Object action = conversationAdapter.getAction();
-		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(action.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
 		if (actionConversationConfigs != null) {
 			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
 				processConversation(conversationConfig, conversationAdapter, action);
@@ -80,12 +78,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 
 	@Override
 	public void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
-		Class<?> actionClass = target.getClass();
-		synchronized (conversationConfigs) {
-			this.configBuilder.addClassConfig(actionClass);
-			this.conversationConfigs = this.configBuilder.getConversationConfigs();
-		}
-		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(target.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
 		if (actionConversationConfigs != null) {
 			Map<String, Object> session = conversationAdapter.getSessionContext();
 			for (ConversationConfiguration conversation : actionConversationConfigs) {
@@ -106,12 +99,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 
 	@Override
 	public void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
-		Class<?> actionClass = target.getClass();
-		synchronized (conversationConfigs) {
-			this.configBuilder.addClassConfig(actionClass);
-			this.conversationConfigs = this.configBuilder.getConversationConfigs();
-		}
-		Collection<ConversationConfiguration> actionConversationConfigs = this.conversationConfigs.get(target.getClass());
+		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
 		if (actionConversationConfigs != null) {
 			for (ConversationConfiguration conversation : actionConversationConfigs) {
 				
