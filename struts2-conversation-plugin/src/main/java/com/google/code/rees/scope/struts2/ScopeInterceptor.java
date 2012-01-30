@@ -1,8 +1,12 @@
 package com.google.code.rees.scope.struts2;
 
-import com.google.code.rees.scope.conversation.ConversationConfigBuilder;
+import com.google.code.rees.scope.DefaultScopeManager;
+import com.google.code.rees.scope.ScopeAdapterFactory;
+import com.google.code.rees.scope.ScopeManager;
+import com.google.code.rees.scope.conversation.ConversationArbitrator;
+import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.ConversationManager;
-import com.google.code.rees.scope.session.SessionFieldConfigBuilder;
+import com.google.code.rees.scope.session.SessionConfigurationProvider;
 import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
@@ -16,36 +20,55 @@ public class ScopeInterceptor implements Interceptor {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ScopeInterceptor.class);
 
+	protected ScopeManager manager = new DefaultScopeManager();
+	protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
+	protected ConversationArbitrator arbitrator;
 	protected ConversationManager conversationManager;
+	protected ConversationConfigurationProvider conversationConfigurationProvider;
 	protected SessionManager sessionManager;
-	protected ConversationConfigBuilder conversationConfigBuilder;
-	protected SessionFieldConfigBuilder sessionFieldConfigBuilder;
-	protected StrutsConversationAdapterFactory adapterFactory;
+	protected SessionConfigurationProvider sessionConfigurationProvider;
+	protected ActionFinder finder;
+	protected String actionSuffix;
 
-	@Inject(StrutsScopeConstants.CONVERSATION_CONFIG_BUILDER_KEY)
-	public void setConversationConfigBuilder(
-			ConversationConfigBuilder configBuilder) {
-		this.conversationConfigBuilder = configBuilder;
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+	public void setActionClassFinder(ActionFinder finder) {
+		this.finder = finder;
 	}
 	
-	@Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
+	@Inject(ConventionConstants.ACTION_SUFFIX)
+	public void setActionSuffix(String suffix) {
+		this.actionSuffix = suffix;
+	}
+	
+	@Inject(value = StrutsScopeConstants.SCOPE_MANAGER_KEY, required = false)
+	public void setScopeManager(ScopeManager manager) {
+		this.manager = manager;
+	}
+	
+	@Inject(value = StrutsScopeConstants.CONVERSATION_MANAGER_KEY, required = false)
 	public void setConversationManager(ConversationManager manager) {
 		this.conversationManager = manager;
 	}
 	
-	@Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
+	@Inject(value = StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY, required = false)
+	public void setConversationConfigurationProvider(
+			ConversationConfigurationProvider conversationConfigurationProvider) {
+		this.conversationConfigurationProvider = conversationConfigurationProvider;
+	}
+	
+	@Inject(value = StrutsScopeConstants.SESSION_MANAGER_KEY, required = false)
 	public void setSessionManager(SessionManager manager) {
 		this.sessionManager = manager;
 	}
 
-	@Inject(StrutsScopeConstants.SESSION_FIELD_CONFIG_BUILDER_KEY)
-	public void setSessionFieldConfigBuilder(
-			SessionFieldConfigBuilder configBuilder) {
-		this.sessionFieldConfigBuilder = configBuilder;
+	@Inject(value = StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY, required = false)
+	public void setSessionConfigurationProvider(
+			SessionConfigurationProvider sessionConfigurationProvider) {
+		this.sessionConfigurationProvider = sessionConfigurationProvider;
 	}
 	
-	@Inject(StrutsScopeConstants.CONVERSATION_ADAPTER_FACTORY_KEY)
-	public void setConversationAdapterFactory(StrutsConversationAdapterFactory adapterFactory) {
+	@Inject(value = StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY, required = false)
+	public void setConversationAdapterFactory(StrutsScopeAdapterFactory adapterFactory) {
 		this.adapterFactory = adapterFactory;
 	}
 
@@ -56,15 +79,35 @@ public class ScopeInterceptor implements Interceptor {
 
 	@Override
 	public void init() {
+		
 		LOG.info("Initializing the ScopeInterceptor...");
-		conversationManager.setConversationConfigBuilder(conversationConfigBuilder);
-		sessionManager.setSessionFieldConfigBuilder(sessionFieldConfigBuilder);
+		
+		if (this.conversationConfigurationProvider != null) {
+			this.manager.setConversationConfigurationProvider(conversationConfigurationProvider);
+		}
+		
+		if (this.conversationManager != null) {
+			this.manager.setConversationManager(conversationManager);
+		}
+		
+		if (this.sessionConfigurationProvider != null) {
+			this.manager.setSessionConfigurationProvider(sessionConfigurationProvider);
+		}
+		
+		if (this.sessionManager != null) {
+			this.manager.setSessionManager(sessionManager);
+		}
+		
+		if (this.arbitrator != null) {
+			this.manager.setConversationArbitrator(arbitrator);
+		}
+		
+		this.manager.init(this.adapterFactory, this.finder.getActionClasses());
 	}
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
-		sessionManager.processSessionFields(new StrutsSessionAdapter(invocation));
-		conversationManager.processConversations(adapterFactory.create(invocation));
+		this.manager.processScopes();
 		return invocation.invoke();
 	}
 

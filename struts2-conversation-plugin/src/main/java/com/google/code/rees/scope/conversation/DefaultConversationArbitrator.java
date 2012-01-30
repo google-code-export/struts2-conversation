@@ -75,6 +75,8 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 				conversations = getConversationControllerConversations(clazz);
 			}
 			methodConversations.addAll(Arrays.asList(conversations));
+		} else {
+			methodConversations.addAll(Arrays.asList(this.getConversationControllerConversations(clazz)));
 		}
 		return methodConversations;
 	}

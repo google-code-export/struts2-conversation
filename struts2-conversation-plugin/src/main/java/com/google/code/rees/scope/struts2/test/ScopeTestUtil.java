@@ -11,7 +11,6 @@ import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.session.SessionUtil;
-import com.google.code.rees.scope.struts2.StrutsConversationConfigBuilder;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -60,9 +59,9 @@ public class ScopeTestUtil {
 				request.addParameter(entry.getKey(), new String[]{entry.getValue()});
 			}
 		} else {
-			for (String c : StrutsConversationConfigBuilder.getConversationNames(actionClass)) {
-				request.addParameter(c + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, c + "-test-id");
-			}
+			//for (String c : StrutsConversationConfigBuilder.getConversationNames(actionClass)) {
+				request.addParameter("oopy" + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, "oopy" + "-test-id");
+			//}
 		}
 	}
 	

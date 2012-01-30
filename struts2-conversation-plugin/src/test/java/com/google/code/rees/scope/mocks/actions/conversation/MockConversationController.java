@@ -4,6 +4,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
+import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.mocks.beans.TestBean;
 import com.google.code.rees.scope.session.SessionField;
 import com.opensymphony.xwork2.ActionSupport;
@@ -12,7 +13,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class MockConversationController extends ActionSupport {
 	
 	private static final long serialVersionUID = 1L;
-	private String conversationString = "initialState";
+	@ConversationField private String conversationString = "initialState";
 	@SessionField String chubby;
 	
 	@Autowired
