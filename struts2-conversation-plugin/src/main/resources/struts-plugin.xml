@@ -52,8 +52,7 @@
 		
 	<!-- SCOPE -->
 	<constant name="struts.scope.followsConvention" value="true" />
-	<constant name="struts.conversation.overridingAnnotations" value="org.springframework.beans.factory.annotation.Autowired"/>
-
+	
 	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.struts2.ActionFinder"
 		class="com.google.code.rees.scope.struts2.ActionFinderImpl" />
 

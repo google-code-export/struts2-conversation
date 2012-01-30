@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 public interface ConversationArbitrator extends Serializable {
+	public void setActionSuffix(String suffix);
 	public Collection<Field> getCandidateConversationFields(Class<?> clazz);
 	public Collection<Method> getCandidateConversationMethods(Class<?> clazz);
 	public Collection<String> getConversations(Class<?> clazz, Field field);

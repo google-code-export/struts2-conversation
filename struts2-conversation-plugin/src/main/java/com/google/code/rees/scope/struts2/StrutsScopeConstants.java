@@ -8,7 +8,6 @@ public class StrutsScopeConstants {
 	public static final String SCOPE_MANAGER_KEY = "struts.scope.manager";
 	public static final String SCOPE_ADAPTER_FACTORY_KEY = "struts.scope.adapterFactory";
 	public static final String SESSION_MANAGER_KEY = "struts.session.sessionManager";
-	public static final String OVERRIDING_ANNOTATIONS = "struts.conversation.overridingAnnotations";
 	public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
 	public static final String SESSION_CONFIG_PROVIDER_KEY = "struts.session.configurationProvider";
 	public static final String SESSION_FIELD_MAP_KEY = "session.field.map";

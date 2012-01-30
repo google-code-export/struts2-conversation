@@ -21,8 +21,9 @@ import com.google.code.rees.scope.util.ReflectionUtil;
 public class DefaultConversationArbitrator implements ConversationArbitrator {
 
 	private static final long serialVersionUID = -1577464106543589370L;
-	protected String actionSuffix = "Controller";
+	protected String actionSuffix = ConversationConstants.DEFAULT_CONTROLLER_SUFFIX;
 	
+	@Override
 	public void setActionSuffix(String suffix) {
 		this.actionSuffix  = suffix;
 	}
@@ -44,7 +45,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		for (Method method : ReflectionUtil.getMethods(clazz)) {
 			if (method.isAnnotationPresent(ConversationAction.class)) {
 				conversationMethods.add(method);
-			} else if (this.isConversationController(clazz) && this.isAction(method)) {
+			} else if (isConversationController(clazz) && isAction(method)) {
 				conversationMethods.add(method);
 			}
 		}
@@ -58,7 +59,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 			ConversationField conversationField = field.getAnnotation(ConversationField.class);
 			String[] conversations = conversationField.conversations();
 			if (conversations.length == 0) {
-				conversations = getConversationControllerConversations(clazz);
+				conversations = getConversationControllerConversations(clazz, actionSuffix);
 			}
 			fieldConversations.addAll(Arrays.asList(conversations));
 		}
@@ -72,11 +73,11 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 			ConversationAction conversationmethod = method.getAnnotation(ConversationAction.class);
 			String[] conversations = conversationmethod.conversations();
 			if (conversations.length == 0) {
-				conversations = getConversationControllerConversations(clazz);
+				conversations = getConversationControllerConversations(clazz, actionSuffix);
 			}
 			methodConversations.addAll(Arrays.asList(conversations));
 		} else {
-			methodConversations.addAll(Arrays.asList(this.getConversationControllerConversations(clazz)));
+			methodConversations.addAll(Arrays.asList(getConversationControllerConversations(clazz, actionSuffix)));
 		}
 		return methodConversations;
 	}
@@ -106,11 +107,11 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 			BeginConversation conversationmethod = method.getAnnotation(BeginConversation.class);
 			String[] conversations = conversationmethod.conversations();
 			if (conversations.length == 0) {
-				conversations = this.getConversationControllerConversations(clazz);
+				conversations = getConversationControllerConversations(clazz, actionSuffix);
 			}
 			methodConversations.addAll(Arrays.asList(conversations));
 		} else if (method.getName().startsWith("begin")) {
-			methodConversations.addAll(Arrays.asList(this.getConversationControllerConversations(clazz)));
+			methodConversations.addAll(Arrays.asList(getConversationControllerConversations(clazz, actionSuffix)));
 		}
 		return methodConversations;
 	}
@@ -122,29 +123,43 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 			EndConversation conversationmethod = method.getAnnotation(EndConversation.class);
 			String[] conversations = conversationmethod.conversations();
 			if (conversations.length == 0) {
-				conversations = this.getConversationControllerConversations(clazz);
+				conversations = getConversationControllerConversations(clazz, actionSuffix);
 			}
 			methodConversations.addAll(Arrays.asList(conversations));
 		} else if (method.getName().startsWith("end")) {
-			methodConversations.addAll(Arrays.asList(this.getConversationControllerConversations(clazz)));
+			methodConversations.addAll(Arrays.asList(getConversationControllerConversations(clazz, actionSuffix)));
 		}
 		return methodConversations;
 	}
 	
-	protected boolean isAction(Method method) {
-		String methodName = method.getName();
-		return (!(methodName.startsWith("get") || methodName.startsWith("set") || methodName.startsWith("is"))
-				&& Modifier.isPublic(method.getModifiers())
-				&& !Modifier.isStatic(method.getModifiers())
-				&& method.getReturnType().equals(String.class)
-				&& method.getParameterTypes().length == 0);
+	public static Collection<String> getConversations(Class<?> clazz) {
+		return getConversations(clazz, ConversationConstants.DEFAULT_CONTROLLER_SUFFIX);
 	}
 	
-	protected boolean isConversationController(Class<?> clazz) {
-		return this.getConversationControllers(clazz).size() > 0;
+	public static Collection<String> getConversations(Class<?> clazz, String actionSuffix) {
+		Set<String> conversations = new HashSet<String>();
+		for (Method method : ReflectionUtil.getMethods(clazz)) {
+			conversations.addAll(getConversations(clazz, method, actionSuffix));
+		}
+		return conversations;
 	}
 	
-	protected String[] getConversationControllerConversations(Class<?> clazz) {
+	public static Collection<String> getConversations(Class<?> clazz, Method method, String actionSuffix) {
+		Set<String> methodConversations = new HashSet<String>();
+		if (method.isAnnotationPresent(ConversationAction.class)) {
+			ConversationAction conversationmethod = method.getAnnotation(ConversationAction.class);
+			String[] conversations = conversationmethod.conversations();
+			if (conversations.length == 0) {
+				conversations = getConversationControllerConversations(clazz, actionSuffix);
+			}
+			methodConversations.addAll(Arrays.asList(conversations));
+		} else if (isAction(method)) {
+			methodConversations.addAll(Arrays.asList(getConversationControllerConversations(clazz, actionSuffix)));
+		}
+		return methodConversations;
+	}
+	
+	protected static String[] getConversationControllerConversations(Class<?> clazz, String actionSuffix) {
 		List<String> conversations = new ArrayList<String>();
 		for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
 			ConversationController controller = conversationControllerClass.getAnnotation(ConversationController.class);
@@ -161,7 +176,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return conversations.toArray(new String[]{});
 	}
 	
-	protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
+	protected static Set<Class<?>> getConversationControllers(Class<?> clazz) {
 		Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
 		for (Class<?> clazzClass : clazz.getInterfaces()) {
 			if (clazzClass.isAnnotationPresent(ConversationController.class)) {
@@ -176,6 +191,19 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 			annotatedClasses.addAll(getConversationControllers(superClass));
 		}
 		return annotatedClasses;
+	}
+	
+	protected static boolean isAction(Method method) {
+		String methodName = method.getName();
+		return (!(methodName.startsWith("get") || methodName.startsWith("set") || methodName.startsWith("is"))
+				&& Modifier.isPublic(method.getModifiers())
+				&& !Modifier.isStatic(method.getModifiers())
+				&& method.getReturnType().equals(String.class)
+				&& method.getParameterTypes().length == 0);
+	}
+	
+	protected static boolean isConversationController(Class<?> clazz) {
+		return getConversationControllers(clazz).size() > 0;
 	}
 
 }

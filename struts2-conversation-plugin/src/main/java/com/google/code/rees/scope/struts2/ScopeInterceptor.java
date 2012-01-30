@@ -99,7 +99,8 @@ public class ScopeInterceptor implements Interceptor {
 		}
 		
 		if (this.arbitrator != null) {
-			this.manager.setConversationArbitrator(arbitrator);
+			this.arbitrator.setActionSuffix(actionSuffix);
+			this.manager.setConversationArbitrator(this.arbitrator);
 		}
 		
 		this.manager.init(this.adapterFactory, this.finder.getActionClasses());

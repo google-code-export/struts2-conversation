@@ -10,7 +10,9 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.conversation.ConversationUtil;
+import com.google.code.rees.scope.conversation.DefaultConversationArbitrator;
 import com.google.code.rees.scope.session.SessionUtil;
+import com.google.code.rees.scope.struts2.ConventionConstants;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -18,12 +20,20 @@ import com.opensymphony.xwork2.util.ValueStack;
 public class ScopeTestUtil {
 	
 	private static ConversationManager manager;
+	private static String actionSuffix;
 	
 	protected static ConversationManager getconversationManager() {
 		if (manager == null) {
 			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
 		}
 		return manager;
+	}
+	
+	protected static String getActionSuffix() {
+		if (actionSuffix == null) {
+			actionSuffix = Dispatcher.getInstance().getContainer().getInstance(String.class, ConventionConstants.ACTION_SUFFIX);
+		}
+		return actionSuffix;
 	}
 	
 	/**
@@ -59,9 +69,9 @@ public class ScopeTestUtil {
 				request.addParameter(entry.getKey(), new String[]{entry.getValue()});
 			}
 		} else {
-			//for (String c : StrutsConversationConfigBuilder.getConversationNames(actionClass)) {
-				request.addParameter("oopy" + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, "oopy" + "-test-id");
-			//}
+			for (String conversationName : DefaultConversationArbitrator.getConversations(actionClass, getActionSuffix())) {
+				request.addParameter(ConversationUtil.sanitizeConversationName(conversationName) + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, conversationName + "-test-id");
+			}
 		}
 	}
 	
