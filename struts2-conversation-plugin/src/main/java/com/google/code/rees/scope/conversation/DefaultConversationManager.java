@@ -3,7 +3,6 @@ package com.google.code.rees.scope.conversation;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -110,11 +109,13 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				
 				if (actionConversationFields != null) {
 					
-					Map<String, Object> session = conversationAdapter.getSessionContext();
-					Map<String, Object> conversationContext = ScopeUtil.getFieldValues(target,
-							actionConversationFields);
-					
-					session.put(conversationId, conversationContext);
+					Map<String, Object> sessionContext = conversationAdapter.getSessionContext();
+					@SuppressWarnings("unchecked")
+					Map<String, Object> conversationContext = (Map<String, Object>) sessionContext.get(conversationId);
+					if (conversationContext == null) {
+						conversationContext = conversationAdapter.createConversationContext(conversationId, sessionContext);
+					}
+					conversationContext.putAll(ScopeUtil.getFieldValues(target, actionConversationFields));
 				}
 				
 				conversationAdapter.addConversation(conversationName, conversationId);
@@ -138,15 +139,14 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 						+ " following execution of action " + conversationAdapter.getActionId());
 			}
 			
-			Map<String, Object> session = conversationAdapter.getSessionContext();
+			Map<String, Object> sessionContext = conversationAdapter.getSessionContext();
 			@SuppressWarnings("unchecked")
-			Map<String, Object> conversationContext = (Map<String, Object>) session.get(conversationId);
+			Map<String, Object> conversationContext = (Map<String, Object>) sessionContext.get(conversationId);
 			if (conversationContext == null) {
-				conversationContext = new HashMap<String, Object>();
+				conversationContext = conversationAdapter.createConversationContext(conversationId, sessionContext);
 			}
 			conversationContext.putAll(ScopeUtil.getFieldValues(action,actionConversationFields));
 			
-			session.put(conversationId, conversationContext);
 		}
 		
 		conversationAdapter.addConversation(conversationConfig.getConversationName(), conversationId);
