@@ -3,7 +3,7 @@ package com.google.code.rees.scope.conversation;
 import java.io.Serializable;
 import java.util.Map;
 
-public abstract class ConversationAdapter implements Serializable {
+public abstract class ConversationAdapter implements Serializable, ConversationContextFactory {
 	
 	private static final long serialVersionUID = -8006640931436858515L;
 	protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();

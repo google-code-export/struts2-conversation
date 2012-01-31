@@ -2,12 +2,8 @@ package com.google.code.rees.scope.conversation;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 
@@ -123,7 +119,7 @@ public class ConversationUtil {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> conversationContext = (Map<String, Object>) sessionContext.get(conversationId);
 				if (conversationContext == null) {
-					conversationContext = new HashMap<String, Object>();
+					conversationContext = adapter.createConversationContext(conversationId, sessionContext);
 				}
 				conversationContext.put(fieldName, fieldValue);
 				sessionContext.put(conversationId, conversationContext);
