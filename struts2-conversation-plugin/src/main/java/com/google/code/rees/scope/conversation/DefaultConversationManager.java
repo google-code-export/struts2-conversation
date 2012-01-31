@@ -59,10 +59,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				}
 				
 				if (conversationConfig.isEndAction(actionId)) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("In Conversation " + conversationName + ", removing conversation map from session following conversation end.");
-					}
-					sessionContext.remove(conversationId);
+					conversationAdapter.dispatchPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
 				} else {
 					conversationAdapter.dispatchPostProcessor(this, conversationConfig, conversationId);
 				}
