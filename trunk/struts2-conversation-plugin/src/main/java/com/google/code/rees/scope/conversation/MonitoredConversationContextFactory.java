@@ -39,8 +39,12 @@ public class MonitoredConversationContextFactory implements ConversationContextF
 
 	@Override
 	public Map<String, Object> createConversationContext(String conversationId, Map<String, Object> sessionContext) {
+		return this.createConversationContext(conversationId, sessionContext, this.conversationDuration);
+	}
+
+	public Map<String, Object> createConversationContext(String conversationId, Map<String, Object> sessionContext, long duration) {
 		MonitoredContext<String, Object> conversationContext = new HashMonitoredContext<String, Object>();
-		conversationContext.init(conversationId, sessionContext, conversationDuration);
+		conversationContext.init(conversationId, sessionContext, duration);
 		this.timer.scheduleAtFixedRate(conversationContext.getTimerTask(), MONITOR_FREQUENCY, MONITOR_FREQUENCY);
 		return conversationContext;
 	}
