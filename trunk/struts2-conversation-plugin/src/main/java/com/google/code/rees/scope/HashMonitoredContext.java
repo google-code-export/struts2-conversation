@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public class HashMonitoredContext<K, V> extends HashMap<K, V> implements MonitoredContext<K, V> {
 
 	private static final long serialVersionUID = 5810194340880306239L;
+	private static final Logger LOG = LoggerFactory.getLogger(HashMonitoredContext.class);
 	
 	protected long timeOfMostRecentAccess;
 	protected String sessionId;
@@ -85,13 +86,24 @@ public class HashMonitoredContext<K, V> extends HashMap<K, V> implements Monitor
 
 	@Override
 	public boolean isActive() {
-		return this.sessionContext.containsKey(this.sessionId) && this.getRemainingTime() > 0;
+		boolean inSession;
+		try {
+			inSession = this.sessionContext.containsKey(this.sessionId);
+		} catch (IllegalStateException e) {
+			LOG.debug("Session has ended.");
+			inSession = false;
+		}
+		return inSession && this.getRemainingTime() > 0;
 	}
 	
 	@Override
 	public void destroy() {
 		this.selfMonitor.cancel();
-		this.sessionContext.remove(this.sessionId);
+		try {
+			this.sessionContext.remove(this.sessionId);
+		} catch (IllegalStateException e) {
+			LOG.debug("Cannot remove context from session as session has ended.");
+		}
 	}
 	
 	@Override
@@ -112,7 +124,7 @@ public class HashMonitoredContext<K, V> extends HashMap<K, V> implements Monitor
 
 class ContextTimerTask extends TimerTask {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(HashMonitoredContext.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ContextTimerTask.class);
 	private HashMonitoredContext<?,?> context;
 	
 	public ContextTimerTask(HashMonitoredContext<?,?> abstractMonitorContext) {

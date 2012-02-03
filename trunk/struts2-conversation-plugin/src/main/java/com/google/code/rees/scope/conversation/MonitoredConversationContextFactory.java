@@ -13,12 +13,12 @@ public class MonitoredConversationContextFactory implements ConversationContextF
 	/**
 	 * 8 hours
 	 */
-	public static final long DEFAULT_CONVERSATION_DURATION = 28800000;
+	public static final long DEFAULT_CONVERSATION_DURATION = 30000;//28800000;
 	
 	/**
 	 * 5 minutes
 	 */
-	public static final long MONITOR_FREQUENCY = 300000;
+	public static final long MONITOR_FREQUENCY = 5000;//300000;
 	
 	protected long conversationDuration;
 	protected Timer timer;
