@@ -1,6 +1,10 @@
 package com.google.code.rees.scope.spring;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,14 +27,18 @@ public class SpringConversationAdapter extends ConversationAdapter {
 	
 	protected Map<String, Object> sessionContext;
 	protected Map<String, String> requestContext;
+	protected Map<String, Object> viewContext;
 	protected Object action;
 	protected String actionId;
+	protected Set<SpringConversationPostProcessorWrapper> postProcessors;
 	
 	public SpringConversationAdapter(HttpServletRequest request, HandlerMethod handler) {
 		this.sessionContext = SessionContextUtil.getSessionContext(request);
 		this.requestContext = RequestContextUtil.getRequestContext(request);
 		this.action = handler.getBean();
 		this.actionId = handler.getMethod().getName();
+		this.postProcessors = new HashSet<SpringConversationPostProcessorWrapper>();
+		this.viewContext = new HashMap<String, Object>();
 	}
 
 	@Override
@@ -60,14 +68,24 @@ public class SpringConversationAdapter extends ConversationAdapter {
 
 	@Override
 	public void dispatchPostProcessor(ConversationPostProcessor postProcessor, ConversationConfiguration conversationConfig, String conversationId) {
-		// TODO Auto-generated method stub
-		
+		this.postProcessors.add(new SpringConversationPostProcessorWrapper(this, postProcessor, conversationConfig, conversationId));
 	}
 
 	@Override
 	public void addConversation(String conversationName, String conversationId) {
-		// TODO Auto-generated method stub
-		
+		this.viewContext.put(conversationName, conversationId);
+	}
+	
+	public Collection<SpringConversationPostProcessorWrapper> getPostProcessors() {
+		return this.postProcessors;
+	}
+	
+	public Map<String, Object> getViewContext() {
+		return this.viewContext;
+	}
+	
+	public static SpringConversationAdapter getSpringAdapter() {
+		return (SpringConversationAdapter) getAdapter();
 	}
 
 }
