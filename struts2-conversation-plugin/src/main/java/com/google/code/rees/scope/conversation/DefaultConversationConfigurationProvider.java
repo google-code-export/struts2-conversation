@@ -19,18 +19,21 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 
 	private static final long serialVersionUID = -1227350994518195549L;
 	
-	protected ConversationArbitrator arbitrator;
+	protected ConversationArbitrator arbitrator = new DefaultConversationArbitrator();
 	protected Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations;
-
-	@Override
-	public void init(ConversationArbitrator arbitrator) {
-		this.arbitrator = arbitrator;
+	
+	public DefaultConversationConfigurationProvider() {
 		classConfigurations = new HashMap<Class<?>, Collection<ConversationConfiguration>>();
 	}
 	
 	@Override
+	public void setArbitrator(ConversationArbitrator arbitrator) {
+		this.arbitrator = arbitrator;
+	}
+	
+	@Override
 	public void init(ConversationArbitrator arbitrator, Set<Class<?>> actionClasses) {
-		this.init(arbitrator);
+		this.arbitrator = arbitrator;
 		for (Class<?> clazz : actionClasses) {
 			processClass(clazz, classConfigurations);
 		}
