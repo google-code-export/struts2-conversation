@@ -8,16 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.ConversationContextFactory;
-import com.google.code.rees.scope.conversation.ConversationPostProcessor;
 import com.google.code.rees.scope.conversation.MonitoredConversationContextFactory;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.PreResultListener;
-
-import com.opensymphony.xwork2.util.ValueStack;
 
 public class StrutsConversationAdapter extends ConversationAdapter {
 
@@ -30,12 +25,10 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 	protected ActionContext actionContext;
 	protected HttpServletRequest request;
 	protected Map<String, String> requestContext;
-	protected ValueStack valueStack;
 
 	public StrutsConversationAdapter(ActionInvocation invocation) {
 		this.invocation = invocation;
 		this.actionContext = invocation.getInvocationContext();
-		this.valueStack = invocation.getStack();
 	}
 
 	@Override
@@ -72,54 +65,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 	@Override
 	public Map<String, Object> createConversationContext(String conversationId, Map<String, Object> sessionContext) {
 		return conversationContextFactory.createConversationContext(conversationId, sessionContext);
-	}
-
-	@Override
-	public void dispatchPostProcessor(ConversationPostProcessor postProcessor,
-			ConversationConfiguration conversationConfig, String conversationId) {
-		invocation.addPreResultListener(new ConversationResultListener(this,
-				postProcessor, conversationConfig, conversationId));
-	}
-
-	@Override
-	public void addConversation(String conversationName, String conversationId) {
-
-		@SuppressWarnings("unchecked")
-		Map<String, String> stackConversationIds = (Map<String, String>) this.valueStack
-				.findValue(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY);
-
-		if (stackConversationIds == null) {
-			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-			stackConversationIds = new HashMap<String, String>();
-			stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY,
-					stackConversationIds);
-			this.valueStack.push(stackItem);
-		}
-
-		stackConversationIds.put(conversationName, conversationId);
-	}
-
-	class ConversationResultListener implements PreResultListener {
-
-		private ConversationConfiguration conversationConfig;
-		private String conversationId;
-		private ConversationPostProcessor postProcessor;
-		private ConversationAdapter conversationAdapter;
-
-		ConversationResultListener(ConversationAdapter conversationAdapter,
-				ConversationPostProcessor postProcessor,
-				ConversationConfiguration conversationConfig, String conversationId) {
-			this.conversationAdapter = conversationAdapter;
-			this.postProcessor = postProcessor;
-			this.conversationConfig = conversationConfig;
-			this.conversationId = conversationId;
-		}
-
-		@Override
-		public void beforeResult(ActionInvocation invocation, String resultCode) {
-			this.postProcessor.postProcessConversation(conversationAdapter,
-					conversationConfig, conversationId);
-		}
 	}
 
 }

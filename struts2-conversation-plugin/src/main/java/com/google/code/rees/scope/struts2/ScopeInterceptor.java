@@ -1,8 +1,12 @@
 package com.google.code.rees.scope.struts2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.code.rees.scope.DefaultScopeManager;
 import com.google.code.rees.scope.ScopeAdapterFactory;
 import com.google.code.rees.scope.ScopeManager;
+import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.ConversationManager;
@@ -11,10 +15,11 @@ import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
+import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
-public class ScopeInterceptor implements Interceptor {
+public class ScopeInterceptor implements Interceptor, PreResultListener {
 
 	private static final long serialVersionUID = 3222190171260674636L;
 	private static final Logger LOG = LoggerFactory
@@ -109,7 +114,20 @@ public class ScopeInterceptor implements Interceptor {
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		this.manager.processScopes();
+		invocation.addPreResultListener(this);
 		return invocation.invoke();
+	}
+	
+	protected void pushViewContextOntoStack(ActionInvocation invocation) {
+		Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
+		stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+		invocation.getStack().push(stackItem);
+	}
+
+	@Override
+	public void beforeResult(ActionInvocation invocation, String result) {
+		ConversationAdapter.getAdapter().executePostProcessors();
+		this.pushViewContextOntoStack(invocation);
 	}
 
 }
