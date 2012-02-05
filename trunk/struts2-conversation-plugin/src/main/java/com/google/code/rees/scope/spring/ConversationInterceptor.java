@@ -8,16 +8,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.ConversationManager;
 
-public class ScopeInterceptor implements HandlerInterceptor {
+public class ConversationInterceptor implements HandlerInterceptor {
 	
 	protected ConversationManager conversationManager;
 	
-	public ScopeInterceptor(ConversationManager conversationManager, ConversationConfigurationProvider conversationConfigurationProvider) {
+	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
-		this.conversationManager.init(conversationConfigurationProvider);
 	}
 
 	@Override
