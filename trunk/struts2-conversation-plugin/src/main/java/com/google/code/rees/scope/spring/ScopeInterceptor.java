@@ -1,7 +1,5 @@
 package com.google.code.rees.scope.spring;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,6 +7,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.ConversationManager;
 
@@ -24,17 +23,13 @@ public class ScopeInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception)
 			throws Exception {
-		Collection<SpringConversationPostProcessorWrapper> postProcessors = 
-			SpringConversationAdapter.getSpringAdapter().getPostProcessors();
-		for (SpringConversationPostProcessorWrapper processor : postProcessors) {
-			processor.postProcessConversation();
-		}
+		ConversationAdapter.getAdapter().executePostProcessors();
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler, ModelAndView modelAndView) throws Exception {
-		modelAndView.addAllObjects(SpringConversationAdapter.getSpringAdapter().getViewContext());
+		modelAndView.addAllObjects(ConversationAdapter.getAdapter().getViewContext());
 	}
 
 	@Override

@@ -58,9 +58,10 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				}
 				
 				if (conversationConfig.isEndAction(actionId)) {
-					conversationAdapter.dispatchPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
+					conversationAdapter.addPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
 				} else {
-					conversationAdapter.dispatchPostProcessor(this, conversationConfig, conversationId);
+					conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
+					conversationAdapter.getViewContext().put(conversationName, conversationId);
 				}
 			}
 		} else if (conversationConfig.isBeginAction(actionId)) {
@@ -68,7 +69,9 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				LOG.debug("Beginning new " + conversationName + " conversation.");
 			}
 			conversationId = java.util.UUID.randomUUID().toString();
-			conversationAdapter.dispatchPostProcessor(this, conversationConfig, conversationId);
+			conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
+			conversationAdapter.getViewContext().put(conversationName, conversationId);
+			
 		}
 	}
 
@@ -118,7 +121,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 					conversationContext.putAll(ScopeUtil.getFieldValues(target, actionConversationFields));
 				}
 				
-				conversationAdapter.addConversation(conversationName, conversationId);
+				conversationAdapter.getViewContext().put(conversationName, conversationId);
 			}
 		}
 	}
@@ -148,8 +151,6 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 			conversationContext.putAll(ScopeUtil.getFieldValues(action,actionConversationFields));
 			
 		}
-		
-		conversationAdapter.addConversation(conversationConfig.getConversationName(), conversationId);
 	}
 
 }
