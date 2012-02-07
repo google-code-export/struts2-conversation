@@ -27,7 +27,7 @@ public class ConversationInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler, ModelAndView modelAndView) throws Exception {
-		modelAndView.addAllObjects(ConversationAdapter.getAdapter().getViewContext());
+		//do nothing
 	}
 
 	@Override

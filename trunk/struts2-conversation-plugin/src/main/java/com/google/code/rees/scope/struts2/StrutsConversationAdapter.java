@@ -11,6 +11,7 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.MonitoredConversationContextFactory;
 import com.google.code.rees.scope.util.RequestContextUtil;
+import com.google.code.rees.scope.util.SessionContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
@@ -43,7 +44,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
 	@Override
 	public Map<String, Object> getSessionContext() {
-		return this.actionContext.getSession();
+		return SessionContextUtil.getSessionContext(((HttpServletRequest) this.actionContext.get(StrutsStatics.HTTP_REQUEST)));
 	}
 	
 	@Override

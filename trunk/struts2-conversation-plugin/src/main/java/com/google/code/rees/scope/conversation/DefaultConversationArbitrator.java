@@ -132,11 +132,11 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return methodConversations;
 	}
 	
-	public static Collection<String> getConversations(Class<?> clazz) {
+	public Collection<String> getConversations(Class<?> clazz) {
 		return getConversations(clazz, ConversationConstants.DEFAULT_CONTROLLER_SUFFIX);
 	}
 	
-	public static Collection<String> getConversations(Class<?> clazz, String actionSuffix) {
+	public Collection<String> getConversations(Class<?> clazz, String actionSuffix) {
 		Set<String> conversations = new HashSet<String>();
 		for (Method method : ReflectionUtil.getMethods(clazz)) {
 			conversations.addAll(getConversations(clazz, method, actionSuffix));
@@ -144,7 +144,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return conversations;
 	}
 	
-	public static Collection<String> getConversations(Class<?> clazz, Method method, String actionSuffix) {
+	public Collection<String> getConversations(Class<?> clazz, Method method, String actionSuffix) {
 		Set<String> methodConversations = new HashSet<String>();
 		if (method.isAnnotationPresent(ConversationAction.class)) {
 			ConversationAction conversationmethod = method.getAnnotation(ConversationAction.class);
@@ -159,7 +159,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return methodConversations;
 	}
 	
-	protected static String[] getConversationControllerConversations(Class<?> clazz, String actionSuffix) {
+	protected String[] getConversationControllerConversations(Class<?> clazz, String actionSuffix) {
 		List<String> conversations = new ArrayList<String>();
 		for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
 			ConversationController controller = conversationControllerClass.getAnnotation(ConversationController.class);
@@ -176,7 +176,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return conversations.toArray(new String[]{});
 	}
 	
-	protected static Set<Class<?>> getConversationControllers(Class<?> clazz) {
+	protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
 		Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
 		for (Class<?> clazzClass : clazz.getInterfaces()) {
 			if (clazzClass.isAnnotationPresent(ConversationController.class)) {
@@ -193,7 +193,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 		return annotatedClasses;
 	}
 	
-	protected static boolean isAction(Method method) {
+	protected boolean isAction(Method method) {
 		String methodName = method.getName();
 		return (!(methodName.startsWith("get") || methodName.startsWith("set") || methodName.startsWith("is"))
 				&& Modifier.isPublic(method.getModifiers())
@@ -202,7 +202,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
 				&& method.getParameterTypes().length == 0);
 	}
 	
-	protected static boolean isConversationController(Class<?> clazz) {
+	protected boolean isConversationController(Class<?> clazz) {
 		return getConversationControllers(clazz).size() > 0;
 	}
 

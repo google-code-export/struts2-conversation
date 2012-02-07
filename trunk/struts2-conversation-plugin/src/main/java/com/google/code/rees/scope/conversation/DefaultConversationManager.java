@@ -72,7 +72,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Beginning new " + conversationName + " conversation.");
 			}
-			conversationId = java.util.UUID.randomUUID().toString();
+			conversationId = ConversationUtil.generateId();
 			conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
 			conversationAdapter.getViewContext().put(conversationName, conversationId);
 			
@@ -111,7 +111,7 @@ public class DefaultConversationManager implements ConversationManager, Conversa
 				String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 				
 				if (conversationId == null) {
-					conversationId = java.util.UUID.randomUUID().toString();
+					conversationId = ConversationUtil.generateId();
 				}
 				
 				if (actionConversationFields != null) {
