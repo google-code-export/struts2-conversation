@@ -39,7 +39,7 @@ public class SessionFieldInterceptorTest extends StrutsScopeTestCase<MockConvent
 	
 	@Test
 	public void testCrossActionSessionFieldPersistence() throws Exception {
-		request.setParameter("sessionField", "test");
+		request.addParameter("sessionField", "test");
 		this.getActionProxy("configuration-action").execute();
 		this.getActionProxy("mock-pojo").execute();
 		assertEquals("test", getAction(MockPojoController.class).getSessionField());

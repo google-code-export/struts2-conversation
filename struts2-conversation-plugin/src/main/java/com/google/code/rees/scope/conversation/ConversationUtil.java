@@ -1,17 +1,11 @@
 package com.google.code.rees.scope.conversation;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.google.code.rees.scope.conversation.annotations.ConversationField;
+import java.util.Map.Entry;
 
 /**
- * 
- * A utility class that provides static methods that are used internally and
- * for unit testing.  Usage of this utility outside of these contexts is
- * discouraged.
  * 
  * @author rees.byars
  *
@@ -127,6 +121,27 @@ public class ConversationUtil {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> endConversation(String conversationName) {
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		Map<String, String> viewContext = adapter.getViewContext();
+		viewContext.remove(conversationName);
+		Map<String, Object> sessionContext = adapter.getSessionContext();
+		String conversationId = ConversationUtil.getConversationId(conversationName);
+		return (Map<String, Object>) sessionContext.remove(conversationId);
+	}
+	
+	public static void endAllConversations() {
+		ConversationAdapter adapter = ConversationAdapter.getAdapter();
+		Map<String, Object> sessionContext = adapter.getSessionContext();
+		Map<String, String> requestContext = adapter.getRequestContext();
+		Map<String, String> viewContext = adapter.getViewContext();
+		for (Entry<String, String> entry : requestContext.entrySet()) {
+			sessionContext.remove(entry.getValue());
+			viewContext.remove(entry.getKey());
+		}
+	}
+	
 	/**
 	 * An array of all active conversations for the currently executing thread.
 	 * 
@@ -162,27 +177,12 @@ public class ConversationUtil {
 		return convoIds.toArray(new String[convoIds.size()]);
 	}
 	
-	/**
-	 * Returns the given field's ConversationField name
-	 * 
-	 * @param field
-	 * @return
-	 */
-	public static String getConversationFieldName(Field field) {
-		String name = null;
-		if (field.isAnnotationPresent(ConversationField.class)) {
-			name = field.getAnnotation(ConversationField.class).name();
-			if (name.equals(ConversationField.DEFAULT)) {
-				name = field.getName();
-			}
-		} else {
-			name = field.getName();
-		}
-		return name;
-	}
-	
 	public static String sanitizeConversationName(String conversationName) {
 		return conversationName.replaceAll(":", "").replaceAll(",", "");
+	}
+	
+	public static String generateId() {
+		return java.util.UUID.randomUUID().toString();
 	}
 	
 }

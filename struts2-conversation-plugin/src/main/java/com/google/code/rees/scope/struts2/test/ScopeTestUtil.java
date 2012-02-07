@@ -20,6 +20,7 @@ import com.opensymphony.xwork2.util.ValueStack;
 public class ScopeTestUtil {
 	
 	private static ConversationManager manager;
+	private static DefaultConversationArbitrator arbitrator = new DefaultConversationArbitrator();
 	private static String actionSuffix;
 	
 	protected static ConversationManager getconversationManager() {
@@ -69,7 +70,7 @@ public class ScopeTestUtil {
 				request.addParameter(entry.getKey(), new String[]{entry.getValue()});
 			}
 		} else {
-			for (String conversationName : DefaultConversationArbitrator.getConversations(actionClass, getActionSuffix())) {
+			for (String conversationName : arbitrator.getConversations(actionClass, getActionSuffix())) {
 				request.addParameter(ConversationUtil.sanitizeConversationName(conversationName) + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX, conversationName + "-test-id");
 			}
 		}

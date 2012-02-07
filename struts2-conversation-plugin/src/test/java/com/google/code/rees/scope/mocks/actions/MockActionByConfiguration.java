@@ -14,6 +14,7 @@ public class MockActionByConfiguration {
 	}
 
 	public void setSessionField(String sessionField) {
+		System.out.println("****************************************" + sessionField);
 		this.sessionField = sessionField;
 	}
 
