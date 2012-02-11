@@ -18,7 +18,7 @@
 	<bean id="conversationConfigurationProvider" class="com.google.code.rees.scope.conversation.DefaultConversationConfigurationProvider">
 		<property name="arbitrator" ref="conversationArbitrator"/>
 	</bean>
-	<bean id="conversationManager" class="com.google.code.rees.scope.conversation.DefaultConversationManager">
+	<bean id="conversationManager" class="com.google.code.rees.scope.conversation.SimpleConversationManager">
 		<property name="configurationProvider" ref="conversationConfigurationProvider"/>
 	</bean>
 

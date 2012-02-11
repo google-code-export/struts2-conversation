@@ -11,6 +11,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.StrutsConstants;
 
+import com.google.code.rees.scope.ActionProvider;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.TextParseUtil;
@@ -29,12 +30,12 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * @author rees.byars with code from the struts2 convention package
  * 
  */
-public class ActionFinderImpl implements ActionFinder {
+public class StrutsActionProvider implements ActionProvider {
 	
 	private static final long serialVersionUID = 6728107973559862449L;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ActionFinderImpl.class);
+			.getLogger(StrutsActionProvider.class);
 
 	private Set<Class<?>> actionClasses;
 	private String[] actionPackages;

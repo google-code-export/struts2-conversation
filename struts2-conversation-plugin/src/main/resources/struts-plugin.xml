@@ -53,8 +53,11 @@
 	<!-- SCOPE -->
 	<constant name="struts.scope.followsConvention" value="true" />
 	
-	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.struts2.ActionFinder"
-		class="com.google.code.rees.scope.struts2.ActionFinderImpl" />
+	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.ActionProvider"
+		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
+		
+	<bean name="struts.conversation.arbitrator" type="com.google.code.rees.scope.conversation.ConversationArbitrator"
+		class="com.google.code.rees.scope.conversation.DefaultConversationArbitrator"/>
 
 	<bean name="struts.session.configurationProvider"
 		type="com.google.code.rees.scope.session.SessionConfigurationProvider"
@@ -66,7 +69,7 @@
 		
 	<bean name="struts.conversation.conversationManager"
 		type="com.google.code.rees.scope.conversation.ConversationManager"
-		class="com.google.code.rees.scope.conversation.DefaultConversationManager" />
+		class="com.google.code.rees.scope.conversation.DefaultInjectionConversationManager" />
 
 	<bean name="struts.session.sessionManager"
 		type="com.google.code.rees.scope.session.SessionManager"
@@ -75,6 +78,8 @@
 	<bean name="struts.scope.adapterFactory"
 		type="com.google.code.rees.scope.ScopeAdapterFactory"
 		class="com.google.code.rees.scope.struts2.StrutsScopeAdapterFactory" />
+		
+	<bean name="struts.scope.manager" type="com.google.code.rees.scope.ScopeManager" class="com.google.code.rees.scope.DefaultScopeManager"></bean>
 
 	<package name="annotated-scope-default" extends="struts-default">
 	

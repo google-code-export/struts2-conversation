@@ -3,6 +3,7 @@ package com.google.code.rees.scope.struts2;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.DefaultScopeManager;
 import com.google.code.rees.scope.ScopeAdapterFactory;
 import com.google.code.rees.scope.ScopeManager;
@@ -21,113 +22,112 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 public class ScopeInterceptor implements Interceptor, PreResultListener {
 
-	private static final long serialVersionUID = 3222190171260674636L;
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ScopeInterceptor.class);
+    private static final long serialVersionUID = 3222190171260674636L;
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ScopeInterceptor.class);
 
-	protected ScopeManager manager = new DefaultScopeManager();
-	protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
-	protected ConversationArbitrator arbitrator;
-	protected ConversationManager conversationManager;
-	protected ConversationConfigurationProvider conversationConfigurationProvider;
-	protected SessionManager sessionManager;
-	protected SessionConfigurationProvider sessionConfigurationProvider;
-	protected ActionFinder finder;
-	protected String actionSuffix;
+    protected ScopeManager manager = new DefaultScopeManager();
+    protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
+    protected ConversationArbitrator arbitrator;
+    protected ConversationManager conversationManager;
+    protected ConversationConfigurationProvider conversationConfigurationProvider;
+    protected SessionManager sessionManager;
+    protected SessionConfigurationProvider sessionConfigurationProvider;
+    protected ActionProvider finder;
+    protected String actionSuffix;
 
-	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-	public void setActionClassFinder(ActionFinder finder) {
-		this.finder = finder;
-	}
-	
-	@Inject(ConventionConstants.ACTION_SUFFIX)
-	public void setActionSuffix(String suffix) {
-		this.actionSuffix = suffix;
-	}
-	
-	@Inject(value = StrutsScopeConstants.SCOPE_MANAGER_KEY, required = false)
-	public void setScopeManager(ScopeManager manager) {
-		this.manager = manager;
-	}
-	
-	@Inject(value = StrutsScopeConstants.CONVERSATION_MANAGER_KEY, required = false)
-	public void setConversationManager(ConversationManager manager) {
-		this.conversationManager = manager;
-	}
-	
-	@Inject(value = StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY, required = false)
-	public void setConversationConfigurationProvider(
-			ConversationConfigurationProvider conversationConfigurationProvider) {
-		this.conversationConfigurationProvider = conversationConfigurationProvider;
-	}
-	
-	@Inject(value = StrutsScopeConstants.SESSION_MANAGER_KEY, required = false)
-	public void setSessionManager(SessionManager manager) {
-		this.sessionManager = manager;
-	}
+    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+    public void setActionClassFinder(ActionProvider finder) {
+        this.finder = finder;
+    }
 
-	@Inject(value = StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY, required = false)
-	public void setSessionConfigurationProvider(
-			SessionConfigurationProvider sessionConfigurationProvider) {
-		this.sessionConfigurationProvider = sessionConfigurationProvider;
-	}
-	
-	@Inject(value = StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY, required = false)
-	public void setConversationAdapterFactory(StrutsScopeAdapterFactory adapterFactory) {
-		this.adapterFactory = adapterFactory;
-	}
+    @Inject(ConventionConstants.ACTION_SUFFIX)
+    public void setActionSuffix(String suffix) {
+        this.actionSuffix = suffix;
+    }
 
-	@Override
-	public void destroy() {
-		LOG.info("Destroying the ScopeInterceptor...");
-	}
+    @Inject(StrutsScopeConstants.SCOPE_MANAGER_KEY)
+    public void setScopeManager(ScopeManager manager) {
+        this.manager = manager;
+    }
 
-	@Override
-	public void init() {
-		
-		LOG.info("Initializing the ScopeInterceptor...");
-		
-		if (this.conversationConfigurationProvider != null) {
-			this.manager.setConversationConfigurationProvider(conversationConfigurationProvider);
-		}
-		
-		if (this.conversationManager != null) {
-			this.manager.setConversationManager(conversationManager);
-		}
-		
-		if (this.sessionConfigurationProvider != null) {
-			this.manager.setSessionConfigurationProvider(sessionConfigurationProvider);
-		}
-		
-		if (this.sessionManager != null) {
-			this.manager.setSessionManager(sessionManager);
-		}
-		
-		if (this.arbitrator != null) {
-			this.arbitrator.setActionSuffix(actionSuffix);
-			this.manager.setConversationArbitrator(this.arbitrator);
-		}
-		
-		this.manager.init(this.adapterFactory, this.finder.getActionClasses());
-	}
+    @Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
+    public void setArbitrator(ConversationArbitrator arbitrator) {
+        this.arbitrator = arbitrator;
+    }
 
-	@Override
-	public String intercept(ActionInvocation invocation) throws Exception {
-		this.manager.processScopes();
-		invocation.addPreResultListener(this);
-		return invocation.invoke();
-	}
-	
-	protected void pushViewContextOntoStack(ActionInvocation invocation) {
-		Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-		stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-		invocation.getStack().push(stackItem);
-	}
+    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
+    public void setConversationManager(ConversationManager manager) {
+        this.conversationManager = manager;
+    }
 
-	@Override
-	public void beforeResult(ActionInvocation invocation, String result) {
-		ConversationAdapter.getAdapter().executePostProcessors();
-		this.pushViewContextOntoStack(invocation);
-	}
+    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
+    public void setConversationConfigurationProvider(
+            ConversationConfigurationProvider conversationConfigurationProvider) {
+        this.conversationConfigurationProvider = conversationConfigurationProvider;
+    }
+
+    @Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
+    public void setSessionManager(SessionManager manager) {
+        this.sessionManager = manager;
+    }
+
+    @Inject(StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
+    public void setSessionConfigurationProvider(
+            SessionConfigurationProvider sessionConfigurationProvider) {
+        this.sessionConfigurationProvider = sessionConfigurationProvider;
+    }
+
+    @Inject(StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY)
+    public void setAdapterFactory(ScopeAdapterFactory adapterFactory) {
+        this.adapterFactory = adapterFactory;
+    }
+
+    @Override
+    public void destroy() {
+        LOG.info("Destroying the ScopeInterceptor...");
+    }
+
+    @Override
+    public void init() {
+
+        LOG.info("Initializing the ScopeInterceptor...");
+
+        this.arbitrator.setActionSuffix(actionSuffix);
+        this.conversationConfigurationProvider.setArbitrator(arbitrator);
+        this.conversationConfigurationProvider.init(this.finder
+                .getActionClasses());
+        this.conversationManager
+                .setConfigurationProvider(conversationConfigurationProvider);
+
+        this.sessionConfigurationProvider.init(finder.getActionClasses());
+        this.sessionManager
+                .setConfigurationProvider(sessionConfigurationProvider);
+
+        this.manager.setConversationManager(conversationManager);
+        this.manager.setSessionManager(sessionManager);
+        this.manager.setScopeAdapterFactory(adapterFactory);
+
+    }
+
+    @Override
+    public String intercept(ActionInvocation invocation) throws Exception {
+        this.manager.processScopes();
+        invocation.addPreResultListener(this);
+        return invocation.invoke();
+    }
+
+    @Override
+    public void beforeResult(ActionInvocation invocation, String result) {
+        ConversationAdapter.getAdapter().executePostProcessors();
+        this.pushViewContextOntoStack(invocation);
+    }
+
+    protected void pushViewContextOntoStack(ActionInvocation invocation) {
+        Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
+        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY,
+                ConversationAdapter.getAdapter().getViewContext());
+        invocation.getStack().push(stackItem);
+    }
 
 }
