@@ -42,7 +42,6 @@ public class MockConversationController extends ActionSupport {
 	}
 
 	public void setConversationString(String conversationString) {
-		System.out.println("****************************************" + conversationString);
 		this.conversationString = conversationString;
 	}
 

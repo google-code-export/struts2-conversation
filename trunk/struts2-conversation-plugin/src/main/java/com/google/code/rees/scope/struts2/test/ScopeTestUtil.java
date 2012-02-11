@@ -11,6 +11,7 @@ import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.DefaultConversationArbitrator;
+import com.google.code.rees.scope.conversation.InjectionConversationManager;
 import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.ConventionConstants;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
@@ -19,13 +20,13 @@ import com.opensymphony.xwork2.util.ValueStack;
 
 public class ScopeTestUtil {
 	
-	private static ConversationManager manager;
+	private static InjectionConversationManager manager;
 	private static DefaultConversationArbitrator arbitrator = new DefaultConversationArbitrator();
 	private static String actionSuffix;
 	
-	protected static ConversationManager getconversationManager() {
+	protected static InjectionConversationManager getconversationManager() {
 		if (manager == null) {
-			manager = Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
+			manager = (InjectionConversationManager) Dispatcher.getInstance().getContainer().getInstance(ConversationManager.class, StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
 		}
 		return manager;
 	}

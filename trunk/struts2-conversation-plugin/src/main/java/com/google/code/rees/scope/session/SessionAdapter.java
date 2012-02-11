@@ -11,7 +11,7 @@ public abstract class SessionAdapter implements Serializable {
 	public abstract Object getAction();
 	public abstract String getActionId();
 	public abstract Map<String, Object> getSessionContext();
-	public abstract void dispatchPostProcessor(SessionPostProcessor sessionPostProcessor);
+	public abstract void addPostProcessor(SessionPostProcessor sessionPostProcessor);
 	
 	public static void setAdapter(SessionAdapter adapter) {
 		sessionAdapter.set(adapter);
