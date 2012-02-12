@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.sessionfield;
+package com.google.code.rees.scope.session;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
