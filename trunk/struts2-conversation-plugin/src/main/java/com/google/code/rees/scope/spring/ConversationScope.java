@@ -6,9 +6,10 @@ import org.springframework.beans.factory.config.Scope;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 
 /**
+ * This custom scope must be configured in a Spring XML context.
+ * It allows for conversation-scoped beans to be injected by the Spring IoC.
  * 
  * @author rees.byars
- * 
  */
 public class ConversationScope implements Scope {
 
