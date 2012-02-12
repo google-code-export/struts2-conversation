@@ -6,9 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This class is used to cache the fields and action IDs for all
+ * {@link SessionField SessionFields}.
+ * 
+ * @see {@link SessionConfigurationProvider}
+ * @see {@link SessionManager}
  * 
  * @author rees.byars
- * 
  */
 public class SessionConfiguration implements Serializable {
 
@@ -19,6 +23,13 @@ public class SessionConfiguration implements Serializable {
         fields = new HashMap<Class<?>, Map<String, Field>>();
     }
 
+    /**
+     * Caches the given field in the configuration
+     * 
+     * @param clazz
+     * @param name
+     * @param field
+     */
     public void addField(Class<?> clazz, String name, Field field) {
         Map<String, Field> classFields = fields.get(clazz);
         if (classFields == null) {
@@ -28,6 +39,12 @@ public class SessionConfiguration implements Serializable {
         fields.put(clazz, classFields);
     }
 
+    /**
+     * Returns the cached fields for the given class
+     * 
+     * @param clazz
+     * @return
+     */
     public Map<String, Field> getFields(Class<?> clazz) {
         return fields.get(clazz);
     }

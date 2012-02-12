@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Denotes an action field as session scoped. Typing is strict, i.e.
  * impl- and sub-classes cannot be injected into super types and interfaces.
+ * 
+ * @author rees.byars
  */
 @Target({ java.lang.annotation.ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

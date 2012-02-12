@@ -11,7 +11,8 @@ import com.google.code.rees.scope.util.ReflectionUtil;
 /**
  * 
  * A utility class that provides static methods that are used internally and
- * for unit testing.
+ * for unit testing. Use outside of these contexts should come only as
+ * a last resort.
  * 
  * @author rees.byars
  * 
