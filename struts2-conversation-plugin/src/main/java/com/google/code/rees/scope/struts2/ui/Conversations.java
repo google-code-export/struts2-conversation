@@ -8,9 +8,12 @@ import org.apache.struts2.components.UIBean;
 import com.opensymphony.xwork2.util.ValueStack;
 
 /**
+ * A custom {@link UIBean} that places the conversation IDs as hidden fields
+ * in a page
+ * 
+ * @see {@link ConversationTag}
  * 
  * @author rees.byars
- * 
  */
 public class Conversations extends UIBean {
 

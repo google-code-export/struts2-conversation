@@ -8,9 +8,10 @@ import org.apache.struts2.components.Form;
 import com.opensymphony.xwork2.util.ValueStack;
 
 /**
+ * A normal Struts2 {@link Form} that maps to a different default template
+ * for including the conversation IDs as hidden tags in the form
  * 
  * @author rees.byars
- * 
  */
 public class ConversationForm extends Form {
 

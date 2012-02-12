@@ -1,9 +1,9 @@
 package com.google.code.rees.scope.struts2;
 
 /**
+ * Constants from the convention plugin. Used for injection.
  * 
  * @author rees.byars
- * 
  */
 public interface ConventionConstants {
 

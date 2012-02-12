@@ -14,9 +14,9 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
 /**
+ * Struts2 implementation of the {@link ConversationAdapter}.
  * 
  * @author rees.byars
- * 
  */
 public class StrutsConversationAdapter extends ConversationAdapter {
 
@@ -32,16 +32,25 @@ public class StrutsConversationAdapter extends ConversationAdapter {
         this.actionContext = invocation.getInvocationContext();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getAction() {
         return invocation.getAction();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getActionId() {
         return invocation.getProxy().getMethod();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getSessionContext() {
         return SessionContextUtil
@@ -49,6 +58,9 @@ public class StrutsConversationAdapter extends ConversationAdapter {
                         .get(StrutsStatics.HTTP_REQUEST)));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> getRequestContext() {
         ActionContext actionContext = ActionContext.getContext();

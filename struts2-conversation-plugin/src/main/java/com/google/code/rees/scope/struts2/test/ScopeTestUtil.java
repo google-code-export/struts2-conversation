@@ -21,9 +21,9 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
 /**
+ * A utility for simplifying Struts2 unit testing against the interceptor stack
  * 
  * @author rees.byars
- * 
  */
 public class ScopeTestUtil {
 
