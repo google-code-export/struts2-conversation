@@ -13,6 +13,10 @@ import org.apache.struts2.util.ClassLoaderUtils;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
+ * A utility for obtaining inherited fields, methods, and annotations, and
+ * making
+ * fields accessible.
+ * 
  * @author rees.byars
  */
 public class ReflectionUtil {

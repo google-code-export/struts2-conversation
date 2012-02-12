@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Utility for creating session contexts for adapters
  * 
  * @author rees.byars
  * 
