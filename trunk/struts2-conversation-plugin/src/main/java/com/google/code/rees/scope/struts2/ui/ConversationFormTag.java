@@ -8,6 +8,11 @@ import org.apache.struts2.views.jsp.ui.FormTag;
 
 import com.opensymphony.xwork2.util.ValueStack;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationFormTag extends FormTag {
 
     private static final long serialVersionUID = -7730872356094866344L;

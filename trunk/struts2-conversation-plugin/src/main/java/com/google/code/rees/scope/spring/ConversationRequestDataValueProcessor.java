@@ -8,6 +8,11 @@ import org.springframework.web.servlet.support.RequestDataValueProcessor;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationRequestDataValueProcessor implements
         RequestDataValueProcessor {
 

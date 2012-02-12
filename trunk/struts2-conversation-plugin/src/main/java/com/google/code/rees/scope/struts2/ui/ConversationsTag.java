@@ -8,6 +8,11 @@ import org.apache.struts2.views.jsp.ui.AbstractUITag;
 
 import com.opensymphony.xwork2.util.ValueStack;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationsTag extends AbstractUITag {
 
     private static final long serialVersionUID = -2510111224558001809L;

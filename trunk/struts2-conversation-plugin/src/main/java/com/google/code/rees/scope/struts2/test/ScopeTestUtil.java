@@ -20,6 +20,11 @@ import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ScopeTestUtil {
 
     private static DefaultInjectionConversationManager manager;

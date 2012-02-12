@@ -5,6 +5,11 @@ import org.springframework.beans.factory.config.Scope;
 
 import com.google.code.rees.scope.conversation.ConversationUtil;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationScope implements Scope {
 
     @Override

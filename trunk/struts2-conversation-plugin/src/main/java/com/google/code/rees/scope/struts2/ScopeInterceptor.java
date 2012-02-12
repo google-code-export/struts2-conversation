@@ -20,6 +20,11 @@ import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ScopeInterceptor implements Interceptor, PreResultListener {
 
     private static final long serialVersionUID = 3222190171260674636L;

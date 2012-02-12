@@ -7,6 +7,11 @@ import org.apache.struts2.components.UIBean;
 
 import com.opensymphony.xwork2.util.ValueStack;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class Conversations extends UIBean {
 
     public Conversations(ValueStack stack, HttpServletRequest request,

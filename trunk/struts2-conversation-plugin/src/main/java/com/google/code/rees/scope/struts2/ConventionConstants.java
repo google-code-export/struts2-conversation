@@ -1,5 +1,10 @@
 package com.google.code.rees.scope.struts2;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public interface ConventionConstants {
 
     public final static String RELOAD_CLASSES = "struts.convention.classes.reload";

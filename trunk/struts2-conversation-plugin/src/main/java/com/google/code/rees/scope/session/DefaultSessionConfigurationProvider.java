@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.util.ReflectionUtil;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class DefaultSessionConfigurationProvider implements
         SessionConfigurationProvider {
 

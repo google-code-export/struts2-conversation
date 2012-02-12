@@ -5,6 +5,16 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.conversation.annotations.ConversationField;
+
+/**
+ * A simple yet effective implementation of {@link ConversationManager} that
+ * manages conversation life cycles, but does not inject
+ * {@link ConversationField ConversationFields}. Ideal for using
+ * in cases such as when field injection will be handled by Spring.
+ * 
+ * @author rees.byars
+ */
 public class SimpleConversationManager implements ConversationManager {
 
     private static final long serialVersionUID = -518452439785782433L;
@@ -12,12 +22,18 @@ public class SimpleConversationManager implements ConversationManager {
             .getLogger(SimpleConversationManager.class);
     protected ConversationConfigurationProvider configurationProvider = new DefaultConversationConfigurationProvider();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConfigurationProvider(
             ConversationConfigurationProvider configurationProvider) {
         this.configurationProvider = configurationProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processConversations(ConversationAdapter conversationAdapter) {
         Object action = conversationAdapter.getAction();
@@ -59,8 +75,7 @@ public class SimpleConversationManager implements ConversationManager {
             conversationId = ConversationUtil.generateId();
             conversationAdapter.getViewContext().put(conversationName,
                     conversationId);
-            conversationAdapter.createConversationContext(conversationId,
-                    conversationAdapter.getSessionContext());
+            conversationAdapter.createConversationContext(conversationId);
         }
     }
 

@@ -9,16 +9,17 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationContextFactory;
-import com.google.code.rees.scope.conversation.MonitoredConversationContextFactory;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.google.code.rees.scope.util.SessionContextUtil;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class SpringConversationAdapter extends ConversationAdapter {
 
     private static final long serialVersionUID = 5664922664767226366L;
-
-    protected final static ConversationContextFactory conversationContextFactory = new MonitoredConversationContextFactory();
 
     protected Map<String, Object> sessionContext;
     protected Map<String, String> requestContext;
@@ -32,13 +33,6 @@ public class SpringConversationAdapter extends ConversationAdapter {
         this.requestContext = RequestContextUtil.getRequestContext(request);
         this.action = handler.getBean();
         this.actionId = handler.getMethod().getName();
-    }
-
-    @Override
-    public Map<String, Object> createConversationContext(String conversationId,
-            Map<String, Object> sessionContext) {
-        return conversationContextFactory.createConversationContext(
-                conversationId, sessionContext);
     }
 
     @Override

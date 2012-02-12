@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
+ * The default implementation of {@link ConversationConfigurationProvider}
  * 
  * @author rees.byars
- * 
  */
 public class DefaultConversationConfigurationProvider implements
         ConversationConfigurationProvider {
@@ -30,11 +30,17 @@ public class DefaultConversationConfigurationProvider implements
     protected Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
             .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Set<Class<?>> actionClasses) {
         for (Class<?> clazz : actionClasses) {
@@ -42,6 +48,9 @@ public class DefaultConversationConfigurationProvider implements
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<ConversationConfiguration> getConfigurations(
             Class<?> clazz) {
@@ -57,6 +66,13 @@ public class DefaultConversationConfigurationProvider implements
         return configurations;
     }
 
+    /**
+     * good candidate for refactoring... but it works!
+     * 
+     * @param clazz
+     * @param classConfigurations
+     * @return
+     */
     protected synchronized Collection<ConversationConfiguration> processClass(
             Class<?> clazz,
             Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations) {
