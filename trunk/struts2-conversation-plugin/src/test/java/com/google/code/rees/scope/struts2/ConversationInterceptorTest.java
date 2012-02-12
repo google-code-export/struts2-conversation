@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.struts2;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.mocks.actions.conversation.MockConversationController;
 import com.google.code.rees.scope.mocks.beans.TestBean;
