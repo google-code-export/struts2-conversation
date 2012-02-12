@@ -9,11 +9,12 @@ import org.apache.struts2.views.jsp.ui.FormTag;
 import com.opensymphony.xwork2.util.ValueStack;
 
 public class ConversationFormTag extends FormTag {
-	
-	private static final long serialVersionUID = -7730872356094866344L;
-	
-	public Component getBean(ValueStack stack, HttpServletRequest req, HttpServletResponse res) {
-		return new ConversationForm(stack, req, res);
-	}
+
+    private static final long serialVersionUID = -7730872356094866344L;
+
+    public Component getBean(ValueStack stack, HttpServletRequest req,
+            HttpServletResponse res) {
+        return new ConversationForm(stack, req, res);
+    }
 
 }

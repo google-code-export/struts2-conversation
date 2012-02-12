@@ -10,13 +10,14 @@ import com.opensymphony.xwork2.util.ValueStack;
 
 public class ConversationsTag extends AbstractUITag {
 
-	private static final long serialVersionUID = -2510111224558001809L;
+    private static final long serialVersionUID = -2510111224558001809L;
 
-	@Override
-	public Component getBean(ValueStack paramValueStack,
-			HttpServletRequest paramHttpServletRequest,
-			HttpServletResponse paramHttpServletResponse) {
-		return new Conversations(paramValueStack, paramHttpServletRequest, paramHttpServletResponse);
-	}
+    @Override
+    public Component getBean(ValueStack paramValueStack,
+            HttpServletRequest paramHttpServletRequest,
+            HttpServletResponse paramHttpServletResponse) {
+        return new Conversations(paramValueStack, paramHttpServletRequest,
+                paramHttpServletResponse);
+    }
 
 }

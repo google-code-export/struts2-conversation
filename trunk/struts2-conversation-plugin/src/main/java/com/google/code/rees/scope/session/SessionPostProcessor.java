@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public interface SessionPostProcessor extends Serializable {
 
-	public void postProcessSession(SessionAdapter sessionAdapter);
-	
+    public void postProcessSession(SessionAdapter sessionAdapter);
+
 }

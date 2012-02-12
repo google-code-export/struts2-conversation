@@ -7,16 +7,18 @@ import com.opensymphony.xwork2.ActionContext;
 
 public class StrutsScopeAdapterFactory implements ScopeAdapterFactory {
 
-	private static final long serialVersionUID = -4595690103120891078L;
-	
-	@Override
-	public SessionAdapter createSessionAdapter() {
-		return new StrutsSessionAdapter(ActionContext.getContext().getActionInvocation());
-	}
+    private static final long serialVersionUID = -4595690103120891078L;
 
-	@Override
-	public ConversationAdapter createConversationAdapter() {
-		return new StrutsConversationAdapter(ActionContext.getContext().getActionInvocation());
-	}
+    @Override
+    public SessionAdapter createSessionAdapter() {
+        return new StrutsSessionAdapter(ActionContext.getContext()
+                .getActionInvocation());
+    }
+
+    @Override
+    public ConversationAdapter createConversationAdapter() {
+        return new StrutsConversationAdapter(ActionContext.getContext()
+                .getActionInvocation());
+    }
 
 }
