@@ -5,6 +5,6 @@ import java.util.Set;
 
 public interface ActionProvider extends Serializable {
 
-	public Set<Class<?>> getActionClasses();
-	
+    public Set<Class<?>> getActionClasses();
+
 }

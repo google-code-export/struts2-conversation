@@ -16,56 +16,59 @@ import com.google.code.rees.scope.util.SessionContextUtil;
 
 public class SpringConversationAdapter extends ConversationAdapter {
 
-	private static final long serialVersionUID = 5664922664767226366L;
-	
-	protected final static ConversationContextFactory conversationContextFactory 
-		= new MonitoredConversationContextFactory();
-	
-	protected Map<String, Object> sessionContext;
-	protected Map<String, String> requestContext;
-	protected Object action;
-	protected String actionId;
-	protected HttpServletRequest request;
-	
-	public SpringConversationAdapter(HttpServletRequest request, HandlerMethod handler) {
-		this.sessionContext = SessionContextUtil.getSessionContext(request);
-		this.requestContext = RequestContextUtil.getRequestContext(request);
-		this.action = handler.getBean();
-		this.actionId = handler.getMethod().getName();
-	}
+    private static final long serialVersionUID = 5664922664767226366L;
 
-	@Override
-	public Map<String, Object> createConversationContext(String conversationId, Map<String, Object> sessionContext) {
-		return conversationContextFactory.createConversationContext(conversationId, sessionContext);
-	}
+    protected final static ConversationContextFactory conversationContextFactory = new MonitoredConversationContextFactory();
 
-	@Override
-	public Object getAction() {
-		return this.action;
-	}
+    protected Map<String, Object> sessionContext;
+    protected Map<String, String> requestContext;
+    protected Object action;
+    protected String actionId;
+    protected HttpServletRequest request;
 
-	@Override
-	public String getActionId() {
-		return this.actionId;
-	}
+    public SpringConversationAdapter(HttpServletRequest request,
+            HandlerMethod handler) {
+        this.sessionContext = SessionContextUtil.getSessionContext(request);
+        this.requestContext = RequestContextUtil.getRequestContext(request);
+        this.action = handler.getBean();
+        this.actionId = handler.getMethod().getName();
+    }
 
-	@Override
-	public Map<String, Object> getSessionContext() {
-		return this.sessionContext;
-	}
+    @Override
+    public Map<String, Object> createConversationContext(String conversationId,
+            Map<String, Object> sessionContext) {
+        return conversationContextFactory.createConversationContext(
+                conversationId, sessionContext);
+    }
 
-	@Override
-	public Map<String, String> getRequestContext() {
-		
-		HttpServletRequest currentRequest = ((ServletRequestAttributes) 
-				RequestContextHolder.currentRequestAttributes()).getRequest();
-		
-		if (!currentRequest.equals(this.request)) {
-			this.request = currentRequest;
-			requestContext = RequestContextUtil.getRequestContext(currentRequest);
-		}
+    @Override
+    public Object getAction() {
+        return this.action;
+    }
 
-		return this.requestContext;
-	}
+    @Override
+    public String getActionId() {
+        return this.actionId;
+    }
+
+    @Override
+    public Map<String, Object> getSessionContext() {
+        return this.sessionContext;
+    }
+
+    @Override
+    public Map<String, String> getRequestContext() {
+
+        HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes()).getRequest();
+
+        if (!currentRequest.equals(this.request)) {
+            this.request = currentRequest;
+            requestContext = RequestContextUtil
+                    .getRequestContext(currentRequest);
+        }
+
+        return this.requestContext;
+    }
 
 }

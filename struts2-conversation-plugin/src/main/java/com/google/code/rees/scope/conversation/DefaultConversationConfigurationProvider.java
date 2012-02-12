@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
@@ -20,6 +23,8 @@ public class DefaultConversationConfigurationProvider implements
         ConversationConfigurationProvider {
 
     private static final long serialVersionUID = -1227350994518195549L;
+    private static final Logger LOG = LoggerFactory
+            .getLogger(DefaultConversationConfigurationProvider.class);
 
     protected ConversationArbitrator arbitrator = new DefaultConversationArbitrator();
     protected Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
@@ -43,6 +48,10 @@ public class DefaultConversationConfigurationProvider implements
         Collection<ConversationConfiguration> configurations = classConfigurations
                 .get(clazz);
         if (configurations == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No cached ConversationConfiguration found for class "
+                        + clazz.getName());
+            }
             configurations = this.processClass(clazz, classConfigurations);
         }
         return configurations;
@@ -54,6 +63,10 @@ public class DefaultConversationConfigurationProvider implements
         Collection<ConversationConfiguration> configurations = classConfigurations
                 .get(clazz);
         if (configurations == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Building ConversationConfiguration for class "
+                        + clazz.getName());
+            }
             configurations = new HashSet<ConversationConfiguration>();
             Map<String, ConversationConfiguration> temporaryConversationMap = new HashMap<String, ConversationConfiguration>();
             for (Field field : this.arbitrator
@@ -71,6 +84,12 @@ public class DefaultConversationConfigurationProvider implements
                                     conversation);
                             temporaryConversationMap.put(conversation,
                                     configuration);
+                        }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Adding field "
+                                    + fieldName
+                                    + " to ConversationConfiguration for Conversation "
+                                    + conversation);
                         }
                         configuration.addField(fieldName, field);
                     }
@@ -92,6 +111,12 @@ public class DefaultConversationConfigurationProvider implements
                             temporaryConversationMap.put(conversation,
                                     configuration);
                         }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Adding method "
+                                    + methodName
+                                    + " as an Intermediate Action to ConversationConfiguration for Conversation "
+                                    + conversation);
+                        }
                         configuration.addAction(methodName);
                     }
                 }
@@ -108,6 +133,12 @@ public class DefaultConversationConfigurationProvider implements
                             temporaryConversationMap.put(conversation,
                                     configuration);
                         }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Adding method "
+                                    + methodName
+                                    + " as a Begin Action to ConversationConfiguration for Conversation "
+                                    + conversation);
+                        }
                         configuration.addBeginAction(methodName);
                     }
                 }
@@ -123,6 +154,12 @@ public class DefaultConversationConfigurationProvider implements
                                     conversation);
                             temporaryConversationMap.put(conversation,
                                     configuration);
+                        }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Adding method "
+                                    + methodName
+                                    + " as an End Action to ConversationConfiguration for Conversation "
+                                    + conversation);
                         }
                         configuration.addEndAction(methodName);
                     }
