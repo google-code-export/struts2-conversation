@@ -14,9 +14,12 @@ import com.google.code.rees.scope.conversation.annotations.ConversationControlle
 import com.google.code.rees.scope.util.NamingUtil;
 
 /**
+ * A {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * ConversationArbitrator} for use with Spring MVC. Looks for
+ * {@link RequestMapping} annotations
+ * to identify controller action methods.
  * 
  * @author rees.byars
- * 
  */
 public class SpringConversationArbitrator extends DefaultConversationArbitrator {
 

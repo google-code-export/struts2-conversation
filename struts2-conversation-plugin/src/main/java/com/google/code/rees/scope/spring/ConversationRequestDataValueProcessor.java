@@ -9,9 +9,13 @@ import org.springframework.web.servlet.support.RequestDataValueProcessor;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 
 /**
+ * Configured in the Spring application XML with the ID
+ * requestDataValueProcessor.
+ * The Spring MVC form tags then call
+ * {@link #getExtraHiddenFields(HttpServletRequest)} on this class. In this way,
+ * the conversation IDs are placed in the tags.
  * 
  * @author rees.byars
- * 
  */
 public class ConversationRequestDataValueProcessor implements
         RequestDataValueProcessor {

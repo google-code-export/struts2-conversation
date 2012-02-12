@@ -13,6 +13,7 @@ import com.google.code.rees.scope.util.RequestContextUtil;
 import com.google.code.rees.scope.util.SessionContextUtil;
 
 /**
+ * An implementation of the {@link ConversationAdapter} for use with Spring MVC.
  * 
  * @author rees.byars
  * 
@@ -35,21 +36,33 @@ public class SpringConversationAdapter extends ConversationAdapter {
         this.actionId = handler.getMethod().getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getAction() {
         return this.action;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getActionId() {
         return this.actionId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getSessionContext() {
         return this.sessionContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> getRequestContext() {
 
