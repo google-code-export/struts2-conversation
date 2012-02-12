@@ -26,9 +26,9 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
+ * Struts2 implementation of the {@link ActionProvider}.
  * 
  * @author rees.byars with code from the struts2 convention package
- * 
  */
 public class StrutsActionProvider implements ActionProvider {
 

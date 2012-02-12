@@ -9,6 +9,8 @@ import org.apache.struts2.views.jsp.ui.AbstractUITag;
 import com.opensymphony.xwork2.util.ValueStack;
 
 /**
+ * A custom {@link AbstractUITag} that uses the {@link Conversations} bean
+ * to add the conversation IDs to a page
  * 
  * @author rees.byars
  * 

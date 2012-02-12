@@ -10,9 +10,9 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 
 /**
+ * The Struts2 implementation of the {@link SessionAdapter}.
  * 
  * @author rees.byars
- * 
  */
 public class StrutsSessionAdapter extends SessionAdapter {
 
@@ -35,21 +35,33 @@ public class StrutsSessionAdapter extends SessionAdapter {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getAction() {
         return this.invocation.getAction();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getActionId() {
         return this.invocation.getProxy().getMethod();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getSessionContext() {
         return this.sessionContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addPostProcessor(SessionPostProcessor sessionPostProcessor) {
         this.invocation.addPreResultListener(new SessionResultListener(this,
@@ -67,6 +79,9 @@ public class StrutsSessionAdapter extends SessionAdapter {
             this.postProcessor = postProcessor;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void beforeResult(ActionInvocation invocation, String resultCode) {
             this.postProcessor.postProcessSession(sessionAdapter);

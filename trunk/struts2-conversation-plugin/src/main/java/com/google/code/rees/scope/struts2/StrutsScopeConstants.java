@@ -1,9 +1,9 @@
 package com.google.code.rees.scope.struts2;
 
 /**
+ * The Struts2 scope constants.
  * 
  * @author rees.byars
- * 
  */
 public class StrutsScopeConstants {
     public static final String ACTION_FINDER_KEY = "struts.scope.actionFinder";

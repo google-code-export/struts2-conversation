@@ -9,9 +9,10 @@ import org.apache.struts2.views.jsp.ui.FormTag;
 import com.opensymphony.xwork2.util.ValueStack;
 
 /**
+ * A normal {@link FormTag} using {@link ConversationForm} instead
+ * of {@link org.apache.struts2.components.Form Form}
  * 
  * @author rees.byars
- * 
  */
 public class ConversationFormTag extends FormTag {
 

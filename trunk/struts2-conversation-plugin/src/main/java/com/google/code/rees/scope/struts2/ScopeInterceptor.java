@@ -17,13 +17,22 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
+import com.opensymphony.xwork2.util.ValueStack;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
+ * A Struts2 {@link Interceptor} that uses injected Conversations and Session
+ * scope management components to process and manage conversation and
+ * session-scoped
+ * beans and lifecycles.
+ * <p>
+ * Also implements {@link PreResultListener} to perform post-processing and
+ * place the {@link ConversationAdapter#getViewContext()} map onto the
+ * {@link ValueStack} in order to make the conversation IDs available to the
+ * view.
  * 
  * @author rees.byars
- * 
  */
 public class ScopeInterceptor implements Interceptor, PreResultListener {
 
@@ -88,11 +97,17 @@ public class ScopeInterceptor implements Interceptor, PreResultListener {
         this.adapterFactory = adapterFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy() {
         LOG.info("Destroying the ScopeInterceptor...");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
 
@@ -115,6 +130,9 @@ public class ScopeInterceptor implements Interceptor, PreResultListener {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
         this.manager.processScopes();
@@ -122,6 +140,9 @@ public class ScopeInterceptor implements Interceptor, PreResultListener {
         return invocation.invoke();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void beforeResult(ActionInvocation invocation, String result) {
         ConversationAdapter.getAdapter().executePostProcessors();

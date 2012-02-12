@@ -7,9 +7,10 @@ import org.apache.struts2.views.jsp.URLTag;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 
 /**
+ * A normal Struts2 {@link URLTag}, but additionally includes the
+ * conversation IDs as parameters on the URL
  * 
  * @author rees.byars
- * 
  */
 public class ConversationUrlTag extends URLTag {
 
