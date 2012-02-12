@@ -12,8 +12,9 @@ import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
  * 
- * @author rees.byars
+ * The default implementation of the {@link SessionConfigurationProvider}.
  * 
+ * @author rees.byars
  */
 public class DefaultSessionConfigurationProvider implements
         SessionConfigurationProvider {
@@ -24,11 +25,17 @@ public class DefaultSessionConfigurationProvider implements
     protected SessionConfiguration configuration = new SessionConfiguration();;
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Set<Class<?>> classes) {
         this.processClasses(classes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SessionConfiguration getSessionConfiguration(Class<?> clazz) {
         if (!this.classesProcessed.contains(clazz)) {

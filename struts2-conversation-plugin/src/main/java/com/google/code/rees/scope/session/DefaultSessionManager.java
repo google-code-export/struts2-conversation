@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 import com.google.code.rees.scope.util.ScopeUtil;
 
 /**
+ * The default implementation of the {@link SessionManager}. Also
+ * implements {@link SessionPostProcessor} to get field values following
+ * action execution.
  * 
  * @author rees.byars
- * 
  */
 public class DefaultSessionManager implements SessionManager,
         SessionPostProcessor {
@@ -23,6 +25,9 @@ public class DefaultSessionManager implements SessionManager,
 
     protected SessionConfigurationProvider configurationProvider;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConfigurationProvider(
             SessionConfigurationProvider configurationProvider) {
@@ -30,6 +35,9 @@ public class DefaultSessionManager implements SessionManager,
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processSessionFields(SessionAdapter sessionAdapter) {
         Object action = sessionAdapter.getAction();
@@ -61,6 +69,9 @@ public class DefaultSessionManager implements SessionManager,
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postProcessSession(SessionAdapter sessionAdapter) {
 

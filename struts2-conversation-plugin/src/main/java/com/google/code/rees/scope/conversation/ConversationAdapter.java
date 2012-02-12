@@ -14,6 +14,10 @@ import java.util.Map;
  * By employing the adapter pattern, the conversation management aspects are
  * separated from the details of the control framework and separated even from
  * the underlying request and session mechanisms.
+ * <p>
+ * Makes use of {@link ThreadLocal} to make the current request's adapter
+ * available through the static call
+ * <code>ConversationAdapter.<i>getAdapter()</i></code>.
  * 
  * @author rees.byars
  * 
@@ -49,7 +53,7 @@ public abstract class ConversationAdapter implements Serializable {
     public abstract String getActionId();
 
     /**
-     * Returns a session-scoped map.
+     * Returns a session-scoped map used to store conversation contexts.
      * 
      * @return
      */
@@ -116,7 +120,8 @@ public abstract class ConversationAdapter implements Serializable {
 
     /**
      * Set the {@link ThreadLocal} ConversationAdapter for use with the current
-     * request
+     * request. Called in the constructor to force new instances into
+     * the ThreadLocal.
      * 
      * @param adapter
      */
