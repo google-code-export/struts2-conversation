@@ -4,9 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
+ * Utility for converting camel-case names into dash-delimited names, e.g.
+ * thisTypeOfName becomes this-type-of-name.
  * 
  * @author rees.byars
- * 
  */
 public class NamingUtil {
 

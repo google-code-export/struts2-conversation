@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 
 /**
+ * Utility for creating the RequestContexts for adapters
  * 
  * @author rees.byars
- * 
  */
 public class RequestContextUtil {
 
