@@ -5,6 +5,11 @@ import java.io.Serializable;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.session.SessionManager;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public interface ScopeManager extends Serializable {
 
     public void setConversationManager(ConversationManager manager);

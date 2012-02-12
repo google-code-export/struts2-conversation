@@ -6,8 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Denotes a field as a conversation-scoped field.
+ * Denotes a field as a conversation-scoped field. Depends
+ * on an
+ * {@link com.google.code.rees.scope.conversation.InjectionConversationManager
+ * InjectionConversationManager} being used to manage conversations.
  * 
+ * @author rees.byars
  * @see #name()
  * @see #conversations()
  * 

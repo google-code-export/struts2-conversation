@@ -7,6 +7,11 @@ import org.apache.struts2.components.Form;
 
 import com.opensymphony.xwork2.util.ValueStack;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationForm extends Form {
 
     public ConversationForm(ValueStack stack, HttpServletRequest request,

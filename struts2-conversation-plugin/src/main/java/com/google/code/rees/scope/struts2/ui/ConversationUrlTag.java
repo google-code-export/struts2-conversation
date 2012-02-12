@@ -6,6 +6,11 @@ import org.apache.struts2.views.jsp.URLTag;
 
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationUrlTag extends URLTag {
 
     private static final long serialVersionUID = -2799594627916112974L;

@@ -1,5 +1,10 @@
 package com.google.code.rees.scope.conversation;
 
+/**
+ * The default implementation of the {@link ConversationPostProcessorWrapper}
+ * 
+ * @author rees.byars
+ */
 public class DefaultConversationPostProcessorWrapper implements
         ConversationPostProcessorWrapper {
 
@@ -20,6 +25,9 @@ public class DefaultConversationPostProcessorWrapper implements
         this.conversationId = conversationId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postProcessConversation() {
         this.postProcessor.postProcessConversation(conversationAdapter,

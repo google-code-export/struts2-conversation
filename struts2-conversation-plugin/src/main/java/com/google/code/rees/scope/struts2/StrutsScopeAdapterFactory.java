@@ -5,6 +5,11 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.session.SessionAdapter;
 import com.opensymphony.xwork2.ActionContext;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class StrutsScopeAdapterFactory implements ScopeAdapterFactory {
 
     private static final long serialVersionUID = -4595690103120891078L;

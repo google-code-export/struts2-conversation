@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.util.ScopeUtil;
 
+/**
+ * The default implementation of the {@link InjectionConversationManager}
+ * 
+ * @author rees.byars
+ */
 public class DefaultInjectionConversationManager extends
         SimpleConversationManager implements InjectionConversationManager,
         ConversationPostProcessor {
@@ -17,6 +22,9 @@ public class DefaultInjectionConversationManager extends
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultInjectionConversationManager.class);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void processConversation(
             ConversationConfiguration conversationConfig,
@@ -77,6 +85,9 @@ public class DefaultInjectionConversationManager extends
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postProcessConversation(
             ConversationAdapter conversationAdapter,
@@ -103,8 +114,7 @@ public class DefaultInjectionConversationManager extends
                     .get(conversationId);
             if (conversationContext == null) {
                 conversationContext = conversationAdapter
-                        .createConversationContext(conversationId,
-                                sessionContext);
+                        .createConversationContext(conversationId);
             }
             conversationContext.putAll(ScopeUtil.getFieldValues(action,
                     actionConversationFields));
@@ -112,6 +122,9 @@ public class DefaultInjectionConversationManager extends
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void injectConversationFields(Object target,
             ConversationAdapter conversationAdapter) {
@@ -141,6 +154,9 @@ public class DefaultInjectionConversationManager extends
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void extractConversationFields(Object target,
             ConversationAdapter conversationAdapter) {
@@ -168,8 +184,7 @@ public class DefaultInjectionConversationManager extends
                             .get(conversationId);
                     if (conversationContext == null) {
                         conversationContext = conversationAdapter
-                                .createConversationContext(conversationId,
-                                        sessionContext);
+                                .createConversationContext(conversationId);
                     }
                     conversationContext.putAll(ScopeUtil.getFieldValues(target,
                             actionConversationFields));

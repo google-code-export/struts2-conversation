@@ -9,6 +9,11 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class HashMonitoredContext<K, V> extends HashMap<K, V> implements
         MonitoredContext<K, V> {
 

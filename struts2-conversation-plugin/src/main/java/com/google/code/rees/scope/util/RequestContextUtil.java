@@ -8,6 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class RequestContextUtil {
 
     public static Map<String, String> getRequestContext(

@@ -7,6 +7,11 @@ import java.lang.annotation.Target;
 
 import org.springframework.stereotype.Controller;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 @Target({ java.lang.annotation.ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Controller

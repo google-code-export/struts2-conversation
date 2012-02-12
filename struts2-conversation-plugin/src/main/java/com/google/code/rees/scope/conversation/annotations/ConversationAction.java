@@ -8,11 +8,14 @@ import java.lang.annotation.Target;
 /**
  * Denotes an action as an intermediate member a conversation.
  * <p>
- * Only works on methods that are also actions. The method may be specified as
- * an action through configuration in the struts.xml, by convention by being
- * named <code>execute()</code> in an action class, of by annotation with the
- * convention plug-in's Action annotation.
+ * Only works on methods that are also actions. Depending on the
+ * {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * ConversationArbitrator} being used, the convention of using the
+ * {@link ConversationController} can replace the need for this annotation in
+ * most cases.
  * <P>
+ * 
+ * @author rees.byars
  * 
  * @see #conversations()
  */

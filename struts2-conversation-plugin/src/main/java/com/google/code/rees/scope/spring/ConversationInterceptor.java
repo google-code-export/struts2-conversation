@@ -10,6 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationManager;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class ConversationInterceptor implements HandlerInterceptor {
 
     protected ConversationManager conversationManager;

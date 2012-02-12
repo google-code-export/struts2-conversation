@@ -3,6 +3,11 @@ package com.google.code.rees.scope;
 import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.session.SessionManager;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class DefaultScopeManager implements ScopeManager {
 
     private static final long serialVersionUID = -7042031513311747101L;

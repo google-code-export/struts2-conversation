@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.TimerTask;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public interface MonitoredContext<K, V> extends Map<K, V>, Serializable {
 
     public void init(String monitoredContextId,

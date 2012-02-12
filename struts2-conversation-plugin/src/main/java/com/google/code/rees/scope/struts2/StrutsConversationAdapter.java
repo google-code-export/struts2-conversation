@@ -8,18 +8,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationContextFactory;
-import com.google.code.rees.scope.conversation.MonitoredConversationContextFactory;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.google.code.rees.scope.util.SessionContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class StrutsConversationAdapter extends ConversationAdapter {
 
     private static final long serialVersionUID = -907192380776385729L;
-
-    protected final static ConversationContextFactory conversationContextFactory = new MonitoredConversationContextFactory();
 
     protected ActionInvocation invocation;
     protected ActionContext actionContext;
@@ -65,13 +66,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
             requestContext = new HashMap<String, String>();
         }
         return requestContext;
-    }
-
-    @Override
-    public Map<String, Object> createConversationContext(String conversationId,
-            Map<String, Object> sessionContext) {
-        return conversationContextFactory.createConversationContext(
-                conversationId, sessionContext);
     }
 
 }

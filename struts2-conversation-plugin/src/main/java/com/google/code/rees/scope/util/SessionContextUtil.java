@@ -6,6 +6,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class SessionContextUtil {
 
     public static final String SCOPE_SESSION_CONTEXT_KEY = "rees.scope.session.context.key";

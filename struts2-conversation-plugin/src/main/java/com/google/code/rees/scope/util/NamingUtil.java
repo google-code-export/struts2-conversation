@@ -3,6 +3,11 @@ package com.google.code.rees.scope.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class NamingUtil {
 
     public static String getConventionName(Class<?> clazz, String suffixToRemove) {

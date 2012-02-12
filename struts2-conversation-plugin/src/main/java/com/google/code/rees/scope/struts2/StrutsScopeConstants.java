@@ -1,5 +1,10 @@
 package com.google.code.rees.scope.struts2;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class StrutsScopeConstants {
     public static final String ACTION_FINDER_KEY = "struts.scope.actionFinder";
     public static final String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";

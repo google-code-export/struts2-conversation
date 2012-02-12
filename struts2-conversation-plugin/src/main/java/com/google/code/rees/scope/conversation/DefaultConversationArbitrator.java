@@ -18,16 +18,27 @@ import com.google.code.rees.scope.conversation.annotations.EndConversation;
 import com.google.code.rees.scope.util.NamingUtil;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
+/**
+ * The default implementation of {@link ConversationArbitrator}
+ * 
+ * @author rees.byars
+ */
 public class DefaultConversationArbitrator implements ConversationArbitrator {
 
     private static final long serialVersionUID = -1577464106543589370L;
     protected String actionSuffix = ConversationConstants.DEFAULT_CONTROLLER_SUFFIX;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setActionSuffix(String suffix) {
         this.actionSuffix = suffix;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Field> getCandidateConversationFields(Class<?> clazz) {
         Set<Field> conversationFields = new HashSet<Field>();
@@ -39,6 +50,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return conversationFields;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Method> getCandidateConversationMethods(Class<?> clazz) {
         Set<Method> conversationMethods = new HashSet<Method>();
@@ -52,6 +66,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return conversationMethods;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getConversations(Class<?> clazz, Field field) {
         Set<String> fieldConversations = new HashSet<String>();
@@ -68,6 +85,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return fieldConversations;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getConversations(Class<?> clazz, Method method) {
         Set<String> methodConversations = new HashSet<String>();
@@ -88,6 +108,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return methodConversations;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName(Field field) {
         String name = field.getName();
@@ -102,11 +125,17 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName(Method method) {
         return method.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getBeginConversations(Class<?> clazz,
             Method method) {
@@ -128,6 +157,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return methodConversations;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<String> getEndConversations(Class<?> clazz, Method method) {
         Set<String> methodConversations = new HashSet<String>();

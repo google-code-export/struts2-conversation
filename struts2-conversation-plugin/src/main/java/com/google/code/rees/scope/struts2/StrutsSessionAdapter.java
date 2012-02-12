@@ -9,6 +9,11 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public class StrutsSessionAdapter extends SessionAdapter {
 
     private static final long serialVersionUID = -5521071699714160473L;

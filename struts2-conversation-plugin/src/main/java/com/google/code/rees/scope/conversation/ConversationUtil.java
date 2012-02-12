@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
+ * Provides static methods intended primarily for use internally and in
+ * unit testing. Use outside of these contexts should come only as
+ * a last resort.
  * 
  * @author rees.byars
  * 
@@ -108,7 +111,7 @@ public class ConversationUtil {
     }
 
     /**
-     * Given a conversation field' name and an instance, the value is set
+     * Given a conversation field's name and an instance, the value is set
      * for the field in all active conversations of which the field is a member.
      * 
      * @param fieldName
@@ -124,8 +127,8 @@ public class ConversationUtil {
                 Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
                         .get(conversationId);
                 if (conversationContext == null) {
-                    conversationContext = adapter.createConversationContext(
-                            conversationId, sessionContext);
+                    conversationContext = adapter
+                            .createConversationContext(conversationId);
                 }
                 conversationContext.put(fieldName, fieldValue);
                 sessionContext.put(conversationId, conversationContext);
@@ -133,6 +136,12 @@ public class ConversationUtil {
         }
     }
 
+    /**
+     * Ends the indicated conversation if active for the current request
+     * 
+     * @param conversationName
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> endConversation(String conversationName) {
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
@@ -144,6 +153,9 @@ public class ConversationUtil {
         return (Map<String, Object>) sessionContext.remove(conversationId);
     }
 
+    /**
+     * Ends all active conversations for the current reuqest
+     */
     public static void endAllConversations() {
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         Map<String, Object> sessionContext = adapter.getSessionContext();
@@ -156,7 +168,7 @@ public class ConversationUtil {
     }
 
     /**
-     * An array of all active conversations for the currently executing thread.
+     * An array of all active conversations for the current request.
      * 
      * @return
      */
@@ -191,10 +203,21 @@ public class ConversationUtil {
         return convoIds.toArray(new String[convoIds.size()]);
     }
 
+    /**
+     * Used to remove undesired characters from conversation names
+     * 
+     * @param conversationName
+     * @return
+     */
     public static String sanitizeConversationName(String conversationName) {
         return conversationName.replaceAll(":", "").replaceAll(",", "");
     }
 
+    /**
+     * Used to generate a unique ID for a conversation context
+     * 
+     * @return
+     */
     public static String generateId() {
         return java.util.UUID.randomUUID().toString();
     }

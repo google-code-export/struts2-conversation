@@ -3,6 +3,11 @@ package com.google.code.rees.scope.struts2.test;
 import com.google.code.struts2.test.junit.StrutsTest;
 import com.opensymphony.xwork2.ActionInvocation;
 
+/**
+ * 
+ * @author rees.byars
+ * 
+ */
 public abstract class StrutsScopeTestCase<T> extends StrutsTest<T> {
 
     @Override
