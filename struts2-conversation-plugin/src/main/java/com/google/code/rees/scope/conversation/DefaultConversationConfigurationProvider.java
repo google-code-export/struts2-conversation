@@ -130,7 +130,7 @@ public class DefaultConversationConfigurationProvider implements
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding method "
                                     + methodName
-                                    + " as an Intermediate Action to ConversationConfiguration for Conversation "
+                                    + " as an Action to ConversationConfiguration for Conversation "
                                     + conversation);
                         }
                         configuration.addAction(methodName);
