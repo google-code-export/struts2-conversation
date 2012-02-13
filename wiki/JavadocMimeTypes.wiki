@@ -1,11 +1,12 @@
 = Setting Mime-types in Windows =
 
+{{{
 C:\PATH_TO_JAVADOCS>for /r %1 in (*.gif) do svn propset svn:mime-type image/gif "%~f1"
 
-C:\PATH_TO_JAVADOCS>for /r %1 in (*.jpg) do svn propset svn:mime-type image/jpeg "%~f1"
+C:\PATH_TO_JAVADOCS>for /r %1 in (*.css) do svn propset svn:mime-type text/css "%~f1"
 
 C:\PATH_TO_JAVADOCS>for /r %1 in (*.htm*) do svn propset svn:mime-type text/html "%~f1"
-
+}}}
 
 
 = Links to Javadoc = 
