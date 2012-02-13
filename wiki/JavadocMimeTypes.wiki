@@ -1,0 +1,12 @@
+= Setting Mime-types in Windows =
+
+C:\PATH_TO_JAVADOCS>for /r %1 in (*.gif) do svn propset svn:mime-type image/gif "%~f1"
+
+C:\PATH_TO_JAVADOCS>for /r %1 in (*.jpg) do svn propset svn:mime-type image/jpeg "%~f1"
+
+C:\PATH_TO_JAVADOCS>for /r %1 in (*.htm*) do svn propset svn:mime-type text/html "%~f1"
+
+
+
+= Links to Javadoc = 
+If the link is still showing the source instead of the page, expand "Show Details" (if not already expanded) and click on "View raw file" on the right side of the page.
