@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.struts2;
+package com.google.code.rees.scope.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,7 +21,7 @@ import com.google.code.struts2.test.junit.StrutsConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:*applicationContext.xml")
 @StrutsConfiguration(locations = "struts-conversation.xml")
-public class ConversationInterceptorTest extends
+public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
     static final String CONVERSATION_NAME = "oopy-conversation";
