@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
 
 @StrutsConfiguration(locations = "struts.xml")
-public class SessionFieldConfigBuilderImplTest extends StrutsScopeTestCase<Object> {
+public class DefaultSessionConfigurationProviderTest extends StrutsScopeTestCase<Object> {
 	
 	@Inject(value=StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
 	SessionConfigurationProvider builder;

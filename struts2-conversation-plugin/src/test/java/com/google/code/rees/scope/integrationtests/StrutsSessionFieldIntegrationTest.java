@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.struts2;
+package com.google.code.rees.scope.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,7 +9,7 @@ import com.google.code.rees.scope.mocks.actions.MockPojoController;
 import com.google.code.rees.scope.struts2.test.StrutsScopeTestCase;
 import com.opensymphony.xwork2.ActionProxy;
 
-public class SessionFieldInterceptorTest extends
+public class StrutsSessionFieldIntegrationTest extends
         StrutsScopeTestCase<MockConventionController> {
 
     @Test
