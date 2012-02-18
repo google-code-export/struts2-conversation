@@ -44,12 +44,12 @@ public class ConversationUtil {
         Object field = null;
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
-            Map<String, Object> sessionContext = adapter.getSessionContext();
             Map<String, String> requestContext = adapter.getRequestContext();
-            for (String conversationId : requestContext.values()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
-                        .get(conversationId);
+            for (Entry<String, String> entry : requestContext.entrySet()) {
+                String name = entry.getKey();
+                String id = entry.getValue();
+                Map<String, Object> conversationContext = adapter
+                        .getConversationContext(name, id);
                 if (conversationContext != null) {
                     field = (Object) conversationContext.get(fieldName);
                     if (field != null)
@@ -93,12 +93,11 @@ public class ConversationUtil {
         T field = null;
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
-            Map<String, Object> session = adapter.getSessionContext();
             for (String conversationName : conversations) {
                 String id = getConversationId(conversationName);
                 if (id != null) {
-                    Map<String, Object> conversationContext = (Map<String, Object>) session
-                            .get(id);
+                    Map<String, Object> conversationContext = adapter
+                            .getConversationContext(conversationName, id);
                     if (conversationContext != null) {
                         field = (T) conversationContext.get(fieldName);
                         if (field != null)
@@ -120,50 +119,14 @@ public class ConversationUtil {
     public static void setConversationField(String fieldName, Object fieldValue) {
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
-            Map<String, Object> sessionContext = adapter.getSessionContext();
             Map<String, String> requestContext = adapter.getRequestContext();
-            for (String conversationId : requestContext.values()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
-                        .get(conversationId);
-                if (conversationContext == null) {
-                    conversationContext = adapter
-                            .createConversationContext(conversationId);
-                }
+            for (Entry<String, String> entry : requestContext.entrySet()) {
+                String name = entry.getKey();
+                String id = entry.getValue();
+                Map<String, Object> conversationContext = adapter
+                        .getConversationContext(name, id);
                 conversationContext.put(fieldName, fieldValue);
-                sessionContext.put(conversationId, conversationContext);
             }
-        }
-    }
-
-    /**
-     * Ends the indicated conversation if active for the current request
-     * 
-     * @param conversationName
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> endConversation(String conversationName) {
-        ConversationAdapter adapter = ConversationAdapter.getAdapter();
-        Map<String, String> viewContext = adapter.getViewContext();
-        viewContext.remove(conversationName);
-        Map<String, Object> sessionContext = adapter.getSessionContext();
-        String conversationId = ConversationUtil
-                .getConversationId(conversationName);
-        return (Map<String, Object>) sessionContext.remove(conversationId);
-    }
-
-    /**
-     * Ends all active conversations for the current reuqest
-     */
-    public static void endAllConversations() {
-        ConversationAdapter adapter = ConversationAdapter.getAdapter();
-        Map<String, Object> sessionContext = adapter.getSessionContext();
-        Map<String, String> requestContext = adapter.getRequestContext();
-        Map<String, String> viewContext = adapter.getViewContext();
-        for (Entry<String, String> entry : requestContext.entrySet()) {
-            sessionContext.remove(entry.getValue());
-            viewContext.remove(entry.getKey());
         }
     }
 

@@ -29,7 +29,8 @@ public class ConversationEndProcessor implements ConversationPostProcessor {
                     + conversationConfig.getConversationName()
                     + ", removing conversation map from session following conversation end.");
         }
-        conversationAdapter.getSessionContext().remove(conversationId);
+        conversationAdapter.endConversation(
+                conversationConfig.getConversationName(), conversationId);
     }
 
 }

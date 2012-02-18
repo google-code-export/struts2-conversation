@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.DefaultConversationContextManager;
 import com.google.code.rees.scope.util.RequestContextUtil;
-import com.google.code.rees.scope.util.SessionContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
@@ -22,6 +25,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 
     private static final long serialVersionUID = -907192380776385729L;
 
+    protected ConversationContextManager conversationContextManager;
     protected ActionInvocation invocation;
     protected ActionContext actionContext;
     protected HttpServletRequest request;
@@ -30,6 +34,8 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     public StrutsConversationAdapter(ActionInvocation invocation) {
         this.invocation = invocation;
         this.actionContext = invocation.getInvocationContext();
+        this.conversationContextManager = getManager((HttpServletRequest) this.actionContext
+                .get(StrutsStatics.HTTP_REQUEST));
     }
 
     /**
@@ -52,16 +58,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> getSessionContext() {
-        return SessionContextUtil
-                .getSessionContext(((HttpServletRequest) this.actionContext
-                        .get(StrutsStatics.HTTP_REQUEST)));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Map<String, String> getRequestContext() {
         ActionContext actionContext = ActionContext.getContext();
         if (actionContext != null) {
@@ -78,6 +74,39 @@ public class StrutsConversationAdapter extends ConversationAdapter {
             requestContext = new HashMap<String, String>();
         }
         return requestContext;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Object> getConversationContext(String conversationName,
+            String conversationId) {
+        return this.conversationContextManager.getContext(conversationName,
+                conversationId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Object> endConversation(String conversationName,
+            String conversationId) {
+        return this.conversationContextManager.remove(conversationName,
+                conversationId);
+    }
+
+    protected ConversationContextManager getManager(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Object ctxMgr = session
+                .getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
+        if (ctxMgr == null) {
+            ctxMgr = new DefaultConversationContextManager();
+            session.setAttribute(
+                    ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY,
+                    ctxMgr);
+        }
+        return (ConversationContextManager) ctxMgr;
     }
 
 }

@@ -25,7 +25,6 @@ import java.util.Map;
 public abstract class ConversationAdapter implements Serializable {
 
     private static final long serialVersionUID = -8006640931436858515L;
-    protected final static ConversationContextFactory conversationContextFactory = new MonitoredConversationContextFactory();
     protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();
     protected Map<String, String> viewContext = new HashMap<String, String>();
     protected ConversationPostProcessorWrapperFactory postProcessorFactory = new DefaultConversationPostProcessorWrapperFactory();
@@ -53,13 +52,6 @@ public abstract class ConversationAdapter implements Serializable {
     public abstract String getActionId();
 
     /**
-     * Returns a session-scoped map used to store conversation contexts.
-     * 
-     * @return
-     */
-    public abstract Map<String, Object> getSessionContext();
-
-    /**
      * Returns a map containing, at a minimum, conversation name/id key/value
      * pairs
      * for the current request.
@@ -69,16 +61,21 @@ public abstract class ConversationAdapter implements Serializable {
     public abstract Map<String, String> getRequestContext();
 
     /**
-     * Returns a map, associated with the current session, the contains
-     * the values for an instance of a conversation.
+     * Returns a map, associated with the current session, that contains
+     * the values for an instance of a conversation. Creates the map
+     * if it does not already exist.
      * 
      * @param conversationId
      * @return
      */
-    public Map<String, Object> createConversationContext(String conversationId) {
-        return conversationContextFactory.createConversationContext(
-                conversationId, getSessionContext());
-    }
+    public abstract Map<String, Object> getConversationContext(
+            String conversationName, String conversationId);
+
+    /**
+     * Removes the conversation from the session, returning the context map
+     */
+    public abstract Map<String, Object> endConversation(
+            String conversationName, String conversationId);
 
     /**
      * Returns a map that is used to place conversation name/id key/value pairs
