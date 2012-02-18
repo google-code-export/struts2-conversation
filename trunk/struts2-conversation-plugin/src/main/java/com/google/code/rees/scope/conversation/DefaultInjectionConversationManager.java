@@ -31,8 +31,6 @@ public class DefaultInjectionConversationManager extends
             ConversationAdapter conversationAdapter, Object action) {
 
         String actionId = conversationAdapter.getActionId();
-        Map<String, Object> sessionContext = conversationAdapter
-                .getSessionContext();
         String conversationName = conversationConfig.getConversationName();
         String conversationId = (String) conversationAdapter
                 .getRequestContext().get(conversationName);
@@ -41,9 +39,9 @@ public class DefaultInjectionConversationManager extends
 
             if (conversationConfig.containsAction(actionId)) {
 
-                @SuppressWarnings("unchecked")
-                Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
-                        .get(conversationId);
+                Map<String, Object> conversationContext = conversationAdapter
+                        .getConversationContext(conversationName,
+                                conversationId);
 
                 if (conversationContext != null) {
                     if (LOG.isDebugEnabled()) {
@@ -106,16 +104,10 @@ public class DefaultInjectionConversationManager extends
                         + " following execution of action "
                         + conversationAdapter.getActionId());
             }
-
-            Map<String, Object> sessionContext = conversationAdapter
-                    .getSessionContext();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
-                    .get(conversationId);
-            if (conversationContext == null) {
-                conversationContext = conversationAdapter
-                        .createConversationContext(conversationId);
-            }
+            Map<String, Object> conversationContext = conversationAdapter
+                    .getConversationContext(
+                            conversationConfig.getConversationName(),
+                            conversationId);
             conversationContext.putAll(ScopeUtil.getFieldValues(action,
                     actionConversationFields));
 
@@ -131,15 +123,14 @@ public class DefaultInjectionConversationManager extends
         Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider
                 .getConfigurations(target.getClass());
         if (actionConversationConfigs != null) {
-            Map<String, Object> session = conversationAdapter
-                    .getSessionContext();
             for (ConversationConfiguration conversation : actionConversationConfigs) {
+                String conversationName = conversation.getConversationName();
                 String conversationId = conversationAdapter.getRequestContext()
-                        .get(conversation.getConversationName());
+                        .get(conversationName);
                 if (conversationId != null) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> conversationContext = (Map<String, Object>) session
-                            .get(conversationId);
+                    Map<String, Object> conversationContext = conversationAdapter
+                            .getConversationContext(conversationName,
+                                    conversationId);
                     if (conversationContext != null) {
                         Map<String, Field> actionConversationFields = conversation
                                 .getFields();
@@ -177,15 +168,9 @@ public class DefaultInjectionConversationManager extends
 
                 if (actionConversationFields != null) {
 
-                    Map<String, Object> sessionContext = conversationAdapter
-                            .getSessionContext();
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> conversationContext = (Map<String, Object>) sessionContext
-                            .get(conversationId);
-                    if (conversationContext == null) {
-                        conversationContext = conversationAdapter
-                                .createConversationContext(conversationId);
-                    }
+                    Map<String, Object> conversationContext = conversationAdapter
+                            .getConversationContext(conversationName,
+                                    conversationId);
                     conversationContext.putAll(ScopeUtil.getFieldValues(target,
                             actionConversationFields));
                 }
