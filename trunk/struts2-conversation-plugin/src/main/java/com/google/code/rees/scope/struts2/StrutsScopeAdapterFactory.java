@@ -1,9 +1,17 @@
 package com.google.code.rees.scope.struts2;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.StrutsStatics;
+
 import com.google.code.rees.scope.ScopeAdapterFactory;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
 import com.google.code.rees.scope.session.SessionAdapter;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionInvocation;
 
 /**
  * Struts2 implementation of the {@link ScopeAdapterFactory}.
@@ -13,6 +21,7 @@ import com.opensymphony.xwork2.ActionContext;
 public class StrutsScopeAdapterFactory implements ScopeAdapterFactory {
 
     private static final long serialVersionUID = -4595690103120891078L;
+    protected static final HttpConversationContextManagerFactory conversationContextManagerFactory = new DefaultHttpConversationContextManagerFactory();
 
     /**
      * {@inheritDoc}
@@ -28,8 +37,13 @@ public class StrutsScopeAdapterFactory implements ScopeAdapterFactory {
      */
     @Override
     public ConversationAdapter createConversationAdapter() {
-        return new StrutsConversationAdapter(ActionContext.getContext()
-                .getActionInvocation());
+        ActionContext actionContext = ActionContext.getContext();
+        HttpServletRequest request = (HttpServletRequest) actionContext
+                .get(StrutsStatics.HTTP_REQUEST);
+        ConversationContextManager contextManager = conversationContextManagerFactory
+                .getManager(request);
+        ActionInvocation invocation = actionContext.getActionInvocation();
+        return new StrutsConversationAdapter(invocation, contextManager);
     }
 
 }

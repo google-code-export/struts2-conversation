@@ -13,8 +13,9 @@ public class DefaultConversationContextFactory implements
     }
 
     @Override
-    public ConversationContext create(String conversationId) {
-        return new DefaultConversationContext(conversationId,
+    public ConversationContext create(String conversationName,
+            String conversationId) {
+        return new DefaultConversationContext(conversationName, conversationId,
                 conversationDuration);
     }
 

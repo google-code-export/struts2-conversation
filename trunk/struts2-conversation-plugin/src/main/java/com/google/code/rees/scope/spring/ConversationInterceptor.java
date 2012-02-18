@@ -9,6 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationManager;
+import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
 
 /**
  * This Spring MVC interceptor uses a {@link ConversationManager} to
@@ -19,6 +21,7 @@ import com.google.code.rees.scope.conversation.ConversationManager;
 public class ConversationInterceptor implements HandlerInterceptor {
 
     protected ConversationManager conversationManager;
+    protected HttpConversationContextManagerFactory conversationContextManagerFactory;
 
     /**
      * Set the {@link ConversationManager}
@@ -27,6 +30,16 @@ public class ConversationInterceptor implements HandlerInterceptor {
      */
     public void setConversationManager(ConversationManager conversationManager) {
         this.conversationManager = conversationManager;
+    }
+
+    /**
+     * Set the {@link HttpConversationContextManagerFactory}
+     * 
+     * @param conversationContextManagerFactory
+     */
+    public void setConversationContextManagerFactory(
+            HttpConversationContextManagerFactory conversationContextManagerFactory) {
+        this.conversationContextManagerFactory = conversationContextManagerFactory;
     }
 
     /**
@@ -57,8 +70,11 @@ public class ConversationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
-        conversationManager.processConversations(new SpringConversationAdapter(
-                request, (HandlerMethod) handler));
+        ConversationContextManager contextManager = conversationContextManagerFactory
+                .getManager(request);
+        ConversationAdapter adapter = new SpringConversationAdapter(request,
+                (HandlerMethod) handler, contextManager);
+        conversationManager.processConversations(adapter);
         return true;
     }
 

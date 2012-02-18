@@ -19,7 +19,7 @@ public class DefaultConversationContextManager implements
 
     protected ConversationContextFactory contextFactory = new DefaultConversationContextFactory();
     protected Map<String, Map<String, ConversationContext>> conversations = new HashMap<String, Map<String, ConversationContext>>();
-    protected long monitoringFrequency = 5000;// DEFAULT_MONITOR_FREQUENCY;
+    protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
     protected int maxInstances = DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
     protected Timer timer = new Timer();
 
@@ -51,7 +51,8 @@ public class DefaultConversationContextManager implements
                         + conversationName);
             }
             conversationContexts = new HashMap<String, ConversationContext>();
-            context = this.contextFactory.create(conversationId);
+            context = this.contextFactory.create(conversationName,
+                    conversationId);
             conversationContexts.put(conversationId, context);
             this.timer.scheduleAtFixedRate(new ContextMonitor(
                     conversationContexts, context), this.monitoringFrequency,
@@ -68,7 +69,8 @@ public class DefaultConversationContextManager implements
                     LOG.debug("No instance of " + conversationName
                             + " found.  Creating new instance.");
                 }
-                context = this.contextFactory.create(conversationId);
+                context = this.contextFactory.create(conversationName,
+                        conversationId);
                 conversationContexts.put(conversationId, context);
                 this.timer.scheduleAtFixedRate(new ContextMonitor(
                         conversationContexts, context),
@@ -117,7 +119,12 @@ public class DefaultConversationContextManager implements
                 leastRemainingTime = entryRemainingTime;
             }
         }
-        conversationContexts.remove(mostStaleId);
+        ConversationContext discardedContext = conversationContexts
+                .remove(mostStaleId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Discarding most stale conversation context with ID "
+                    + discardedContext.getId());
+        }
         if (conversationContexts.size() > this.maxInstances) {
             removeMostStaleConversation(conversationContexts, defaultDuration);
         }
