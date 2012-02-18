@@ -21,7 +21,7 @@ public class DefaultConversationContextManager implements
     protected Map<String, Map<String, ConversationContext>> conversations = new HashMap<String, Map<String, ConversationContext>>();
     protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
     protected int maxInstances = DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
-    protected Timer timer = new Timer();
+    protected transient Timer timer = new Timer();
 
     @Override
     public void setMonitoringFrequency(long frequency) {
@@ -54,9 +54,6 @@ public class DefaultConversationContextManager implements
             context = this.contextFactory.create(conversationName,
                     conversationId);
             conversationContexts.put(conversationId, context);
-            this.timer.scheduleAtFixedRate(new ContextMonitor(
-                    conversationContexts, context), this.monitoringFrequency,
-                    this.monitoringFrequency);
             this.conversations.put(conversationName, conversationContexts);
         } else {
             if (LOG.isDebugEnabled()) {
@@ -72,9 +69,6 @@ public class DefaultConversationContextManager implements
                 context = this.contextFactory.create(conversationName,
                         conversationId);
                 conversationContexts.put(conversationId, context);
-                this.timer.scheduleAtFixedRate(new ContextMonitor(
-                        conversationContexts, context),
-                        this.monitoringFrequency, this.monitoringFrequency);
             }
             if (conversationContexts.size() > this.maxInstances) {
                 if (LOG.isDebugEnabled()) {
@@ -85,6 +79,19 @@ public class DefaultConversationContextManager implements
                 this.removeMostStaleConversation(conversationContexts,
                         context.getRemainingTime());
             }
+        }
+
+        // following block ensures monitoring continues after
+        // serialization/deserialization
+        TimerTask monitor = context.getTimerTask();
+        if (monitor == null) {
+            monitor = new ContextMonitor(conversationContexts, context);
+            context.setTimerTask(monitor);
+            if (timer == null) {
+                this.createTimer();
+            }
+            this.timer.scheduleAtFixedRate(monitor, this.monitoringFrequency,
+                    this.monitoringFrequency);
         }
 
         return context;
@@ -127,6 +134,12 @@ public class DefaultConversationContextManager implements
         }
         if (conversationContexts.size() > this.maxInstances) {
             removeMostStaleConversation(conversationContexts, defaultDuration);
+        }
+    }
+
+    protected synchronized void createTimer() {
+        if (timer == null) {
+            timer = new Timer();
         }
     }
 
