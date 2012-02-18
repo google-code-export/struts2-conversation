@@ -11,5 +11,6 @@ public interface ConversationContextFactory extends Serializable {
 
     public void setConversationDuration(long duration);
 
-    public ConversationContext create(String conversationId);
+    public ConversationContext create(String conversationName,
+            String conversationId);
 }

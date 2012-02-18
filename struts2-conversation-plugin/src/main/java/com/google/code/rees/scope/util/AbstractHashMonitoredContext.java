@@ -1,4 +1,4 @@
-package com.google.code.rees.scope;
+package com.google.code.rees.scope.util;
 
 import java.util.Collection;
 import java.util.HashMap;

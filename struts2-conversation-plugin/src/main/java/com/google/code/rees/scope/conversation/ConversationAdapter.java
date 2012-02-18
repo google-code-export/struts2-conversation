@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.google.code.rees.scope.conversation.context.ConversationContext;
+
 /**
  * This class is used to adapt/integrate the major components of the
  * conversation management
@@ -68,13 +70,13 @@ public abstract class ConversationAdapter implements Serializable {
      * @param conversationId
      * @return
      */
-    public abstract Map<String, Object> getConversationContext(
+    public abstract ConversationContext getConversationContext(
             String conversationName, String conversationId);
 
     /**
      * Removes the conversation from the session, returning the context map
      */
-    public abstract Map<String, Object> endConversation(
+    public abstract ConversationContext endConversation(
             String conversationName, String conversationId);
 
     /**

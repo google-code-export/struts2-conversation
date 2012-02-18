@@ -3,16 +3,14 @@ package com.google.code.rees.scope.spring;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.DefaultConversationContextManager;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.google.code.rees.scope.util.SessionContextUtil;
 
@@ -34,12 +32,13 @@ public class SpringConversationAdapter extends ConversationAdapter {
     protected HttpServletRequest request;
 
     public SpringConversationAdapter(HttpServletRequest request,
-            HandlerMethod handler) {
+            HandlerMethod handler,
+            ConversationContextManager conversationContextManager) {
         this.sessionContext = SessionContextUtil.getSessionContext(request);
         this.requestContext = RequestContextUtil.getRequestContext(request);
         this.action = handler.getBean();
         this.actionId = handler.getMethod().getName();
-        this.conversationContextManager = getManager(request);
+        this.conversationContextManager = conversationContextManager;
     }
 
     /**
@@ -80,7 +79,7 @@ public class SpringConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> getConversationContext(String conversationName,
+    public ConversationContext getConversationContext(String conversationName,
             String conversationId) {
         return this.conversationContextManager.getContext(conversationName,
                 conversationId);
@@ -90,23 +89,10 @@ public class SpringConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> endConversation(String conversationName,
+    public ConversationContext endConversation(String conversationName,
             String conversationId) {
         return this.conversationContextManager.remove(conversationName,
                 conversationId);
-    }
-
-    protected ConversationContextManager getManager(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Object ctxMgr = session
-                .getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-        if (ctxMgr == null) {
-            ctxMgr = new DefaultConversationContextManager();
-            session.setAttribute(
-                    ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY,
-                    ctxMgr);
-        }
-        return (ConversationContextManager) ctxMgr;
     }
 
 }

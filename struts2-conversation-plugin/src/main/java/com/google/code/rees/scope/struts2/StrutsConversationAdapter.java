@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.DefaultConversationContextManager;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
@@ -31,11 +29,11 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     protected HttpServletRequest request;
     protected Map<String, String> requestContext;
 
-    public StrutsConversationAdapter(ActionInvocation invocation) {
+    public StrutsConversationAdapter(ActionInvocation invocation,
+            ConversationContextManager conversationContextManager) {
         this.invocation = invocation;
         this.actionContext = invocation.getInvocationContext();
-        this.conversationContextManager = getManager((HttpServletRequest) this.actionContext
-                .get(StrutsStatics.HTTP_REQUEST));
+        this.conversationContextManager = conversationContextManager;
     }
 
     /**
@@ -80,7 +78,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> getConversationContext(String conversationName,
+    public ConversationContext getConversationContext(String conversationName,
             String conversationId) {
         return this.conversationContextManager.getContext(conversationName,
                 conversationId);
@@ -90,23 +88,10 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> endConversation(String conversationName,
+    public ConversationContext endConversation(String conversationName,
             String conversationId) {
         return this.conversationContextManager.remove(conversationName,
                 conversationId);
-    }
-
-    protected ConversationContextManager getManager(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Object ctxMgr = session
-                .getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-        if (ctxMgr == null) {
-            ctxMgr = new DefaultConversationContextManager();
-            session.setAttribute(
-                    ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY,
-                    ctxMgr);
-        }
-        return (ConversationContextManager) ctxMgr;
     }
 
 }
