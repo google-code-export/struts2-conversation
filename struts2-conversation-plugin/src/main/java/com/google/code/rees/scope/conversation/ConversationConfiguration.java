@@ -1,6 +1,5 @@
 package com.google.code.rees.scope.conversation;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +16,7 @@ import java.util.Set;
  * @author rees.byars
  * 
  */
-public class ConversationConfiguration implements Serializable {
-
-    private static final long serialVersionUID = -4462332285717898280L;
+public class ConversationConfiguration {
 
     private Map<String, Field> fields;
     private Set<String> actionIds;

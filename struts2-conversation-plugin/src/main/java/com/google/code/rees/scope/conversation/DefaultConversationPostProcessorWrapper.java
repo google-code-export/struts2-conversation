@@ -10,7 +10,7 @@ public class DefaultConversationPostProcessorWrapper implements
 
     private static final long serialVersionUID = -8235162251071925835L;
 
-    private ConversationConfiguration conversationConfig;
+    private transient ConversationConfiguration conversationConfig;
     private String conversationId;
     private ConversationPostProcessor postProcessor;
     private ConversationAdapter conversationAdapter;

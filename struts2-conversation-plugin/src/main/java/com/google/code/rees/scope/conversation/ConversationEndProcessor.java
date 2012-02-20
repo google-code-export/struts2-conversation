@@ -1,5 +1,7 @@
 package com.google.code.rees.scope.conversation;
 
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +31,18 @@ public class ConversationEndProcessor implements ConversationPostProcessor {
                     + conversationConfig.getConversationName()
                     + ", removing conversation map from session following conversation end.");
         }
-        conversationAdapter.endConversation(
-                conversationConfig.getConversationName(), conversationId);
+        String conversationName = null;
+        if (conversationConfig == null) {
+            for (Entry<String, String> nameIdPair : conversationAdapter
+                    .getRequestContext().entrySet()) {
+                if (nameIdPair.getValue().equals(conversationId)) {
+                    conversationName = nameIdPair.getKey();
+                }
+            }
+        } else {
+            conversationName = conversationConfig.getConversationName();
+        }
+        conversationAdapter.endConversation(conversationName, conversationId);
     }
 
 }
