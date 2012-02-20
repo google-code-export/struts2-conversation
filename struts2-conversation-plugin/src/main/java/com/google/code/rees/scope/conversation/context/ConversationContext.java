@@ -12,8 +12,4 @@ public interface ConversationContext extends MonitoredContext<String, Object> {
 
     public TimerTask getTimerTask();
 
-    public <T> T getBean(Class<T> beanClass);
-
-    public <T> T getBean(Class<T> beanClass, String beanName);
-
 }
