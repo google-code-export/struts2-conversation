@@ -24,18 +24,6 @@ public class DefaultConversationContext extends
     }
 
     @Override
-    public <T> T getBean(Class<T> beanClass) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T> T getBean(Class<T> beanClass, String beanName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void setTimerTask(TimerTask timerTask) {
         this.timerTask = timerTask;
     }
