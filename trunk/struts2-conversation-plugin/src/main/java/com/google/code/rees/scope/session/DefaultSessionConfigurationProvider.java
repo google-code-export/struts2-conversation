@@ -22,7 +22,7 @@ public class DefaultSessionConfigurationProvider implements
     private static final long serialVersionUID = 3703684121698557461L;
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultSessionConfigurationProvider.class);
-    protected SessionConfiguration configuration = new SessionConfiguration();;
+    protected transient SessionConfiguration configuration = new SessionConfiguration();
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 
     /**
@@ -38,6 +38,10 @@ public class DefaultSessionConfigurationProvider implements
      */
     @Override
     public SessionConfiguration getSessionConfiguration(Class<?> clazz) {
+        if (this.configuration == null) {
+            this.configuration = new SessionConfiguration();
+            this.processClasses(this.classesProcessed);
+        }
         if (!this.classesProcessed.contains(clazz)) {
             this.processClass(clazz);
         }

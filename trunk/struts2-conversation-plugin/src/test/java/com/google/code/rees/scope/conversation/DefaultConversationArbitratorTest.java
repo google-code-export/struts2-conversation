@@ -1,5 +1,8 @@
 package com.google.code.rees.scope.conversation;
 
-public class DefaultConversationArbitratorTest {
+import com.google.code.rees.scope.testutil.SerializableObjectTest;
+
+public class DefaultConversationArbitratorTest extends
+        SerializableObjectTest<DefaultConversationArbitrator> {
 
 }

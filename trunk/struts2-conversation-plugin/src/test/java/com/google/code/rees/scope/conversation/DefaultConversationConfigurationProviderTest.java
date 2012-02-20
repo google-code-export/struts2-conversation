@@ -1,5 +1,8 @@
 package com.google.code.rees.scope.conversation;
 
-public class DefaultConversationConfigurationProviderTest {
+import com.google.code.rees.scope.testutil.SerializableObjectTest;
+
+public class DefaultConversationConfigurationProviderTest extends
+        SerializableObjectTest<DefaultConversationConfigurationProvider> {
 
 }

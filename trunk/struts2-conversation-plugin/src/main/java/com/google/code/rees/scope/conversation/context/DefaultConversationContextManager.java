@@ -89,9 +89,10 @@ public class DefaultConversationContextManager implements
             context.setTimerTask(monitor);
             if (timer == null) {
                 this.createTimer();
+            } else {
+                this.timer.scheduleAtFixedRate(monitor,
+                        this.monitoringFrequency, this.monitoringFrequency);
             }
-            this.timer.scheduleAtFixedRate(monitor, this.monitoringFrequency,
-                    this.monitoringFrequency);
         }
 
         return context;
@@ -140,6 +141,14 @@ public class DefaultConversationContextManager implements
     protected synchronized void createTimer() {
         if (timer == null) {
             timer = new Timer();
+            for (Map<String, ConversationContext> conversationContexts : this.conversations
+                    .values()) {
+                for (ConversationContext context : conversationContexts
+                        .values()) {
+                    this.timer.scheduleAtFixedRate(context.getTimerTask(),
+                            this.monitoringFrequency, this.monitoringFrequency);
+                }
+            }
         }
     }
 

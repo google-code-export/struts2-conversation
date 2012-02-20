@@ -27,7 +27,7 @@ public class DefaultConversationConfigurationProvider implements
             .getLogger(DefaultConversationConfigurationProvider.class);
 
     protected ConversationArbitrator arbitrator = new DefaultConversationArbitrator();
-    protected Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
+    protected transient Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
             .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
 
     /**
@@ -54,6 +54,11 @@ public class DefaultConversationConfigurationProvider implements
     @Override
     public Collection<ConversationConfiguration> getConfigurations(
             Class<?> clazz) {
+
+        if (this.classConfigurations == null) {
+            this.classConfigurations = Collections
+                    .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
+        }
         Collection<ConversationConfiguration> configurations = classConfigurations
                 .get(clazz);
         if (configurations == null) {

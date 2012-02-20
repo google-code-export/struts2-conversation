@@ -1,6 +1,5 @@
 package com.google.code.rees.scope.session;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,9 +13,8 @@ import java.util.Map;
  * 
  * @author rees.byars
  */
-public class SessionConfiguration implements Serializable {
+public class SessionConfiguration {
 
-    private static final long serialVersionUID = 1402196072477172856L;
     private Map<Class<?>, Map<String, Field>> fields;
 
     public SessionConfiguration() {
