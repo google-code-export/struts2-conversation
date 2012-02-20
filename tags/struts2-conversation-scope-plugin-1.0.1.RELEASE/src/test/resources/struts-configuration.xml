@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+
+<struts>
+	
+	<constant name="struts.objectFactory" value="struts"/>
+	
+	<constant name="struts.scope.followsConvention" value="false" />
+	
+	<constant name="struts.convention.action.suffix" value="Controller" />
+	
+	<constant name="struts.convention.package.locators" value="actions" />
+	
+	<package name="session-field-configuration-test-default" extends="annotated-scope-default">
+		
+		<action name="configuration-action"
+			class="com.google.code.rees.scope.mocks.actions.MockActionByConfiguration">
+			<result name="success">/mock.jsp</result>
+		</action>
+
+	</package>
+
+</struts>
