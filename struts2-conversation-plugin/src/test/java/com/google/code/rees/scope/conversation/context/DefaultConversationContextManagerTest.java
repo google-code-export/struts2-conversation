@@ -13,6 +13,11 @@ import com.google.code.rees.scope.testutil.SerializationTestingUtil;
 public class DefaultConversationContextManagerTest {
 
     @Test
+    public void testGetContext() {
+
+    }
+
+    @Test
     public void testSerialization() throws Exception {
 
         String testName = "test-conversation";
