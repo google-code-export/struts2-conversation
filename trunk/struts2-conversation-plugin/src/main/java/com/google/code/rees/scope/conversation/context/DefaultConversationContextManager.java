@@ -23,21 +23,33 @@ public class DefaultConversationContextManager implements
     protected int maxInstances = DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
     protected transient Timer timer = new Timer();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMonitoringFrequency(long frequency) {
         this.monitoringFrequency = frequency;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMaxInstances(int maxInstances) {
         this.maxInstances = maxInstances;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setContextFactory(ConversationContextFactory contextFactory) {
         this.contextFactory = contextFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConversationContext getContext(String conversationName,
             String conversationId) {
@@ -98,6 +110,9 @@ public class DefaultConversationContextManager implements
         return context;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConversationContext remove(String conversationName,
             String conversationId) {
@@ -114,6 +129,11 @@ public class DefaultConversationContextManager implements
 
     }
 
+    /**
+     * Recursively removes the least-recently accessed conversations until the
+     * number of remaining
+     * conversations equals {@link #maxInstances}
+     */
     protected void removeMostStaleConversation(
             Map<String, ConversationContext> conversationContexts,
             long defaultDuration) {
@@ -138,6 +158,11 @@ public class DefaultConversationContextManager implements
         }
     }
 
+    /**
+     * For use in case of the timer becoming null do to serialization. Creates
+     * a new timer and adds the existing cached conversations' monitors to the
+     * timer
+     */
     protected synchronized void createTimer() {
         if (timer == null) {
             timer = new Timer();

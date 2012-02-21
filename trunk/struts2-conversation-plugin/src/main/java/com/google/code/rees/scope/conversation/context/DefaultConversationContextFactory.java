@@ -1,5 +1,11 @@
 package com.google.code.rees.scope.conversation.context;
 
+/**
+ * The default implementation of the {@link ConversationContextFactory}
+ * 
+ * @author rees.byars
+ * 
+ */
 public class DefaultConversationContextFactory implements
         ConversationContextFactory {
 
@@ -7,11 +13,20 @@ public class DefaultConversationContextFactory implements
 
     protected long conversationDuration = DEFAULT_CONVERSATION_DURATION;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConversationDuration(long duration) {
         this.conversationDuration = duration;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * The implementation of the context is the
+     * {@link DefaultConversationContext}
+     */
     @Override
     public ConversationContext create(String conversationName,
             String conversationId) {
