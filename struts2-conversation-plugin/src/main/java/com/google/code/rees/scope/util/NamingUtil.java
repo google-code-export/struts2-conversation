@@ -13,8 +13,10 @@ public class NamingUtil {
 
     public static String getConventionName(Class<?> clazz, String suffixToRemove) {
         String conventionName = clazz.getSimpleName();
-        conventionName = conventionName.substring(0,
-                conventionName.lastIndexOf(suffixToRemove));
+        int suffixIndex = conventionName.lastIndexOf(suffixToRemove);
+        if (suffixIndex > 0) {
+            conventionName = conventionName.substring(0, suffixIndex);
+        }
         conventionName = getConventionName(conventionName);
         return conventionName;
     }

@@ -75,6 +75,8 @@ public class SimpleConversationManager implements ConversationManager {
             conversationId = ConversationUtil.generateId();
             conversationAdapter.getViewContext().put(conversationName,
                     conversationId);
+            conversationAdapter.getRequestContext().put(conversationName,
+                    conversationId);
             conversationAdapter.getConversationContext(conversationName,
                     conversationId);
         }

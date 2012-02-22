@@ -190,8 +190,8 @@ public class DefaultConversationContextManager implements
 
         @Override
         public void run() {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Monitoring conversation context with ID "
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Monitoring conversation context with ID "
                         + context.getId());
             }
             if (!conversationContexts.containsValue(context)) {
