@@ -39,8 +39,12 @@ public class DefaultSessionConfigurationProvider implements
     @Override
     public SessionConfiguration getSessionConfiguration(Class<?> clazz) {
         if (this.configuration == null) {
-            this.configuration = new SessionConfiguration();
-            this.processClasses(this.classesProcessed);
+            synchronized (this.configuration) {
+                if (this.configuration == null) {
+                    this.configuration = new SessionConfiguration();
+                    this.processClasses(this.classesProcessed);
+                }
+            }
         }
         if (!this.classesProcessed.contains(clazz)) {
             this.processClass(clazz);
@@ -61,6 +65,7 @@ public class DefaultSessionConfigurationProvider implements
                     && !clazz.isAnnotation()) {
                 LOG.info("Loading @SessionField fields from " + clazz.getName());
                 addFields(clazz);
+                this.classesProcessed.add(clazz);
             }
         }
     }
