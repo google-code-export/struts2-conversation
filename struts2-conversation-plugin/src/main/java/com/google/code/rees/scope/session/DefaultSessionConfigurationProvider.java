@@ -39,17 +39,21 @@ public class DefaultSessionConfigurationProvider implements
     @Override
     public SessionConfiguration getSessionConfiguration(Class<?> clazz) {
         if (this.configuration == null) {
-            synchronized (this.configuration) {
-                if (this.configuration == null) {
-                    this.configuration = new SessionConfiguration();
-                    this.processClasses(this.classesProcessed);
-                }
+            synchronized (this.classesProcessed) {
+                this.initConfig();
             }
         }
         if (!this.classesProcessed.contains(clazz)) {
             this.processClass(clazz);
         }
         return this.configuration;
+    }
+
+    protected synchronized void initConfig() {
+        if (this.configuration == null) {
+            this.configuration = new SessionConfiguration();
+            this.processClasses(this.classesProcessed);
+        }
     }
 
     protected void processClasses(Set<Class<?>> classes) {
