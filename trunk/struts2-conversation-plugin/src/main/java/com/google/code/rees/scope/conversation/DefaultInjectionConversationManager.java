@@ -26,14 +26,32 @@ public class DefaultInjectionConversationManager extends
      * {@inheritDoc}
      */
     @Override
+    public void processConversations(ConversationAdapter adapter) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Conversation Request Context:  "
+                    + adapter.getRequestContext());
+        }
+        super.processConversations(adapter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void processConversation(
             ConversationConfiguration conversationConfig,
             ConversationAdapter conversationAdapter, Object action) {
 
         String actionId = conversationAdapter.getActionId();
         String conversationName = conversationConfig.getConversationName();
-        String conversationId = (String) conversationAdapter
-                .getRequestContext().get(conversationName);
+        String conversationId = conversationAdapter.getRequestContext().get(
+                conversationName);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing request for conversation " + conversationName
+                    + " and action " + actionId + " of class "
+                    + action.getClass());
+        }
 
         if (conversationId != null) {
 
@@ -43,13 +61,13 @@ public class DefaultInjectionConversationManager extends
                         .getConversationContext(conversationName,
                                 conversationId);
 
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("The action is a conversation member.  Processing with context:  "
+                            + conversationContext);
+                }
+
                 if (conversationContext != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("In Conversation "
-                                + conversationName
-                                + ".  Setting Conversation Field values for method "
-                                + actionId + " of class " + action.getClass());
-                    }
+
                     Map<String, Field> actionConversationFields = conversationConfig
                             .getFields();
                     if (actionConversationFields != null) {
@@ -79,7 +97,8 @@ public class DefaultInjectionConversationManager extends
                     conversationId);
             conversationAdapter.getViewContext().put(conversationName,
                     conversationId);
-
+            conversationAdapter.getRequestContext().put(conversationName,
+                    conversationId);
         }
     }
 

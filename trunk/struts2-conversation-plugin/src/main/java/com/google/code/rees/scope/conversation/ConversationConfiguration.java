@@ -72,6 +72,7 @@ public class ConversationConfiguration {
      * @param actionId
      */
     public void addBeginAction(String actionId) {
+        actionIds.add(actionId);
         beginActionIds.add(actionId);
     }
 
@@ -83,6 +84,7 @@ public class ConversationConfiguration {
      * @param actionId
      */
     public void addEndAction(String actionId) {
+        actionIds.add(actionId);
         endActionIds.add(actionId);
     }
 
