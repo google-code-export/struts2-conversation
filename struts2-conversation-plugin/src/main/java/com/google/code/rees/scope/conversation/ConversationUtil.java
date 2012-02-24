@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.code.rees.scope.conversation.context.ConversationContext;
+
 /**
  * Provides static methods intended primarily for use internally and in
  * unit testing. Use outside of these contexts should come only as
@@ -128,6 +130,53 @@ public class ConversationUtil {
                 conversationContext.put(fieldName, fieldValue);
             }
         }
+    }
+
+    /**
+     * A convenience method for beginning a conversation programmatically
+     * 
+     * @param name
+     * @return a new {@link ConversationContext}
+     */
+    public static ConversationContext begin(String name) {
+        String id = generateId();
+        ConversationAdapter adapter = ConversationAdapter.getAdapter();
+        adapter.getViewContext().put(name, id);
+        return adapter.getConversationContext(name, id);
+    }
+
+    /**
+     * Persist a conversation programmatically
+     * 
+     * @param name
+     * @return The {@link ConversationContext} or <code>null</code> if
+     *         the conversation is not active
+     */
+    public static ConversationContext persist(String name) {
+        ConversationAdapter adapter = ConversationAdapter.getAdapter();
+        String id = adapter.getRequestContext().get(name);
+        if (id == null) {
+            return null;
+        }
+        adapter.getViewContext().put(name, id);
+        return adapter.getConversationContext(name, id);
+    }
+
+    /**
+     * A convenience method for ending a conversation programmatically.
+     * 
+     * @param name
+     * @return The {@link ConversationContext} or <code>null</code> if
+     *         the conversation is not active
+     */
+    public static ConversationContext end(String name) {
+        ConversationAdapter adapter = ConversationAdapter.getAdapter();
+        String id = adapter.getRequestContext().remove(name);
+        if (id == null) {
+            return null;
+        }
+        adapter.getViewContext().remove(name);
+        return adapter.endConversation(name, id);
     }
 
     /**

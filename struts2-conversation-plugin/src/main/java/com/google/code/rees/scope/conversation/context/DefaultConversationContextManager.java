@@ -123,6 +123,10 @@ public class DefaultConversationContextManager implements
         ConversationContext context = null;
         if (conversationContexts != null) {
             context = conversationContexts.remove(conversationId);
+            TimerTask task = context.getTimerTask();
+            if (task != null) {
+                task.cancel();
+            }
         }
 
         return context;
@@ -149,6 +153,10 @@ public class DefaultConversationContextManager implements
         }
         ConversationContext discardedContext = conversationContexts
                 .remove(mostStaleId);
+        TimerTask task = discardedContext.getTimerTask();
+        if (task != null) {
+            task.cancel();
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Discarding most stale conversation context with ID "
                     + discardedContext.getId());
