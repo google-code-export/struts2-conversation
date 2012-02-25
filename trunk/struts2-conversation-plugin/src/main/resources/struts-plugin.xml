@@ -52,6 +52,9 @@
 		
 	<!-- SCOPE -->
 	<constant name="struts.scope.followsConvention" value="true" />
+	<constant name="conversation.monitoring.frequency" value="300000"/>
+	<constant name="conversation.idle.timeout" value="28800000"/>
+	<constant name="conversation.max.instances" value="20"/>
 	
 	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.ActionProvider"
 		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
@@ -70,6 +73,10 @@
 	<bean name="struts.conversation.conversationManager"
 		type="com.google.code.rees.scope.conversation.ConversationManager"
 		class="com.google.code.rees.scope.conversation.DefaultInjectionConversationManager" />
+		
+	<bean name="conversation.simple.manager"
+		type="com.google.code.rees.scope.conversation.ConversationManager"
+		class="com.google.code.rees.scope.conversation.SimpleConversationManager" />
 
 	<bean name="struts.session.sessionManager"
 		type="com.google.code.rees.scope.session.SessionManager"
@@ -79,17 +86,24 @@
 		type="com.google.code.rees.scope.ScopeAdapterFactory"
 		class="com.google.code.rees.scope.struts2.StrutsScopeAdapterFactory" />
 		
+	<bean name="conversation.context.manager.factory" 
+		type="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory" 
+		class="com.google.code.rees.scope.struts2.StrutsConversationContextManagerFactory"/>
+		
+	<bean name="conversation.context.factory" type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
+		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
+	
 	<bean name="struts.scope.manager" type="com.google.code.rees.scope.ScopeManager" class="com.google.code.rees.scope.DefaultScopeManager"></bean>
 
 	<package name="annotated-scope-default" extends="struts-default">
 	
 		<interceptors>
 		
-			<interceptor name="jChronic"
+			<interceptor name="scopeInjection"
 				class="com.google.code.rees.scope.struts2.ScopeInterceptor" />
 			
 			<interceptor-stack name="defaultAnnotatedScopeStack">
-				<interceptor-ref name="jChronic" />
+				<interceptor-ref name="scopeInjection" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 			

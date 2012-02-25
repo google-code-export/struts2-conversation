@@ -55,7 +55,7 @@ public class StrutsConversationIntegrationTest extends
         System.out.println("3" + this.getAction().getBean().getEcho());
         System.out.println(ConversationAdapter.getAdapter().getActionId());
 
-        String id = ConversationUtil.getConversationId("oopy");
+        String id = ConversationUtil.getId("oopy");
 
         this.getActionProxy("begin").execute();
 

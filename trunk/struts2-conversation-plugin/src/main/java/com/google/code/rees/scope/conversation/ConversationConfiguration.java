@@ -30,7 +30,7 @@ public class ConversationConfiguration {
         beginActionIds = new HashSet<String>();
         endActionIds = new HashSet<String>();
         this.conversationName = ConversationUtil
-                .sanitizeConversationName(conversationName)
+                .sanitizeName(conversationName)
                 + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
     }
 

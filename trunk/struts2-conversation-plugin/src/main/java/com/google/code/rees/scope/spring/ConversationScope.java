@@ -15,10 +15,10 @@ public class ConversationScope implements Scope {
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
-        Object object = ConversationUtil.getConversationField(name);
+        Object object = ConversationUtil.getField(name);
         if (object == null) {
             object = objectFactory.getObject();
-            ConversationUtil.setConversationField(name, object);
+            ConversationUtil.setField(name, object);
         }
         return object;
     }

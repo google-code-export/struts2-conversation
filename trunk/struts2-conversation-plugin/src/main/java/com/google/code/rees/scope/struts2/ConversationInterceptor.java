@@ -4,51 +4,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.DefaultScopeManager;
 import com.google.code.rees.scope.ScopeAdapterFactory;
-import com.google.code.rees.scope.ScopeManager;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.ConversationManager;
-import com.google.code.rees.scope.session.SessionConfigurationProvider;
-import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
-import com.opensymphony.xwork2.util.ValueStack;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
-/**
- * A Struts2 {@link Interceptor} that uses injected Conversations and Session
- * scope management components to process and manage conversation and
- * session-scoped
- * beans and lifecycles.
- * <p>
- * Also implements {@link PreResultListener} to perform post-processing and
- * place the {@link ConversationAdapter#getViewContext()} map onto the
- * {@link ValueStack} in order to make the conversation IDs available to the
- * view.
- * 
- * @author rees.byars
- */
-public class ScopeInterceptor extends MethodFilterInterceptor implements
+public class ConversationInterceptor extends MethodFilterInterceptor implements
         PreResultListener {
 
-    private static final long serialVersionUID = 3222190171260674636L;
+    private static final long serialVersionUID = -72776817859403642L;
     private static final Logger LOG = LoggerFactory
-            .getLogger(ScopeInterceptor.class);
+            .getLogger(ConversationInterceptor.class);
 
-    protected ScopeManager manager = new DefaultScopeManager();
     protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
     protected ConversationArbitrator arbitrator;
     protected ConversationManager conversationManager;
     protected ConversationConfigurationProvider conversationConfigurationProvider;
-    protected SessionManager sessionManager;
-    protected SessionConfigurationProvider sessionConfigurationProvider;
     protected ActionProvider finder;
     protected String actionSuffix;
 
@@ -62,17 +40,12 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
         this.actionSuffix = suffix;
     }
 
-    @Inject(StrutsScopeConstants.SCOPE_MANAGER_KEY)
-    public void setScopeManager(ScopeManager manager) {
-        this.manager = manager;
-    }
-
     @Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
+    @Inject(StrutsScopeConstants.SIMPLE_CONVERSATION_MANAGER_KEY)
     public void setConversationManager(ConversationManager manager) {
         this.conversationManager = manager;
     }
@@ -81,17 +54,6 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
     public void setConversationConfigurationProvider(
             ConversationConfigurationProvider conversationConfigurationProvider) {
         this.conversationConfigurationProvider = conversationConfigurationProvider;
-    }
-
-    @Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
-    public void setSessionManager(SessionManager manager) {
-        this.sessionManager = manager;
-    }
-
-    @Inject(StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
-    public void setSessionConfigurationProvider(
-            SessionConfigurationProvider sessionConfigurationProvider) {
-        this.sessionConfigurationProvider = sessionConfigurationProvider;
     }
 
     @Inject(StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY)
@@ -104,7 +66,7 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
      */
     @Override
     public void destroy() {
-        LOG.info("Destroying the ScopeInterceptor...");
+        LOG.info("Destroying the ConversationInterceptor...");
     }
 
     /**
@@ -113,7 +75,7 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
     @Override
     public void init() {
 
-        LOG.info("Initializing the ScopeInterceptor...");
+        LOG.info("Initializing the ConversationInterceptor...");
 
         this.arbitrator.setActionSuffix(actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(arbitrator);
@@ -122,22 +84,12 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
         this.conversationManager
                 .setConfigurationProvider(conversationConfigurationProvider);
 
-        this.sessionConfigurationProvider.init(finder.getActionClasses());
-        this.sessionManager
-                .setConfigurationProvider(sessionConfigurationProvider);
-
-        this.manager.setConversationManager(conversationManager);
-        this.manager.setSessionManager(sessionManager);
-        this.manager.setScopeAdapterFactory(adapterFactory);
-
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String doIntercept(ActionInvocation invocation) throws Exception {
-        this.manager.processScopes();
+        this.conversationManager.processConversations(this.adapterFactory
+                .createConversationAdapter());
         invocation.addPreResultListener(this);
         return invocation.invoke();
     }

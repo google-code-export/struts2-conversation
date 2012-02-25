@@ -17,4 +17,10 @@ public class StrutsScopeConstants {
     public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
     public static final String SESSION_CONFIG_PROVIDER_KEY = "struts.session.configurationProvider";
     public static final String SESSION_FIELD_MAP_KEY = "session.field.map";
+    public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
+    public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
+    public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
+    public static final String CONVERSATION_CONTEXT_FACTORY = "conversation.context.factory";
+    public static final String CONVERSATION_CONTEXT_MANAGER_FACTORY = "conversation.context.manager.factory";
+    public static final String SIMPLE_CONVERSATION_MANAGER_KEY = "conversation.simple.manager";
 }
