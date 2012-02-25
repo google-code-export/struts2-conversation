@@ -1,0 +1,95 @@
+---
+==Conversation Redirects==
+
+If the standard Struts2 result types "redirect" and "redirectAction" are used, then the action conversations are not propagated along with the redirect.  If you wish to allow redirects of conversations, then the following approach should be used:
+
+In the struts.xml, either extend struts-conversation-default package:
+{{{
+<package name="your-package" extends="struts-conversation-default">
+}}}
+
+Or, declare the result types in your package:
+{{{
+<package name="your-package" extends="struts-default">
+   <result-types>
+      <result-type name="conversationRedirectAction" class="com.google.code.rees.scope.struts2.ConversationActionRedirectResult"/>
+      <result-type name="conversationRedirect" class="com.google.code.rees.scope.struts2.ConversationRedirectResult"/>
+   </result-types>
+}}}
+
+Then, in your result mapping set the result type as either "conversationRedirect" or "conversationRedirectAction", and the conversations will propagate over the redirection.
+
+
+---
+== Programmatic Conversation Management ==
+If you prefer not to use annotations to dictate when conversation are beginning, continuing, or ending, the the ConversationUtil class can be used to do it programmatically:
+
+{{{
+public String someAction() {
+
+   //Begins a new instance of the conversation, returning the context
+   ConversationContext context = ConversationUtil.begin("someConversationName");
+
+   return SUCCESS;
+}
+
+public String someOtherAction() {
+
+   //Continues the conversation, returning the context
+   ConversationContext context = ConversationUtil.persist("someConversationName");
+
+   return SUCCESS;
+}
+
+public String someOtherOtherAction() {
+
+   //Ends the conversation, returning the context
+   ConversationContext context = ConversationUtil.end("someConversationName");
+
+   return SUCCESS;
+}
+}}}
+
+---
+== Inheritance ==
+
+Using the DefaultConversationArbitrator (which is what is used unless overridden in the struts.xml), Conversation configurations are inherited.
+
+So, if you have the abstract controller BaseController:
+{{{
+@ConversationController
+public abstract BaseController {
+   @Autowired BaseModel model;
+}
+}}}
+
+And then extend this controller with two other controllers:
+{{{
+@ConversationController
+public RegistrationController extends BaseController {
+   @Autowired RegistrationModel model;
+}
+}}}
+{{{
+@ConversationController
+public PaymentController extends BaseController {
+   @Autowired PaymentModel model;
+}
+}}}
+
+Then the actions in the RegistrationController and PaymentController are members of both the higher-level "base" conversation.  Any "begin" and "end" actions in the sub-controllers will only begin the base conversation if stated explicitly.  In this manner, registration and payment conversations can begin and end within a single base conversation.
+
+---
+==Memory Management==
+Conversations have a default idle-time timeout of 8 hours in order to keep old conversations from taking up system resources.  Conversations are, by default, monitored once every 5 minutes to scan for cleanup of the stale conversations.  As well, there is a default maximum of 20 instances of each conversation per session to prevent users from unnecessarily overloading the system by creating countless conversations (so, in the above example, there could be up to 20 "base" conversations, 20 "registration" conversations, etc.).  Each of these settings can be changed in the struts.xml by configuring constants:
+
+{{{
+<!-- monitoring frequency in milliseconds -->
+<constant name="conversation.monitoring.frequency" value="300000"/>
+
+<!-- idle conversation timeout in milliseconds -->
+<constant name="conversation.idle.timeout" value="28800000"/>
+
+<!-- max instances of a conversation -->
+<constant name="conversation.max.instances" value="20"/>
+}}}
