@@ -25,7 +25,7 @@ public class ConversationUtil {
      * @param conversationName
      * @return
      */
-    public static String getConversationId(String conversationName) {
+    public static String getId(String conversationName) {
         if (!conversationName
                 .endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
             conversationName += ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
@@ -42,7 +42,7 @@ public class ConversationUtil {
      * @param fieldName
      * @return
      */
-    public static Object getConversationField(String fieldName) {
+    public static Object getField(String fieldName) {
         Object field = null;
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
@@ -71,9 +71,9 @@ public class ConversationUtil {
      * @param fieldClass
      * @return
      */
-    public static <T> T getConversationField(String fieldName,
+    public static <T> T getField(String fieldName,
             Class<T> fieldClass) {
-        return getConversationField(fieldName, fieldClass, getConversations());
+        return getField(fieldName, fieldClass, getConversations());
     }
 
     /**
@@ -90,13 +90,13 @@ public class ConversationUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getConversationField(String fieldName,
+    public static <T> T getField(String fieldName,
             Class<T> fieldClass, String[] conversations) {
         T field = null;
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
             for (String conversationName : conversations) {
-                String id = getConversationId(conversationName);
+                String id = getId(conversationName);
                 if (id != null) {
                     Map<String, Object> conversationContext = adapter
                             .getConversationContext(conversationName, id);
@@ -118,7 +118,7 @@ public class ConversationUtil {
      * @param fieldName
      * @param fieldValue
      */
-    public static void setConversationField(String fieldName, Object fieldValue) {
+    public static void setField(String fieldName, Object fieldValue) {
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
             Map<String, String> requestContext = adapter.getRequestContext();
@@ -202,7 +202,7 @@ public class ConversationUtil {
      * 
      * @return
      */
-    public static String[] getConversationIds() {
+    public static String[] getIds() {
 
         List<String> convoIds = new ArrayList<String>();
 
@@ -221,7 +221,7 @@ public class ConversationUtil {
      * @param conversationName
      * @return
      */
-    public static String sanitizeConversationName(String conversationName) {
+    public static String sanitizeName(String conversationName) {
         return conversationName.replaceAll(":", "").replaceAll(",", "");
     }
 

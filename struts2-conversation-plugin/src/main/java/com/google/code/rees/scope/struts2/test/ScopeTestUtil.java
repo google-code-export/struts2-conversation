@@ -63,7 +63,7 @@ public class ScopeTestUtil {
      */
     @SuppressWarnings("unchecked")
     public static String getConversationId(String conversationName) {
-        String id = ConversationUtil.getConversationId(conversationName);
+        String id = ConversationUtil.getId(conversationName);
         if (id == null) {
             ValueStack stack = ActionContext.getContext().getValueStack();
             id = (String) ((Map<String, Object>) stack
@@ -97,7 +97,7 @@ public class ScopeTestUtil {
                     actionClass, getActionSuffix())) {
                 request.addParameter(
                         ConversationUtil
-                                .sanitizeConversationName(conversationName)
+                                .sanitizeName(conversationName)
                                 + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX,
                         conversationName + "-test-id");
             }
@@ -113,7 +113,7 @@ public class ScopeTestUtil {
      * @param target
      */
     public static void extractScopeFields(Object target) {
-        SessionUtil.extractSessionFields(target);
+        SessionUtil.extractFields(target);
         getconversationManager().extractConversationFields(target,
                 ConversationAdapter.getAdapter());
     }
@@ -127,7 +127,7 @@ public class ScopeTestUtil {
      * @param target
      */
     public static void injectScopeFields(Object target) {
-        SessionUtil.injectSessionFields(target);
+        SessionUtil.injectFields(target);
         getconversationManager().injectConversationFields(target,
                 ConversationAdapter.getAdapter());
     }

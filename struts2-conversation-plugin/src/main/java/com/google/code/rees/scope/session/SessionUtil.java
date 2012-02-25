@@ -45,7 +45,7 @@ public class SessionUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getSessionField(String name, Class<T> clazz) {
+    public static <T> T getField(String name, Class<T> clazz) {
         String key = buildKey(name, clazz);
         SessionAdapter adapter = SessionAdapter.getAdapter();
         if (adapter == null)
@@ -61,7 +61,7 @@ public class SessionUtil {
      * @param fieldName
      * @param fieldValue
      */
-    public static void setSessionField(String name, Object sessionField) {
+    public static void setField(String name, Object sessionField) {
         String key = buildKey(name, sessionField.getClass());
         SessionAdapter adapter = SessionAdapter.getAdapter();
         if (adapter != null) {
@@ -78,7 +78,7 @@ public class SessionUtil {
      * 
      * @param target
      */
-    public static void extractSessionFields(Object target) {
+    public static void extractFields(Object target) {
         Class<?> clazz = target.getClass();
         for (Field field : ReflectionUtil.getFields(clazz)) {
             if (field.isAnnotationPresent(SessionField.class)) {
@@ -87,7 +87,7 @@ public class SessionUtil {
                 try {
                     Object value = field.get(target);
                     if (value != null) {
-                        setSessionField(name, value);
+                        setField(name, value);
                     }
                 } catch (IllegalArgumentException e) {
                     LOG.info("Illegal Argument on session field "
@@ -107,10 +107,10 @@ public class SessionUtil {
      * 
      * @param target
      */
-    public static void injectSessionFields(Object target) {
+    public static void injectFields(Object target) {
         for (Field field : ReflectionUtil.getFields(target.getClass())) {
             if (field.isAnnotationPresent(SessionField.class)) {
-                Object value = getSessionField(field.getName(), field.getType());
+                Object value = getField(field.getName(), field.getType());
                 ReflectionUtil.makeAccessible(field);
                 try {
                     field.set(target, value);
