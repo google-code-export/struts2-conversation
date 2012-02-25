@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation-scope-plugin</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<packaging>jar</packaging>
 
 	<name>Struts2 Conversation Scope Plugin</name>
@@ -17,9 +16,9 @@
 	</parent>
 
 	<scm>
-		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</developerConnection>
-		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</connection>
-		<url>http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</url>
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.3</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.3</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.3</url>
 	</scm>
 
 	<licenses>
