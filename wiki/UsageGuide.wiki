@@ -28,7 +28,7 @@ Then, in your result mapping set the result type as either "conversationRedirect
 
 ----
 ==Programmatic Conversation Management==
-If you prefer not to use annotations to dictate when conversation are beginning, continuing, or ending, the the ConversationUtil class can be used to do it programmatically:
+If you prefer not to use annotations to dictate when conversations are beginning, continuing, or ending, then the ConversationUtil class can be used to do it programmatically:
 
 {{{
 public String someAction() {
