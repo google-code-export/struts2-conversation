@@ -1,4 +1,4 @@
----
+----
 ==Conversation Redirects==
 
 If the standard Struts2 result types "redirect" and "redirectAction" are used, then the action conversations are not propagated along with the redirect.  If you wish to allow redirects of conversations, then the following approach should be used:
@@ -20,7 +20,7 @@ Or, declare the result types in your package:
 Then, in your result mapping set the result type as either "conversationRedirect" or "conversationRedirectAction", and the conversations will propagate over the redirection.
 
 
----
+----
 == Programmatic Conversation Management ==
 If you prefer not to use annotations to dictate when conversation are beginning, continuing, or ending, the the ConversationUtil class can be used to do it programmatically:
 
@@ -50,7 +50,7 @@ public String someOtherOtherAction() {
 }
 }}}
 
----
+----
 == Inheritance ==
 
 Using the DefaultConversationArbitrator (which is what is used unless overridden in the struts.xml), Conversation configurations are inherited.
@@ -79,7 +79,7 @@ public PaymentController extends BaseController {
 
 Then the actions in the RegistrationController and PaymentController are members of both the higher-level "base" conversation.  Any "begin" and "end" actions in the sub-controllers will only begin the base conversation if stated explicitly.  In this manner, registration and payment conversations can begin and end within a single base conversation.
 
----
+----
 ==Memory Management==
 Conversations have a default idle-time timeout of 8 hours in order to keep old conversations from taking up system resources.  Conversations are, by default, monitored once every 5 minutes to scan for cleanup of the stale conversations.  As well, there is a default maximum of 20 instances of each conversation per session to prevent users from unnecessarily overloading the system by creating countless conversations (so, in the above example, there could be up to 20 "base" conversations, 20 "registration" conversations, etc.).  Each of these settings can be changed in the struts.xml by configuring constants:
 
