@@ -1,4 +1,3 @@
-
 ==Sections==
   # [#Conversation_Redirects Conversation Redirects]
   # [#Programmatic_Conversation_Management Programmatic Conversation Management]
@@ -99,4 +98,18 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 
 <!-- max instances of a conversation -->
 <constant name="conversation.max.instances" value="20"/>
+}}}
+
+----
+==Interceptor Selection==
+There are two possible interceptors for selection:  the ScopeInterceptor and the ConversationInterceptor.  The ScopeInterceptor can be used without a dependency-injection framework to inject conversation- and session-scoped fields on action class instances using the @ConversationField and @SessionField annotations.  However, if you are (and Irecommend that you do!) use a framework such as Spring or Guice for injection, then the ScopeInterceptor is probably likely unnecessary.  Instead, you should configure your struts.xml to use the ConversationInterceptor (it is lighter weight/higher-performing than the ScopeInterceptor).  Currently, only Spring is compatible with this plugin.  Guice compatibility is coming just around the corner, though.  
+
+{{{
+<package name="your-package" extends="struts-conversation-default">
+
+   <interceptors>
+      <interceptor-stack name="yourConversationStack">
+         <interceptor-ref name="conversation" />
+	 <interceptor-ref name="defaultStack" />
+      </interceptor-stack>
 }}}
