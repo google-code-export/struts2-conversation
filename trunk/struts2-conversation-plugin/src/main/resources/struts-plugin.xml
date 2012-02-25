@@ -95,21 +95,31 @@
 	
 	<bean name="struts.scope.manager" type="com.google.code.rees.scope.ScopeManager" class="com.google.code.rees.scope.DefaultScopeManager"></bean>
 
-	<package name="annotated-scope-default" extends="struts-default">
+	<package name="struts-conversation-default" extends="struts-default">
+	
+		<result-types>
+			<result-type name="conversationRedirectAction" 
+				class="com.google.code.rees.scope.struts2.ConversationActionRedirectResult"/>
+			<result-type name="conversationRedirect" 
+				class="com.google.code.rees.scope.struts2.ConversationRedirectResult"/>
+		</result-types>
 	
 		<interceptors>
 		
 			<interceptor name="scopeInjection"
 				class="com.google.code.rees.scope.struts2.ScopeInterceptor" />
+				
+			<interceptor name="conversation"
+				class="com.google.code.rees.scope.struts2.ConversationInterceptor" />
 			
-			<interceptor-stack name="defaultAnnotatedScopeStack">
+			<interceptor-stack name="defaultConversationStack">
 				<interceptor-ref name="scopeInjection" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 			
 		</interceptors>
 		
-		<default-interceptor-ref name="defaultAnnotatedScopeStack" />
+		<default-interceptor-ref name="defaultConversationStack" />
 		
 	</package>
 	
