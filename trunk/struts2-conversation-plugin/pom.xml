@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation-scope-plugin</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
 
 	<name>Struts2 Conversation Scope Plugin</name>
@@ -16,9 +16,9 @@
 	</parent>
 
 	<scm>
-		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</developerConnection>
-		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</connection>
-		<url>http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</url>
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.2.0</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.2.0</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.2.0</url>
 	</scm>
 
 	<licenses>
@@ -32,9 +32,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<asm.version>3.1</asm.version>
-		<ognl.version>[3.0,)</ognl.version>
+		<ognl.version>3.0.4</ognl.version>
 		<spring.version>[3.1,)</spring.version>
-		<struts2.version>[2.2,)</struts2.version>
+		<struts2.version>[2.3,)</struts2.version>
 	</properties>
 
 	<dependencies>
