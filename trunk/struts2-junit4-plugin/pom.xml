@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-junit4-plugin</artifactId>
-	<version>1.3.2</version>
+	<version>1.3.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
 	<parent>
@@ -12,9 +12,9 @@
 	</parent>
 
 	<scm>
-		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/tags/struts2-junit4-plugin-1.3.2</developerConnection>
-		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/tags/struts2-junit4-plugin-1.3.2</connection>
-		<url>http://struts2-conversation.googlecode.com/svn/tags/struts2-junit4-plugin-1.3.2</url>
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/struts2-junit4-plugin</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/struts2-junit4-plugin</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/trunk/struts2-junit4-plugin</url>
 	</scm>
 
 	<licenses>
