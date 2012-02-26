@@ -1,7 +1,6 @@
 ==Sections==
   # [#Conversation_Redirects Conversation Redirects]
   # [#Programmatic_Conversation_Management Programmatic Conversation Management]
-  # [#Inheritance Inheritance]
   # [#Memory_Management Memory Management]
   # [#Interceptor_Selection Interceptor Selection]
 ----
