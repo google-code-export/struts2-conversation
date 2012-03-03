@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
-import com.google.code.rees.scope.struts2.test.StrutsScopeTestCase;
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
+import com.google.code.rees.scope.testutil.StrutsScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.ActionProxy;

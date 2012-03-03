@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.MockConventionController;
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
-import com.google.code.rees.scope.struts2.test.StrutsScopeTestCase;
+import com.google.code.rees.scope.testutil.StrutsScopeTestCase;
 import com.opensymphony.xwork2.ActionProxy;
 
 public class StrutsSessionFieldIntegrationTest extends

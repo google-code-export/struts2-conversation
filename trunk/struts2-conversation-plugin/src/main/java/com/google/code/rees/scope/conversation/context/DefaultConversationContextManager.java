@@ -9,6 +9,12 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The default implementation of the {@link ConversationContextManager}.
+ * 
+ * @author rees.byars
+ * 
+ */
 public class DefaultConversationContextManager implements
         ConversationContextManager {
 
@@ -158,8 +164,13 @@ public class DefaultConversationContextManager implements
             task.cancel();
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Discarding most stale conversation context with ID "
+            LOG.debug("Discarding most stale "
+                    + discardedContext.getConversationName()
+                    + "conversation context with ID "
                     + discardedContext.getId());
+            LOG.debug("Remaining " + discardedContext.getConversationName()
+                    + " conversation contexts for this session:  "
+                    + conversationContexts.size());
         }
         if (conversationContexts.size() > this.maxInstances) {
             removeMostStaleConversation(conversationContexts, defaultDuration);

@@ -1,6 +1,7 @@
 package com.google.code.rees.scope.conversation.context;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -15,15 +16,19 @@ public class DefaultConversationContextFactoryTest extends
     @Test
     public void testSetConversationDuration() throws IOException,
             ClassNotFoundException {
+        final long duration = 500000L;
+        final long elapsedTimeWindow = 1000L;
         ConversationContextFactory contextFactory = new DefaultConversationContextFactory();
-        contextFactory.setConversationDuration(5L);
+        contextFactory.setConversationDuration(duration);
         ConversationContext context = contextFactory.create("testName",
                 "testId");
-        assertEquals(5L, context.getRemainingTime());
+        assertTrue(context.getRemainingTime() <= duration
+                && context.getRemainingTime() > duration - elapsedTimeWindow);
         contextFactory = SerializationTestingUtil
                 .getSerializedCopy(contextFactory);
         context = contextFactory.create("testName", "testId");
-        assertEquals(5L, context.getRemainingTime());
+        assertTrue(context.getRemainingTime() <= duration
+                && context.getRemainingTime() > duration - elapsedTimeWindow);
     }
 
     @Test
