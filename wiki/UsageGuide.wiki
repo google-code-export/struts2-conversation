@@ -1,19 +1,27 @@
-==Sections==
+=Sections=
+
   # [#Conversation_Redirects Conversation Redirects]
   # [#Programmatic_Conversation_Management Programmatic Conversation Management]
   # [#Memory_Management Memory Management]
   # [#Interceptor_Selection Interceptor Selection]
+
+
 ----
+
 ==Conversation Redirects==
 
 If the standard Struts2 result types "redirect" and "redirectAction" are used, then the action conversations are not propagated along with the redirect.  If you wish to allow redirects of conversations, then the following approach should be used:
 
+
 In the struts.xml, either extend struts-conversation-default package:
+
 {{{
 <package name="your-package" extends="struts-conversation-default">
 }}}
 
+
 Or, declare the result types in your package:
+
 {{{
 <package name="your-package" extends="struts-default">
    <result-types>
@@ -22,12 +30,15 @@ Or, declare the result types in your package:
    </result-types>
 }}}
 
+
 Then, in your result mapping set the result type as either "conversationRedirect" or "conversationRedirectAction", and the conversations will propagate over the redirection.
 
 
 ----
 ==Programmatic Conversation Management==
+
 If you prefer not to use annotations to dictate when conversations are beginning, continuing, or ending, then the ConversationUtil class can be used to do it programmatically:
+
 
 {{{
 public String someAction() {
@@ -55,9 +66,12 @@ public String someOtherOtherAction() {
 }
 }}}
 
+
 ----
 ==Memory Management==
+
 Conversations have a default idle-time timeout of 8 hours in order to keep old conversations from taking up system resources.  Conversations are, by default, monitored once every 5 minutes to scan for cleanup of the stale conversations.  As well, there is a default maximum of 20 instances of each conversation per session to prevent users from unnecessarily overloading the system by creating countless conversations (so, in the above example, there could be up to 20 "base" conversations, 20 "registration" conversations, etc.).  Each of these settings can be changed in the struts.xml by configuring constants:
+
 
 {{{
 <!-- monitoring frequency in milliseconds -->
@@ -70,9 +84,12 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 <constant name="conversation.max.instances" value="20"/>
 }}}
 
+
 ----
 ==Interceptor Selection==
+
 There are two possible interceptors for selection:  the ScopeInterceptor and the ConversationInterceptor.  The ScopeInterceptor can be used without a dependency-injection framework to inject conversation- and session-scoped fields on action class instances using the @ConversationField and @SessionField annotations.  However, if you are (and I recommend that you do!) using a framework such as Spring or Guice for injection, then the ScopeInterceptor is probably likely unnecessary.  Instead, you should configure your struts.xml to use the ConversationInterceptor (it is lighter weight/higher-performing than the ScopeInterceptor).  Currently, only Spring is compatible with this plugin.  Guice compatibility is coming just around the corner, though.  
+
 
 {{{
 <package name="your-package" extends="struts-conversation-default">
