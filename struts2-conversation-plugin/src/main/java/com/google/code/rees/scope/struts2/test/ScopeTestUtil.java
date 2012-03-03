@@ -18,7 +18,6 @@ import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.ConventionConstants;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
 
 /**
  * A utility for simplifying Struts2 unit testing against the interceptor stack
@@ -54,26 +53,6 @@ public class ScopeTestUtil {
     }
 
     /**
-     * Given a conversation name, returns the ID of the conversation for the
-     * currently
-     * executing thread.
-     * 
-     * @param conversationName
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static String getConversationId(String conversationName) {
-        String id = ConversationUtil.getId(conversationName);
-        if (id == null) {
-            ValueStack stack = ActionContext.getContext().getValueStack();
-            id = (String) ((Map<String, Object>) stack
-                    .findValue(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY))
-                    .get(conversationName);
-        }
-        return id;
-    }
-
-    /**
      * For unit testing, sets the conversation IDs of the conversations in the
      * current thread
      * onto a given mock request.
@@ -96,8 +75,7 @@ public class ScopeTestUtil {
             for (String conversationName : arbitrator.getConversations(
                     actionClass, getActionSuffix())) {
                 request.addParameter(
-                        ConversationUtil
-                                .sanitizeName(conversationName)
+                        ConversationUtil.sanitizeName(conversationName)
                                 + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX,
                         conversationName + "-test-id");
             }

@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
-import com.google.code.rees.scope.struts2.test.StrutsSpringScopeTestCase;
+import com.google.code.rees.scope.testutil.StrutsSpringScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 import com.opensymphony.xwork2.inject.Inject;

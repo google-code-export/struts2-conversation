@@ -1,5 +1,6 @@
 package com.google.code.rees.scope.testutil;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -21,7 +22,8 @@ public abstract class SerializableObjectTest<T> {
 
         T serializableObject = this.getInstance(serializableObjectClass);
 
-        SerializationTestingUtil.getSerializedCopy(serializableObject);
+        SerializationTestingUtil
+                .getSerializedCopy((Serializable) serializableObject);
     }
 
     @SuppressWarnings("unchecked")

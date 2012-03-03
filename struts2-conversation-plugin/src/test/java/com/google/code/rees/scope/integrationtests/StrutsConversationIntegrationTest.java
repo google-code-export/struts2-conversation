@@ -15,7 +15,7 @@ import com.google.code.rees.scope.mocks.actions.conversation.MockConversationCon
 import com.google.code.rees.scope.mocks.beans.TestBean;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.struts2.test.ScopeTestUtil;
-import com.google.code.rees.scope.struts2.test.StrutsSpringScopeTestCase;
+import com.google.code.rees.scope.testutil.StrutsSpringScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -79,10 +79,10 @@ public class StrutsConversationIntegrationTest extends
     public void testBeforeInvocation() throws Exception {
 
         this.getActionProxy("/conversation/begin").execute();
-        String id1 = ScopeTestUtil.getConversationId(CONVERSATION_NAME);
+        String id1 = ConversationUtil.getId(CONVERSATION_NAME);
 
         this.getActionProxy("/conversation/begin").execute();
-        String id2 = ScopeTestUtil.getConversationId(CONVERSATION_NAME);
+        String id2 = ConversationUtil.getId(CONVERSATION_NAME);
 
         System.out.println("id:  " + id1);
         System.out.println("id:  " + id2);

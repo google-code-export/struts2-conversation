@@ -1,6 +1,7 @@
-package com.google.code.rees.scope.struts2.test;
+package com.google.code.rees.scope.testutil;
 
-import com.google.code.struts2.test.junit.StrutsSpringTest;
+import com.google.code.rees.scope.struts2.test.ScopeTestUtil;
+import com.google.code.struts2.test.junit.StrutsTest;
 import com.opensymphony.xwork2.ActionInvocation;
 
 /**
@@ -8,9 +9,8 @@ import com.opensymphony.xwork2.ActionInvocation;
  * yet unavailable Struts2 testing library. Sorry!
  * 
  * @author rees.byars
- * 
  */
-public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
+public abstract class StrutsScopeTestCase<T> extends StrutsTest<T> {
 
     @Override
     public void afterProxyExecution(ActionInvocation invocation, String result) {
