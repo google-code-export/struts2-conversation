@@ -71,8 +71,7 @@ public class ConversationUtil {
      * @param fieldClass
      * @return
      */
-    public static <T> T getField(String fieldName,
-            Class<T> fieldClass) {
+    public static <T> T getField(String fieldName, Class<T> fieldClass) {
         return getField(fieldName, fieldClass, getConversations());
     }
 
@@ -90,8 +89,8 @@ public class ConversationUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getField(String fieldName,
-            Class<T> fieldClass, String[] conversations) {
+    public static <T> T getField(String fieldName, Class<T> fieldClass,
+            String[] conversations) {
         T field = null;
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         if (adapter != null) {
@@ -142,6 +141,7 @@ public class ConversationUtil {
         String id = generateId();
         ConversationAdapter adapter = ConversationAdapter.getAdapter();
         adapter.getViewContext().put(name, id);
+        adapter.getRequestContext().put(name, id);
         return adapter.getConversationContext(name, id);
     }
 
@@ -177,6 +177,23 @@ public class ConversationUtil {
         }
         adapter.getViewContext().remove(name);
         return adapter.endConversation(name, id);
+    }
+
+    /**
+     * Given the conversation name, returns that conversation's context for the
+     * current request.
+     * 
+     * @param name
+     * @return The {@link ConversationContext} or <code>null</code> if
+     *         the conversation is not active
+     */
+    public static ConversationContext getContext(String name) {
+        ConversationAdapter adapter = ConversationAdapter.getAdapter();
+        String id = adapter.getRequestContext().get(name);
+        if (id == null) {
+            return null;
+        }
+        return adapter.getConversationContext(name, id);
     }
 
     /**
