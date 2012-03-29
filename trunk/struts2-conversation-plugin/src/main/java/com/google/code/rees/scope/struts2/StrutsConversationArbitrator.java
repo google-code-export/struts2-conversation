@@ -19,32 +19,25 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
     private static final long serialVersionUID = 6842124082407418415L;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected String[] getConversationControllerConversations(Class<?> clazz,
+    protected String[] getConversationsWithoutInheritance(Class<?> clazz,
             String actionSuffix) {
-        List<String> conversations = new ArrayList<String>();
-        for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
-            ConversationController controller = conversationControllerClass
-                    .getAnnotation(ConversationController.class);
-            String[] newConversations = controller.conversations();
-            if (controller.value().equals(ConversationController.DEFAULT_VALUE)) {
-                if (newConversations.length == 0) {
-                    newConversations = new String[] { NamingUtil
-                            .getConventionName(conversationControllerClass,
-                                    actionSuffix) };
-                }
-            } else {
-                conversations.add(controller.value());
-            }
-            conversations.addAll(Arrays.asList(newConversations));
-        }
-        if (this.isModelDrivenConversation(clazz)) {
+        List<String> conversations = new ArrayList<String>(Arrays.asList(super
+                .getConversationsWithoutInheritance(clazz, actionSuffix)));
+        if (this.isModelDrivenConversation(clazz)
+                && !clazz.isAnnotationPresent(ConversationController.class)) {
             conversations
                     .add(NamingUtil.getConventionName(clazz, actionSuffix));
         }
         return conversations.toArray(new String[] {});
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isConversationController(Class<?> clazz) {
         return getConversationControllers(clazz).size() > 0
