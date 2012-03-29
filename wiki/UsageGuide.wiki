@@ -2,7 +2,6 @@
 =Sections=
 
   # [#Conversation_Redirects Conversation Redirects]
-  # [#Programmatic_Conversation_Management Programmatic Conversation Management]
   # [#Memory_Management Memory Management]
   # [#Interceptor_Selection Interceptor Selection]
 
@@ -33,40 +32,6 @@ Or, declare the result types in your package:
 
 
 Then, in your result mapping set the result type as either "conversationRedirect" or "conversationRedirectAction", and the conversations will propagate over the redirection.
-
-
-----
-==Programmatic Conversation Management==
-
-If you prefer not to use annotations to dictate when conversations are beginning, continuing, or ending, then the ConversationUtil class can be used to do it programmatically:
-
-
-{{{
-public String someAction() {
-
-   //Begins a new instance of the conversation, returning the context
-   ConversationContext context = ConversationUtil.begin("someConversationName");
-
-   return SUCCESS;
-}
-
-public String someOtherAction() {
-
-   //Continues the conversation, returning the context
-   ConversationContext context = ConversationUtil.persist("someConversationName");
-
-   return SUCCESS;
-}
-
-public String someOtherOtherAction() {
-
-   //Ends the conversation, returning the context
-   ConversationContext context = ConversationUtil.end("someConversationName");
-
-   return SUCCESS;
-}
-}}}
-
 
 ----
 ==Memory Management==
