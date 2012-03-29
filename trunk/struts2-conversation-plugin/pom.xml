@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation-scope-plugin</artifactId>
-	<version>1.4.0</version>
+	<version>1.4.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Struts2 Conversation Scope Plugin</name>
@@ -16,9 +16,9 @@
 	</parent>
 
 	<scm>
-		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.4.0</developerConnection>
-		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.4.0</connection>
-		<url>http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-scope-plugin-1.4.0</url>
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/trunk/struts2-conversation-plugin</url>
 	</scm>
 
 	<licenses>
