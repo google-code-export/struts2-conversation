@@ -26,7 +26,7 @@ public class SpringConversationArbitrator extends DefaultConversationArbitrator 
     private static final long serialVersionUID = -2131295964932528989L;
 
     @Override
-    protected String[] getConversationControllerConversations(Class<?> clazz,
+    protected String[] getConversationsWithInheritance(Class<?> clazz,
             String actionSuffix) {
         List<String> conversations = new ArrayList<String>();
         for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
