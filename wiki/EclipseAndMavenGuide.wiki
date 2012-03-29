@@ -1,23 +1,23 @@
  # Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&url=http://www.gtlib.gatech.edu/pub/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&mirror_id=337 32-bit]] [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&url=http://mirrors.xmission.com/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&mirror_id=518 64-bit]]
  # Open Eclipse
-# Go to Help->Install New Software...
-# Paste this URL into the field and click "Add":  http://download.eclipse.org/technology/m2e/releases/
-# Follow the directions and finish installing the plugin.
-# Do the same thing again but with this URL: http://subclipse.tigris.org/update_1.7.x
-# Restart Eclipse.
-# Go to Window->Open Perspective->Other...
-# Select "SVN Repository Exploring"
-#You should now see the "SVN Repositories" sub-window on the left.
-#Right-click in the white area of the SVN Repositories view.
-#Select New->Repository Location
-#Enter the follwoing as the URL:  http://struts2-conversation.googlecode.com/svn/trunk/examples
-#Expand the new repository directory.
-#You should see folders for each of the example projects.
-#Right click on one of the projects and select "Checkout..."
-#Select "Check out as a project in the workspace" and click "Finish".
-#Click on "Java" or "JEE" in the top right-hand corner of Eclipse to switch back to a Java perspective.
-#You should see the project that you just checkout out in the Package Explorer on the left.
-#Right click on the project and select Configure->Convert to Maven Project
-#When the conversion has finished, right click on the project again and select Run as->Maven Build
-#Type "jetty:run" in the "Goals" field and then click the "Run" button.
+ # Go to Help->Install New Software...
+ # Paste this URL into the field and click "Add":  http://download.eclipse.org/technology/m2e/releases/
+ # Follow the directions and finish installing the plugin.
+ # Do the same thing again but with this URL: http://subclipse.tigris.org/update_1.7.x
+ # Restart Eclipse.
+ # Go to Window->Open Perspective->Other...
+ # Select "SVN Repository Exploring"
+ # You should now see the "SVN Repositories" sub-window on the left.
+ # Right-click in the white area of the SVN Repositories view.
+ # Select New->Repository Location
+ # Enter the follwoing as the URL:  http://struts2-conversation.googlecode.com/svn/trunk/examples
+ # Expand the new repository directory.
+ # You should see folders for each of the example projects.
+ # Right click on one of the projects and select "Checkout..."
+ # Select "Check out as a project in the workspace" and click "Finish".
+ # Click on "Java" or "JEE" in the top right-hand corner of Eclipse to switch back to a Java perspective.
+ # You should see the project that you just checkout out in the Package Explorer on the left.
+ # Right click on the project and select Configure->Convert to Maven Project
+ # When the conversion has finished, right click on the project again and select Run as->Maven Build
+ # Type "jetty:run" in the "Goals" field and then click the "Run" button.
 Go to this URL:  [http://localhost:8080/simple-example/registration/begin.action]
