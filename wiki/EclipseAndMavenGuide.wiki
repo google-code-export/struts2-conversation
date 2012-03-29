@@ -1,5 +1,5 @@
-# Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&url=http://www.gtlib.gatech.edu/pub/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&mirror_id=337 32-bit]] [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&url=http://mirrors.xmission.com/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&mirror_id=518 64-bit]]
-# Open Eclipse
+ # Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&url=http://www.gtlib.gatech.edu/pub/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&mirror_id=337 32-bit]] [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&url=http://mirrors.xmission.com/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&mirror_id=518 64-bit]]
+ # Open Eclipse
 # Go to Help->Install New Software...
 # Paste this URL into the field and click "Add":  http://download.eclipse.org/technology/m2e/releases/
 # Follow the directions and finish installing the plugin.
