@@ -140,19 +140,26 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     public Collection<String> getBeginConversations(Class<?> clazz,
             Method method) {
         Set<String> methodConversations = new HashSet<String>();
+
+        Class<?> declaringClass = method.getDeclaringClass();
         if (method.isAnnotationPresent(BeginConversation.class)) {
             BeginConversation conversationmethod = method
                     .getAnnotation(BeginConversation.class);
-            String[] conversations = conversationmethod.conversations();
-            if (conversations.length == 0) {
-                conversations = getConversationsWithoutInheritance(clazz,
-                        actionSuffix);
+            methodConversations.addAll(Arrays.asList(conversationmethod
+                    .conversations()));
+            if (declaringClass.equals(clazz) && methodConversations.size() == 0) {
+                methodConversations.addAll(Arrays
+                        .asList(getConversationsWithoutInheritance(clazz,
+                                actionSuffix)));
             }
-            methodConversations.addAll(Arrays.asList(conversations));
-        } else if (method.getName().startsWith("begin")) {
+        } else if (declaringClass.equals(clazz)
+                && method.getName().startsWith("begin")) {
             methodConversations.addAll(Arrays
                     .asList(getConversationsWithoutInheritance(clazz,
                             actionSuffix)));
+        } else if (!declaringClass.equals(clazz)) {
+            methodConversations.addAll(getBeginConversations(declaringClass,
+                    method));
         }
         return methodConversations;
     }
@@ -163,19 +170,25 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     @Override
     public Collection<String> getEndConversations(Class<?> clazz, Method method) {
         Set<String> methodConversations = new HashSet<String>();
+        Class<?> declaringClass = method.getDeclaringClass();
         if (method.isAnnotationPresent(EndConversation.class)) {
             EndConversation conversationmethod = method
                     .getAnnotation(EndConversation.class);
-            String[] conversations = conversationmethod.conversations();
-            if (conversations.length == 0) {
-                conversations = getConversationsWithoutInheritance(clazz,
-                        actionSuffix);
+            methodConversations.addAll(Arrays.asList(conversationmethod
+                    .conversations()));
+            if (declaringClass.equals(clazz) && methodConversations.size() == 0) {
+                methodConversations.addAll(Arrays
+                        .asList(getConversationsWithoutInheritance(clazz,
+                                actionSuffix)));
             }
-            methodConversations.addAll(Arrays.asList(conversations));
-        } else if (method.getName().startsWith("end")) {
+        } else if (declaringClass.equals(clazz)
+                && method.getName().startsWith("end")) {
             methodConversations.addAll(Arrays
                     .asList(getConversationsWithoutInheritance(clazz,
                             actionSuffix)));
+        } else if (!declaringClass.equals(clazz)) {
+            methodConversations.addAll(getEndConversations(declaringClass,
+                    method));
         }
         return methodConversations;
     }
