@@ -51,6 +51,7 @@
 		
 		
 	<!-- SCOPE -->
+	<constant name="conversation.package.nesting" value="false" />
 	<constant name="struts.scope.followsConvention" value="true" />
 	<constant name="conversation.monitoring.frequency" value="300000"/>
 	<constant name="conversation.idle.timeout" value="28800000"/>

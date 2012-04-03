@@ -2,8 +2,10 @@ package com.google.code.rees.scope.mocks.actions;
 
 import org.apache.struts2.convention.annotation.Action;
 
+import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.session.SessionField;
 
+@ConversationController
 public class MockConventionController extends AbstractController {
 
     public static final String SUCCESS = "success";
