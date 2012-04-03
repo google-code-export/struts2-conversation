@@ -23,4 +23,5 @@ public class StrutsScopeConstants {
     public static final String CONVERSATION_CONTEXT_FACTORY = "conversation.context.factory";
     public static final String CONVERSATION_CONTEXT_MANAGER_FACTORY = "conversation.context.manager.factory";
     public static final String SIMPLE_CONVERSATION_MANAGER_KEY = "conversation.simple.manager";
+    public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
 }
