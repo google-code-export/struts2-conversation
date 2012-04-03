@@ -32,7 +32,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
         ProgrammaticModelDrivenConversation<T>, Preparable {
 
     private static final long serialVersionUID = -3567083451289146237L;
-    public static final String DEFAULT_MODEL_KEY = "conversation.model";
+
     private T model;
     private ScopeAdapterFactory adapterFactory;
 
@@ -80,21 +80,13 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * {@link com.google.code.rees.scope.conversation.context.ConversationContext
      * ConversationContext}.
      * 
-     * This can be overridden to provide unique names (the default is
-     * {@link #DEFAULT_MODEL_KEY}).
-     * 
-     * This should only be necessary when the potential for collisions exists.
-     * Collisions
-     * occur when 2 or more ProgrammaticModelDrivenConversationSupport-extending
-     * action classes
-     * are members of the same conversation, but use different classes for their
-     * models. In these
-     * cases, this method should be overridden.
+     * This can be overridden to provide the name of choice. The default is
+     * <code>this.getClass().getName()</code>.
      * 
      * @return
      */
     protected String getModelName() {
-        return DEFAULT_MODEL_KEY;
+        return this.getClass().getName();
     }
 
     /**

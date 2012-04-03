@@ -25,7 +25,6 @@ import com.opensymphony.xwork2.ModelDriven;
 public abstract class ModelDrivenConversationSupport<T extends Serializable>
         extends ActionSupport implements ModelDriven<T> {
 
-    public static final String DEFAULT_MODEL_KEY = "conversation.model";
     private static final long serialVersionUID = -8313905274280660299L;
     private T model;
 
@@ -60,21 +59,13 @@ public abstract class ModelDrivenConversationSupport<T extends Serializable>
      * {@link com.google.code.rees.scope.conversation.context.ConversationContext
      * ConversationContext}.
      * 
-     * This can be overridden to provide unique names (the default is
-     * {@link #DEFAULT_MODEL_KEY}).
-     * 
-     * This should only be necessary when the potential for collisions exists.
-     * Collisions
-     * occur when 2 or more ModelDrivenConversationSupport-extending
-     * action classes
-     * are members of the same conversation, but use different classes for their
-     * models. In these
-     * cases, this method should be overridden.
+     * This can be overridden to provide the name of choice. The default is
+     * <code>this.getClass().getName()</code>.
      * 
      * @return
      */
     protected String getModelName() {
-        return DEFAULT_MODEL_KEY;
+        return this.getClass().getName();
     }
 
 }
