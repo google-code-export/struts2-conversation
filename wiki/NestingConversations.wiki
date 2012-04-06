@@ -4,6 +4,10 @@ Implementing nested conversations, or sub-flows, is fairly simple.
 
 Nested conversations are achieved in one of three ways:  inheritance, explicit declaration, and an optional package-based nesting feature.
 
+==Sections==
+  # [#Package-Based_Nesting Package-Based Nesting (the best approach)]
+  # [#Explicit_Declaration Explicit Declaration]
+  # [#Inheritance Inheritance]
 
 ----
 ===Package-Based Nesting===
