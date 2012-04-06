@@ -1,4 +1,3 @@
-
 =Nesting in Version 1.4.1=
 
 Implementing nested conversations, or sub-flows, is fairly simple.
@@ -7,7 +6,7 @@ Nested conversations are achieved in one of three ways:  inheritance, explicit d
 
 ----
 ===Inheritance===
-The conversation inheritance mechanism works like this:  conversations in a sub-class are sub-conversations, and "begin" and "end" actions only begin and end the conversations of the classes in which they are declared.   Since they may sound a little confusing at first, consider the following two Struts2 action classes:
+The conversation inheritance mechanism works like this:  conversations in a sub-class are sub-conversations, and "begin" and "end" actions only begin and end the conversations of the classes in which they are declared.   Since that may sound a little confusing at first, consider the following two Struts2 action classes:
 
 {{{
 @ConversationController
