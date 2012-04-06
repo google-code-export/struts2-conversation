@@ -1,4 +1,4 @@
-Zero-configuration conversation scope can be achieved by extending the [http://struts2-conversation.googlecode.com/svn/javadoc/struts2-conversation-scope-plugin-1.4.0-javadoc/index.html ProgrammaticModelDrivenConversationSupport] class.
+Zero-configuration conversation scope can be achieved by extending the [http://struts2-conversation.googlecode.com/svn/javadoc/struts2-conversation-scope-plugin-1.4.0-javadoc/com/google/code/rees/scope/struts2/programmatic/ProgrammaticModelDrivenConversationSupport.html ProgrammaticModelDrivenConversationSupport] class.
 
 An example usage of this class can be found [http://code.google.com/p/struts2-conversation/source/browse/trunk/examples/simple-programmatic-example/src/main/java/org/byars/struts2/example/actions/RegistrationController.java here].
 
