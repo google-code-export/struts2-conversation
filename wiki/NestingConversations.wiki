@@ -15,6 +15,9 @@ Package-based nesting allows for "magical" nesting of conversations, but it is a
 
 Basically, its like this:  actions located in sub-packages are sub-conversations of actions located higher in the package tree.
 
+Package-based nesting is turned off by default.  To turn it on, add this to your struts.xml:
+`<constant name="conversation.package.nesting" value="true" />`
+
 TODO
 
 
