@@ -3,7 +3,6 @@ package com.google.code.rees.scope.conversation.context;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.TimerTask;
 
 import org.junit.Test;
 
@@ -28,22 +27,6 @@ public class DefaultConversationContextTest extends
         assertEquals("testId", context.getId());
         assertEquals("beanValue", context.get("bean"));
         assertEquals(5L, context.getRemainingTime());
-    }
-
-    @Test
-    public void testSetAndGetTimerTask() {
-        ConversationContext context = new DefaultConversationContext(
-                "testName", "testId", 5L);
-        TestTimerTask task = new TestTimerTask();
-        context.setTimerTask(task);
-        assertEquals(task, context.getTimerTask());
-    }
-
-    class TestTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            // blah blah blah
-        }
     }
 
 }

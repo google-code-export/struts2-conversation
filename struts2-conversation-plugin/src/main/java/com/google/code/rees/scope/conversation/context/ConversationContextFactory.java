@@ -33,25 +33,36 @@ import java.io.Serializable;
  */
 public interface ConversationContextFactory extends Serializable {
 
-    /**
-     * 8 hours
-     */
-    public static final long DEFAULT_CONVERSATION_DURATION = 28800000;
+	/**
+	 * 8 hours
+	 */
+	public static final long DEFAULT_CONVERSATION_DURATION = 28800000;
 
-    /**
-     * Set the max-idle duration for all conversations created by this factory
-     * 
-     * @param duration
-     */
-    public void setConversationDuration(long duration);
+	/**
+	 * Set the max-idle maxIdleTime for all conversations created by this factory
+	 * 
+	 * @param maxIdleTime
+	 */
+	public void setConversationDuration(long duration);
 
-    /**
-     * Create a new context with the given name and id
-     * 
-     * @param conversationName
-     * @param conversationId
-     * @return
-     */
-    public ConversationContext create(String conversationName,
-            String conversationId);
+	/**
+	 * Create a new context with the given name and id
+	 * 
+	 * @param conversationName
+	 * @param conversationId
+	 * @return
+	 */
+	public ConversationContext create(String conversationName,
+			String conversationId);
+
+	/**
+	 * Create a new context with the given name, id, and max idle time
+	 * 
+	 * @param conversationName
+	 * @param conversationId
+	 * @param maxIdleTime
+	 * @return
+	 */
+	public ConversationContext create(String conversationName,
+			String conversationId, long maxIdleTime);
 }

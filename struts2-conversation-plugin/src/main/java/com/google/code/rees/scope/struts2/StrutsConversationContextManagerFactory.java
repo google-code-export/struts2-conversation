@@ -27,14 +27,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.DefaultConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.TimeoutConversationContextManager;
+import com.google.code.rees.scope.util.monitor.BasicTimeoutMonitor;
+import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsConversationContextManagerFactory implements
-        HttpConversationContextManagerFactory {
+/**
+ * 
+ * @author rees.byars
+ *
+ */
+public class StrutsConversationContextManagerFactory implements HttpConversationContextManagerFactory {
 
     private static final long serialVersionUID = 2461287910903625512L;
 
@@ -52,8 +59,7 @@ public class StrutsConversationContextManagerFactory implements
     public void setTimeout(String timeout) {
         this.timeout = Long.parseLong(timeout);
         if (this.conversationContextFactory != null) {
-            this.conversationContextFactory
-                    .setConversationDuration(this.timeout);
+            this.conversationContextFactory.setConversationDuration(this.timeout);
         }
     }
 
@@ -63,31 +69,33 @@ public class StrutsConversationContextManagerFactory implements
     }
 
     @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
-    public void setConversationContextFactory(
-            ConversationContextFactory conversationContextFactory) {
+    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
         if (this.timeout != null) {
-            this.conversationContextFactory
-                    .setConversationDuration(this.timeout);
+            this.conversationContextFactory.setConversationDuration(this.timeout);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConversationContextManager getManager(HttpServletRequest request) {
+    	
         HttpSession session = request.getSession();
         Object ctxMgr = null;
-        ctxMgr = session
-                .getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
+        ctxMgr = session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
+        
         if (ctxMgr == null) {
-            ConversationContextManager newCtxMgr = new DefaultConversationContextManager();
-            newCtxMgr.setContextFactory(this.conversationContextFactory);
+            TimeoutConversationContextManager newCtxMgr = new TimeoutConversationContextManager();
             newCtxMgr.setMaxInstances(this.maxInstances);
-            newCtxMgr.setMonitoringFrequency(this.monitoringFrequency);
+            newCtxMgr.setContextFactory(this.conversationContextFactory);
+            TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);
+            newCtxMgr.setTimeoutMonitor(timeoutMonitor);
             ctxMgr = newCtxMgr;
-            session.setAttribute(
-                    ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY,
-                    ctxMgr);
+            session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, ctxMgr);
         }
+        
         return (ConversationContextManager) ctxMgr;
     }
 
