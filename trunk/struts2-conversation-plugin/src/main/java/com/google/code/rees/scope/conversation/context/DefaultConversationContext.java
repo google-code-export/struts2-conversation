@@ -23,9 +23,7 @@
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.context;
 
-import java.util.TimerTask;
-
-import com.google.code.rees.scope.util.AbstractHashMonitoredContext;
+import com.google.code.rees.scope.util.monitor.HashMonitoredContext;
 
 /**
  * The default implementation of the {@link ConversationContext}
@@ -34,41 +32,34 @@ import com.google.code.rees.scope.util.AbstractHashMonitoredContext;
  * 
  */
 public class DefaultConversationContext extends
-        AbstractHashMonitoredContext<String, Object> implements
-        ConversationContext {
+		HashMonitoredContext<String, Object, ConversationContext> implements
+		ConversationContext {
 
-    private static final long serialVersionUID = 2795735781863798576L;
-    protected String conversationName;
-    protected transient TimerTask timerTask;
+	private static final long serialVersionUID = 2795735781863798576L;
+	protected String conversationName;
+	protected String id;
 
-    public DefaultConversationContext(String conversationName, String id,
-            long duration) {
-        super(id, duration);
-        this.conversationName = conversationName;
-    }
+	public DefaultConversationContext(String conversationName, String id,
+			long duration) {
+		super(duration);
+		this.id = id;
+		this.conversationName = conversationName;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getConversationName() {
-        return this.conversationName;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getConversationName() {
+		return this.conversationName;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTimerTask(TimerTask timerTask) {
-        this.timerTask = timerTask;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TimerTask getTimerTask() {
-        return this.timerTask;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getId() {
+		return this.id;
+	}
 
 }
