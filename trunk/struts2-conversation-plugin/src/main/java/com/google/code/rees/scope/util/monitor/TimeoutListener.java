@@ -35,7 +35,7 @@ import java.io.Serializable;
 public interface TimeoutListener<T> extends Serializable {
 
 	/**
-	 * Called when the given {@link Timeoutable Timeoutable's} timeout method is called.
+	 * Called when the given {@link Timeoutable Timeoutable's} defaultMaxIdleTime method is called.
 	 * 
 	 * @param timeoutable
 	 */

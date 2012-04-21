@@ -27,14 +27,14 @@ package com.google.code.rees.scope.util.monitor;
 import java.io.Serializable;
 
 /**
- * This interface can be used in conjunction with a {@link TimeoutMonitor} to provide a simple timeout mechanism
+ * This interface can be used in conjunction with a {@link TimeoutMonitor} to provide a simple defaultMaxIdleTime mechanism
  * 
  * @author rees.byars
  */
 public interface Timeoutable<T extends Timeoutable<T>> extends Serializable {
 
 	/**
-	 * Sets the time after which this Timeoutable's {@link #timeout()} method will be called
+	 * Sets the time after which this Timeoutable's {@link #defaultMaxIdleTime()} method will be called
 	 * @param maxIdleTime
 	 */
 	public void setMaxIdleTime(long maxIdleTime);
@@ -46,7 +46,7 @@ public interface Timeoutable<T extends Timeoutable<T>> extends Serializable {
 	public String getId();
 
 	/**
-	 * The time remaining until this Timeoutable's {@link #timeout()} method will be called
+	 * The time remaining until this Timeoutable's {@link #defaultMaxIdleTime()} method will be called
 	 * @return
 	 */
 	public long getRemainingTime();
@@ -63,7 +63,7 @@ public interface Timeoutable<T extends Timeoutable<T>> extends Serializable {
 
 	/**
 	 * Add a listener whose {@link TimeoutListener#onTimeout(Object)} method will be called when this Timeoutable's
-	 * {@link #timeout()} method is called.  
+	 * {@link #defaultMaxIdleTime()} method is called.  
 	 * 
 	 * @param timeoutListener
 	 */

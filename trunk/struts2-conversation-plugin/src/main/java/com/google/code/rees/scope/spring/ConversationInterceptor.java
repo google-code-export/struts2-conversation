@@ -60,8 +60,7 @@ public class ConversationInterceptor implements HandlerInterceptor {
      * 
      * @param conversationContextManagerFactory
      */
-    public void setConversationContextManagerFactory(
-            HttpConversationContextManagerFactory conversationContextManagerFactory) {
+    public void setConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
         this.conversationContextManagerFactory = conversationContextManagerFactory;
     }
 
@@ -69,9 +68,7 @@ public class ConversationInterceptor implements HandlerInterceptor {
      * Calls {@link ConversationAdapter#executePostProcessors()}
      */
     @Override
-    public void afterCompletion(HttpServletRequest request,
-            HttpServletResponse response, Object handler, Exception exception)
-            throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
         ConversationAdapter.getAdapter().executePostProcessors();
     }
 
@@ -79,9 +76,7 @@ public class ConversationInterceptor implements HandlerInterceptor {
      * This method not used by the Interceptor
      */
     @Override
-    public void postHandle(HttpServletRequest request,
-            HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         // do nothing
     }
 
@@ -91,12 +86,9 @@ public class ConversationInterceptor implements HandlerInterceptor {
      * passes in a {@link SpringConversationAdapter}.
      */
     @Override
-    public boolean preHandle(HttpServletRequest request,
-            HttpServletResponse response, Object handler) throws Exception {
-        ConversationContextManager contextManager = conversationContextManagerFactory
-                .getManager(request);
-        ConversationAdapter adapter = new SpringConversationAdapter(request,
-                (HandlerMethod) handler, contextManager);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        ConversationContextManager contextManager = conversationContextManagerFactory.getManager(request);
+        ConversationAdapter adapter = new SpringConversationAdapter(request, (HandlerMethod) handler, contextManager);
         conversationManager.processConversations(adapter);
         return true;
     }

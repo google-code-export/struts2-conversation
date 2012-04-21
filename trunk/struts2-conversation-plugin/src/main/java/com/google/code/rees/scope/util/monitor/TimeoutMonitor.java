@@ -27,7 +27,7 @@ package com.google.code.rees.scope.util.monitor;
 import java.io.Serializable;
 
 /**
- * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple timeout mechanism
+ * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple defaultMaxIdleTime mechanism
  * 
  * @author rees.byars
  */

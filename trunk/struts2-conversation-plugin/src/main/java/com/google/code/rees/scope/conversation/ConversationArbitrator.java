@@ -120,8 +120,7 @@ public interface ConversationArbitrator extends Serializable {
      * @param method
      * @return
      */
-    public Collection<String> getBeginConversations(Class<?> clazz,
-            Method method);
+    public Collection<String> getBeginConversations(Class<?> clazz, Method method);
 
     /**
      * returns a collection of conversation names for the method as an end point

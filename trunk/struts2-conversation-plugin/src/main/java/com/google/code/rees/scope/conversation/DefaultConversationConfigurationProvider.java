@@ -49,7 +49,7 @@ public class DefaultConversationConfigurationProvider implements
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultConversationConfigurationProvider.class);
 
-    protected ConversationArbitrator arbitrator = new DefaultConversationArbitrator();
+    protected ConversationArbitrator arbitrator;
     protected transient Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
             .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
 
@@ -66,6 +66,9 @@ public class DefaultConversationConfigurationProvider implements
      */
     @Override
     public void init(Set<Class<?>> actionClasses) {
+    	if (this.arbitrator == null) {
+    		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
+    	}
         for (Class<?> clazz : actionClasses) {
             processClass(clazz, classConfigurations);
         }
