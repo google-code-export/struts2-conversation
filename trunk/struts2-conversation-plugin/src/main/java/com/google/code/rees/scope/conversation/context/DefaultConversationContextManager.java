@@ -119,6 +119,14 @@ public class DefaultConversationContextManager implements ConversationContextMan
 		return context;
 
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void destroy() {
+		this.conversations.clear();
+	}
 
 	/**
 	 * Recursively removes the least-recently accessed conversations until the
