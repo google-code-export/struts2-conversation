@@ -24,6 +24,9 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.conversation.context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.util.monitor.TimeoutListener;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
@@ -34,6 +37,8 @@ import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 public class TimeoutConversationContextManager extends DefaultConversationContextManager implements TimeoutListener<ConversationContext> {
 
 	private static final long serialVersionUID = -4431057690602876686L;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(TimeoutConversationContextManager.class);
 	
 	protected TimeoutMonitor<ConversationContext> conversationTimeoutMonitor;
 	
@@ -59,6 +64,9 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	public ConversationContext remove(String conversationName, String conversationId) {
 		ConversationContext context = super.remove(conversationName, conversationId);
 		if (context != null) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Conversation has ended, removing from TimeoutMonitor:  " + conversationName + " with ID " + conversationId);
+			}
 			this.conversationTimeoutMonitor.removeTimeoutable(context);
 		}
 		return context;
@@ -69,6 +77,9 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	 */
 	@Override
 	public void onTimeout(ConversationContext expiredConversation) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Conversation has timed out:  " + expiredConversation.getConversationName() + " with ID " + expiredConversation.getId());
+		}
 		super.remove(expiredConversation.getConversationName(), expiredConversation.getId());
 	}
 	
@@ -76,8 +87,11 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	 * {@inheritDoc}
 	 */
 	public void destroy() {
+		LOG.debug("Destroying TimeoutConversationManager.");
 		super.destroy();
+		LOG.debug("Destroying TimeoutMonitor.");
 		this.conversationTimeoutMonitor.destroy();
+		LOG.debug("TimeoutConversationManager and TimeoutMonitor destroyed.");
 	}
 
 }

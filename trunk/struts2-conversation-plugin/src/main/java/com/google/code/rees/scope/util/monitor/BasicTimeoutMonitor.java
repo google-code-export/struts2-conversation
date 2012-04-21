@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.code.rees.scope.util.thread.BasicTaskThread;
-import com.google.code.rees.scope.util.thread.EasyTaskThread;
+import com.google.code.rees.scope.util.thread.TaskThread;
 
 /**
  * @author rees.byars
@@ -43,7 +43,7 @@ public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements
 	private static final long serialVersionUID = -7924540987291582366L;
 
 	protected Map<String, TimeoutTask> timeoutTasks;
-	protected transient EasyTaskThread taskThread;
+	protected transient TaskThread taskThread;
 	protected WaitTask waiter;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
 	

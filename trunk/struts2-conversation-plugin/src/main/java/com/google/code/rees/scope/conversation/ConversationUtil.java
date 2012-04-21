@@ -47,8 +47,7 @@ public class ConversationUtil {
 	 * @return
 	 */
 	public static String getId(String conversationName) {
-		if (!conversationName
-				.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
+		if (!conversationName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
 			conversationName += ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
 		}
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
@@ -71,8 +70,7 @@ public class ConversationUtil {
 			for (Entry<String, String> entry : requestContext.entrySet()) {
 				String name = entry.getKey();
 				String id = entry.getValue();
-				Map<String, Object> conversationContext = adapter
-						.getConversationContext(name, id);
+				Map<String, Object> conversationContext = adapter.getConversationContext(name, id);
 				if (conversationContext != null) {
 					field = (Object) conversationContext.get(fieldName);
 					if (field != null)
@@ -108,16 +106,14 @@ public class ConversationUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getField(String fieldName, Class<T> fieldClass,
-			String[] conversations) {
+	public static <T> T getField(String fieldName, Class<T> fieldClass,String[] conversations) {
 		T field = null;
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
 		if (adapter != null) {
 			for (String conversationName : conversations) {
 				String id = getId(conversationName);
 				if (id != null) {
-					Map<String, Object> conversationContext = adapter
-							.getConversationContext(conversationName, id);
+					Map<String, Object> conversationContext = adapter.getConversationContext(conversationName, id);
 					if (conversationContext != null) {
 						field = (T) conversationContext.get(fieldName);
 						if (field != null)
@@ -143,8 +139,7 @@ public class ConversationUtil {
 			for (Entry<String, String> entry : requestContext.entrySet()) {
 				String name = entry.getKey();
 				String id = entry.getValue();
-				Map<String, Object> conversationContext = adapter
-						.getConversationContext(name, id);
+				Map<String, Object> conversationContext = adapter.getConversationContext(name, id);
 				conversationContext.put(fieldName, fieldValue);
 			}
 		}
@@ -159,6 +154,17 @@ public class ConversationUtil {
 	public static ConversationContext begin(String name) {
 		return begin(name, ConversationAdapter.getAdapter());
 	}
+	
+	/**
+	 * A convenience method for beginning a conversation programmatically
+	 * 
+	 * @param name
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public static ConversationContext begin(String name, long maxIdleTimeMillis) {
+		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
+	}
 
 	/**
 	 * A convenience method for beginning a conversation programmatically
@@ -166,12 +172,26 @@ public class ConversationUtil {
 	 * @param name
 	 * @return a new {@link ConversationContext}
 	 */
-	public static ConversationContext begin(String name,
-			ConversationAdapter adapter) {
+	public static ConversationContext begin(String name, ConversationAdapter adapter) {
 		String id = generateId();
 		adapter.getViewContext().put(name, id);
 		adapter.getRequestContext().put(name, id);
 		return adapter.getConversationContext(name, id);
+	}
+	
+	/**
+	 * A convenience method for beginning a conversation programmatically
+	 * 
+	 * @param name
+	 * @param adapter
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis) {
+		String id = generateId();
+		adapter.getViewContext().put(name, id);
+		adapter.getRequestContext().put(name, id);
+		return adapter.getConversationContext(name, id, maxIdleTimeMillis);
 	}
 
 	/**
@@ -192,8 +212,7 @@ public class ConversationUtil {
 	 * @return The {@link ConversationContext} or <code>null</code> if the
 	 *         conversation is not active
 	 */
-	public static ConversationContext persist(String name,
-			ConversationAdapter adapter) {
+	public static ConversationContext persist(String name, ConversationAdapter adapter) {
 		String id = adapter.getRequestContext().get(name);
 		if (id == null) {
 			return null;
@@ -220,8 +239,7 @@ public class ConversationUtil {
 	 * @return The {@link ConversationContext} or <code>null</code> if the
 	 *         conversation is not active
 	 */
-	public static ConversationContext end(String name,
-			ConversationAdapter adapter) {
+	public static ConversationContext end(String name, ConversationAdapter adapter) {
 		String id = adapter.getRequestContext().remove(name);
 		if (id == null) {
 			return null;

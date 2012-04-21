@@ -1,6 +1,8 @@
 package com.google.code.rees.scope.util.thread;
 
 /**
+ * A simple abstract implementation of the {@link EasyThread} interface.
+ * 
  * @author rees.byars
  */
 public abstract class AbstractEasyThread implements EasyThread {

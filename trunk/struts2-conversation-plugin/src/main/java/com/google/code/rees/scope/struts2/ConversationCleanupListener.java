@@ -28,6 +28,9 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationUtil;
 
@@ -36,6 +39,8 @@ import com.google.code.rees.scope.conversation.context.HttpConversationUtil;
  */
 @WebListener
 public class ConversationCleanupListener implements HttpSessionListener {
+	
+	private static Logger LOG = LoggerFactory.getLogger(ConversationCleanupListener.class);
     
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
@@ -46,6 +51,9 @@ public class ConversationCleanupListener implements HttpSessionListener {
 	public void sessionDestroyed(HttpSessionEvent se) {
 		ConversationContextManager contextManager = HttpConversationUtil.getContextManager(se.getSession());
 		if (contextManager != null) {
+			if (LOG.isDebugEnabled()) {
+	    		LOG.debug("Destroying ConversationContextManager for session with ID:  " + se.getSession().getId());
+	    	}
 			contextManager.destroy();
 		}
 	}
