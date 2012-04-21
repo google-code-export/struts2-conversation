@@ -25,15 +25,30 @@
 package com.google.code.rees.scope.util.thread;
 
 /**
- * @author rees.byars
+ * This interface provides a simple mechanism that can be implemented for adding tasks to a {@link TaskThread}
  * 
+ * @author rees.byars
  */
 public interface ThreadTask {
 
+	/**
+	 * indicates whether or not this tasks {@link #doTask()} method should continue to be called
+	 * by its {@link TaskThread}
+	 * @return
+	 */
 	public boolean isActive();
 
+	/**
+	 * Cancels this task, after which calls to {@link #isActive()} return false
+	 */
 	public void cancel();
 
+	/**
+	 * The basic task to be performed by this task.  Will continue being called until
+	 * {@link #isActive()} returns false or the task is removed from its {@link TaskThread} using
+	 * {@link TaskThread#removeTask(ThreadTask)}.  The frequency with which this
+	 * task will be executed will be dependent upon the other tasks that are added to the TaskThread.
+	 */
 	public void doTask();
 
 }

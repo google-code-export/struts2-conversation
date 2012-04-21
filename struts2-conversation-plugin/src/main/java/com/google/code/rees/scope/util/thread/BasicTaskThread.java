@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author rees.byars
  */
 public class BasicTaskThread extends AbstractEasyThread implements
-		EasyTaskThread {
+		TaskThread {
 
 	protected Set<ThreadTask> tasks;
 

@@ -44,6 +44,15 @@ public class DefaultConversationContextManager implements ConversationContextMan
     protected ConversationContextFactory contextFactory;
 	protected Map<String, Map<String, ConversationContext>> conversations = new HashMap<String, Map<String, ConversationContext>>();
 	protected int maxInstances = DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+	protected long conversationDuration = DEFAULT_CONVERSATION_DURATION;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setConversationDuration(long duration) {
+		this.conversationDuration = duration;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -66,16 +75,22 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	 */
 	@Override
 	public ConversationContext getContext(String conversationName, String conversationId) {
-
+		return this.getContext(conversationName, conversationId, this.conversationDuration);
+	}
+	
+	@Override
+	public ConversationContext getContext(String conversationName, String conversationId, long maxIdleTimeMillis) {
+		
 		Map<String, ConversationContext> conversationContexts = this.conversations.get(conversationName);
 		ConversationContext context = null;
 		if (conversationContexts == null) {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Creating new conversation instance cache and instance for conversation " + conversationName);
+				LOG.debug("Creating new conversation cache and instance for " + conversationName);
 			}
 			conversationContexts = new HashMap<String, ConversationContext>();
 			this.conversations.put(conversationName, conversationContexts);
-			context = this.createContext(conversationContexts, conversationName, conversationId);
+			context = this.contextFactory.create(conversationName, conversationId, maxIdleTimeMillis);
+			conversationContexts.put(conversationId, context);
 		} else {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Retrieving cached instance for conversation " + conversationName);
@@ -85,7 +100,8 @@ public class DefaultConversationContextManager implements ConversationContextMan
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("No instance of " + conversationName + " found.  Creating new instance.");
 				}
-				context = this.createContext(conversationContexts, conversationName, conversationId);
+				context = this.contextFactory.create(conversationName, conversationId, maxIdleTimeMillis);
+				conversationContexts.put(conversationId, context);
 			}
 			if (conversationContexts.size() > this.maxInstances) {
 				if (LOG.isDebugEnabled()) {
@@ -94,7 +110,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 				this.removeMostStaleConversation(conversationContexts, context.getRemainingTime());
 			}
 		}
-
+		context.reset();
 		return context;
 	}
 
@@ -125,16 +141,16 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	 */
 	@Override
 	public void destroy() {
+		LOG.debug("Destroying ConversationManager and clearing conversation cache.");
 		this.conversations.clear();
+		LOG.debug("ConversationManager destroyed and conversation cache cleared.");
 	}
 
 	/**
 	 * Recursively removes the least-recently accessed conversations until the
 	 * number of remaining conversations equals {@link #maxInstances}
 	 */
-	protected void removeMostStaleConversation(
-			Map<String, ConversationContext> conversationContexts,
-			long defaultDuration) {
+	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, long defaultDuration) {
 
 		String mostStaleId = null;
 		long leastRemainingTime = defaultDuration;
@@ -149,20 +165,14 @@ public class DefaultConversationContextManager implements ConversationContextMan
 		ConversationContext discardedContext = conversationContexts.remove(mostStaleId);
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Discarding most stale " + discardedContext.getConversationName() + "conversation context with ID " + discardedContext.getId());
-			LOG.debug("Remaining " + discardedContext.getConversationName() + " conversation contexts for this session:  " + conversationContexts.size());
+			LOG.debug("Discarding most stale " + discardedContext.getConversationName() + " context with ID " + discardedContext.getId());
+			LOG.debug("Remaining " + discardedContext.getConversationName() + " contexts for this session:  " + conversationContexts.size());
 		}
 
 		if (conversationContexts.size() > this.maxInstances) {
 			removeMostStaleConversation(conversationContexts, defaultDuration);
 		}
 
-	}
-
-	protected ConversationContext createContext(Map<String, ConversationContext> conversationContexts, String name, String id) {
-		ConversationContext context = this.contextFactory.create(name, id);
-		conversationContexts.put(id, context);
-		return context;
 	}
 
 }

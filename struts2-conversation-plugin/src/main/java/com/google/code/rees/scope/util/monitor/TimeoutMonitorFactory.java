@@ -25,15 +25,20 @@
 package com.google.code.rees.scope.util.monitor;
 
 /**
- * @author rees.byars
+ * A factory interface for producing {@link TimeoutMonitor TimeoutMonitors}
  * 
+ * @author rees.byars
  */
 public interface TimeoutMonitorFactory<T extends Timeoutable<T>> {
 
+	/**
+	 * Sets the monitoring frequency of the monitors produced by this factory
+	 * @param frequencyMillis
+	 */
 	public void setMonitoringFrequency(long frequencyMillis);
 
 	/**
-	 * returns a TimeoutMonitor with its thread running
+	 * returns a TimeoutMonitor with its thread running (already initialized)
 	 */
 	public TimeoutMonitor<T> spawnMonitor();
 

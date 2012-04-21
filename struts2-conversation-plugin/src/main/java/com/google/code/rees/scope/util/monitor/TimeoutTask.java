@@ -44,16 +44,25 @@ public class TimeoutTask implements ThreadTask, Serializable {
 		this.active = true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized boolean isActive() {
 		return this.active;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void cancel() {
 		this.active = false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void doTask() {
 		if (this.timeoutable.getRemainingTime() <= 0) {

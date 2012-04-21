@@ -52,8 +52,7 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     protected HttpServletRequest request;
     protected Map<String, String> requestContext;
 
-    public StrutsConversationAdapter(ActionInvocation invocation,
-            ConversationContextManager conversationContextManager) {
+    public StrutsConversationAdapter(ActionInvocation invocation, ConversationContextManager conversationContextManager) {
         this.invocation = invocation;
         this.actionContext = invocation.getInvocationContext();
         this.conversationContextManager = conversationContextManager;
@@ -82,12 +81,10 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     public Map<String, String> getRequestContext() {
         ActionContext actionContext = ActionContext.getContext();
         if (actionContext != null) {
-            HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext
-                    .getContext().get(StrutsStatics.HTTP_REQUEST));
+            HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
             if (!currentRequest.equals(this.request)) {
                 this.request = currentRequest;
-                requestContext = RequestContextUtil
-                        .getRequestContext(currentRequest);
+                requestContext = RequestContextUtil.getRequestContext(currentRequest);
             }
         } else {
             // TODO: this is a hack to get unit tests to work with spring
@@ -101,20 +98,24 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public ConversationContext getConversationContext(String conversationName,
-            String conversationId) {
-        return this.conversationContextManager.getContext(conversationName,
-                conversationId);
+    public ConversationContext getConversationContext(String conversationName, String conversationId) {
+        return this.conversationContextManager.getContext(conversationName, conversationId);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis) {
+    	return this.conversationContextManager.getContext(conversationName, conversationId, maxIdleTimeMillis);
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ConversationContext endConversation(String conversationName,
-            String conversationId) {
-        return this.conversationContextManager.remove(conversationName,
-                conversationId);
+    public ConversationContext endConversation(String conversationName, String conversationId) {
+        return this.conversationContextManager.remove(conversationName, conversationId);
     }
 
 }

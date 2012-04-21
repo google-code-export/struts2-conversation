@@ -26,6 +26,9 @@ package com.google.code.rees.scope.struts2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
@@ -44,6 +47,8 @@ import com.opensymphony.xwork2.inject.Inject;
 public class StrutsConversationContextManagerFactory implements HttpConversationContextManagerFactory {
 
     private static final long serialVersionUID = 2461287910903625512L;
+    
+    private static Logger LOG = LoggerFactory.getLogger(StrutsConversationContextManagerFactory.class);
 
     protected Long monitoringFrequency;
     protected Long timeout;
@@ -58,9 +63,6 @@ public class StrutsConversationContextManagerFactory implements HttpConversation
     @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
     public void setTimeout(String timeout) {
         this.timeout = Long.parseLong(timeout);
-        if (this.conversationContextFactory != null) {
-            this.conversationContextFactory.setConversationDuration(this.timeout);
-        }
     }
 
     @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
@@ -71,9 +73,6 @@ public class StrutsConversationContextManagerFactory implements HttpConversation
     @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
-        if (this.timeout != null) {
-            this.conversationContextFactory.setConversationDuration(this.timeout);
-        }
     }
 
     /**
@@ -90,7 +89,11 @@ public class StrutsConversationContextManagerFactory implements HttpConversation
     }
     
     protected ConversationContextManager createContextManager(HttpSession session) {
+    	if (LOG.isDebugEnabled()) {
+    		LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
+    	}
     	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
+    	contextManager.setConversationDuration(this.timeout);
     	contextManager.setMaxInstances(this.maxInstances);
     	contextManager.setContextFactory(this.conversationContextFactory);
         TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);

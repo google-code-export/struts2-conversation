@@ -54,9 +54,7 @@ public class SpringConversationAdapter extends ConversationAdapter {
     protected String actionId;
     protected HttpServletRequest request;
 
-    public SpringConversationAdapter(HttpServletRequest request,
-            HandlerMethod handler,
-            ConversationContextManager conversationContextManager) {
+    public SpringConversationAdapter(HttpServletRequest request, HandlerMethod handler, ConversationContextManager conversationContextManager) {
         this.sessionContext = SessionContextUtil.getSessionContext(request);
         this.requestContext = RequestContextUtil.getRequestContext(request);
         this.action = handler.getBean();
@@ -86,13 +84,11 @@ public class SpringConversationAdapter extends ConversationAdapter {
     @Override
     public Map<String, String> getRequestContext() {
 
-        HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder
-                .currentRequestAttributes()).getRequest();
+        HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         if (!currentRequest.equals(this.request)) {
             this.request = currentRequest;
-            requestContext = RequestContextUtil
-                    .getRequestContext(currentRequest);
+            requestContext = RequestContextUtil.getRequestContext(currentRequest);
         }
 
         return this.requestContext;
@@ -102,20 +98,25 @@ public class SpringConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public ConversationContext getConversationContext(String conversationName,
-            String conversationId) {
-        return this.conversationContextManager.getContext(conversationName,
-                conversationId);
+    public ConversationContext getConversationContext(String conversationName, String conversationId) {
+        return this.conversationContextManager.getContext(conversationName, conversationId);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis) {
+    	return this.conversationContextManager.getContext(conversationName, conversationId, maxIdleTimeMillis);
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ConversationContext endConversation(String conversationName,
-            String conversationId) {
-        return this.conversationContextManager.remove(conversationName,
-                conversationId);
+    public ConversationContext endConversation(String conversationName, String conversationId) {
+        return this.conversationContextManager.remove(conversationName, conversationId);
     }
+	
 
 }
