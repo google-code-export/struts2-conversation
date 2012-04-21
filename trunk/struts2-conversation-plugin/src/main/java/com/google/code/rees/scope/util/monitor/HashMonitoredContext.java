@@ -36,8 +36,7 @@ import java.util.Set;
  * 
  * @author rees.byars
  */
-public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>>
-		extends HashMap<K, V> implements MonitoredContext<K, V, T> {
+public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends HashMap<K, V> implements MonitoredContext<K, V, T> {
 
 	private static final long serialVersionUID = 5810194340880306239L;
 
@@ -119,8 +118,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public long getRemainingTime() {
-		long remainingTime = (this.timeOfMostRecentAccess + this.maxIdleTime)
-				- System.currentTimeMillis();
+		long remainingTime = (this.timeOfMostRecentAccess + this.maxIdleTime) - System.currentTimeMillis();
 		return remainingTime;
 	}
 
@@ -157,6 +155,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 		for (TimeoutListener<T> timeoutListener : this.timeoutListeners) {
 			timeoutListener.onTimeout((T) this);
 		}
+		this.clear();
 	}
 
 	protected void ping() {

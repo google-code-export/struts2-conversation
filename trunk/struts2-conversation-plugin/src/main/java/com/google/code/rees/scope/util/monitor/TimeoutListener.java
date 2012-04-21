@@ -28,14 +28,14 @@ import java.io.Serializable;
 
 /**
  * This interface provides a simple mechanism for allowing other objects to be notified of a {@link Timeoutable Timeoutable's}
- * tmieout.
+ * timeout.
  * 
  * @author rees.byars
  */
 public interface TimeoutListener<T> extends Serializable {
 
 	/**
-	 * Called when the given {@link Timeoutable Timeoutable's} defaultMaxIdleTime method is called.
+	 * Called when the given {@link Timeoutable Timeoutable's} timeout method is called.
 	 * 
 	 * @param timeoutable
 	 */
