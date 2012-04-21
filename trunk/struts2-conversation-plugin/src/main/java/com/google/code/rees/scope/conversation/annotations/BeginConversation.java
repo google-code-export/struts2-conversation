@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 
 /**
  * Denotes a method as a conversation-initiating method. Depending on
- * the {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * the {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
  * ConversationArbitrator} being used, the convention of
  * using the {@link ConversationController} annotation and beginning the name of
  * an action method with "begin" can be used instead of this annotation.

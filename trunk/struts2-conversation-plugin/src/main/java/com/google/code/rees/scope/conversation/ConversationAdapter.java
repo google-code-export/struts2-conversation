@@ -29,7 +29,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
+import com.google.code.rees.scope.conversation.processing.ConversationPostProcessor;
+import com.google.code.rees.scope.conversation.processing.ConversationPostProcessorWrapper;
+import com.google.code.rees.scope.conversation.processing.ConversationPostProcessorWrapperFactory;
+import com.google.code.rees.scope.conversation.processing.DefaultConversationPostProcessorWrapperFactory;
 
 /**
  * This class is used to adapt/integrate the major components of the

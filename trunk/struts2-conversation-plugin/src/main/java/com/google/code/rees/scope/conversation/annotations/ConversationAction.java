@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * Denotes an action as an intermediate member a conversation.
  * <p>
  * Only works on methods that are also actions. Depending on the
- * {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
  * ConversationArbitrator} being used, the convention of using the
  * {@link ConversationController} can replace the need for this annotation in
  * most cases.

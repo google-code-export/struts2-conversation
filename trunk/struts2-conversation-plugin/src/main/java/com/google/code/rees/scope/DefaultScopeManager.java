@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.google.code.rees.scope;
 
-import com.google.code.rees.scope.conversation.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.session.SessionManager;
 
 /**

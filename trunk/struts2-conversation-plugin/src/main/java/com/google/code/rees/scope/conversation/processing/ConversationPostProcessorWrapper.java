@@ -19,31 +19,30 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationPostProcessorWrapperFactory.java reesbyars $
+ *  $Id: ConversationPostProcessorWrapper.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
 import java.io.Serializable;
 
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+
 /**
- * Creates {@link ConversationPostProcessorWrapper
- * ConversationPostProcessorWrappers}
+ * A wrapper class for {@link ConversationPostProcessor}. Allows for
+ * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationConfiguration, String)}
+ * to be called without the caller needing to provide the parameters
  * 
+ * @see {@link ConversationPostProcessorWrapperFactory}
  * @author rees.byars
  * 
  */
-public interface ConversationPostProcessorWrapperFactory extends Serializable {
+public interface ConversationPostProcessorWrapper extends Serializable {
+
     /**
-     * Returns an instance of a {@link ConversationPostProcessorWrapper}
-     * 
-     * @param conversationAdapter
-     * @param postProcessor
-     * @param conversationConfig
-     * @param conversationId
-     * @return
+     * Calls
+     * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationConfiguration, String)}
+     * for an underlying post processor
      */
-    public ConversationPostProcessorWrapper create(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId);
+    public void postProcessConversation();
+
 }

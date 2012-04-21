@@ -21,7 +21,7 @@
  * 
  *  $Id: DefaultConversationArbitrator.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.annotations.BeginConversation;
 import com.google.code.rees.scope.conversation.annotations.ConversationAction;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;

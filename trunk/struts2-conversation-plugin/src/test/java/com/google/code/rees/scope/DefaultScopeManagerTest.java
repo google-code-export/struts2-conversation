@@ -4,7 +4,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.session.SessionAdapter;
 import com.google.code.rees.scope.session.SessionManager;
 

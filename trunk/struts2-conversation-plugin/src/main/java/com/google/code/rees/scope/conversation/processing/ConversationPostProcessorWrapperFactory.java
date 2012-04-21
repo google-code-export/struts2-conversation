@@ -19,33 +19,34 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationManager.java reesbyars $
+ *  $Id: ConversationPostProcessorWrapperFactory.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
 import java.io.Serializable;
 
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+
 /**
- * The primary conversation processing and management component.
+ * Creates {@link ConversationPostProcessorWrapper
+ * ConversationPostProcessorWrappers}
  * 
  * @author rees.byars
  * 
  */
-public interface ConversationManager extends Serializable {
-
+public interface ConversationPostProcessorWrapperFactory extends Serializable {
     /**
-     * Set the configuration provider for this manager
-     * 
-     * @param configurationProvider
-     */
-    public void setConfigurationProvider(
-            ConversationConfigurationProvider configurationProvider);
-
-    /**
-     * Process the conversations for the current request using the given adapter
+     * Returns an instance of a {@link ConversationPostProcessorWrapper}
      * 
      * @param conversationAdapter
+     * @param postProcessor
+     * @param conversationConfig
+     * @param conversationId
+     * @return
      */
-    public void processConversations(ConversationAdapter conversationAdapter);
-
+    public ConversationPostProcessorWrapper create(
+            ConversationAdapter conversationAdapter,
+            ConversationPostProcessor postProcessor,
+            ConversationConfiguration conversationConfig, String conversationId);
 }

@@ -32,12 +32,12 @@ import java.util.Set;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.google.code.rees.scope.conversation.DefaultConversationArbitrator;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
+import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.util.NamingUtil;
 
 /**
- * A {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * A {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
  * ConversationArbitrator} for use with Spring MVC. Looks for
  * {@link RequestMapping} annotations
  * to identify controller action methods.

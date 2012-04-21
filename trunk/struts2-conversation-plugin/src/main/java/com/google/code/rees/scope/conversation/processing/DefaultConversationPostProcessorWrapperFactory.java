@@ -19,40 +19,34 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: InjectionConversationManager.java reesbyars $
+ *  $Id: DefaultConversationPostProcessorWrapperFactory.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
-import com.google.code.rees.scope.conversation.annotations.ConversationField;
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 
 /**
- * Implementations of this class should implement injection of
- * {@link ConversationField ConversationFields}
+ * The default implementation of the
+ * {@link ConversationPostProcessorWrapperFactory}
  * 
  * @author rees.byars
  */
-public interface InjectionConversationManager extends ConversationManager {
+public class DefaultConversationPostProcessorWrapperFactory implements
+        ConversationPostProcessorWrapperFactory {
+
+    private static final long serialVersionUID = -8906181370354593161L;
 
     /**
-     * Inject the {@link ConversationField ConversationFields} on the target
-     * from the appropriate conversation contexts for active conversations
-     * associated with the current request
-     * 
-     * @param target
-     * @param conversationAdapter
+     * {@inheritDoc}
      */
-    void injectConversationFields(Object target,
-            ConversationAdapter conversationAdapter);
-
-    /**
-     * Extract the {@link ConversationField ConversationFields} from the target
-     * and place them into the conversations' contexts for active conversations
-     * associated with the current request.
-     * 
-     * @param target
-     * @param conversationAdapter
-     */
-    void extractConversationFields(Object target,
-            ConversationAdapter conversationAdapter);
+    @Override
+    public ConversationPostProcessorWrapper create(
+            ConversationAdapter conversationAdapter,
+            ConversationPostProcessor postProcessor,
+            ConversationConfiguration conversationConfig, String conversationId) {
+        return new DefaultConversationPostProcessorWrapper(conversationAdapter,
+                postProcessor, conversationConfig, conversationId);
+    }
 
 }

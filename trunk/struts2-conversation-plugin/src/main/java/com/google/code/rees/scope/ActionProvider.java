@@ -26,7 +26,7 @@ package com.google.code.rees.scope;
 import java.io.Serializable;
 import java.util.Set;
 
-import com.google.code.rees.scope.conversation.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.session.SessionConfigurationProvider;
 
 /**

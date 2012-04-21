@@ -162,10 +162,20 @@ public class DefaultConversationContextManager implements ConversationContextMan
 		
 		LOG.debug("Destroying ConversationManager and clearing conversation cache.");
 		
-		for (Map<String, ConversationContext> conversationContexts : this.conversations.values()) {
+		for (Entry<String, Map<String, ConversationContext>> conversationEntry : this.conversations.entrySet()) {
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Clearing contexts for " + conversationEntry.getKey() + ".");
+			}
+			
+			Map<String, ConversationContext> conversationContexts = conversationEntry.getValue();
+			
 			for (ConversationContext context : conversationContexts.values()) {
 				context.clear();
 			}
+			
+			conversationContexts.clear();
+			
 		}
 		
 		this.conversations.clear();

@@ -36,9 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.conversation.ConversationArbitrator;
-import com.google.code.rees.scope.conversation.DefaultConversationArbitrator;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
+import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
+import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.util.NamingUtil;
 import com.opensymphony.xwork2.inject.Inject;
 

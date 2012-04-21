@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * annotation.
  * <p>
  * Depending on the
- * {@link com.google.code.rees.scope.conversation.ConversationArbitrator
+ * {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
  * ConversationArbitrator} being used, by convention any action methods that
  * begin with the word "begin" or "end" are treated as {@link BeginConversation}
  * and {@link EndConversation} methods, respectively.

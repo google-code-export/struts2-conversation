@@ -21,7 +21,7 @@
  * 
  *  $Id: DefaultInjectionConversationManager.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -30,6 +30,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationUtil;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.util.ScopeUtil;
 
 /**
