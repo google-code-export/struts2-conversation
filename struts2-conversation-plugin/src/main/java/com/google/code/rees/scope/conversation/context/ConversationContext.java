@@ -32,8 +32,7 @@ import com.google.code.rees.scope.util.monitor.MonitoredContext;
  * @author rees.byars
  * 
  */
-public abstract interface ConversationContext extends
-		MonitoredContext<String, Object, ConversationContext> {
+public abstract interface ConversationContext extends MonitoredContext<String, Object, ConversationContext> {
 
 	/**
 	 * Get the context's id

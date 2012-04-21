@@ -31,16 +31,13 @@ import com.google.code.rees.scope.util.monitor.HashMonitoredContext;
  * @author rees.byars
  * 
  */
-public class DefaultConversationContext extends
-		HashMonitoredContext<String, Object, ConversationContext> implements
-		ConversationContext {
+public class DefaultConversationContext extends HashMonitoredContext<String, Object, ConversationContext> implements ConversationContext {
 
 	private static final long serialVersionUID = 2795735781863798576L;
 	protected String conversationName;
 	protected String id;
 
-	public DefaultConversationContext(String conversationName, String id,
-			long duration) {
+	public DefaultConversationContext(String conversationName, String id, long duration) {
 		super(duration);
 		this.id = id;
 		this.conversationName = conversationName;

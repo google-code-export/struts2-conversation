@@ -29,8 +29,7 @@ package com.google.code.rees.scope.conversation.context;
  * @author rees.byars
  * 
  */
-public class DefaultConversationContextFactory implements
-		ConversationContextFactory {
+public class DefaultConversationContextFactory implements ConversationContextFactory {
 
 	private static final long serialVersionUID = 5527890036398455557L;
 
@@ -41,10 +40,8 @@ public class DefaultConversationContextFactory implements
 	 * {@link DefaultConversationContext}
 	 */
 	@Override
-	public ConversationContext create(String conversationName,
-			String conversationId, long maxIdleTime) {
-		return new DefaultConversationContext(conversationName, conversationId,
-				maxIdleTime);
+	public ConversationContext create(String conversationName, String conversationId, long maxIdleTime) {
+		return new DefaultConversationContext(conversationName, conversationId, maxIdleTime);
 	}
 
 }

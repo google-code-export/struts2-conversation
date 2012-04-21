@@ -29,6 +29,17 @@ package com.google.code.rees.scope.conversation;
  * @author rees.byars
  */
 public class ConversationConstants {
+	
+	/**
+	 * 20
+	 */
+	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
+	
+	/**
+	 * 8 hours
+	 */
+	public static final long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
+	
     public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
     public static final String CONVERSATION_NAME_SESSION_MAP_SUFFIX = "-conversation";
     public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";

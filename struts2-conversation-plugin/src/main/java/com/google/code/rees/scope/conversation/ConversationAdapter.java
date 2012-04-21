@@ -92,8 +92,7 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @param conversationId
 	 * @return
 	 */
-	public abstract ConversationContext getConversationContext(
-			String conversationName, String conversationId);
+	public abstract ConversationContext getConversationContext(String conversationName, String conversationId);
 	
 	/**
 	 * Returns a map, associated with the current session, that contains the
@@ -105,14 +104,12 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public abstract ConversationContext getConversationContext(
-			String conversationName, String conversationId, long maxIdleTimeMillis);
+	public abstract ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis);
 
 	/**
 	 * Removes the conversation from the session, returning the context map
 	 */
-	public abstract ConversationContext endConversation(
-			String conversationName, String conversationId);
+	public abstract ConversationContext endConversation(String conversationName, String conversationId);
 
 	/**
 	 * Returns a map that is used to place conversation name/id key/value pairs
@@ -133,10 +130,8 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @param conversationConfig
 	 * @param conversationId
 	 */
-	public void addPostProcessor(ConversationPostProcessor postProcessor,
-			ConversationConfiguration conversationConfig, String conversationId) {
-		ConversationPostProcessorWrapper wrapper = this.postProcessorFactory
-				.create(this, postProcessor, conversationConfig, conversationId);
+	public void addPostProcessor(ConversationPostProcessor postProcessor, ConversationConfiguration conversationConfig, String conversationId) {
+		ConversationPostProcessorWrapper wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
 		this.postProcessors.add(wrapper);
 	}
 

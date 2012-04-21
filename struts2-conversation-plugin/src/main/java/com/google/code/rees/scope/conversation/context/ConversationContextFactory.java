@@ -41,6 +41,5 @@ public interface ConversationContextFactory extends Serializable {
 	 * @param maxIdleTime
 	 * @return
 	 */
-	public ConversationContext create(String conversationName,
-			String conversationId, long maxIdleTime);
+	public ConversationContext create(String conversationName, String conversationId, long maxIdleTime);
 }

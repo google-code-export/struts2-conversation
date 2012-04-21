@@ -36,6 +36,33 @@ import javax.servlet.http.HttpServletRequest;
  * 
  */
 public interface HttpConversationContextManagerFactory extends Serializable {
+	
+	/**
+	 * Set the default max idle time for {@link ConversationContext ConversationContexts} managed by the managers produced by this factory
+	 * 
+	 * @param maxIdleTime
+	 */
+	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
+	
+	/**
+	 * set the frequency in milliseconds for monitoring timeouts
+	 * 
+	 * @param monitoringFrequency
+	 */
+	public void setMonitoringFrequency(long monitoringFrequency);
+	
+	/**
+	 * set the max number of instances of conversations
+	 * 
+	 * @param maxInstances
+	 */
+	public void setMaxInstances(int maxInstances);
+	
+	/**
+	 * set the {@link ConversationContextFactory}
+	 * @param conversationContextFactory
+	 */
+	public void setConversationContextFactory(ConversationContextFactory conversationContextFactory);
 
     /**
      * Return the {@link ConversationContextManager} for this request

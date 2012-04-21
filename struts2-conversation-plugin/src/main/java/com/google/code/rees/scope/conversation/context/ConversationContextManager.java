@@ -33,23 +33,13 @@ import java.io.Serializable;
  * 
  */
 public interface ConversationContextManager extends Serializable {
-
-	/**
-	 * 20
-	 */
-	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
 	
 	/**
-	 * 8 hours
-	 */
-	public static final long DEFAULT_CONVERSATION_DURATION = 28800000;
-
-	/**
-	 * Set the max-idle maxIdleTime for all conversations created by this factory
+	 * Set the default max idle time for {@link ConversationContext ConversationContexts} managed by this manager
 	 * 
 	 * @param maxIdleTime
 	 */
-	public void setConversationDuration(long duration);
+	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
 
 	/**
 	 * Set the max number of cached {@link ConversationContext
@@ -74,8 +64,7 @@ public interface ConversationContextManager extends Serializable {
 	 * @param conversationId
 	 * @return
 	 */
-	public ConversationContext getContext(String conversationName,
-			String conversationId);
+	public ConversationContext getContext(String conversationName, String conversationId);
 	
 	/**
 	 * Retrieve the context identified by the given information, creating a new
@@ -86,8 +75,7 @@ public interface ConversationContextManager extends Serializable {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public ConversationContext getContext(String conversationName,
-			String conversationId, long maxIdleTimeMillis);
+	public ConversationContext getContext(String conversationName, String conversationId, long maxIdleTimeMillis);
 
 	/**
 	 * Remove the context identified by the given information, returning the
@@ -97,8 +85,7 @@ public interface ConversationContextManager extends Serializable {
 	 * @param conversationId
 	 * @return
 	 */
-	public ConversationContext remove(String conversationName,
-			String conversationId);
+	public ConversationContext remove(String conversationName, String conversationId);
 	
 	/**
 	 * Cleanup and release the manager's resources

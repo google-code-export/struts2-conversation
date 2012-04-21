@@ -52,8 +52,7 @@ public class ConversationScope implements Scope {
     }
 
     @Override
-    public void registerDestructionCallback(String name,
-            Runnable destructionCallback) {
+    public void registerDestructionCallback(String name, Runnable destructionCallback) {
     }
 
     @Override

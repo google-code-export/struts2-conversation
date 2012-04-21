@@ -23,83 +23,43 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
-import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
-import com.google.code.rees.scope.conversation.context.HttpConversationUtil;
-import com.google.code.rees.scope.conversation.context.TimeoutConversationContextManager;
-import com.google.code.rees.scope.util.monitor.BasicTimeoutMonitor;
-import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 import com.opensymphony.xwork2.inject.Inject;
 
 /**
+ * This class basically just serves to work with X-Work's dependency injection
  * 
  * @author rees.byars
  *
  */
-public class StrutsConversationContextManagerFactory implements HttpConversationContextManagerFactory {
+public class StrutsConversationContextManagerFactory extends DefaultHttpConversationContextManagerFactory implements HttpConversationContextManagerFactory {
 
     private static final long serialVersionUID = 2461287910903625512L;
     
-    private static Logger LOG = LoggerFactory.getLogger(StrutsConversationContextManagerFactory.class);
-
-    protected Long monitoringFrequency;
-    protected Long timeout;
-    protected Integer maxInstances;
-    protected ConversationContextFactory conversationContextFactory;
+    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
+        super.setDefaultMaxIdleTime(Long.parseLong(defaultMaxIdleTimeString));
+    }
 
     @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
     public void setMonitoringFrequency(String monitoringFrequency) {
-        this.monitoringFrequency = Long.parseLong(monitoringFrequency);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setTimeout(String timeout) {
-        this.timeout = Long.parseLong(timeout);
+        super.setMonitoringFrequency(Long.parseLong(monitoringFrequency));
     }
 
     @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
     public void setMaxInstances(String maxInstances) {
-        this.maxInstances = Integer.parseInt(maxInstances);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
-    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
-        this.conversationContextFactory = conversationContextFactory;
+        super.setMaxInstances(Integer.parseInt(maxInstances));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ConversationContextManager getManager(HttpServletRequest request) { 
-    	HttpSession session = request.getSession();
-    	Object contextManager = HttpConversationUtil.getContextManager(session);
-        if (contextManager == null) {
-        	contextManager = this.createContextManager(session);
-        }
-        return (ConversationContextManager) contextManager;
-    }
-    
-    protected ConversationContextManager createContextManager(HttpSession session) {
-    	if (LOG.isDebugEnabled()) {
-    		LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
-    	}
-    	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
-    	contextManager.setConversationDuration(this.timeout);
-    	contextManager.setMaxInstances(this.maxInstances);
-    	contextManager.setContextFactory(this.conversationContextFactory);
-        TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);
-        contextManager.setTimeoutMonitor(timeoutMonitor);
-        HttpConversationUtil.setContextManager(session, contextManager);
-        return contextManager;
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
+    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
+        this.conversationContextFactory = conversationContextFactory;
     }
 
 }

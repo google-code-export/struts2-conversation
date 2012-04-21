@@ -22,7 +22,7 @@
  * $Id: ConversationCleanupListener.java Apr 20, 2012 11:32:39 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.struts2;
+package com.google.code.rees.scope.conversation.context;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
@@ -31,10 +31,12 @@ import javax.servlet.http.HttpSessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.HttpConversationUtil;
 
 /**
+ * This class listens for the destruction of sessions and cleans up that sessions conversation resources.
+ * With Servlet API 3.0+, this class is auto-discovered using the {@link WebListener} annotation. In earlier
+ * API versions, it must be configured in the web.xml (or not at all if cleanup is not a concern).
+ * 
  * @author rees.byars
  */
 @WebListener
