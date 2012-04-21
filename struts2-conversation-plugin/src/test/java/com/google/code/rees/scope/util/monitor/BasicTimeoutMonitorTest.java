@@ -24,9 +24,6 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.monitor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 
 import com.google.code.rees.scope.conversation.ConversationUtil;
@@ -43,19 +40,7 @@ public class BasicTimeoutMonitorTest {
 	@Test
 	public void testSerialization() {
 		
-		
-		
-		
-		Map<Timeoutable<ConversationContext>, TimeoutTask> timeoutTasks = new HashMap<Timeoutable<ConversationContext>, TimeoutTask>();
-		for (int i = 0; i < 500; i++) {
-			Timeoutable<ConversationContext> timeoutable = new DefaultConversationContext(
-					"sf", "ddddddd", 5000000L);
-			timeoutTasks.put(timeoutable, TimeoutTask.create(timeoutable));
-			Timeoutable<ConversationContext> timeoutable2 = new DefaultConversationContext(
-					"sftttttttttt", "dd", 5000000L);
-			timeoutTasks.put(timeoutable2, TimeoutTask.create(timeoutable2));
-		}
-		System.out.println("SIZE:  " + timeoutTasks.size());
+		//TODO this is not a great test per se
 
 		TimeoutMonitor<ConversationContext> m = BasicTimeoutMonitor.spawnInstance(100L);
 		
@@ -70,11 +55,8 @@ public class BasicTimeoutMonitorTest {
 					ConversationUtil.generateId(), 5000000L));
 			m.addTimeoutable(new DefaultConversationContext("ssdddd",
 					ConversationUtil.generateId(), 5000000L));
-			System.out.println("serializing...");
 			m = SerializationTestingUtil.getSerializedCopy(m);
-			System.out.println("done serializing!!!");
 		}
-		System.out.println("about to sleep...");
 
 		for (int ii = 0; ii < 300; ii++) {
 			m.addTimeoutable(new DefaultConversationContext("s",
@@ -85,7 +67,6 @@ public class BasicTimeoutMonitorTest {
 			Thread.yield();
 		}
 
-		System.out.println("done sleeping!!!");
 		m.destroy();
 	}
 

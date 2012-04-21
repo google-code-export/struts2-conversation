@@ -21,12 +21,14 @@
  * 
  *  $Id: ConversationArbitrator.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.configuration;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
+
+import com.google.code.rees.scope.conversation.ConversationAdapter;
 
 /**
  * This class is used by a {@link ConversationConfigurationProvider} to

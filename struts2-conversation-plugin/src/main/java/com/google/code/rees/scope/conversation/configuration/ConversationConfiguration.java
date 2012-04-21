@@ -21,13 +21,18 @@
  * 
  *  $Id: ConversationConfiguration.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.ConversationUtil;
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
 
 /**
  * This class is used to cache the fields and action IDs for a single

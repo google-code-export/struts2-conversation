@@ -31,11 +31,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.conversation.ConversationManager;
 import com.google.code.rees.scope.conversation.ConversationUtil;
-import com.google.code.rees.scope.conversation.DefaultConversationArbitrator;
-import com.google.code.rees.scope.conversation.DefaultInjectionConversationManager;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
+import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationManager;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.ConventionConstants;

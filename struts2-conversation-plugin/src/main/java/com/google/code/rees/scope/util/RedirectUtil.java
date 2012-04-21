@@ -33,23 +33,19 @@ import java.util.Map.Entry;
  */
 public class RedirectUtil {
 
-    public static String getUrlParamString(String url,
-            Map<String, String> viewContext) {
+    public static String getUrlParamString(String url, Map<String, String> viewContext) {
         StringBuilder builder = new StringBuilder(url);
         if (viewContext.size() > 0) {
             if (url.contains("?")) {
                 for (Entry<String, String> param : viewContext.entrySet()) {
-                    builder.append("&").append(param.getKey()).append("=")
-                            .append(param.getValue());
+                    builder.append("&").append(param.getKey()).append("=").append(param.getValue());
                 }
             } else {
                 builder.append("?");
                 for (Entry<String, String> param : viewContext.entrySet()) {
-                    builder.append(param.getKey()).append("=")
-                            .append(param.getValue()).append("&");
+                    builder.append(param.getKey()).append("=").append(param.getValue()).append("&");
                 }
-                builder = builder
-                        .delete(builder.length() - 1, builder.length());
+                builder = builder.delete(builder.length() - 1, builder.length());
             }
         }
         return builder.toString();

@@ -19,31 +19,45 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultConversationPostProcessorWrapperFactory.java reesbyars $
+ *  $Id: DefaultConversationPostProcessorWrapper.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
+
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 
 /**
- * The default implementation of the
- * {@link ConversationPostProcessorWrapperFactory}
+ * The default implementation of the {@link ConversationPostProcessorWrapper}
  * 
  * @author rees.byars
  */
-public class DefaultConversationPostProcessorWrapperFactory implements
-        ConversationPostProcessorWrapperFactory {
+public class DefaultConversationPostProcessorWrapper implements
+        ConversationPostProcessorWrapper {
 
-    private static final long serialVersionUID = -8906181370354593161L;
+    private static final long serialVersionUID = -8235162251071925835L;
+
+    private transient ConversationConfiguration conversationConfig;
+    private String conversationId;
+    private ConversationPostProcessor postProcessor;
+    private ConversationAdapter conversationAdapter;
+
+    public DefaultConversationPostProcessorWrapper(
+            ConversationAdapter conversationAdapter,
+            ConversationPostProcessor postProcessor,
+            ConversationConfiguration conversationConfig, String conversationId) {
+        this.conversationAdapter = conversationAdapter;
+        this.postProcessor = postProcessor;
+        this.conversationConfig = conversationConfig;
+        this.conversationId = conversationId;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ConversationPostProcessorWrapper create(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId) {
-        return new DefaultConversationPostProcessorWrapper(conversationAdapter,
-                postProcessor, conversationConfig, conversationId);
+    public void postProcessConversation() {
+        this.postProcessor.postProcessConversation(conversationAdapter,
+                conversationConfig, conversationId);
     }
 
 }

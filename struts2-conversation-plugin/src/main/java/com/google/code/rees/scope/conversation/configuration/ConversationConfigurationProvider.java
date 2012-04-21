@@ -21,11 +21,13 @@
  * 
  *  $Id: ConversationConfigurationProvider.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.configuration;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
+
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
 
 /**
  * This class is used by {@link ConversationManager ConversationManagers} to

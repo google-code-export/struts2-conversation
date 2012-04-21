@@ -19,42 +19,31 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultConversationPostProcessorWrapper.java reesbyars $
+ *  $Id: ConversationPostProcessor.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
+
+import java.io.Serializable;
+
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 
 /**
- * The default implementation of the {@link ConversationPostProcessorWrapper}
- * 
+ * This interface allows for post-processing of a conversation.  Registered via
+ * {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationConfiguration, String)
  * @author rees.byars
  */
-public class DefaultConversationPostProcessorWrapper implements
-        ConversationPostProcessorWrapper {
-
-    private static final long serialVersionUID = -8235162251071925835L;
-
-    private transient ConversationConfiguration conversationConfig;
-    private String conversationId;
-    private ConversationPostProcessor postProcessor;
-    private ConversationAdapter conversationAdapter;
-
-    public DefaultConversationPostProcessorWrapper(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId) {
-        this.conversationAdapter = conversationAdapter;
-        this.postProcessor = postProcessor;
-        this.conversationConfig = conversationConfig;
-        this.conversationId = conversationId;
-    }
+public interface ConversationPostProcessor extends Serializable {
 
     /**
-     * {@inheritDoc}
+     * Perform the post-processing using the given parameters
+     * 
+     * @param conversationAdapter
+     * @param conversationConfig
+     * @param conversationId
      */
-    @Override
-    public void postProcessConversation() {
-        this.postProcessor.postProcessConversation(conversationAdapter,
-                conversationConfig, conversationId);
-    }
+    public void postProcessConversation(
+            ConversationAdapter conversationAdapter,
+            ConversationConfiguration conversationConfig, String conversationId);
 
 }

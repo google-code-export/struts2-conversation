@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 /**
  * Denotes a field as a conversation-scoped field. Depends
  * on an
- * {@link com.google.code.rees.scope.conversation.InjectionConversationManager
+ * {@link com.google.code.rees.scope.conversation.processing.InjectionConversationManager
  * InjectionConversationManager} being used to manage conversations.
  * 
  * @author rees.byars

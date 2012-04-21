@@ -19,28 +19,41 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationPostProcessor.java reesbyars $
+ *  $Id: InjectionConversationManager.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
-import java.io.Serializable;
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.annotations.ConversationField;
 
 /**
- * This interface allows for post-processing of a conversation.  Registered via
- * {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationConfiguration, String)
+ * Implementations of this class should implement injection of
+ * {@link ConversationField ConversationFields}
+ * 
  * @author rees.byars
  */
-public interface ConversationPostProcessor extends Serializable {
+public interface InjectionConversationManager extends ConversationManager {
 
     /**
-     * Perform the post-processing using the given parameters
+     * Inject the {@link ConversationField ConversationFields} on the target
+     * from the appropriate conversation contexts for active conversations
+     * associated with the current request
      * 
+     * @param target
      * @param conversationAdapter
-     * @param conversationConfig
-     * @param conversationId
      */
-    public void postProcessConversation(
-            ConversationAdapter conversationAdapter,
-            ConversationConfiguration conversationConfig, String conversationId);
+    void injectConversationFields(Object target,
+            ConversationAdapter conversationAdapter);
+
+    /**
+     * Extract the {@link ConversationField ConversationFields} from the target
+     * and place them into the conversations' contexts for active conversations
+     * associated with the current request.
+     * 
+     * @param target
+     * @param conversationAdapter
+     */
+    void extractConversationFields(Object target,
+            ConversationAdapter conversationAdapter);
 
 }

@@ -60,7 +60,7 @@
 	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.ActionProvider"
 		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
 		
-	<bean name="struts.conversation.arbitrator" type="com.google.code.rees.scope.conversation.ConversationArbitrator"
+	<bean name="struts.conversation.arbitrator" type="com.google.code.rees.scope.conversation.configuration.ConversationArbitrator"
 		class="com.google.code.rees.scope.struts2.StrutsConversationArbitrator"/>
 
 	<bean name="struts.session.configurationProvider"
@@ -68,16 +68,16 @@
 		class="com.google.code.rees.scope.session.DefaultSessionConfigurationProvider" />
 		
 	<bean name="struts.conversation.configurationProvider"
-		type="com.google.code.rees.scope.conversation.ConversationConfigurationProvider"
-		class="com.google.code.rees.scope.conversation.DefaultConversationConfigurationProvider" />
+		type="com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider"
+		class="com.google.code.rees.scope.conversation.configuration.DefaultConversationConfigurationProvider" />
 		
 	<bean name="struts.conversation.conversationManager"
-		type="com.google.code.rees.scope.conversation.ConversationManager"
-		class="com.google.code.rees.scope.conversation.DefaultInjectionConversationManager" />
+		type="com.google.code.rees.scope.conversation.processing.ConversationManager"
+		class="com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationManager" />
 		
 	<bean name="conversation.simple.manager"
-		type="com.google.code.rees.scope.conversation.ConversationManager"
-		class="com.google.code.rees.scope.conversation.SimpleConversationManager" />
+		type="com.google.code.rees.scope.conversation.processing.ConversationManager"
+		class="com.google.code.rees.scope.conversation.processing.SimpleConversationManager" />
 
 	<bean name="struts.session.sessionManager"
 		type="com.google.code.rees.scope.session.SessionManager"

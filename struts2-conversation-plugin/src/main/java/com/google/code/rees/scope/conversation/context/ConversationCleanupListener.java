@@ -54,9 +54,12 @@ public class ConversationCleanupListener implements HttpSessionListener {
 		ConversationContextManager contextManager = HttpConversationUtil.getContextManager(se.getSession());
 		if (contextManager != null) {
 			if (LOG.isDebugEnabled()) {
-	    		LOG.debug("Destroying ConversationContextManager for session with ID:  " + se.getSession().getId());
+	    		LOG.debug("Cleaning up conversation resources for session with ID:  " + se.getSession().getId());
 	    	}
 			contextManager.destroy();
+			if (LOG.isDebugEnabled()) {
+	    		LOG.debug("Cleanup of conversation resources completed for session with ID:  " + se.getSession().getId());
+	    	}
 		}
 	}
 

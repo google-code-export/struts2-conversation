@@ -21,12 +21,15 @@
  * 
  *  $Id: ConversationEndProcessor.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.processing;
 
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 
 /**
  * A {@link ConversationPostProcessor} used to remove a conversation context

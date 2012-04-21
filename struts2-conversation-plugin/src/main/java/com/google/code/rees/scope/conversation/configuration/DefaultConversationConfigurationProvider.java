@@ -21,7 +21,7 @@
  * 
  *  $Id: DefaultConversationConfigurationProvider.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
