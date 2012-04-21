@@ -75,5 +75,10 @@ public interface ConversationContextManager extends Serializable {
 	 */
 	public ConversationContext remove(String conversationName,
 			String conversationId);
+	
+	/**
+	 * Cleanup and release the manager's resources
+	 */
+	public void destroy();
 
 }

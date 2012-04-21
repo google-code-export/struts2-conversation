@@ -71,5 +71,13 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	public void onTimeout(ConversationContext expiredConversation) {
 		super.remove(expiredConversation.getConversationName(), expiredConversation.getId());
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void destroy() {
+		super.destroy();
+		this.conversationTimeoutMonitor.destroy();
+	}
 
 }

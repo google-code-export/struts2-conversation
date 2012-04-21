@@ -41,9 +41,7 @@ public abstract class AbstractEasyThread implements EasyThread {
 		Thread dieingThread = this.thread;
 		this.thread = null;
 		if (dieingThread != null) {
-			System.out.println("Stopping thread...");
 			dieingThread.interrupt();
-			System.out.println("Interupted?  " + dieingThread.isInterrupted());
 		}
 	}
 

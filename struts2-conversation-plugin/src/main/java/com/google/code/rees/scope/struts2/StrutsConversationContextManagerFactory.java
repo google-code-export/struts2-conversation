@@ -26,11 +26,11 @@ package com.google.code.rees.scope.struts2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.HttpConversationUtil;
 import com.google.code.rees.scope.conversation.context.TimeoutConversationContextManager;
 import com.google.code.rees.scope.util.monitor.BasicTimeoutMonitor;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
@@ -80,23 +80,23 @@ public class StrutsConversationContextManagerFactory implements HttpConversation
      * {@inheritDoc}
      */
     @Override
-    public ConversationContextManager getManager(HttpServletRequest request) {
-    	
-        HttpSession session = request.getSession();
-        Object ctxMgr = null;
-        ctxMgr = session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-        
-        if (ctxMgr == null) {
-            TimeoutConversationContextManager newCtxMgr = new TimeoutConversationContextManager();
-            newCtxMgr.setMaxInstances(this.maxInstances);
-            newCtxMgr.setContextFactory(this.conversationContextFactory);
-            TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);
-            newCtxMgr.setTimeoutMonitor(timeoutMonitor);
-            ctxMgr = newCtxMgr;
-            session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, ctxMgr);
+    public ConversationContextManager getManager(HttpServletRequest request) { 
+    	HttpSession session = request.getSession();
+    	Object contextManager = HttpConversationUtil.getContextManager(session);
+        if (contextManager == null) {
+        	contextManager = this.createContextManager(session);
         }
-        
-        return (ConversationContextManager) ctxMgr;
+        return (ConversationContextManager) contextManager;
+    }
+    
+    protected ConversationContextManager createContextManager(HttpSession session) {
+    	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
+    	contextManager.setMaxInstances(this.maxInstances);
+    	contextManager.setContextFactory(this.conversationContextFactory);
+        TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);
+        contextManager.setTimeoutMonitor(timeoutMonitor);
+        HttpConversationUtil.setContextManager(session, contextManager);
+        return contextManager;
     }
 
 }
