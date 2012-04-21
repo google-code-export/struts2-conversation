@@ -29,6 +29,8 @@ import java.io.Serializable;
 import com.google.code.rees.scope.util.thread.ThreadTask;
 
 /**
+ * This task observes the remaining time of a single {@link Timeoutable} and times it out when its remaining time is zero or less.
+ * 
  * @author rees.byars
  * 
  */

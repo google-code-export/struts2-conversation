@@ -31,6 +31,10 @@ import com.google.code.rees.scope.util.monitor.TimeoutListener;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
+ * This class extends the {@link DefaultConversationContextManager} and uses a {@link TimeoutMonitor} to
+ * monitor conversations for timeouts.  Using the {@link TimeoutListener} interface, it removes conversations
+ * from its cache when they have expired.
+ * 
  * @author rees.byars
  *
  */

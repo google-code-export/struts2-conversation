@@ -34,11 +34,13 @@ import com.google.code.rees.scope.util.thread.BasicTaskThread;
 import com.google.code.rees.scope.util.thread.TaskThread;
 
 /**
- * @author rees.byars
+ * This is a {@link Serializable} implementation of the {@link TimeoutMonitor} interface.  When serialized,
+ * it stops its {@TaskThread}.  When deserialized, it calls {@link #init()}, creating a new task thread
+ * and adding its serializable cache of {@link TimeoutTask TimeoutTasks} to the thread.
  * 
+ * @author rees.byars
  */
-public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements
-		TimeoutMonitor<T>, TimeoutListener<T> {
+public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMonitor<T>, TimeoutListener<T> {
 
 	private static final long serialVersionUID = -7924540987291582366L;
 
