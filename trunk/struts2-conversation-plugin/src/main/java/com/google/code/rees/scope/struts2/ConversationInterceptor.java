@@ -98,7 +98,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
     @Override
     public void init() {
 
-        LOG.info("Initializing the ConversationInterceptor...");
+        LOG.info("Initializing the Conversation Interceptor...");
 
         this.arbitrator.setActionSuffix(actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(arbitrator);
@@ -106,6 +106,8 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
                 .getActionClasses());
         this.conversationManager
                 .setConfigurationProvider(conversationConfigurationProvider);
+        
+        LOG.info("...Conversation Interceptor successfully initialized.");
 
     }
 
