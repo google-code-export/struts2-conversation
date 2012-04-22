@@ -43,6 +43,10 @@ import org.slf4j.LoggerFactory;
 public class ConversationCleanupListener implements HttpSessionListener {
 	
 	private static Logger LOG = LoggerFactory.getLogger(ConversationCleanupListener.class);
+	
+	public ConversationCleanupListener() {
+		LOG.info("Conversation Cleanup Listener created.");
+	}
     
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {

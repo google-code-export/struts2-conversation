@@ -136,7 +136,7 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
     @Override
     public void init() {
 
-        LOG.info("Initializing the ScopeInterceptor...");
+    	LOG.info("Initializing the Conversation Interceptor...");
 
         this.arbitrator.setActionSuffix(actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(arbitrator);
@@ -152,6 +152,8 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
         this.manager.setConversationManager(conversationManager);
         this.manager.setSessionManager(sessionManager);
         this.manager.setScopeAdapterFactory(adapterFactory);
+        
+        LOG.info("...Conversation Interceptor successfully initialized.");
 
     }
 

@@ -66,12 +66,14 @@ public class DefaultConversationConfigurationProvider implements
      */
     @Override
     public void init(Set<Class<?>> actionClasses) {
+    	LOG.info("Building Conversation Configurations...");
     	if (this.arbitrator == null) {
     		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
     	}
         for (Class<?> clazz : actionClasses) {
             processClass(clazz, classConfigurations);
         }
+        LOG.info("...building of Conversation Configurations successfully completed.");
     }
 
     /**
