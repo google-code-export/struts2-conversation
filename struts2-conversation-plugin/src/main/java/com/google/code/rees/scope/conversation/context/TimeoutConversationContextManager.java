@@ -91,11 +91,11 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	 * {@inheritDoc}
 	 */
 	public void destroy() {
-		LOG.debug("Destroying TimeoutConversationManager.");
+		LOG.debug("Destroying TimeoutConversationContextManager.");
 		super.destroy();
 		LOG.debug("Destroying TimeoutMonitor.");
 		this.conversationTimeoutMonitor.destroy();
-		LOG.debug("TimeoutConversationManager and TimeoutMonitor destroyed.");
+		LOG.debug("TimeoutConversationContextManager and TimeoutMonitor destroyed.");
 	}
 
 }
