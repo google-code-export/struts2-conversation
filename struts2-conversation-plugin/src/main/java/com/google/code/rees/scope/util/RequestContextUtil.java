@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.configuration.ConversationSet;
 
 /**
  * Utility for creating the RequestContexts for adapters
@@ -43,9 +43,12 @@ public class RequestContextUtil {
         Map<String, String> requestContext = new HashMap<String, String>();
         if (request != null) {
             Map<String, String[]> params = request.getParameterMap();
+            ConversationSet realConversationNames = ConversationSet.get();
             for (Entry<String, String[]> param : params.entrySet()) {
-                if (param.getKey().endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-                    requestContext.put(param.getKey(), param.getValue()[0]);
+            	String candidateConversationName = param.getKey();
+            	String candidateConversationId = param.getValue()[0];
+                if (realConversationNames.contains(candidateConversationName)) {
+                    requestContext.put(candidateConversationName, candidateConversationId);
                 }
             }
         }
