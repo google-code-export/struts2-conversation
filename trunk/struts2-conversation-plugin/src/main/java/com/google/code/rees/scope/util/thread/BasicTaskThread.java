@@ -30,6 +30,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
+ * A basic TaskThread implementation that uses a {@link CopyOnWriteArraySet} to manage concurrent read/write/removal
+ * of {@link ThreadTask ThreadTasks}.
+ * 
  * @author rees.byars
  */
 public class BasicTaskThread extends AbstractEasyThread implements
@@ -41,6 +44,9 @@ public class BasicTaskThread extends AbstractEasyThread implements
 		tasks = new CopyOnWriteArraySet<ThreadTask>();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addTask(ThreadTask task) {
 		synchronized (this.tasks) {
@@ -48,6 +54,9 @@ public class BasicTaskThread extends AbstractEasyThread implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeTask(ThreadTask task) {
 		synchronized (this.tasks) {
@@ -55,6 +64,9 @@ public class BasicTaskThread extends AbstractEasyThread implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void destroy() {
 		super.destroy();
@@ -63,6 +75,9 @@ public class BasicTaskThread extends AbstractEasyThread implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void doWhileRunning() {
 		Iterator<ThreadTask> taskIterator = this.tasks.iterator();

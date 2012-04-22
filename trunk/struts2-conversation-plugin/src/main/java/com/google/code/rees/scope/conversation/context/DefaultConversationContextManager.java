@@ -160,7 +160,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	@Override
 	public void destroy() {
 		
-		LOG.debug("Destroying ConversationManager and clearing conversation cache.");
+		LOG.debug("Destroying ConversationContextManager and clearing conversation cache.");
 		
 		for (Entry<String, Map<String, ConversationContext>> conversationEntry : this.conversations.entrySet()) {
 			
@@ -180,7 +180,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 		
 		this.conversations.clear();
 		
-		LOG.debug("ConversationManager destroyed and conversation cache cleared.");
+		LOG.debug("ConversationContextManager destroyed and conversation cache cleared.");
 		
 	}
 
