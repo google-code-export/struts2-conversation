@@ -215,6 +215,12 @@ public class DefaultConversationConfigurationProvider implements
             configurations.addAll(temporaryConversationMap.values());
             classConfigurations.put(clazz, configurations);
         }
+        
+        ConversationSet convoSet = ConversationSet.get();
+        for (ConversationConfiguration configuration : configurations) {
+        	convoSet.add(configuration.getConversationName());
+        }
+        
         return configurations;
     }
 
