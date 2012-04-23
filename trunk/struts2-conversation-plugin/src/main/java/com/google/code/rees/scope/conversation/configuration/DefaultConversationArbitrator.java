@@ -116,18 +116,14 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     public Collection<String> getConversations(Class<?> clazz, Method method) {
         Set<String> methodConversations = new HashSet<String>();
         if (method.isAnnotationPresent(ConversationAction.class)) {
-            ConversationAction conversationmethod = method
-                    .getAnnotation(ConversationAction.class);
+            ConversationAction conversationmethod = method.getAnnotation(ConversationAction.class);
             String[] conversations = conversationmethod.conversations();
             if (conversations.length == 0) {
-                conversations = getConversationsWithInheritance(clazz,
-                        actionSuffix);
+                conversations = getConversationsWithInheritance(clazz, actionSuffix);
             }
             methodConversations.addAll(Arrays.asList(conversations));
         } else {
-            methodConversations
-                    .addAll(Arrays.asList(getConversationsWithInheritance(
-                            clazz, actionSuffix)));
+            methodConversations.addAll(Arrays.asList(getConversationsWithInheritance(clazz, actionSuffix)));
         }
         return methodConversations;
     }
@@ -139,8 +135,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     public String getName(Field field) {
         String name = field.getName();
         if (field.isAnnotationPresent(ConversationField.class)) {
-            ConversationField conversationField = field
-                    .getAnnotation(ConversationField.class);
+            ConversationField conversationField = field.getAnnotation(ConversationField.class);
             String annotationName = conversationField.name();
             if (!annotationName.equals(ConversationField.DEFAULT)) {
                 name = annotationName;
@@ -161,29 +156,19 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> getBeginConversations(Class<?> clazz,
-            Method method) {
+    public Collection<String> getBeginConversations(Class<?> clazz, Method method) {
         Set<String> methodConversations = new HashSet<String>();
-
         Class<?> declaringClass = method.getDeclaringClass();
         if (method.isAnnotationPresent(BeginConversation.class)) {
-            BeginConversation conversationmethod = method
-                    .getAnnotation(BeginConversation.class);
-            methodConversations.addAll(Arrays.asList(conversationmethod
-                    .conversations()));
+            BeginConversation conversationmethod = method.getAnnotation(BeginConversation.class);
+            methodConversations.addAll(Arrays.asList(conversationmethod.conversations()));
             if (declaringClass.equals(clazz) && methodConversations.size() == 0) {
-                methodConversations.addAll(Arrays
-                        .asList(getConversationsWithoutInheritance(clazz,
-                                actionSuffix)));
+                methodConversations.addAll(Arrays.asList(getConversationsWithoutInheritance(clazz, actionSuffix)));
             }
-        } else if (declaringClass.equals(clazz)
-                && method.getName().startsWith("begin")) {
-            methodConversations.addAll(Arrays
-                    .asList(getConversationsWithoutInheritance(clazz,
-                            actionSuffix)));
+        } else if (declaringClass.equals(clazz) && method.getName().startsWith("begin")) {
+            methodConversations.addAll(Arrays.asList(getConversationsWithoutInheritance(clazz, actionSuffix)));
         } else if (!declaringClass.equals(clazz)) {
-            methodConversations.addAll(getBeginConversations(declaringClass,
-                    method));
+            methodConversations.addAll(getBeginConversations(declaringClass, method));
         }
         return methodConversations;
     }
@@ -196,34 +181,24 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         Set<String> methodConversations = new HashSet<String>();
         Class<?> declaringClass = method.getDeclaringClass();
         if (method.isAnnotationPresent(EndConversation.class)) {
-            EndConversation conversationmethod = method
-                    .getAnnotation(EndConversation.class);
-            methodConversations.addAll(Arrays.asList(conversationmethod
-                    .conversations()));
+            EndConversation conversationmethod = method.getAnnotation(EndConversation.class);
+            methodConversations.addAll(Arrays.asList(conversationmethod.conversations()));
             if (declaringClass.equals(clazz) && methodConversations.size() == 0) {
-                methodConversations.addAll(Arrays
-                        .asList(getConversationsWithoutInheritance(clazz,
-                                actionSuffix)));
+                methodConversations.addAll(Arrays.asList(getConversationsWithoutInheritance(clazz, actionSuffix)));
             }
-        } else if (declaringClass.equals(clazz)
-                && method.getName().startsWith("end")) {
-            methodConversations.addAll(Arrays
-                    .asList(getConversationsWithoutInheritance(clazz,
-                            actionSuffix)));
+        } else if (declaringClass.equals(clazz) && method.getName().startsWith("end")) {
+            methodConversations.addAll(Arrays.asList(getConversationsWithoutInheritance(clazz, actionSuffix)));
         } else if (!declaringClass.equals(clazz)) {
-            methodConversations.addAll(getEndConversations(declaringClass,
-                    method));
+            methodConversations.addAll(getEndConversations(declaringClass, method));
         }
         return methodConversations;
     }
 
     public Collection<String> getConversations(Class<?> clazz) {
-        return getConversations(clazz,
-                ConversationConstants.DEFAULT_CONTROLLER_SUFFIX);
+        return getConversations(clazz, ConversationConstants.DEFAULT_CONTROLLER_SUFFIX);
     }
 
-    public Collection<String> getConversations(Class<?> clazz,
-            String actionSuffix) {
+    public Collection<String> getConversations(Class<?> clazz, String actionSuffix) {
         Set<String> conversations = new HashSet<String>();
         for (Method method : ReflectionUtil.getMethods(clazz)) {
             conversations.addAll(getConversations(clazz, method, actionSuffix));
@@ -231,48 +206,37 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
         return conversations;
     }
 
-    public Collection<String> getConversations(Class<?> clazz, Method method,
-            String actionSuffix) {
+    public Collection<String> getConversations(Class<?> clazz, Method method, String actionSuffix) {
         Set<String> methodConversations = new HashSet<String>();
         if (method.isAnnotationPresent(ConversationAction.class)) {
-            ConversationAction conversationmethod = method
-                    .getAnnotation(ConversationAction.class);
+            ConversationAction conversationmethod = method.getAnnotation(ConversationAction.class);
             String[] conversations = conversationmethod.conversations();
             if (conversations.length == 0) {
-                conversations = getConversationsWithInheritance(clazz,
-                        actionSuffix);
+                conversations = getConversationsWithInheritance(clazz, actionSuffix);
             }
             methodConversations.addAll(Arrays.asList(conversations));
         } else if (isAction(method)) {
-            methodConversations
-                    .addAll(Arrays.asList(getConversationsWithInheritance(
-                            clazz, actionSuffix)));
+            methodConversations.addAll(Arrays.asList(getConversationsWithInheritance(clazz, actionSuffix)));
         }
         return methodConversations;
     }
 
-    protected String[] getConversationsWithInheritance(Class<?> clazz,
-            String actionSuffix) {
+    protected String[] getConversationsWithInheritance(Class<?> clazz, String actionSuffix) {
         List<String> conversations = new ArrayList<String>();
         for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
-            conversations.addAll(Arrays.asList(this
-                    .getConversationsWithoutInheritance(
-                            conversationControllerClass, actionSuffix)));
+            conversations.addAll(Arrays.asList(this.getConversationsWithoutInheritance(conversationControllerClass, actionSuffix)));
         }
         return conversations.toArray(new String[] {});
     }
 
-    protected String[] getConversationsWithoutInheritance(Class<?> clazz,
-            String actionSuffix) {
+    protected String[] getConversationsWithoutInheritance(Class<?> clazz, String actionSuffix) {
         List<String> conversations = new ArrayList<String>();
         if (clazz.isAnnotationPresent(ConversationController.class)) {
-            ConversationController controller = clazz
-                    .getAnnotation(ConversationController.class);
+            ConversationController controller = clazz.getAnnotation(ConversationController.class);
             String[] newConversations = controller.conversations();
             if (controller.value().equals(ConversationController.DEFAULT_VALUE)) {
                 if (newConversations.length == 0) {
-                    newConversations = new String[] { NamingUtil
-                            .getConventionName(clazz, actionSuffix) };
+                    newConversations = new String[] { NamingUtil.getConventionName(clazz, actionSuffix) };
                 }
             } else {
                 conversations.add(controller.value());
