@@ -99,7 +99,7 @@ public class ScopeTestUtil {
                     actionClass, getActionSuffix())) {
                 request.addParameter(
                         ConversationUtil.sanitizeName(conversationName)
-                                + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX,
+                                + ConversationConstants.CONVERSATION_NAME_SUFFIX,
                         conversationName + "-test-id");
             }
         }

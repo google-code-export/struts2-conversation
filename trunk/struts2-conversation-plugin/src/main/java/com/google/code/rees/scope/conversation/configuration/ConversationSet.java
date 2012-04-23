@@ -25,8 +25,8 @@
 package com.google.code.rees.scope.conversation.configuration;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.google.code.rees.scope.util.RequestContextUtil;
 
@@ -34,9 +34,6 @@ import com.google.code.rees.scope.util.RequestContextUtil;
  * A set (not a Java set, but backed by one) of all valid conversation names.  Used by the {@link RequestContextUtil} to build a valid
  * conversation request context and prevent the potential for memory leaks presented by the introduction
  * of invalid conversation names into a session.
- * 
- * The set is backed by a {@link CopyOnWriteArraySet} for thread safety, and the {@link #add(String)}
- * method is visible only within the Configuration package.
  * 
  * This class is a lazily-initialized singleton using the singleton-holder pattern developed by Bill Pugh.
  * 
@@ -46,7 +43,7 @@ public class ConversationSet implements Serializable {
 
 	private static final long serialVersionUID = 7638052367886487999L;
 	
-	private Set<String> backingSet = new CopyOnWriteArraySet<String>();
+	private Set<String> backingSet = new HashSet<String>();
 	
 	private ConversationSet(){}
 	

@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.mocks.actions.conversation.MockConversationController;
@@ -24,7 +25,7 @@ import com.google.code.struts2.test.junit.StrutsConfiguration;
 public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
-    static final String CONVERSATION_NAME = "oopy-conversation";
+    static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     static final String CONVERSATION_FIELD = "conversationString";
 
     @ConversationField(conversations = "oopy")

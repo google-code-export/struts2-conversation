@@ -47,8 +47,8 @@ public class ConversationUtil {
 	 * @return
 	 */
 	public static String getId(String conversationName) {
-		if (!conversationName.endsWith(ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX)) {
-			conversationName += ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
+		if (!conversationName.endsWith(ConversationConstants.CONVERSATION_NAME_SUFFIX)) {
+			conversationName += ConversationConstants.CONVERSATION_NAME_SUFFIX;
 		}
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
 		String id = (String) adapter.getRequestContext().get(conversationName);
