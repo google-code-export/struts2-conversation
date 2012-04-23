@@ -144,71 +144,56 @@ public class DefaultConversationConfigurationProvider implements
                     }
                 }
             }
+            
             // TODO refactor into multiple methods to make more beautimous
-            for (Method method : this.arbitrator
-                    .getCandidateConversationMethods(clazz)) {
-                Collection<String> methodConversations = this.arbitrator
-                        .getConversations(clazz, method);
+            for (Method method : this.arbitrator.getCandidateConversationMethods(clazz)) {
+            	
+            	//intermediate action methods
+                Collection<String> methodConversations = this.arbitrator.getConversations(clazz, method);
                 if (methodConversations != null) {
                     String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodConversations) {
-                        ConversationConfiguration configuration = temporaryConversationMap
-                                .get(conversation);
+                        ConversationConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationConfiguration(
-                                    conversation);
-                            temporaryConversationMap.put(conversation,
-                                    configuration);
+                            configuration = new ConversationConfiguration(conversation);
+                            temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method "
-                                    + methodName
-                                    + " as an Action to ConversationConfiguration for Conversation "
-                                    + conversation);
+                            LOG.debug("Adding method " + methodName + " as an Action to ConversationConfiguration for Conversation " + conversation);
                         }
                         configuration.addAction(methodName);
                     }
                 }
-                Collection<String> methodBeginConversations = this.arbitrator
-                        .getBeginConversations(clazz, method);
+                
+                //begin action methods
+                Collection<String> methodBeginConversations = this.arbitrator.getBeginConversations(clazz, method);
                 if (methodBeginConversations != null) {
                     String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodBeginConversations) {
-                        ConversationConfiguration configuration = temporaryConversationMap
-                                .get(conversation);
+                        ConversationConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationConfiguration(
-                                    conversation);
-                            temporaryConversationMap.put(conversation,
-                                    configuration);
+                            configuration = new ConversationConfiguration(conversation);
+                            temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method "
-                                    + methodName
-                                    + " as a Begin Action to ConversationConfiguration for Conversation "
-                                    + conversation);
+                            LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationConfiguration for Conversation " + conversation);
                         }
                         configuration.addBeginAction(methodName);
                     }
                 }
-                Collection<String> methodEndConversations = this.arbitrator
-                        .getEndConversations(clazz, method);
+                
+                //end action methods
+                Collection<String> methodEndConversations = this.arbitrator.getEndConversations(clazz, method);
                 if (methodEndConversations != null) {
                     String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodEndConversations) {
-                        ConversationConfiguration configuration = temporaryConversationMap
-                                .get(conversation);
+                        ConversationConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationConfiguration(
-                                    conversation);
-                            temporaryConversationMap.put(conversation,
-                                    configuration);
+                            configuration = new ConversationConfiguration(conversation);
+                            temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method "
-                                    + methodName
-                                    + " as an End Action to ConversationConfiguration for Conversation "
-                                    + conversation);
+                            LOG.debug("Adding method " + methodName + " as an End Action to ConversationConfiguration for Conversation " + conversation);
                         }
                         configuration.addEndAction(methodName);
                     }
@@ -218,6 +203,7 @@ public class DefaultConversationConfigurationProvider implements
             classConfigurations.put(clazz, configurations);
         }
         
+        //add all the conversation names to the ConversationSet
         ConversationSet convoSet = ConversationSet.get();
         for (ConversationConfiguration configuration : configurations) {
         	convoSet.add(configuration.getConversationName());

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +53,9 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
     private static final long serialVersionUID = 6842124082407418415L;
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(StrutsConversationArbitrator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StrutsConversationArbitrator.class);
 
-    private Map<Class<?>, Collection<String>> packageBasedConversations = Collections
-            .synchronizedMap(new HashMap<Class<?>, Collection<String>>());
+    private Map<Class<?>, Collection<String>> packageBasedConversations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<String>>());
 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
@@ -70,25 +69,32 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
     }
+    
+    @Override
+    protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
+    	if (this.isModelDrivenConversation(clazz)) {
+    		Set<Class<?>> controllers = super.getConversationControllers(clazz);
+    		controllers.add(clazz);
+    		return controllers;
+    	} else {
+    		return super.getConversationControllers(clazz);
+    	}
+    	
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected String[] getConversationsWithInheritance(Class<?> clazz,
-            String actionSuffix) {
+    protected String[] getConversationsWithInheritance(Class<?> clazz, String actionSuffix) {
         List<String> conversations = new ArrayList<String>();
-        conversations.addAll(Arrays.asList(super
-                .getConversationsWithInheritance(clazz, actionSuffix)));
+        conversations.addAll(Arrays.asList(super.getConversationsWithInheritance(clazz, actionSuffix)));
         if (this.usePackageNesting) {
             synchronized (this.packageBasedConversations) {
-                Collection<String> packageConversations = this.packageBasedConversations
-                        .get(clazz);
+                Collection<String> packageConversations = this.packageBasedConversations.get(clazz);
                 if (packageConversations == null) {
-                    packageConversations = this.getPackageBasedConversations(
-                            clazz, actionSuffix);
-                    this.packageBasedConversations.put(clazz,
-                            packageConversations);
+                    packageConversations = this.getPackageBasedConversations(clazz, actionSuffix);
+                    this.packageBasedConversations.put(clazz, packageConversations);
                 }
                 conversations.addAll(packageConversations);
             }
@@ -100,14 +106,10 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
      * {@inheritDoc}
      */
     @Override
-    protected String[] getConversationsWithoutInheritance(Class<?> clazz,
-            String actionSuffix) {
-        List<String> conversations = new ArrayList<String>(Arrays.asList(super
-                .getConversationsWithoutInheritance(clazz, actionSuffix)));
-        if (this.isModelDrivenConversation(clazz)
-                && !clazz.isAnnotationPresent(ConversationController.class)) {
-            conversations
-                    .add(NamingUtil.getConventionName(clazz, actionSuffix));
+    protected String[] getConversationsWithoutInheritance(Class<?> clazz, String actionSuffix) {
+        List<String> conversations = new ArrayList<String>(Arrays.asList(super.getConversationsWithoutInheritance(clazz, actionSuffix)));
+        if (this.isModelDrivenConversation(clazz) && !clazz.isAnnotationPresent(ConversationController.class)) {
+            conversations.add(NamingUtil.getConventionName(clazz, actionSuffix));
         }
         return conversations.toArray(new String[] {});
     }
@@ -117,46 +119,37 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
      */
     @Override
     protected boolean isConversationController(Class<?> clazz) {
-        return getConversationControllers(clazz).size() > 0
-                || this.isModelDrivenConversation(clazz);
+        return getConversationControllers(clazz).size() > 0 || this.isModelDrivenConversation(clazz);
     }
 
     protected boolean isModelDrivenConversation(Class<?> clazz) {
-        return (ModelDrivenConversationSupport.class.isAssignableFrom(clazz));
+        return (ModelDrivenConversationSupport.class.isAssignableFrom(clazz)) && !clazz.equals(ModelDrivenConversationSupport.class);
     }
 
-    protected Collection<String> getPackageBasedConversations(Class<?> clazz,
-            String actionSuffix) {
+    protected Collection<String> getPackageBasedConversations(Class<?> clazz, String actionSuffix) {
 
         String className = clazz.getName();
 
         LOG.debug("Getting package-based conversations for " + className);
 
-        String classPackageString = className.substring(0,
-                className.lastIndexOf("."));
+        String classPackageString = className.substring(0, className.lastIndexOf("."));
 
         Collection<String> packageBasedConversations = new HashSet<String>();
 
         for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
             String superCandidateClassName = superCandidate.getName();
-            String superCandidateClassPackageString = superCandidateClassName
-                    .substring(0, superCandidateClassName.lastIndexOf("."));
-            if (classPackageString.contains(superCandidateClassPackageString)
-                    && !classPackageString
-                            .equals(superCandidateClassPackageString)) {
-                LOG.debug("Adding conversations from "
-                        + superCandidateClassName);
+            String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
+            if (classPackageString.contains(superCandidateClassPackageString) 
+            		&& !classPackageString.equals(superCandidateClassPackageString)) {
+                
+            	LOG.debug("Adding conversations from " + superCandidateClassName);
 
-                String[] superCandidateConversations = this
-                        .getConversationsWithoutInheritance(superCandidate,
-                                actionSuffix);
-                packageBasedConversations.addAll(Arrays
-                        .asList(superCandidateConversations));
+                String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
+                packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
             }
         }
 
-        LOG.debug("Package-based conversations found for " + className + ":  "
-                + packageBasedConversations.toString());
+        LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
 
         return packageBasedConversations;
 
