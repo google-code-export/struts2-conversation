@@ -59,7 +59,7 @@ public class ConversationConfiguration {
         endActionIds = new HashSet<String>();
         this.conversationName = ConversationUtil
                 .sanitizeName(conversationName)
-                + ConversationConstants.CONVERSATION_NAME_SESSION_MAP_SUFFIX;
+                + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     }
 
     /**

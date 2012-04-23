@@ -40,8 +40,12 @@ public class ConversationConstants {
 	 */
 	public static final long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
 	
+	/**
+	 * used as a key to identify the {@link com.google.code.rees.scope.conversation.context.ConversationContextManager ConversationContextManager} 
+	 * within the session context
+	 */
     public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
-    public static final String CONVERSATION_NAME_SESSION_MAP_SUFFIX = "-conversation";
+    public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
     public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
-    public static final String TEMPORARY_CONTEXT_NAME = "rees.scope.temporary.context";
+    
 }
