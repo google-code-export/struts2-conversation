@@ -67,7 +67,7 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
      */
     @Override
     public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
-    	LOG.info("Setting conversation monitoring thread-pool size:  " + this.monitoringThreadPoolSize + " threads.");
+    	LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
     	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
     }
     
