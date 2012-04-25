@@ -23,6 +23,10 @@
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.context;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -30,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.util.monitor.BasicTimeoutMonitor;
+import com.google.code.rees.scope.util.monitor.ScheduledExecutorTimeoutMonitor;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
@@ -49,13 +53,32 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
     protected long defaultMaxIdleTime = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
     protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
     protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+    protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
     protected ConversationContextFactory conversationContextFactory;
+    protected transient ScheduledExecutorService scheduler;
+    
+    @PostConstruct
+    public void init() {
+    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
+    	LOG.info("Setting conversation monitoring thread-pool size:  " + this.monitoringThreadPoolSize + " threads.");
+    	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
+    }
     
     /**
      * {@inheritDoc}
      */
     @Override
     public void setDefaultMaxIdleTime(long timeout) {
+    	double idleTimeHours = timeout / (1000.0 * 60 * 60);
+    	LOG.info("Setting default conversation timeout:  " + timeout + " milliseconds.");
+    	LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
         this.defaultMaxIdleTime = timeout;
     }
 
@@ -64,6 +87,9 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
      */
     @Override
     public void setMonitoringFrequency(long monitoringFrequency) {
+    	double monitoringFrequencyMinutes = monitoringFrequency / (1000.0 * 60);
+    	LOG.info("Setting conversation timeout monitoring frequency:  " + monitoringFrequency + " milliseconds.");
+    	LOG.info("Converted monitoring frequency:  " + String.format("%.2f", monitoringFrequencyMinutes) + " minutes.");
         this.monitoringFrequency = monitoringFrequency;
     }
 
@@ -72,6 +98,7 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
      */
     @Override
     public void setMaxInstances(int maxInstances) {
+    	LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
         this.maxInstances = maxInstances;
     }
 
@@ -89,11 +116,14 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
     @Override
     public ConversationContextManager getManager(HttpServletRequest request) { 
     	HttpSession session = request.getSession();
-    	Object contextManager = HttpConversationUtil.getContextManager(session);
+    	ConversationContextManager contextManager = HttpConversationUtil.getContextManager(session);
         if (contextManager == null) {
         	contextManager = this.createContextManager(session);
+        } else {
+        	ScheduledExecutorTimeoutMonitor<ConversationContext> monitor = (ScheduledExecutorTimeoutMonitor<ConversationContext>) HttpConversationUtil.getTimeoutMonitor(session);
+        	monitor.setScheduler(this.scheduler);
         }
-        return (ConversationContextManager) contextManager;
+        return contextManager;
     }
     
     protected ConversationContextManager createContextManager(HttpSession session) {
@@ -104,9 +134,10 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
     	contextManager.setDefaultMaxIdleTime(this.defaultMaxIdleTime);
     	contextManager.setMaxInstances(this.maxInstances);
     	contextManager.setContextFactory(this.conversationContextFactory);
-        TimeoutMonitor<ConversationContext> timeoutMonitor = BasicTimeoutMonitor.spawnInstance(this.monitoringFrequency);
+        TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);
         contextManager.setTimeoutMonitor(timeoutMonitor);
         HttpConversationUtil.setContextManager(session, contextManager);
+        HttpConversationUtil.setTimeoutMonitor(session, timeoutMonitor);
         return contextManager;
     }
 

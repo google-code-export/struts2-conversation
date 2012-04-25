@@ -62,12 +62,19 @@ public class SimpleConversationManager implements ConversationManager {
 	 */
 	@Override
 	public void processConversations(ConversationAdapter conversationAdapter) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Beginning processing of conversations...");
+            LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
+        }
 		Object action = conversationAdapter.getAction();
 		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
 		if (actionConversationConfigs != null) {
 			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
 				processConversation(conversationConfig, conversationAdapter, action);
 			}
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("...processing of conversations complete.");
 		}
 	}
 
@@ -76,7 +83,7 @@ public class SimpleConversationManager implements ConversationManager {
 		String actionId = conversationAdapter.getActionId();
 		String conversationName = conversationConfig.getConversationName();
 		String conversationId = (String) conversationAdapter.getRequestContext().get(conversationName);
-
+		
 		if (conversationId != null) {
 			if (conversationConfig.containsAction(actionId)) {
 				if (conversationConfig.isEndAction(actionId)) {
@@ -87,7 +94,7 @@ public class SimpleConversationManager implements ConversationManager {
 			}
 		} else if (conversationConfig.isBeginAction(actionId)) {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Beginning new " + conversationName + " conversation.");
+				LOG.debug("Beginning new " + conversationName + ".");
 			}
 			ConversationUtil.begin(conversationName, conversationAdapter);
 		}

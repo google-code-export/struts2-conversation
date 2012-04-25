@@ -38,6 +38,14 @@ public class StrutsConversationContextManagerFactory extends DefaultHttpConversa
 
     private static final long serialVersionUID = 2461287910903625512L;
     
+    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
+    public void setMonitoringThreadPoolSize(String monitoringThreadPoolSizeString) {
+        super.setMonitoringThreadPoolSize(Integer.parseInt(monitoringThreadPoolSizeString));
+        if (this.scheduler == null) {
+        	this.init();
+        }
+    }
+    
     @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
     public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
         super.setDefaultMaxIdleTime(Long.parseLong(defaultMaxIdleTimeString));

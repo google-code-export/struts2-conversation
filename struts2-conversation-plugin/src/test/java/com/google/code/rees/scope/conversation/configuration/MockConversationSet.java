@@ -19,37 +19,21 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: HttpConversationUtil.java Apr 20, 2012 11:48:45 PM reesbyars $
+ * $Id: MockConversationSet.java Apr 23, 2012 5:37:56 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.conversation.context;
-
-import javax.servlet.http.HttpSession;
-
-import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
+package com.google.code.rees.scope.conversation.configuration;
 
 /**
  * @author rees.byars
  *
  */
-public class HttpConversationUtil {
+public class MockConversationSet {
 	
-	public static ConversationContextManager getContextManager(HttpSession session) {
-		return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-	}
+	private static ConversationSet set = ConversationSet.get();
 	
-	public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
-		session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static TimeoutMonitor<ConversationContext> getTimeoutMonitor(HttpSession session) {
-		return (TimeoutMonitor<ConversationContext>) session.getAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY);
-	}
-	
-	public static void setTimeoutMonitor(HttpSession session, TimeoutMonitor<ConversationContext> monitor) {
-		session.setAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY, monitor);
+	public static void add(String conversationName) {
+		set.add(conversationName);
 	}
 
 }
