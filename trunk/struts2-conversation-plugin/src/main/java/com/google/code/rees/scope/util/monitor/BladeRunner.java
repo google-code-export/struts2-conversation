@@ -19,37 +19,66 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: HttpConversationUtil.java Apr 20, 2012 11:48:45 PM reesbyars $
+ * $Id: BladeRunner.java Apr 25, 2012 1:52:33 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.conversation.context;
+package com.google.code.rees.scope.util.monitor;
 
-import javax.servlet.http.HttpSession;
-
-import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
+import com.google.code.rees.scope.util.thread.ThreadTask;
 
 /**
+ * A basic implementation of {@link TimeoutRunner} inspired by Harrison Ford.
+ * 
  * @author rees.byars
- *
  */
-public class HttpConversationUtil {
+public class BladeRunner<T extends Timeoutable<T>> implements TimeoutRunner<T> {
+
+	private static final long serialVersionUID = -2296155896962664978L;
+	private ThreadTask threadTask;
+	private T timeoutable;
 	
-	public static ConversationContextManager getContextManager(HttpSession session) {
-		return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-	}
+	protected BladeRunner(){}
 	
-	public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
-		session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static TimeoutMonitor<ConversationContext> getTimeoutMonitor(HttpSession session) {
-		return (TimeoutMonitor<ConversationContext>) session.getAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY);
-	}
-	
-	public static void setTimeoutMonitor(HttpSession session, TimeoutMonitor<ConversationContext> monitor) {
-		session.setAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY, monitor);
+	/**
+	 * creates and returns a BladeRunner instance
+	 * 
+	 * @param <TT>
+	 * @param timeoutable
+	 * @return
+	 */
+	public static <TT extends Timeoutable<TT>> BladeRunner<TT> create(TT timeoutable) {
+		BladeRunner<TT> runner = new BladeRunner<TT>();
+		runner.setTimeoutable(timeoutable);
+		runner.setThreadTask(TimeoutTask.create(timeoutable));
+		return runner;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void run() {
+		this.threadTask.doTask();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public T getTimeoutable() {
+		return this.timeoutable;
+	}
+	
+	protected void setTimeoutable(T timeoutable) {
+		this.timeoutable = timeoutable;
+	}
+	
+	protected ThreadTask getThreadTask() {
+		return this.threadTask;
+	}
+	
+	protected void setThreadTask(ThreadTask threadTask) {
+		this.threadTask = threadTask;
+	}
+	
 }

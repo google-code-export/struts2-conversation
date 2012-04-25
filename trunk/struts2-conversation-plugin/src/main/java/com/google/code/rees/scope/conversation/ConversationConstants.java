@@ -33,6 +33,11 @@ public class ConversationConstants {
 	/**
 	 * 20
 	 */
+	public static final int DEFAULT_MONITORING_THREAD_POOL_SIZE = 20;
+	
+	/**
+	 * 20
+	 */
 	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
 	
 	/**
@@ -45,6 +50,13 @@ public class ConversationConstants {
 	 * within the session context
 	 */
     public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
+    
+    /**
+	 * used as a key to identify the TimeoutMonitor 
+	 * within the session context
+	 */
+    public static final String CONVERSATION_TIMEOUT_MONITOR_KEY = "rees.scope.conversation.timeout.monitor.key";
+    
     public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
     public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
     

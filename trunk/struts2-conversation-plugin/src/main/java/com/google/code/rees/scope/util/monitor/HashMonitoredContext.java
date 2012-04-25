@@ -155,6 +155,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 		for (TimeoutListener<T> timeoutListener : this.timeoutListeners) {
 			timeoutListener.onTimeout((T) this);
 		}
+		this.timeoutListeners.clear();
 		this.clear();
 	}
 

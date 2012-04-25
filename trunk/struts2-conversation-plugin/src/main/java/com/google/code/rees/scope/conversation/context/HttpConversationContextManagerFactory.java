@@ -38,6 +38,18 @@ import javax.servlet.http.HttpServletRequest;
 public interface HttpConversationContextManagerFactory extends Serializable {
 	
 	/**
+	 * initialize this factory.  
+	 */
+	public void init();
+	
+	/**
+	 * The number of threads that will be used to monitor conversation timeouts
+	 * 
+	 * @param monitoringThreadPoolSize
+	 */
+	public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize);
+	
+	/**
 	 * Set the default max idle time for {@link ConversationContext ConversationContexts} managed by the managers produced by this factory
 	 * 
 	 * @param maxIdleTime

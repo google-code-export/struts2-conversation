@@ -56,6 +56,7 @@
 	<constant name="conversation.monitoring.frequency" value="300000"/>
 	<constant name="conversation.idle.timeout" value="28800000"/>
 	<constant name="conversation.max.instances" value="20"/>
+	<constant name="conversation.monitoring.thread.pool.size" value="20"/>
 	
 	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.ActionProvider"
 		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
