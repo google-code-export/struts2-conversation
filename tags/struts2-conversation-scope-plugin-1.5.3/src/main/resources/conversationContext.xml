@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<property name="scopes">
+			<map>
+				<entry key="conversation">
+					<bean class="com.google.code.rees.scope.spring.ConversationScope" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="conversationArbitrator"
+		class="com.google.code.rees.scope.spring.SpringConversationArbitrator" />
+	<bean id="conversationConfigurationProvider"
+		class="com.google.code.rees.scope.conversation.configuration.DefaultConversationConfigurationProvider">
+		<property name="arbitrator" ref="conversationArbitrator" />
+	</bean>
+	<bean id="conversationManager"
+		class="com.google.code.rees.scope.conversation.processing.SimpleConversationManager">
+		<property name="configurationProvider" ref="conversationConfigurationProvider" />
+	</bean>
+	<bean id="conversationContextManagerFactory"
+		class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory" />
+
+	<bean id="requestDataValueProcessor"
+		class="com.google.code.rees.scope.spring.ConversationRequestDataValueProcessor" />
+
+</beans>
