@@ -36,7 +36,7 @@ Then, in your result mapping set the result type as either "conversationRedirect
 ----
 ==Memory Management==
 
-Conversations have a default idle-time timeout of 8 hours in order to keep old conversations from taking up system resources.  Conversations are, by default, monitored once every 5 minutes to scan for cleanup of the stale conversations.  As well, there is a default maximum of 20 instances of each conversation per session to prevent users from unnecessarily overloading the system by creating countless conversations (so, in the above example, there could be up to 20 "base" conversations, 20 "registration" conversations, etc.).  Each of these settings can be changed in the struts.xml by configuring constants:
+Conversations have a default idle-time timeout of 8 hours in order to keep old conversations from taking up system resources.  Conversations are, by default, monitored once every 5 minutes to scan for cleanup of the stale conversations.  As well, there is a default maximum of 20 instances of each conversation per session to prevent users from unnecessarily overloading the system by creating countless conversations (so, in the above example, there could be up to 20 "base" conversations, 20 "registration" conversations, etc.).  The size of the timeout monitoring thread-pool can be configured also (the default is 20).  Each of these settings can be changed in the struts.xml by configuring constants:
 
 
 {{{
@@ -48,8 +48,19 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 
 <!-- max instances of a conversation -->
 <constant name="conversation.max.instances" value="20"/>
+
+<!-- number of timeout monitoring threads -->
+<constant name="conversation.monitoring.thread.pool.size" value="20"/>
 }}}
 
+It is important to note the an HttpSessionListener is used to cleanup each session's conversation resources when the session ends.  This listener will startup automatically for Servlet API 3.0+.  For earlier Servlet APIs, the listener should be configured in the web.xml:
+
+{{{
+<!-- only needed for apps not using Servlet API 3.0 or greater -->
+<listener>
+   <listener-class>com.google.code.rees.scope.conversation.context.ConversationCleanupListener</listener-class>
+</listener>
+}}}
 
 ----
 ==Interceptor Selection==
