@@ -122,7 +122,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 					LOG.debug("Cached instances of conversation " + conversationName + " exceeds limit.  Removing stale conversations.");
 				}
 				
-				this.removeMostStaleConversation(conversationContexts, context.getRemainingTime());
+				this.removeMostStaleConversation(conversationContexts, conversationName, context.getRemainingTime());
 				
 			}
 		}
@@ -188,7 +188,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	 * Recursively removes the least-recently accessed conversations until the
 	 * number of remaining conversations equals {@link #maxInstances}
 	 */
-	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, long defaultDuration) {
+	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, String conversationName, long defaultDuration) {
 
 		String mostStaleId = null;
 		long leastRemainingTime = defaultDuration;
@@ -205,15 +205,15 @@ public class DefaultConversationContextManager implements ConversationContextMan
 			}
 		}
 		
-		ConversationContext discardedContext = conversationContexts.remove(mostStaleId);
+		this.remove(conversationName, mostStaleId);
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Discarding most stale " + discardedContext.getConversationName() + " context with ID " + discardedContext.getId());
-			LOG.debug("Remaining " + discardedContext.getConversationName() + " contexts for this session:  " + conversationContexts.size());
+			LOG.debug("Discarding most stale " + conversationName + " context with ID " + mostStaleId);
+			LOG.debug("Remaining " + conversationName + " contexts for this session:  " + conversationContexts.size());
 		}
 
 		if (conversationContexts.size() > this.maxInstances) {
-			removeMostStaleConversation(conversationContexts, defaultDuration);
+			removeMostStaleConversation(conversationContexts, conversationName, defaultDuration);
 		}
 
 	}
