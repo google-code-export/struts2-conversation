@@ -1,10 +1,11 @@
 This page covers solutions to simple setup/detail issues that can be big headaches.  
 
+----
 == Dependencies ==
 
 The plugin uses slf4j for logging.  Without having the slf4j jars in your WAR file, the plugin's classes cannot be loaded.
 
-To download the API, go [here http://repo2.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/].
+To download the API, go [http://repo2.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/ here].
 
 For Maven users, include this dependency:
 
@@ -18,7 +19,7 @@ For Maven users, include this dependency:
 
 The API will also need an implementation.  I use log4j.
 
-Download it [here http://repo2.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.4/].
+Download it [http://repo2.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.4/ here].
 
 And for Maven:
 
