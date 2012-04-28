@@ -34,4 +34,4 @@ Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/do
  # Type "jetty:run" in the "Goals" field and then click the "Run" button.
 Go to this URL to use the app:  [http://localhost:8080/simple-example/registration/begin.action]
 
-Go to this URL to browse the app configuration:  [localhost:8080/simple-example/conversation-config-browser/index.action]
+Go to this URL to browse the app configuration:  [http://localhost:8080/simple-example/conversation-config-browser/index.action]
