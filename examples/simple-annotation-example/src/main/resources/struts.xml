@@ -6,7 +6,14 @@
 
 <struts>
 
+	<!-- This is helpful for debugging but should be turned off for production
+		deployments for performance and security reasons -->
 	<constant name="struts.devMode" value="true" />
+
+	<!-- Needed to inspect class files properly on startup on WebLogic for some versions
+	<constant name="struts.convention.action.fileProtocols" value="jar,zip" />
+	<constant name="struts.convention.action.includeJars" value=".*_wl_cls_gen.*" />
+	 -->
 	
 	<!-- These constants help the Conversation Plugin find actions on startup -->
 	<constant name="struts.scope.followsConvention" value="true" /> 
