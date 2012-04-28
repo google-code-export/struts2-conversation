@@ -34,7 +34,7 @@ And for Maven:
 ----
 ==Action Conversation Flow and Configuration==
 
-Sometimes with a larger application, it may become difficult to keep track of a quickly trouble shoot the conversation-flow aspects of all the actions.  
+Sometimes with a larger application, it may become difficult to keep track of and quickly trouble shoot the conversation-flow aspects of all the actions.  
 
 The Conversation Config Browser is a simple to use drop-in extension to the [http://mvnrepository.com/artifact/org.apache.struts/struts2-config-browser-plugin/2.3.1.2 Struts2 Config Browser Plugin] that includes a tab for viewing the Conversation flow details of each action in the application at run-time.
 
