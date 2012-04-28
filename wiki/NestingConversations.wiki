@@ -20,7 +20,7 @@ Package-based nesting is turned off by default.  To turn it on, add this to your
 <constant name="conversation.package.nesting" value="true" />
 }}}
 
-TODO
+TODO  - add better explanation and an example app
 
 
 ----
