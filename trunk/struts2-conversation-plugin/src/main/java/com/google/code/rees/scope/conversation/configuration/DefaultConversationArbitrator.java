@@ -25,7 +25,6 @@ package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +38,7 @@ import com.google.code.rees.scope.conversation.annotations.ConversationAction;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.annotations.EndConversation;
+import com.google.code.rees.scope.struts2.ActionUtil;
 import com.google.code.rees.scope.util.NamingUtil;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
@@ -264,13 +264,7 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     }
 
     protected boolean isAction(Method method) {
-        String methodName = method.getName();
-        return (!(methodName.startsWith("get") || methodName.startsWith("set") || methodName
-                .startsWith("is"))
-                && Modifier.isPublic(method.getModifiers())
-                && !Modifier.isStatic(method.getModifiers())
-                && method.getReturnType().equals(String.class) && method
-                .getParameterTypes().length == 0);
+        return ActionUtil.isAction(method);
     }
 
     protected boolean isConversationController(Class<?> clazz) {
