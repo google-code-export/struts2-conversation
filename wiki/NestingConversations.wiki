@@ -1,4 +1,4 @@
-=Nesting in Version 1.4.1=
+=Nesting=
 
 Implementing nested conversations, or sub-flows, is fairly simple.
 
