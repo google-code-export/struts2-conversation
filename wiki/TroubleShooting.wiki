@@ -47,3 +47,5 @@ The extension is available from the Downloads link above or though Maven with th
    <version>1.5.5</version>
 </dependency>
 }}}
+
+To use the config browser, include it in your WAR file, startup your app, and go to {application_root}/conversation-config-browser/index.action, and from there you can select actions and click on the "Conversations" tab to view each action's conversation details.
