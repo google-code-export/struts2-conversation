@@ -11,32 +11,41 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<struts2.version>2.3.1.2</struts2.version>
+		<struts2.conversation.version>1.5.5</struts2.conversation.version>
 		<slf4j.version>1.6.4</slf4j.version>
 	</properties>
 
 	<dependencies>
 	
-		<dependency>
-			<groupId>com.googlecode.struts2-conversation</groupId>
-			<artifactId>struts2-conversation-scope-plugin</artifactId>
-			<version>1.5.4</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		
+		<!-- Core dependencies -->
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
 			<version>${struts2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.struts2-conversation</groupId>
+			<artifactId>struts2-conversation-scope-plugin</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+		
+		<!-- These dependencies helpful for development - they should not be included in production builds -->
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-config-browser-plugin</artifactId>
+			<version>${struts2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.struts2-conversation</groupId>
+			<artifactId>struts2-conversation-config-browser-extension</artifactId>
+			<version>1.5.5</version>  
+		</dependency>
+		
+		<!-- For Struts2 Conversation Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 		
 	</dependencies>
