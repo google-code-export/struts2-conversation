@@ -44,7 +44,7 @@ public class DefaultConversationContextManagerTest {
     	
     	ConversationContextManager manager = new DefaultConversationContextManager();
     	manager.setContextFactory(new DefaultConversationContextFactory());
-    	manager.setMaxInstances(8);
+    	manager.setMaxInstances(4);
     	
     	TaskThread contractionThread = BasicTaskThread.spawnInstance();
     	CollectionContractionTask collectionContractionTask = new CollectionContractionTask(manager);
@@ -53,7 +53,7 @@ public class DefaultConversationContextManagerTest {
     	TaskThread expansionThread = BasicTaskThread.spawnInstance();
     	expansionThread.addTask(new CollectionExpansionTask(manager, collectionContractionTask));
     	
-    	Thread.sleep(10000L);
+    	Thread.sleep(2000L);
     }
     
     class CollectionExpansionTask implements ThreadTask {
