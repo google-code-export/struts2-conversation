@@ -134,11 +134,21 @@
     </table>
 <#elseif conversationsSelected> <!-- Action conversations-->
 	<table width="100%">
+		<tr/>
         <tr><th>Conversation Name</th><th>Conversation Command</th></tr>
         <#list conversations?keys as name>  
       		<tr <#if name_index%2 gt 0>class="b"<#else>class="a"</#if>>
     			<td>${name}</td>
     			<td>${conversations[name]}</td>
+    		</tr> 
+    	</#list>
+    	<tr/>
+    	<tr/>
+    	<tr><th>Conversation Name</th><th>Conversation Fields</th></tr>
+        <#list conversationFields?keys as name>  
+      		<tr <#if name_index%2 gt 0>class="b"<#else>class="a"</#if>>
+    			<td>${name}</td>
+    			<td>${conversationFields[name]}</td>
     		</tr> 
     	</#list>
     </table>
