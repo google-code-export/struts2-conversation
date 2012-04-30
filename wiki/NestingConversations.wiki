@@ -20,8 +20,6 @@ Package-based nesting is turned off by default.  To turn it on, add this to your
 <constant name="conversation.package.nesting" value="true" />
 }}}
 
-TODO  - add better explanation and an example app
-
 
 ----
 ===Explicit Declaration===
@@ -33,7 +31,9 @@ public class SomeController {
    
    @BeginConversation("some") 
    public String begin() {return "success";}
+
    public String blahAction() {return "success";}
+
    @EndConversation("some") 
    public String end() {return "success";}
 
