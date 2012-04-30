@@ -33,6 +33,7 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.context.ConversationContextAware;
 
 /**
  * A simple yet effective implementation of {@link ConversationManager} that
@@ -62,17 +63,32 @@ public class SimpleConversationManager implements ConversationManager {
 	 */
 	@Override
 	public void processConversations(ConversationAdapter conversationAdapter) {
+		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Beginning processing of conversations...");
             LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
         }
+		
 		Object action = conversationAdapter.getAction();
+		
 		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
 		if (actionConversationConfigs != null) {
 			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
 				processConversation(conversationConfig, conversationAdapter, action);
 			}
 		}
+		
+		if (action instanceof ConversationContextAware) {
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Action implements ConversationContextAware, setting composite ConversationContext on action class instance.");
+			}
+			
+			ConversationContextAware contextAware = (ConversationContextAware) action;
+			contextAware.setConversationContext(ConversationUtil.getContext(conversationAdapter));
+		}
+		
+		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("...processing of conversations complete.");
 		}

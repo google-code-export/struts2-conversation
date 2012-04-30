@@ -19,19 +19,31 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: BeanContext.java Apr 29, 2012 4:18:30 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.util;
 
-import java.io.Serializable;
+import java.util.Map;
 
-import com.google.code.rees.scope.util.BeanContext;
+import com.google.code.rees.scope.util.exceptions.NoUniqueBeanOfTypeException;
 
 /**
  * @author rees.byars
- * 
+ *
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends BeanContext<K, V>, Timeoutable<T>, Serializable {
+public interface BeanContext<K, V> extends Map<K, V> {
+	
+	/**
+	 * 
+	 * @param <BeanClass>
+	 * @param beanClass
+	 * @return
+	 * @throws NoMatchingBeanException 
+	 * @throws NoUniqueBeanOfTypeException 
+	 */
+	public <BeanClass> BeanClass getBean(Class<BeanClass> beanClass) throws NoUniqueBeanOfTypeException;
+	
+	public <BeanClass> BeanClass getBean(Class<BeanClass> beanClass, K qualifier);
 
 }
