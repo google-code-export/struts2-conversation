@@ -19,19 +19,17 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: ConversationContextAware.java Apr 29, 2012 4:10:40 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
-
-import java.io.Serializable;
-
-import com.google.code.rees.scope.util.BeanContext;
+package com.google.code.rees.scope.conversation.context;
 
 /**
  * @author rees.byars
- * 
+ *
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends BeanContext<K, V>, Timeoutable<T>, Serializable {
+public interface ConversationContextAware {
+	
+	public void setConversationContext(ConversationContext conversationContext);
 
 }

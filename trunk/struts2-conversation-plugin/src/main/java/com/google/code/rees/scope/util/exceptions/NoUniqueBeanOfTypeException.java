@@ -19,19 +19,37 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: NoUniqueBeanOfTypeException.java Apr 29, 2012 7:26:50 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.util.exceptions;
 
-import java.io.Serializable;
-
-import com.google.code.rees.scope.util.BeanContext;
+import java.util.List;
 
 /**
  * @author rees.byars
- * 
+ *
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends BeanContext<K, V>, Timeoutable<T>, Serializable {
+public class NoUniqueBeanOfTypeException extends Exception {
+
+	private static final long serialVersionUID = -3879374658803976323L;
+	
+	private String message = null;
+	
+	public NoUniqueBeanOfTypeException(Class<?> type, List<?> matches) {
+		StringBuilder messageBuilder = new StringBuilder("There is more than one bean of type.  Found ");
+		messageBuilder.append(matches.size());
+		messageBuilder.append(" matches, expected 1.  Matching Beans found:  ");
+		for (Object matchingBean : matches) {
+			messageBuilder.append("\n      ");
+			messageBuilder.append(matchingBean);
+		}
+		message = messageBuilder.toString();
+	}
+	
+	@Override
+	public String getMessage() {
+		return this.message;
+	}
 
 }

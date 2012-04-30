@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.code.rees.scope.conversation.context.CompositeConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 
 /**
@@ -263,6 +264,29 @@ public class ConversationUtil {
 			return null;
 		}
 		return adapter.getConversationContext(name, id);
+	}
+	
+	/**
+	 * returns a composite conversation context for the
+	 * current request's conversations.
+	 * 
+	 * @return The {@link ConversationContext} or <code>null</code> if
+	 *         no conversations are active
+	 */
+	public static ConversationContext getContext() {
+		return CompositeConversationContext.create(ConversationAdapter.getAdapter());
+	}
+	
+	/**
+	 * returns a composite conversation context for the
+	 * current request's conversations.
+	 * 
+	 * @param adapter
+	 * @return The {@link ConversationContext} or <code>null</code> if
+	 *         no conversations are active
+	 */
+	public static ConversationContext getContext(ConversationAdapter adpater) {
+		return CompositeConversationContext.create(adpater);
 	}
 
 	/**

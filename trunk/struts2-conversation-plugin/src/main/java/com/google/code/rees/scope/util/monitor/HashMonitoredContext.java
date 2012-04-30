@@ -24,10 +24,15 @@
 package com.google.code.rees.scope.util.monitor;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.code.rees.scope.util.exceptions.NoUniqueBeanOfTypeException;
 
 /**
  * A Serializable Hash implementation of the Map and Timeoutable interfaces.
@@ -40,12 +45,14 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 
 	private static final long serialVersionUID = 5810194340880306239L;
 
+	protected Map<Class<? extends V>, List<V>> backingBeanContext;
 	protected Collection<TimeoutListener<T>> timeoutListeners;
 	protected long timeOfMostRecentAccess;
 	protected long maxIdleTime;
 
 	public HashMonitoredContext(long maxIdleTime) {
 		this.maxIdleTime = maxIdleTime;
+		this.backingBeanContext = Collections.synchronizedMap(new HashMap<Class<? extends V>, List<V>>());
 		this.timeoutListeners = new HashSet<TimeoutListener<T>>();
 		this.ping();
 	}
@@ -65,6 +72,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@Override
 	public V put(K key, V value) {
 		this.ping();
+		this.placeInBackingBeanContext(value);
 		return super.put(key, value);
 	}
 
@@ -92,7 +100,9 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@Override
 	public V remove(Object key) {
 		this.ping();
-		return super.remove(key);
+		V value = super.remove(key);
+		this.removeFromBackingBeanContext(value);
+		return value;
 	}
 
 	/**
@@ -157,10 +167,68 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 		}
 		this.timeoutListeners.clear();
 		this.clear();
+		this.backingBeanContext.clear();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <BeanClass> BeanClass getBean(Class<BeanClass> beanClass) throws NoUniqueBeanOfTypeException {
+		List<V> beanList = this.backingBeanContext.get(beanClass);
+		if (beanList == null || beanList.size() == 0) {
+			return null;
+		} else if (beanList.size() > 1) {
+			throw new NoUniqueBeanOfTypeException(beanClass, beanList);
+		}
+		return (BeanClass) beanList.get(0);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <BeanClass> BeanClass getBean(Class<BeanClass> beanClass, K qualifier) {
+		return (BeanClass) this.get(qualifier);
 	}
 
 	protected void ping() {
 		this.timeOfMostRecentAccess = System.currentTimeMillis();
+	}
+	
+	protected void placeInBackingBeanContext(V value) {
+		@SuppressWarnings("unchecked")
+		Class<? extends V> beanClass = (Class<? extends V>) value.getClass();
+		if (this.isBean(beanClass)) {
+			synchronized (this.backingBeanContext) {
+				List<V> values = this.backingBeanContext.get(beanClass);
+				if (values == null) {
+					values = new LinkedList<V>();
+					this.backingBeanContext.put(beanClass, values);
+				}
+				values.add(value);
+			}
+		}
+	}
+	
+	protected void removeFromBackingBeanContext(V value) {
+		@SuppressWarnings("unchecked")
+		Class<? extends V> beanClass = (Class<? extends V>) value.getClass();
+		if (this.isBean(beanClass)) {
+			synchronized (this.backingBeanContext) {
+				List<V> values = this.backingBeanContext.get(beanClass);
+				if (values != null) {
+					values.remove(value);
+					if (values.size() == 0) {
+						this.backingBeanContext.remove(values);
+					}
+				}
+			}
+		}
+	}
+	
+	protected boolean isBean(Class<?> beanClass) {
+		return !beanClass.isPrimitive() && !beanClass.equals(String.class);
 	}
 
 }
