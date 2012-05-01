@@ -13,7 +13,7 @@ Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/do
 ===Install SVN Plugin===
  # Open Eclipse
  # Go to Help->Install New Software...
- # Paste this URL into the field and click "Add":  http://subclipse.tigris.org/update_1.7.x
+ # Paste this URL into the field and click "Add":  http://subclipse.tigris.org/update_1.8.x
  # Restart Eclipse.
 
 ===Checkout Example Project and Run It===
