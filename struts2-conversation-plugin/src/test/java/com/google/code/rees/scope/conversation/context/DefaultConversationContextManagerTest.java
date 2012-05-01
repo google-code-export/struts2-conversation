@@ -53,7 +53,16 @@ public class DefaultConversationContextManagerTest {
     	TaskThread expansionThread = BasicTaskThread.spawnInstance();
     	expansionThread.addTask(new CollectionExpansionTask(manager, collectionContractionTask));
     	
-    	Thread.sleep(2000L);
+    	Thread.sleep(8000L);
+    	
+    	for (int i = 0; i < 200; i++) {
+    		BasicTaskThread.spawnInstance().addTask(new CollectionExpansionTask(manager, collectionContractionTask));
+    	}
+    	
+    	Thread.sleep(8000L);
+    	
+    	
+    	
     }
     
     class CollectionExpansionTask implements ThreadTask {
