@@ -1,21 +1,30 @@
+==Conversation Action vs. Non-Conversation Action Load Test Comparison==
 
 To get some gauge of the performance cost of using the Conversation Plugin, the simple-annotation-example app was deployed to on the [http://www.heroku.com/ Heroku] Cedar Stack using the free, single Web Dyno.
 
 For comparison, a baseline test action was added to the app.  The baseline action uses the default interceptor stack, and does no processing:  the class is a single execute method that returns success.  The [http://struts2-conversation-showcase.herokuapp.com/baseline/test.action result is a JSP that just says "Test!!!"].  
 
-For the conversation action, the begin action was chosen.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  The interceptor stack used for this action was a custom stack.  The struts.xml is available at the bottom of this post.
+For the conversation action, the [http://struts2-conversation-showcase.herokuapp.com/registration/begin.action begin action] was chosen.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  In addition, this action depends on the XWork object factory to inject a service, then calls the service to get an instance of a model object, and then renders a page with form elements built using the Struts2 tags.  The interceptor stack used for this action was a custom stack.  The struts.xml is available at the bottom of this post.
 
 The [http://blitz.io/ Blitz load testing app] was used to perform load testing on the baseline action and on the begin conversation action.
 
 The free version of Blitz will simulate up to 250 concurrent users making repeated requests to a URL.  For this test, the maximum of 250 was used, over a period of 1 minute, with a timeout of 1 second.  If the server does not respond within 1 second, the Blitz request times-out.  
 
-The results support the assumption that the conversation-processing overhead is minimal and that the far greater performance cost is imposed by using the default interceptor stack instead of custom stacks that use only the interceptors necessary for a given action.
+The results support the assumption that the conversation-processing overhead is minimal and that the greater performance cost is imposed by using the default interceptor stack instead of custom stacks that use only the interceptors necessary for a given action.
 
 The graphs below display the results of the tests:
+
+----
+
+==Conversation Begin Action Performance==
 
 http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG
 
 http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-hit-rate.PNG
+
+----
+
+==Baseline Action with Default Stack Performance==
 
 http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-baseline-action-load-test-report-response-times.PNG
 
