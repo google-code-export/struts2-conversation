@@ -1,0 +1,1 @@
+[http://code.google.com/p/struts2-conversation/source/browse/wiki/showcase-load-test/struts2-conversation-showcase-begin-action-load-test-report.PNG]
