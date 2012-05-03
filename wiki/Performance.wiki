@@ -1,6 +1,6 @@
 ==Conversation Action vs. Non-Conversation Action Load Test Comparison==
 
-To get some gauge of the performance cost of using the Conversation Plugin, the simple-annotation-example app was deployed on the [http://www.heroku.com/ Heroku] Cedar Stack using the free, single Web Dyno.
+To get some gauge of the performance cost of using the Conversation Plugin, the [http://code.google.com/p/struts2-conversation/wiki/EclipseAndMavenGuide simple-annotation-example app] was deployed on the [http://www.heroku.com/ Heroku] Cedar Stack using the free, single Web Dyno.
 
 For comparison, a baseline test action was added to the app.  The baseline action uses the default interceptor stack, and does no processing:  the class is a single execute method that returns success.  The [http://struts2-conversation-showcase.herokuapp.com/baseline/test.action result is a JSP that just says "Test!!!"].  
 
