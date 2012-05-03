@@ -9,6 +9,9 @@ C:\PATH_TO_JAVADOCS>for /r %1 in (*.gif) do svn propset svn:mime-type image/gif 
 
 C:\PATH_TO_JAVADOCS>for /r %1 in (*.css) do svn propset svn:mime-type text/css "%~f1"
 
+
+C:\PATH_TO_JAVADOCS>for /r %1 in (*.png) do svn propset svn:mime-type image/png "%~f1"
+
 C:\PATH_TO_JAVADOCS>for /r %1 in (*.htm*) do svn propset svn:mime-type text/html "%~f1"
 }}}
 
