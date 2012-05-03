@@ -1,1 +1,5 @@
 [http://code.google.com/p/struts2-conversation/source/browse/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG begin-response-times]
+
+http://struts2-conversation.googlecode.com/svn/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG
+
+[http://struts2-conversation.googlecode.com/svn/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG]
