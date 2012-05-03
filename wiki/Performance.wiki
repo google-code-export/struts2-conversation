@@ -1,5 +1,84 @@
-[http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG begin-response-times]
+
+To get some gauge of the performance cost of using the Conversation Plugin, the simple-annotation-example app was deployed to on the [http://www.heroku.com/ Heroku] Cedar Stack using the free, single Web Dyno.
+
+For comparison, a baseline test action was added to the app.  The baseline action uses the default interceptor stack, and does no processing:  the class is a single execute method that returns success.  The [http://struts2-conversation-showcase.herokuapp.com/baseline/test.action result is a JSP that just says "Test!!!"].  
+
+For the conversation action, the begin action was chosen.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  The interceptor stack used for this action was a custom stack.  The struts.xml is available at the bottom of this post.
+
+The [http://blitz.io/ Blitz load testing app] was used to perform load testing on the baseline action and on the begin conversation action.
+
+The free version of Blitz will simulate up to 250 concurrent users making repeated requests to a URL.  For this test, the maximum of 250 was used, over a period of 1 minute, with a timeout of 1 second.  If the server does not respond within 1 second, the Blitz request times-out.  
+
+The results support the assumption that the conversation-processing overhead is minimal and that the far greater performance cost is imposed by using the default interceptor stack instead of custom stacks that use only the interceptors necessary for a given action.
+
+The graphs below display the results of the tests:
 
 http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG
 
-[http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG]
+http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-hit-rate.PNG
+
+http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-baseline-action-load-test-report-response-times.PNG
+
+http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-baseline-action-load-test-report-hit-rate.PNG
+
+----
+
+==struts.xml==
+
+{{{
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+
+<struts>
+
+	<constant name="struts.scope.followsConvention" value="true" /> 
+	<constant name="struts.convention.action.suffix" value="Controller" />
+	
+	<constant name="conversation.package.nesting" value="false" /> 
+	<constant name="conversation.monitoring.frequency" value="90000"/> 
+	<constant name="conversation.idle.timeout" value="180000"/> 
+	<constant name="conversation.max.instances" value="5"/>
+	<constant name="conversation.monitoring.thread.pool.size" value="3"/>
+
+	<bean type="org.byars.struts2.example.services.RegistrationService" class="org.byars.struts2.example.services.RegistrationServiceImpl" />
+
+	<package name="registration" namespace="/registration" extends="struts-conversation-default">
+	
+		<interceptors>
+			
+			<interceptor-stack name="registrationStack">
+				<interceptor-ref name="scopeInjection" />
+				<interceptor-ref name="i18n" />
+				<interceptor-ref name="modelDriven" />
+				<interceptor-ref name="actionMappingParams"/>
+				<interceptor-ref name="params">
+					<param name="excludeParams">dojo\..*</param>
+				</interceptor-ref>
+				<interceptor-ref name="conversionError" />
+				<interceptor-ref name="validation"/>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			
+		</interceptors>
+		
+		<default-interceptor-ref name="registrationStack" />
+
+		<action name="*" class="org.byars.struts2.example.actions.RegistrationController" method="{1}">
+			<result name="success">{1}-success.jsp</result>
+		</action>
+
+	</package>
+	
+	<package name="baseline" namespace="/baseline" extends="struts-default">
+		<action name="test" class="org.byars.struts2.example.actions.BaselineAction" method="execute">
+			<result name="success">test-success.jsp</result>
+		</action>
+	</package>
+
+</struts>
+}}}
