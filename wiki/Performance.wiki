@@ -4,11 +4,11 @@ To get some gauge of the performance cost of using the Conversation Plugin, a tw
 
 For comparison, the same class was configured in two different packages in the struts.xml:  in one package, the Conversation Plugin's scopeInjection interceptor was applied, in the other package the XWork scopedModelDriven interceptor was applied.
 
-The begin action was chosen for the test URL for both packages.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  For both packages, the Jetty container (the container used on the Cedar Stack) has to create new HttpSessions for each of request.
+The begin action was chosen for the test URL for both packages.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  For both packages, the Jetty container (the container used on the Cedar Stack) has to create new HttpSessions for each request.
 
 The [http://blitz.io/ Blitz load testing app] was used to perform load testing.
 
-The free version of Blitz will simulate up to 250 concurrent users making repeated requests to a URL for 1 minutes.  This ends up being about 7,000 requests in a minute.  If the response is not received within 1 second, the request times-out.
+The free version of Blitz will simulate up to 250 concurrent users making repeated requests to a URL for 1 minute.  This ends up being about 7,000 requests in a minute.  If the response is not received within 1 second, the request times-out.
 
 The results support the assumption that the conversation-processing overhead is minimal and that it compares favorably with the performance of the ScopedModelDrivenInterceptor.  
 
