@@ -1,3 +1,5 @@
+This document for internal use.
+
 = Setting Mime-types in Windows =
 
 First, use Tortoise SVN to checkout the javadoc directory from SVN.  Then, copy the javadoc folder of the tag into the root of the javadoc directory, such that the javadoc for tag 'struts2-conversation-x.x' is in the the location 'javadoc/struts2-conversation-x.x'.  Then use Tortoise SVN's 'add' command to add the folder to version control.  DO NOT COMMIT THE FOLEDER YET!
