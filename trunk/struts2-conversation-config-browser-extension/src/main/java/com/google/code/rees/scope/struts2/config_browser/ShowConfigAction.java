@@ -12,8 +12,11 @@ import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.struts2.ActionUtil;
+import com.google.code.rees.scope.struts2.ConversationInterceptor;
+import com.google.code.rees.scope.struts2.ScopeInterceptor;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
+import com.opensymphony.xwork2.config.entities.InterceptorMapping;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
@@ -60,46 +63,67 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     }
 
     public Map<String, String> getConversations() throws ClassNotFoundException {
+        
         ActionConfig actionConfig = this.getConfig();
-        Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
-        String methodName = this.getMethodName(actionConfig);
-        Map<String, String> conversations = new HashMap<String, String>(); 
-        for (ConversationConfiguration realConfig : realConfigs) {
-            String name = realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, "");
-            if (realConfig.isBeginAction(methodName)) {
-                conversations.put(name, "Begin");
-            } else if (realConfig.isEndAction(methodName)) {
-                conversations.put(name, "End");
-            } else if (realConfig.containsAction(methodName)) {
-                conversations.put(name, "Continue");
+        Map<String, String> conversations = new HashMap<String, String>();
+        
+        if (this.isConversationInterceptorApplied(actionConfig)) {
+            Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
+            String methodName = this.getMethodName(actionConfig); 
+            for (ConversationConfiguration realConfig : realConfigs) {
+                String name = realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, "");
+                if (realConfig.isBeginAction(methodName)) {
+                    conversations.put(name, "Begin");
+                } else if (realConfig.isEndAction(methodName)) {
+                    conversations.put(name, "End");
+                } else if (realConfig.containsAction(methodName)) {
+                    conversations.put(name, "Continue");
+                }
             }
         }
+        
         return conversations;
     }
     
     public Map<String, String> getConversationFields() throws ClassNotFoundException {
+        
         ActionConfig actionConfig = this.getConfig();
-        Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
-        String methodName = this.getMethodName(actionConfig);
         Map<String, String> conversationFields = new HashMap<String, String>();
-        for (ConversationConfiguration realConfig : realConfigs) {
-            if (realConfig.containsAction(methodName)) {
-                Map<String, Field> fields = realConfig.getFields();
-                if (fields.size() > 0) {
-                    StringBuilder fieldDisplayBuilder = new StringBuilder();
-                    for (Entry<String, Field> fieldEntry : fields.entrySet()) {
-                        fieldDisplayBuilder.append(fieldEntry.getKey()).append(" (").append(fieldEntry.getValue().getType().getSimpleName()).append("), ");
+        
+        if (this.isConversationInterceptorApplied(actionConfig)) {
+            Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
+            String methodName = this.getMethodName(actionConfig);
+            for (ConversationConfiguration realConfig : realConfigs) {
+                if (realConfig.containsAction(methodName)) {
+                    Map<String, Field> fields = realConfig.getFields();
+                    if (fields.size() > 0) {
+                        StringBuilder fieldDisplayBuilder = new StringBuilder();
+                        for (Entry<String, Field> fieldEntry : fields.entrySet()) {
+                            fieldDisplayBuilder.append(fieldEntry.getKey()).append(" (").append(fieldEntry.getValue().getType().getSimpleName()).append("), ");
+                        }
+                        String displayString = fieldDisplayBuilder.substring(0, fieldDisplayBuilder.length() - 2);
+                        conversationFields.put(realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, ""), displayString);
                     }
-                    String displayString = fieldDisplayBuilder.substring(0, fieldDisplayBuilder.length() - 2);
-                    conversationFields.put(realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, ""), displayString);
                 }
             }
         }
+        
         return conversationFields;
     }
     
     protected Collection<ConversationConfiguration> getConversationConfigurations(ActionConfig actionConfig) throws ClassNotFoundException {
         return this.conversationConfigurationProvider.getConfigurations(Class.forName(actionConfig.getClassName()));
+    }
+    
+    protected boolean isConversationInterceptorApplied(ActionConfig actionConfig) {
+        boolean hasConvoInterceptor = false;
+        for (InterceptorMapping interceptorMapping : actionConfig.getInterceptors()) {
+            if (interceptorMapping.getInterceptor() instanceof ScopeInterceptor || interceptorMapping.getInterceptor() instanceof ConversationInterceptor) {
+                hasConvoInterceptor = true;
+                break;
+            }
+        }
+        return hasConvoInterceptor;
     }
     
     protected String getMethodName(ActionConfig actionConfig) {
