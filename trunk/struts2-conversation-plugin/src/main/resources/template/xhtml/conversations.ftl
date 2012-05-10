@@ -1,5 +1,5 @@
 
-<@s.iterator value="conversationIdMapStackKey">
-    <input type="hidden" name="${key}" value="${value}" />
-</@s.iterator>
+<#list conversationIdMapStackKey.entrySet() as entry>  
+	<input type="hidden" name="${entry.key}" value="${entry.value}" />
+</#list>
 
