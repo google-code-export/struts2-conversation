@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
 import com.google.code.rees.scope.util.thread.BasicTaskThread;
 import com.google.code.rees.scope.util.thread.TaskThread;
@@ -84,13 +83,18 @@ public class DefaultConversationContextManagerTest {
 		public void doTask() {
 			//this will create a new context
 			LOG.info("Expanding...");
-			String id = ConversationUtil.generateId();
+			String id = getNextId();
 			this.manager.getContext(TEST_NAME, id);
 			this.removalTask.addId(id);
 			Thread.yield();
 		}
     	
     }
+    
+    static long id = 1L;
+	public static synchronized String getNextId() {
+		return String.valueOf(id++);
+	}
     
     class CollectionContractionTask implements ThreadTask {
     	

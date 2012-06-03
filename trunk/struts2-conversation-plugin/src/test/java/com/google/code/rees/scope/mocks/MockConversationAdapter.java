@@ -74,15 +74,25 @@ public class MockConversationAdapter extends ConversationAdapter {
 	public Map<String, String> getRequestContext() {
 		return this.requestContext;
 	}
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
+		return this.contextManager.createContext(conversationName, maxIdleTimeMillis);
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public ConversationContext beginConversation(String conversationName) {
+		return this.contextManager.createContext(conversationName);
+	}
 	
 	@Override
 	public ConversationContext getConversationContext(String conversationName, String conversationId) {
 		return this.contextManager.getContext(conversationName, conversationId);
-	}
-
-	@Override
-	public ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis) {
-		return this.contextManager.getContext(conversationName, conversationId, maxIdleTimeMillis);
 	}
 
 	@Override

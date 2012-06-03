@@ -93,6 +93,22 @@ public class SpringConversationAdapter extends ConversationAdapter {
 
         return this.requestContext;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
+		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public ConversationContext beginConversation(String conversationName) {
+		return this.conversationContextManager.createContext(conversationName);
+	}
 
     /**
      * {@inheritDoc}
@@ -101,14 +117,6 @@ public class SpringConversationAdapter extends ConversationAdapter {
     public ConversationContext getConversationContext(String conversationName, String conversationId) {
         return this.conversationContextManager.getContext(conversationName, conversationId);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis) {
-    	return this.conversationContextManager.getContext(conversationName, conversationId, maxIdleTimeMillis);
-	}
 
     /**
      * {@inheritDoc}

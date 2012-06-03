@@ -55,6 +55,23 @@ public interface ConversationContextManager extends Serializable {
 	 * @param contextFactory
 	 */
 	public void setContextFactory(ConversationContextFactory contextFactory);
+	
+	/**
+	 * Creates a new context for the given conversation name, using the given idle time
+	 * 
+	 * @param conversationName
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis);
+	
+	/**
+	 * Creates a new context for the given conversation name, using the default idle time
+	 * 
+	 * @param conversationName
+	 * @return
+	 */
+	public ConversationContext createContext(String conversationName);
 
 	/**
 	 * Retrieve the context identified by the given information, creating a new
@@ -65,17 +82,6 @@ public interface ConversationContextManager extends Serializable {
 	 * @return
 	 */
 	public ConversationContext getContext(String conversationName, String conversationId);
-	
-	/**
-	 * Retrieve the context identified by the given information, creating a new
-	 * one if none exists.
-	 * 
-	 * @param conversationName
-	 * @param conversationId
-	 * @param maxIdleTimeMillis
-	 * @return
-	 */
-	public ConversationContext getContext(String conversationName, String conversationId, long maxIdleTimeMillis);
 
 	/**
 	 * Remove the context identified by the given information, returning the

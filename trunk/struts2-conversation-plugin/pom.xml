@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation-scope-plugin</artifactId>
-	<version>1.5.6-SNAPSHOT</version>
+	<version>1.6.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Struts2 Conversation Scope Plugin</name>
@@ -33,16 +33,16 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<asm.version>3.3.1</asm.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
-		<struts2.version>2.3.1.2</struts2.version>
+		<struts2.version>2.3.4</struts2.version>
 	</properties>
 
 	<dependencies>
 
 		<!-- Provided Scope Dependencies -->
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>3.0</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -61,15 +61,15 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-core</artifactId>
-			<version>${struts2.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts.xwork</groupId>
-			<artifactId>xwork-core</artifactId>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-core</artifactId>
 			<version>${struts2.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
@@ -84,20 +84,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.4</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>3.0</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-jci-core</artifactId>
-			<version>1.0</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -153,123 +139,70 @@
 
 		<!-- Test Scope Dependencies -->
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.googlecode.struts2-conversation</groupId>
 			<artifactId>struts2-junit4-plugin</artifactId>
 			<version>1.3.2</version>
 			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>${asm.version}</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm-commons</artifactId>
-			<version>${asm.version}</version>
-			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.1</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.1.4</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.0.1</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.0</version>
 			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging-api</artifactId>
-			<version>1.1</version>
-			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.1</version>
 			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.16</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.11.0.GA</version>
-			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>ognl</groupId>
-			<artifactId>ognl</artifactId>
-			<version>3.0.5</version>
-			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 			<version>1.2</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-junit-plugin</artifactId>
 			<version>${struts2.version}</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-spring-plugin</artifactId>
 			<version>${struts2.version}</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

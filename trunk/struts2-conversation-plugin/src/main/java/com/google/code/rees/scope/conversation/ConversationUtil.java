@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.code.rees.scope.conversation.context.CompositeConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 
 /**
@@ -141,7 +140,9 @@ public class ConversationUtil {
 				String name = entry.getKey();
 				String id = entry.getValue();
 				Map<String, Object> conversationContext = adapter.getConversationContext(name, id);
-				conversationContext.put(fieldName, fieldValue);
+				if (conversationContext != null) {
+					conversationContext.put(fieldName, fieldValue);
+				}
 			}
 		}
 	}
@@ -174,10 +175,11 @@ public class ConversationUtil {
 	 * @return a new {@link ConversationContext}
 	 */
 	public static ConversationContext begin(String name, ConversationAdapter adapter) {
-		String id = generateId();
+		ConversationContext context = adapter.beginConversation(name);
+		String id = context.getId();
 		adapter.getViewContext().put(name, id);
 		adapter.getRequestContext().put(name, id);
-		return adapter.getConversationContext(name, id);
+		return context;
 	}
 	
 	/**
@@ -189,10 +191,11 @@ public class ConversationUtil {
 	 * @return
 	 */
 	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis) {
-		String id = generateId();
+		ConversationContext context = adapter.beginConversation(name, maxIdleTimeMillis);
+		String id = context.getId();
 		adapter.getViewContext().put(name, id);
 		adapter.getRequestContext().put(name, id);
-		return adapter.getConversationContext(name, id, maxIdleTimeMillis);
+		return context;
 	}
 
 	/**
@@ -265,29 +268,6 @@ public class ConversationUtil {
 		}
 		return adapter.getConversationContext(name, id);
 	}
-	
-	/**
-	 * returns a composite conversation context for the
-	 * current request's conversations.
-	 * 
-	 * @return The {@link ConversationContext} or <code>null</code> if
-	 *         no conversations are active
-	 */
-	public static ConversationContext getContext() {
-		return CompositeConversationContext.create(ConversationAdapter.getAdapter());
-	}
-	
-	/**
-	 * returns a composite conversation context for the
-	 * current request's conversations.
-	 * 
-	 * @param adapter
-	 * @return The {@link ConversationContext} or <code>null</code> if
-	 *         no conversations are active
-	 */
-	public static ConversationContext getContext(ConversationAdapter adpater) {
-		return CompositeConversationContext.create(adpater);
-	}
 
 	/**
 	 * An array of all active conversations for the current request.
@@ -333,15 +313,6 @@ public class ConversationUtil {
 	 */
 	public static String sanitizeName(String conversationName) {
 		return conversationName.replaceAll(":", "").replaceAll(",", "");
-	}
-
-	/**
-	 * Used to generate a unique ID for a conversation context
-	 * 
-	 * @return
-	 */
-	public static String generateId() {
-		return java.util.UUID.randomUUID().toString();
 	}
 
 }

@@ -19,42 +19,66 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: CompositeConversationContext.java Apr 29, 2012 3:59:17 PM reesbyars $
+ * $Id: GetTask.java May 1, 2012 12:25:52 AM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.conversation.context;
+package com.google.code.rees.scope.integrationtests.fakeloadtests;
 
-import java.util.Map.Entry;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
-import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.util.thread.ThreadTask;
 
 /**
  * @author rees.byars
  *
  */
-public class CompositeConversationContext extends DefaultConversationContext {
-
-	private static final long serialVersionUID = -7936271674093461650L;
+public class GetTask implements ThreadTask {
 	
-	public static final String COMPOSITE_CONVERSATION_CONTEXT_NAME = "composite_conversation_context";
-	public static final String COMPOSITE_CONVERSATION_CONTEXT_ID = "composite_conversation_context";
-	public static final long COMPOSITE_CONVERSATION_CONTEXT_DURATION = 0;
-
-	/**
-	 * @param conversationName
-	 * @param id
-	 * @param duration
-	 */
-	protected CompositeConversationContext() {
-		super(COMPOSITE_CONVERSATION_CONTEXT_NAME, COMPOSITE_CONVERSATION_CONTEXT_ID, COMPOSITE_CONVERSATION_CONTEXT_DURATION);
+	private final HttpClient httpClient;
+    private final HttpContext context;
+    private final String getUrl;
+    boolean active = true;
+    private int abortCount = 0;
+    private int successCount = 0;
+    
+	public GetTask(HttpClient httpClient, String getUrl) {
+        this.httpClient = httpClient;
+        this.context = new BasicHttpContext();
+        this.getUrl = getUrl;
+    }
+	
+	@Override
+	public boolean isActive() {
+		return this.active;
 	}
 	
-	public static ConversationContext create(ConversationAdapter adapter) {
-		ConversationContext context = new CompositeConversationContext();
-		for (Entry<String, String> conversationRequestEntry : adapter.getRequestContext().entrySet()) {
-			context.putAll(adapter.getConversationContext(conversationRequestEntry.getKey(), conversationRequestEntry.getValue()));
+	@Override
+	public void cancel() {
+		this.active = false;
+	}
+	
+	@Override
+	public void doTask() {
+		HttpGet httpGet = new HttpGet(this.getUrl);
+		try {
+			httpClient.execute(httpGet, context);
+			this.successCount++;
+		} catch (Exception e) {
+			this.abortCount++;
+			httpGet.abort();
 		}
-		return context;
+		Thread.yield();
+	}
+	
+	public int getSuccessCount() {
+		return this.successCount;
+	}
+	
+	public int getAbortCount() {
+		return this.abortCount;
 	}
 
 }
