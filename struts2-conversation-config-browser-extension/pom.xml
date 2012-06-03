@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>com.googlecode.struts2-conversation</groupId>
 			<artifactId>struts2-conversation-scope-plugin</artifactId>
-			<version>${version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	
