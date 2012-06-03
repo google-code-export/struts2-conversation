@@ -31,8 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.util.ScopeUtil;
 
 /**
@@ -47,9 +49,10 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
 
     /**
      * {@inheritDoc}
+     * @throws ConversationException 
      */
     @Override
-    protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
+    protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
         String actionId = conversationAdapter.getActionId();
         String conversationName = conversationConfig.getConversationName();
@@ -63,9 +66,7 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
 
             if (conversationConfig.containsAction(actionId)) {
 
-                Map<String, Object> conversationContext = conversationAdapter
-                        .getConversationContext(conversationName,
-                                conversationId);
+                Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
@@ -78,6 +79,11 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
                     if (actionConversationFields != null) {
                         ScopeUtil.setFieldValues(action, actionConversationFields, conversationContext);
                     }
+                    
+                } else {
+                	
+                	throw new ConversationException("The following conversation name and id pair did not return an active ConversationContext:  Name: " + conversationName + ", ID:  " + conversationId + ".  This is likely due to the conversation having ended or expired.");
+                	
                 }
 
                 if (conversationConfig.isEndAction(actionId)) {
@@ -88,12 +94,15 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
                 }
             }
         } else if (conversationConfig.isBeginAction(actionId)) {
-        	
+            
+            long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
+            
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Beginning new " + conversationName+ ".");
+                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
             }
             
-            conversationId = ConversationUtil.begin(conversationName, conversationAdapter).getId();
+            ConversationContext newConversationContext = ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
+            conversationId = newConversationContext.getId();
             conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
             
         }
@@ -122,7 +131,10 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
             }
             
             Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-            conversationContext.putAll(ScopeUtil.getFieldValues(action, actionConversationFields));
+            
+            if (conversationContext != null) {
+            	conversationContext.putAll(ScopeUtil.getFieldValues(action, actionConversationFields));
+            }
 
         }
         

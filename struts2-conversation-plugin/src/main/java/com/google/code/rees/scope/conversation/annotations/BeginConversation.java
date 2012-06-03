@@ -28,6 +28,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.google.code.rees.scope.conversation.ConversationConstants;
+
 /**
  * Denotes a method as a conversation-initiating method. Depending on
  * the {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
@@ -55,5 +57,10 @@ public @interface BeginConversation {
      * order to associate this begin point.
      */
     public abstract String[] conversations() default {};
+    
+    /**
+     * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.
+     */
+    public abstract long maxIdleTimeMillis() default ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
 
 }

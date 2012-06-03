@@ -50,6 +50,7 @@ public class ConversationConfiguration {
     private Set<String> actionIds;
     private Set<String> beginActionIds;
     private Set<String> endActionIds;
+    private Map<String, Long> beginActionIdleTimes;
     private String conversationName;
 
     public ConversationConfiguration(String conversationName) {
@@ -57,6 +58,7 @@ public class ConversationConfiguration {
         actionIds = new HashSet<String>();
         beginActionIds = new HashSet<String>();
         endActionIds = new HashSet<String>();
+        beginActionIdleTimes = new HashMap<String, Long>();
         this.conversationName = ConversationUtil
                 .sanitizeName(conversationName)
                 + ConversationConstants.CONVERSATION_NAME_SUFFIX;
@@ -99,9 +101,10 @@ public class ConversationConfiguration {
      * @see {@link ConversationArbitrator#getName(Method)}
      * @param actionId
      */
-    public void addBeginAction(String actionId) {
+    public void addBeginAction(String actionId, Long maxIdleTimeMillis) {
         actionIds.add(actionId);
         beginActionIds.add(actionId);
+        beginActionIdleTimes.put(actionId, maxIdleTimeMillis);
     }
 
     /**
@@ -153,6 +156,16 @@ public class ConversationConfiguration {
      */
     public boolean isEndAction(String actionId) {
         return endActionIds.contains(actionId);
+    }
+    
+    /**
+     * given the begin action's ID, returns the max idle time (in milliseconds) for the conversation created by that action
+     * 
+     * @param beginActionId
+     * @return
+     */
+    public long getMaxIdleTime(String beginActionId) {
+    	return beginActionIdleTimes.get(beginActionId);
     }
 
     /**

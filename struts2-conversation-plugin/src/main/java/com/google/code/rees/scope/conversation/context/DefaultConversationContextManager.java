@@ -73,35 +73,6 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	public void setContextFactory(ConversationContextFactory contextFactory) {
 		this.contextFactory = contextFactory;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ConversationContext getContext(String conversationName, String conversationId) {
-		
-		ConversationContext context = null;
-		
-		synchronized (this.conversations) {
-			
-			Map<String, ConversationContext> conversationContexts = this.conversations.get(conversationName);
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Retrieving cached instance for conversation " + conversationName);
-			}
-				
-			if (conversationContexts != null) {
-				context = conversationContexts.get(conversationId);
-			}
-			
-		}
-		
-		if (context != null) {
-			context.reset();
-		}
-		
-		return context;
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -152,7 +123,33 @@ public class DefaultConversationContextManager implements ConversationContextMan
 				
 			}
 			
-			context.reset();
+		}
+		
+		return context;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConversationContext getContext(String conversationName, String conversationId) {
+		
+		ConversationContext context = null;
+		
+		synchronized (this.conversations) {
+			
+			Map<String, ConversationContext> conversationContexts = this.conversations.get(conversationName);
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Retrieving cached instance for conversation " + conversationName);
+			}
+				
+			if (conversationContexts != null) {
+				context = conversationContexts.get(conversationId);
+				if (context != null) {
+					context.reset(); //reset the timeout
+				}
+			}
 			
 		}
 		
