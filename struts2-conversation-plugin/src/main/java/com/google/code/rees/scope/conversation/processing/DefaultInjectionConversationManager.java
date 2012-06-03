@@ -93,10 +93,9 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
                 LOG.debug("Beginning new " + conversationName+ ".");
             }
             
-            conversationId = ConversationUtil.generateId();
+            conversationId = ConversationUtil.begin(conversationName, conversationAdapter).getId();
             conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
-            conversationAdapter.getViewContext().put(conversationName, conversationId);
-            conversationAdapter.getRequestContext().put(conversationName, conversationId);
+            
         }
     }
 
@@ -169,17 +168,17 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
                 String conversationName = conversation.getConversationName();
                 String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 
-                if (conversationId == null) {
-                    conversationId = ConversationUtil.generateId();
+                if (conversationId != null) {
+
+	                if (actionConversationFields != null) {
+	
+	                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+	                    conversationContext.putAll(ScopeUtil.getFieldValues(target, actionConversationFields));
+	                }
+	
+	                conversationAdapter.getViewContext().put(conversationName, conversationId);
+                
                 }
-
-                if (actionConversationFields != null) {
-
-                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-                    conversationContext.putAll(ScopeUtil.getFieldValues(target, actionConversationFields));
-                }
-
-                conversationAdapter.getViewContext().put(conversationName, conversationId);
             }
         }
     }

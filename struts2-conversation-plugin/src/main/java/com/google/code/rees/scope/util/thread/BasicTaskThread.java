@@ -71,6 +71,9 @@ public class BasicTaskThread extends AbstractEasyThread implements
 	public void destroy() {
 		super.destroy();
 		synchronized (this.tasks) {
+			for (ThreadTask task : this.tasks) {
+				task.cancel();
+			}
 			this.tasks.clear();
 		}
 	}

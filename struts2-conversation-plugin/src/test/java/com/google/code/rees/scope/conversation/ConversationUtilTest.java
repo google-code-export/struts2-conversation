@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
-import com.google.code.rees.scope.conversation.configuration.MockConversationSet;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory;
@@ -24,7 +23,6 @@ public class ConversationUtilTest implements TimeoutListener<ConversationContext
 	
 	@Test
 	public void testSetTimeout() {
-		MockConversationSet.add(mockConversationName);
 		MockHttpSession session = new MockHttpSession();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setSession(session);
@@ -34,7 +32,7 @@ public class ConversationUtilTest implements TimeoutListener<ConversationContext
 		managerFactory.setMonitoringFrequency(1L);
 		managerFactory.init();
 		MockConversationAdapter.init(request, managerFactory);
-		ConversationContext context = ConversationUtil.getContext(mockConversationName);
+		ConversationContext context = ConversationUtil.begin(mockConversationName);
 		context.addTimeoutListener(this);
 		context.setMaxIdleTime(50L);
 		try {

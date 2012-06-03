@@ -26,7 +26,6 @@ package com.google.code.rees.scope.util.monitor;
 
 import org.junit.Test;
 
-import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.DefaultConversationContext;
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
@@ -46,21 +45,21 @@ public class BasicTimeoutMonitorTest {
 		
 		for (int i = 0; i < 500; i++) {
 			m.addTimeoutable(new DefaultConversationContext("sf",
-					ConversationUtil.generateId(), 5000000L));
+					getNextId(), 5000000L));
 			m.addTimeoutable(new DefaultConversationContext("sfff",
-					ConversationUtil.generateId(), 5000000L));
+					getNextId(), 5000000L));
 			m.addTimeoutable(new DefaultConversationContext("sff",
-					ConversationUtil.generateId(), 5000000L));
+					getNextId(), 5000000L));
 			m.addTimeoutable(new DefaultConversationContext("ssss",
-					ConversationUtil.generateId(), 5000000L));
+					getNextId(), 5000000L));
 			m.addTimeoutable(new DefaultConversationContext("ssdddd",
-					ConversationUtil.generateId(), 5000000L));
+					getNextId(), 5000000L));
 			m = SerializationTestingUtil.getSerializedCopy(m);
 		}
 
 		for (int ii = 0; ii < 300; ii++) {
 			m.addTimeoutable(new DefaultConversationContext("s",
-					ConversationUtil.generateId(), 50L));
+					getNextId(), 50L));
 			for (long iii = 0; iii < 10000000; iii++) {
 
 			}
@@ -68,6 +67,11 @@ public class BasicTimeoutMonitorTest {
 		}
 
 		m.destroy();
+	}
+	
+	long id = 1L;
+	public synchronized String getNextId() {
+		return String.valueOf(id++);
 	}
 
 }

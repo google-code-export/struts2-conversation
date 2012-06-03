@@ -89,31 +89,34 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @return
 	 */
 	public abstract Map<String, String> getRequestContext();
+	
+	/**
+	 * begins a new conversation, returning the context for the new conversation
+	 * 
+	 * @param conversationName
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public abstract ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis);
+	
+	/**
+	 * begins a new conversation, returning the context for the new conversation
+	 * 
+	 * @param conversationName
+	 * @return
+	 */
+	public abstract ConversationContext beginConversation(String conversationName);
 
 	/**
-	 * Returns a map, associated with the current session, that contains the
-	 * values for an instance of a conversation. Creates the map if it does not
-	 * already exist.
+	 * Returns a ConversationContext for the given name and ID
 	 * 
 	 * @param conversationId
 	 * @return
 	 */
 	public abstract ConversationContext getConversationContext(String conversationName, String conversationId);
-	
-	/**
-	 * Returns a map, associated with the current session, that contains the
-	 * values for an instance of a conversation. Creates the map if it does not
-	 * already exist.
-	 * 
-	 * @param conversationName
-	 * @param conversationId
-	 * @param maxIdleTimeMillis
-	 * @return
-	 */
-	public abstract ConversationContext getConversationContext(String conversationName, String conversationId, long maxIdleTimeMillis);
 
 	/**
-	 * Removes the conversation from the session, returning the context map
+	 * Removes the conversation from the session, returning the context
 	 */
 	public abstract ConversationContext endConversation(String conversationName, String conversationId);
 

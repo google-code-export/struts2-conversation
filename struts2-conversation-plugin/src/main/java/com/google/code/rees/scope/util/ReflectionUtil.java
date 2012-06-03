@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.struts2.util.ClassLoaderUtils;
-
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -106,16 +104,6 @@ public class ReflectionUtil {
             return;
         }
         field.setAccessible(true);
-    }
-
-    public static boolean classExists(String className) {
-        boolean exists = false;
-        try {
-            ClassLoaderUtils.loadClass(className, ReflectionUtil.class);
-            exists = true;
-        } catch (ClassNotFoundException e) {
-        }
-        return exists;
     }
 
 }

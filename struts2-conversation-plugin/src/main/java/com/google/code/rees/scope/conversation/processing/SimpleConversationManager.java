@@ -33,7 +33,6 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.google.code.rees.scope.conversation.context.ConversationContextAware;
 
 /**
  * A simple yet effective implementation of {@link ConversationManager} that
@@ -76,16 +75,6 @@ public class SimpleConversationManager implements ConversationManager {
 			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
 				processConversation(conversationConfig, conversationAdapter, action);
 			}
-		}
-		
-		if (action instanceof ConversationContextAware) {
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Action implements ConversationContextAware, setting composite ConversationContext on action class instance.");
-			}
-			
-			ConversationContextAware contextAware = (ConversationContextAware) action;
-			contextAware.setConversationContext(ConversationUtil.getContext(conversationAdapter));
 		}
 		
 		

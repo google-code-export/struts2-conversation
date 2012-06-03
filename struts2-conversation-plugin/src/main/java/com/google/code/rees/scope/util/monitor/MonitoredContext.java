@@ -25,13 +25,13 @@
 package com.google.code.rees.scope.util.monitor;
 
 import java.io.Serializable;
-
-import com.google.code.rees.scope.util.BeanContext;
+import java.util.Map;
 
 /**
  * @author rees.byars
  * 
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends BeanContext<K, V>, Timeoutable<T>, Serializable {
+public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>>
+		extends Map<K, V>, Timeoutable<T>, Serializable {
 
 }

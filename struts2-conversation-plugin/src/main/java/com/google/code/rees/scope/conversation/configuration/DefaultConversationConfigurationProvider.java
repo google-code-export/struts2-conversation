@@ -203,12 +203,6 @@ public class DefaultConversationConfigurationProvider implements
             classConfigurations.put(clazz, configurations);
         }
         
-        //add all the conversation names to the ConversationSet
-        ConversationSet convoSet = ConversationSet.get();
-        for (ConversationConfiguration configuration : configurations) {
-        	convoSet.add(configuration.getConversationName());
-        }
-        
         return configurations;
     }
 
