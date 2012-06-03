@@ -81,14 +81,6 @@ public class MockConversationAdapter extends ConversationAdapter {
 	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
 		return this.contextManager.createContext(conversationName, maxIdleTimeMillis);
 	}
-
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-	public ConversationContext beginConversation(String conversationName) {
-		return this.contextManager.createContext(conversationName);
-	}
 	
 	@Override
 	public ConversationContext getConversationContext(String conversationName, String conversationId) {

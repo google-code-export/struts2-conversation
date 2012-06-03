@@ -44,16 +44,25 @@ import com.google.code.rees.scope.util.ReflectionUtil;
  * 
  * @author rees.byars
  */
-public class DefaultConversationConfigurationProvider implements
-        ConversationConfigurationProvider {
+public class DefaultConversationConfigurationProvider implements ConversationConfigurationProvider {
 
     private static final long serialVersionUID = -1227350994518195549L;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultConversationConfigurationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationConfigurationProvider.class);
 
     protected ConversationArbitrator arbitrator;
-    protected transient Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections
-            .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
+    protected transient Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
+	protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
+		double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
+    	LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
+    	LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
+		this.maxIdleTimeMillis = maxIdleTimeMillis;
+	}
 
     /**
      * {@inheritDoc}
@@ -88,15 +97,12 @@ public class DefaultConversationConfigurationProvider implements
             Class<?> clazz) {
 
         if (this.classConfigurations == null) {
-            this.classConfigurations = Collections
-                    .synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
+            this.classConfigurations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<ConversationConfiguration>>());
         }
-        Collection<ConversationConfiguration> configurations = classConfigurations
-                .get(clazz);
+        Collection<ConversationConfiguration> configurations = classConfigurations.get(clazz);
         if (configurations == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("No cached ConversationConfiguration found for class "
-                        + clazz.getName());
+                LOG.debug("No cached ConversationConfiguration found for class " + clazz.getName());
             }
             configurations = this.processClass(clazz, classConfigurations);
         }
@@ -110,33 +116,24 @@ public class DefaultConversationConfigurationProvider implements
      * @param classConfigurations
      * @return
      */
-    protected synchronized Collection<ConversationConfiguration> processClass(
-            Class<?> clazz,
-            Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations) {
-        Collection<ConversationConfiguration> configurations = classConfigurations
-                .get(clazz);
+    protected synchronized Collection<ConversationConfiguration> processClass(Class<?> clazz, Map<Class<?>, Collection<ConversationConfiguration>> classConfigurations) {
+        Collection<ConversationConfiguration> configurations = classConfigurations.get(clazz);
         if (configurations == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Building ConversationConfiguration for class "
-                        + clazz.getName());
+                LOG.debug("Building ConversationConfiguration for class " + clazz.getName());
             }
             configurations = new HashSet<ConversationConfiguration>();
             Map<String, ConversationConfiguration> temporaryConversationMap = new HashMap<String, ConversationConfiguration>();
-            for (Field field : this.arbitrator
-                    .getCandidateConversationFields(clazz)) {
-                Collection<String> fieldConversations = this.arbitrator
-                        .getConversations(clazz, field);
+            for (Field field : this.arbitrator.getCandidateConversationFields(clazz)) {
+                Collection<String> fieldConversations = this.arbitrator.getConversations(clazz, field);
                 if (fieldConversations != null) {
                     String fieldName = this.arbitrator.getName(field);
                     ReflectionUtil.makeAccessible(field);
                     for (String conversation : fieldConversations) {
-                        ConversationConfiguration configuration = temporaryConversationMap
-                                .get(conversation);
+                        ConversationConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationConfiguration(
-                                    conversation);
-                            temporaryConversationMap.put(conversation,
-                                    configuration);
+                            configuration = new ConversationConfiguration(conversation);
+                            temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding field "
@@ -184,7 +181,7 @@ public class DefaultConversationConfigurationProvider implements
                         }
                         
                         //yeah this code just got placed here because it was easy - again, this class and the arbitrator just need overhauling (but thats a lot of work!)
-                        long maxIdleTime = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
+                        long maxIdleTime = this.maxIdleTimeMillis;
                 		if (method.isAnnotationPresent(BeginConversation.class)) {
                 			BeginConversation beginConversation = method.getAnnotation(BeginConversation.class);
                 			maxIdleTime = beginConversation.maxIdleTimeMillis();

@@ -38,6 +38,13 @@ import com.google.code.rees.scope.conversation.processing.ConversationManager;
  * 
  */
 public interface ConversationConfigurationProvider extends Serializable {
+	
+	/**
+	 * Set the default max idle time for conversations
+	 * 
+	 * @param maxIdleTime
+	 */
+	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
 
     /**
      * Set the {@link ConversationArbitrator} to be used for building the

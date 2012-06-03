@@ -50,13 +50,6 @@ public interface HttpConversationContextManagerFactory extends Serializable {
 	public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize);
 	
 	/**
-	 * Set the default max idle time for {@link ConversationContext ConversationContexts} managed by the managers produced by this factory
-	 * 
-	 * @param maxIdleTime
-	 */
-	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
-	
-	/**
 	 * set the frequency in milliseconds for monitoring timeouts
 	 * 
 	 * @param monitoringFrequency

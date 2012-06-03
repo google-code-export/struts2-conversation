@@ -47,16 +47,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
     protected ConversationContextFactory contextFactory;
 	protected Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
 	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
-	protected long defaultMaxIdleTime = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
 	protected long nextId = 0L;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
-		this.defaultMaxIdleTime = maxIdleTimeMillis;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -72,14 +63,6 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	@Override
 	public void setContextFactory(ConversationContextFactory contextFactory) {
 		this.contextFactory = contextFactory;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ConversationContext createContext(String conversationName) {
-		return this.createContext(conversationName, this.defaultMaxIdleTime);
 	}
 	
 	/**

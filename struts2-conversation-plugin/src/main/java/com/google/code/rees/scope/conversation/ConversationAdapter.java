@@ -98,14 +98,6 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @return
 	 */
 	public abstract ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis);
-	
-	/**
-	 * begins a new conversation, returning the context for the new conversation
-	 * 
-	 * @param conversationName
-	 * @return
-	 */
-	public abstract ConversationContext beginConversation(String conversationName);
 
 	/**
 	 * Returns a ConversationContext for the given name and ID
