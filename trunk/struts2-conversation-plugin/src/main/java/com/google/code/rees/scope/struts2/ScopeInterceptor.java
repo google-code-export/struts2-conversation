@@ -58,12 +58,10 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  * 
  * @author rees.byars
  */
-public class ScopeInterceptor extends MethodFilterInterceptor implements
-        PreResultListener {
+public class ScopeInterceptor extends MethodFilterInterceptor implements PreResultListener {
 
     private static final long serialVersionUID = 3222190171260674636L;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ScopeInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScopeInterceptor.class);
 
     protected ScopeManager manager = new DefaultScopeManager();
     protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
@@ -74,6 +72,7 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
     protected SessionConfigurationProvider sessionConfigurationProvider;
     protected ActionProvider finder;
     protected String actionSuffix;
+	protected long maxIdleTime;
 
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
@@ -121,6 +120,11 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
     public void setAdapterFactory(ScopeAdapterFactory adapterFactory) {
         this.adapterFactory = adapterFactory;
     }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
+        this.maxIdleTime = Long.parseLong(defaultMaxIdleTimeString);
+    }
 
     /**
      * {@inheritDoc}
@@ -140,14 +144,12 @@ public class ScopeInterceptor extends MethodFilterInterceptor implements
 
         this.arbitrator.setActionSuffix(actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(arbitrator);
-        this.conversationConfigurationProvider.init(this.finder
-                .getActionClasses());
-        this.conversationManager
-                .setConfigurationProvider(conversationConfigurationProvider);
+        this.conversationConfigurationProvider.setDefaultMaxIdleTime(maxIdleTime);
+        this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        this.conversationManager.setConfigurationProvider(conversationConfigurationProvider);
 
         this.sessionConfigurationProvider.init(finder.getActionClasses());
-        this.sessionManager
-                .setConfigurationProvider(sessionConfigurationProvider);
+        this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
 
         this.manager.setConversationManager(conversationManager);
         this.manager.setSessionManager(sessionManager);

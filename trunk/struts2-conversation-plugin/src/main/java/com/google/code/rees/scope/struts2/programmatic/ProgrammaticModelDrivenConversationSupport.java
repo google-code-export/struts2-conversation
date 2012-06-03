@@ -50,14 +50,18 @@ import com.opensymphony.xwork2.inject.Inject;
  * 
  * @param <T>
  */
-public abstract class ProgrammaticModelDrivenConversationSupport<T extends Serializable>
-        extends ActionSupport implements
-        ProgrammaticModelDrivenConversation<T>, Preparable {
+public abstract class ProgrammaticModelDrivenConversationSupport<T extends Serializable> extends ActionSupport implements ProgrammaticModelDrivenConversation<T>, Preparable {
 
     private static final long serialVersionUID = -3567083451289146237L;
 
     private T model;
     private ScopeAdapterFactory adapterFactory;
+    protected long maxIdleTime;
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+    public void setMaxIdleTime(long maxIdleTime) {
+    	this.maxIdleTime = maxIdleTime;
+    }
 
     /**
      * Sets a {@link ScopeAdapterFactory} used to create
@@ -127,7 +131,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this);
+        ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime);
     }
 
     /**

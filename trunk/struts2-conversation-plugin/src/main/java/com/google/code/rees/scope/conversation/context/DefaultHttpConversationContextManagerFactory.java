@@ -50,7 +50,6 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
 
     private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerFactory.class);
 
-    protected long defaultMaxIdleTime = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
     protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
     protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
     protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
@@ -69,17 +68,6 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
     public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
     	LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
     	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setDefaultMaxIdleTime(long timeout) {
-    	double idleTimeHours = timeout / (1000.0 * 60 * 60);
-    	LOG.info("Setting default conversation timeout:  " + timeout + " milliseconds.");
-    	LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
-        this.defaultMaxIdleTime = timeout;
     }
 
     /**
@@ -131,7 +119,6 @@ public class DefaultHttpConversationContextManagerFactory implements HttpConvers
     		LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
     	}
     	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
-    	contextManager.setDefaultMaxIdleTime(this.defaultMaxIdleTime);
     	contextManager.setMaxInstances(this.maxInstances);
     	contextManager.setContextFactory(this.conversationContextFactory);
         TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);

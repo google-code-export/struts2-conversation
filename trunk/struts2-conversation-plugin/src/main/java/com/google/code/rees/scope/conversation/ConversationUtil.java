@@ -146,16 +146,6 @@ public class ConversationUtil {
 			}
 		}
 	}
-
-	/**
-	 * A convenience method for beginning a conversation programmatically
-	 * 
-	 * @param name
-	 * @return a new {@link ConversationContext}
-	 */
-	public static ConversationContext begin(String name) {
-		return begin(name, ConversationAdapter.getAdapter());
-	}
 	
 	/**
 	 * A convenience method for beginning a conversation programmatically
@@ -166,20 +156,6 @@ public class ConversationUtil {
 	 */
 	public static ConversationContext begin(String name, long maxIdleTimeMillis) {
 		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
-	}
-
-	/**
-	 * A convenience method for beginning a conversation programmatically
-	 * 
-	 * @param name
-	 * @return a new {@link ConversationContext}
-	 */
-	public static ConversationContext begin(String name, ConversationAdapter adapter) {
-		ConversationContext context = adapter.beginConversation(name);
-		String id = context.getId();
-		adapter.getViewContext().put(name, id);
-		adapter.getRequestContext().put(name, id);
-		return context;
 	}
 	
 	/**

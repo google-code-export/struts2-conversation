@@ -102,14 +102,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
 		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
 	}
 
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-	public ConversationContext beginConversation(String conversationName) {
-		return this.conversationContextManager.createContext(conversationName);
-	}
-
     /**
      * {@inheritDoc}
      */

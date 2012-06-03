@@ -45,11 +45,6 @@ public class StrutsConversationContextManagerFactory extends DefaultHttpConversa
         	this.init();
         }
     }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
-        super.setDefaultMaxIdleTime(Long.parseLong(defaultMaxIdleTimeString));
-    }
 
     @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
     public void setMonitoringFrequency(String monitoringFrequency) {

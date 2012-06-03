@@ -52,6 +52,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
     protected ConversationConfigurationProvider conversationConfigurationProvider;
     protected ActionProvider finder;
     protected String actionSuffix;
+	protected long maxIdleTime;
 
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
@@ -61,6 +62,11 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
     @Inject(ConventionConstants.ACTION_SUFFIX)
     public void setActionSuffix(String suffix) {
         this.actionSuffix = suffix;
+    }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
+        this.maxIdleTime = Long.parseLong(defaultMaxIdleTimeString);
     }
 
     @Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
@@ -102,10 +108,9 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
 
         this.arbitrator.setActionSuffix(actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(arbitrator);
-        this.conversationConfigurationProvider.init(this.finder
-                .getActionClasses());
-        this.conversationManager
-                .setConfigurationProvider(conversationConfigurationProvider);
+        this.conversationConfigurationProvider.setDefaultMaxIdleTime(maxIdleTime);
+        this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        this.conversationManager.setConfigurationProvider(conversationConfigurationProvider);
         
         LOG.info("...Conversation Interceptor successfully initialized.");
 
@@ -113,8 +118,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
 
     @Override
     protected String doIntercept(ActionInvocation invocation) throws Exception {
-        this.conversationManager.processConversations(this.adapterFactory
-                .createConversationAdapter());
+        this.conversationManager.processConversations(this.adapterFactory.createConversationAdapter());
         invocation.addPreResultListener(this);
         return invocation.invoke();
     }

@@ -43,38 +43,32 @@ import com.google.code.rees.scope.conversation.context.ConversationContext;
  */
 public class ProgrammaticModelDrivenConversationUtil {
 
-    public static <T extends ProgrammaticModelDrivenConversation<?>> void begin(
-            T controller) {
+    public static <T extends ProgrammaticModelDrivenConversation<?>> void begin(T controller, long maxIdleTime) {
         Object model = controller.getModel();
         for (String conversationName : controller.getConversations()) {
-            ConversationContext conversationContext = ConversationUtil
-                    .begin(conversationName);
+            ConversationContext conversationContext = ConversationUtil.begin(conversationName, maxIdleTime);
             conversationContext.put(conversationName, model);
         }
     }
 
-    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void persist(
-            T controller) {
+    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void persist(T controller) {
         for (String conversationName : controller.getConversations()) {
             ConversationUtil.persist(conversationName);
         }
     }
 
-    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void end(
-            T controller) {
+    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void end(T controller) {
         for (String conversationName : controller.getConversations()) {
             ConversationUtil.end(conversationName);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> M getModel(
-            T controller, String modelKey) {
+    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> M getModel(T controller, String modelKey) {
         return (M) ConversationUtil.getField(modelKey);
     }
 
-    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void setModel(
-            M model, T controller, String modelKey) {
+    public static <M extends Serializable, T extends ProgrammaticModelDrivenConversation<M>> void setModel(M model, T controller, String modelKey) {
         ConversationUtil.setField(modelKey, model);
     }
 

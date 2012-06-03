@@ -33,13 +33,6 @@ import java.io.Serializable;
  * 
  */
 public interface ConversationContextManager extends Serializable {
-	
-	/**
-	 * Set the default max idle time for {@link ConversationContext ConversationContexts} managed by this manager
-	 * 
-	 * @param maxIdleTime
-	 */
-	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
 
 	/**
 	 * Set the max number of cached {@link ConversationContext
@@ -65,13 +58,6 @@ public interface ConversationContextManager extends Serializable {
 	 */
 	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis);
 	
-	/**
-	 * Creates a new context for the given conversation name, using the default idle time
-	 * 
-	 * @param conversationName
-	 * @return
-	 */
-	public ConversationContext createContext(String conversationName);
 
 	/**
 	 * Retrieve the context identified by the given information, creating a new
