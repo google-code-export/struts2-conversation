@@ -35,6 +35,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.annotations.BeginConversation;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
@@ -66,14 +68,16 @@ public class DefaultConversationConfigurationProvider implements
      */
     @Override
     public void init(Set<Class<?>> actionClasses) {
-    	LOG.info("Building Conversation Configurations...");
-    	if (this.arbitrator == null) {
-    		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
+    	if (this.classConfigurations.size() != actionClasses.size()) {
+    		LOG.info("Building Conversation Configurations...");
+        	if (this.arbitrator == null) {
+        		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
+        	}
+            for (Class<?> clazz : actionClasses) {
+                processClass(clazz, classConfigurations);
+            }
+            LOG.info("...building of Conversation Configurations successfully completed.");
     	}
-        for (Class<?> clazz : actionClasses) {
-            processClass(clazz, classConfigurations);
-        }
-        LOG.info("...building of Conversation Configurations successfully completed.");
     }
 
     /**
@@ -178,7 +182,14 @@ public class DefaultConversationConfigurationProvider implements
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationConfiguration for Conversation " + conversation);
                         }
-                        configuration.addBeginAction(methodName);
+                        
+                        //yeah this code just got placed here because it was easy - again, this class and the arbitrator just need overhauling (but thats a lot of work!)
+                        long maxIdleTime = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
+                		if (method.isAnnotationPresent(BeginConversation.class)) {
+                			BeginConversation beginConversation = method.getAnnotation(BeginConversation.class);
+                			maxIdleTime = beginConversation.maxIdleTimeMillis();
+                		}
+                        configuration.addBeginAction(methodName, maxIdleTime);
                     }
                 }
                 

@@ -25,6 +25,7 @@ package com.google.code.rees.scope;
 
 import java.io.Serializable;
 
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.session.SessionManager;
 
@@ -61,7 +62,8 @@ public interface ScopeManager extends Serializable {
 
     /**
      * Performs the scope processing for the conversation and session scopes
+     * @throws ConversationException 
      */
-    public void processScopes();
+    public void processScopes() throws ConversationException;
 
 }

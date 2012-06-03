@@ -23,6 +23,7 @@
  ******************************************************************************/
 package com.google.code.rees.scope;
 
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.session.SessionManager;
 
@@ -65,13 +66,12 @@ public class DefaultScopeManager implements ScopeManager {
 
     /**
      * {@inheritDoc}
+     * @throws ConversationException 
      */
     @Override
-    public void processScopes() {
-        this.sessionManager.processSessionFields(this.adapterFactory
-                .createSessionAdapter());
-        this.conversationManager.processConversations(this.adapterFactory
-                .createConversationAdapter());
+    public void processScopes() throws ConversationException {
+        this.sessionManager.processSessionFields(this.adapterFactory.createSessionAdapter());
+        this.conversationManager.processConversations(this.adapterFactory.createConversationAdapter());
     }
 
 }

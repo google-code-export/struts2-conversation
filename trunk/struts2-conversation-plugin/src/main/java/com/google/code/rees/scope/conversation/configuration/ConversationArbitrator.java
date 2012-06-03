@@ -134,4 +134,5 @@ public interface ConversationArbitrator extends Serializable {
      * @return
      */
     public Collection<String> getEndConversations(Class<?> clazz, Method method);
+    
 }

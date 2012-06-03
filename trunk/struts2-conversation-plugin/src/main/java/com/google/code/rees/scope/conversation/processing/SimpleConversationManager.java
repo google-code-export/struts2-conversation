@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
@@ -59,31 +60,42 @@ public class SimpleConversationManager implements ConversationManager {
 
 	/**
 	 * {@inheritDoc}
+	 * @throws ConversationException 
 	 */
 	@Override
-	public void processConversations(ConversationAdapter conversationAdapter) {
+	public void processConversations(ConversationAdapter conversationAdapter) throws ConversationException {
 		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Beginning processing of conversations...");
             LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
         }
 		
-		Object action = conversationAdapter.getAction();
-		
-		Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
-		if (actionConversationConfigs != null) {
-			for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
-				processConversation(conversationConfig, conversationAdapter, action);
+		try {
+			
+			Object action = conversationAdapter.getAction();
+			
+			Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
+			if (actionConversationConfigs != null) {
+				for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
+					processConversation(conversationConfig, conversationAdapter, action);
+				}
 			}
+			
+		} catch (Exception e) {
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("An exception occurred while processing the conversations:  " + e.getMessage());
+			}
+			
+			throw new ConversationException(e.getMessage());
 		}
-		
 		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("...processing of conversations complete.");
 		}
 	}
 
-	protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
+	protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
 		String actionId = conversationAdapter.getActionId();
 		String conversationName = conversationConfig.getConversationName();
@@ -96,12 +108,15 @@ public class SimpleConversationManager implements ConversationManager {
 				} else {
 					conversationAdapter.getViewContext().put(conversationName, conversationId);
 				}
-			}
+			} else {
+            	throw new ConversationException("The following conversation name and id pair did not return an active ConversationContext:  Name: " + conversationName + ", ID:  " + conversationId + ".  This is likely due to the conversation having ended or expired.");
+            }
 		} else if (conversationConfig.isBeginAction(actionId)) {
+			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Beginning new " + conversationName + ".");
-			}
-			ConversationUtil.begin(conversationName, conversationAdapter);
+                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
+            }
+            ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
 		}
 	}
 

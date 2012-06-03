@@ -26,6 +26,7 @@ package com.google.code.rees.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 
 /**
@@ -41,14 +42,14 @@ public interface ConversationManager extends Serializable {
      * 
      * @param configurationProvider
      */
-    public void setConfigurationProvider(
-            ConversationConfigurationProvider configurationProvider);
+    public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider);
 
     /**
      * Process the conversations for the current request using the given adapter
      * 
      * @param conversationAdapter
+     * @throws ConversationException 
      */
-    public void processConversations(ConversationAdapter conversationAdapter);
+    public void processConversations(ConversationAdapter conversationAdapter) throws ConversationException;
 
 }
