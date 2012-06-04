@@ -13,7 +13,6 @@ public class ActionNamesAction extends org.apache.struts2.config_browser.ActionN
     @Override
     public Set<String> getActionNames() {
         String namespace = this.getNamespace();
-        @SuppressWarnings("unchecked")
         Set<String> actionNames = new TreeSet<String>(this.configHelper.getActionNames(this.getNamespace()));
         for (String actionName : actionNames) {
             if (ActionConfig.WILDCARD.equals(actionName)) {
