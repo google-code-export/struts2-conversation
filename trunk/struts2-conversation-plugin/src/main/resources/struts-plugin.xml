@@ -58,10 +58,12 @@
 	<constant name="conversation.max.instances" value="20"/>
 	<constant name="conversation.monitoring.thread.pool.size" value="20"/>
 	
-	<bean name="struts.scope.actionFinder" type="com.google.code.rees.scope.ActionProvider"
+	<bean name="struts.scope.actionFinder" 
+		type="com.google.code.rees.scope.ActionProvider"
 		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
 		
-	<bean name="struts.conversation.arbitrator" type="com.google.code.rees.scope.conversation.configuration.ConversationArbitrator"
+	<bean name="struts.conversation.arbitrator" 
+		type="com.google.code.rees.scope.conversation.configuration.ConversationArbitrator"
 		class="com.google.code.rees.scope.struts2.StrutsConversationArbitrator"/>
 
 	<bean name="struts.session.configurationProvider"
@@ -84,38 +86,39 @@
 		type="com.google.code.rees.scope.session.SessionManager"
 		class="com.google.code.rees.scope.session.DefaultSessionManager" />
 		
-	<bean name="struts.scope.adapterFactory"
-		type="com.google.code.rees.scope.ScopeAdapterFactory"
-		class="com.google.code.rees.scope.struts2.StrutsScopeAdapterFactory" />
-		
 	<bean name="conversation.context.manager.factory" 
 		type="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory" 
-		class="com.google.code.rees.scope.struts2.StrutsConversationContextManagerFactory"/>
+		class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory"/>
 		
-	<bean name="conversation.context.factory" type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
+	<bean name="conversation.context.factory" 
+		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
 		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
-	
-	<bean name="struts.scope.manager" type="com.google.code.rees.scope.ScopeManager" class="com.google.code.rees.scope.DefaultScopeManager"></bean>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	
 		<result-types>
-			<result-type name="conversationRedirectAction" 
+		
+			<result-type 
+				name="conversationRedirectAction" 
 				class="com.google.code.rees.scope.struts2.ConversationActionRedirectResult"/>
-			<result-type name="conversationRedirect" 
+			
+			<result-type 
+				name="conversationRedirect" 
 				class="com.google.code.rees.scope.struts2.ConversationRedirectResult"/>
+				
 		</result-types>
 	
 		<interceptors>
 		
-			<interceptor name="scopeInjection"
-				class="com.google.code.rees.scope.struts2.ScopeInterceptor" />
+			<interceptor name="sessionField"
+				class="com.google.code.rees.scope.struts2.SessionInterceptor" />
 				
 			<interceptor name="conversation"
 				class="com.google.code.rees.scope.struts2.ConversationInterceptor" />
 			
 			<interceptor-stack name="defaultConversationStack">
-				<interceptor-ref name="scopeInjection" />
+				<interceptor-ref name="sessionField" />
+				<interceptor-ref name="conversation" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 			

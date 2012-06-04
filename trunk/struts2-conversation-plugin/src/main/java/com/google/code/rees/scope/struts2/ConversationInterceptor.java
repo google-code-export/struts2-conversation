@@ -26,33 +26,41 @@ package com.google.code.rees.scope.struts2;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.StrutsStatics;
+
 import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.ScopeAdapterFactory;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
+import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
-public class ConversationInterceptor extends MethodFilterInterceptor implements
-        PreResultListener {
+public class ConversationInterceptor implements Interceptor, PreResultListener {
 
     private static final long serialVersionUID = -72776817859403642L;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ConversationInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
 
-    protected ScopeAdapterFactory adapterFactory = new StrutsScopeAdapterFactory();
-    protected ConversationArbitrator arbitrator;
-    protected ConversationManager conversationManager;
-    protected ConversationConfigurationProvider conversationConfigurationProvider;
     protected ActionProvider finder;
     protected String actionSuffix;
 	protected long maxIdleTime;
+    protected ConversationArbitrator arbitrator;
+    protected ConversationConfigurationProvider conversationConfigurationProvider;
+    protected ConversationManager conversationManager;
+    protected HttpConversationContextManagerFactory conversationContextManagerFactory;
+    protected int monitoringThreadPoolSize;
+    protected long monitoringFrequency;
+    protected int maxInstances;
+    protected ConversationContextFactory conversationContextFactory;
 
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
@@ -73,21 +81,40 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
+    public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
+        this.conversationConfigurationProvider = conversationConfigurationProvider;
+    }
 
-    @Inject(StrutsScopeConstants.SIMPLE_CONVERSATION_MANAGER_KEY)
+    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
     public void setConversationManager(ConversationManager manager) {
         this.conversationManager = manager;
     }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
-    public void setConversationConfigurationProvider(
-            ConversationConfigurationProvider conversationConfigurationProvider) {
-        this.conversationConfigurationProvider = conversationConfigurationProvider;
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_FACTORY)
+    public void setHttpConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
+        this.conversationContextManagerFactory = conversationContextManagerFactory;
+    }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
+    public void setMonitoringThreadPoolSize(String monitoringThreadPoolSizeString) {
+    	this.monitoringThreadPoolSize = Integer.parseInt(monitoringThreadPoolSizeString);
     }
 
-    @Inject(StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY)
-    public void setAdapterFactory(ScopeAdapterFactory adapterFactory) {
-        this.adapterFactory = adapterFactory;
+    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
+    public void setMonitoringFrequency(String monitoringFrequencyString) {
+    	this.monitoringFrequency = Long.parseLong(monitoringFrequencyString);
+    }
+
+    @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
+    public void setMaxInstances(String maxInstancesString) {
+    	this.maxInstances = Integer.parseInt(maxInstancesString);
+    }
+
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
+    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
+        this.conversationContextFactory = conversationContextFactory;
     }
 
     /**
@@ -106,19 +133,27 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
 
         LOG.info("Initializing the Conversation Interceptor...");
 
-        this.arbitrator.setActionSuffix(actionSuffix);
-        this.conversationConfigurationProvider.setArbitrator(arbitrator);
-        this.conversationConfigurationProvider.setDefaultMaxIdleTime(maxIdleTime);
+        this.arbitrator.setActionSuffix(this.actionSuffix);
+        this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
+        this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
         this.conversationConfigurationProvider.init(this.finder.getActionClasses());
-        this.conversationManager.setConfigurationProvider(conversationConfigurationProvider);
+        this.conversationManager.setConfigurationProvider(this.conversationConfigurationProvider);
+        
+        this.conversationContextManagerFactory.setConversationContextFactory(this.conversationContextFactory);
+        this.conversationContextManagerFactory.setMaxInstances(this.maxInstances);
+        this.conversationContextManagerFactory.setMonitoringFrequency(this.monitoringFrequency);
+        this.conversationContextManagerFactory.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
+        this.conversationContextManagerFactory.init();
         
         LOG.info("...Conversation Interceptor successfully initialized.");
 
     }
 
     @Override
-    protected String doIntercept(ActionInvocation invocation) throws Exception {
-        this.conversationManager.processConversations(this.adapterFactory.createConversationAdapter());
+    public String intercept(ActionInvocation invocation) throws Exception {
+    	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+    	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
+        this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
         invocation.addPreResultListener(this);
         return invocation.invoke();
     }
@@ -129,13 +164,8 @@ public class ConversationInterceptor extends MethodFilterInterceptor implements
     @Override
     public void beforeResult(ActionInvocation invocation, String result) {
         ConversationAdapter.getAdapter().executePostProcessors();
-        this.pushViewContextOntoStack(invocation);
-    }
-
-    protected void pushViewContextOntoStack(ActionInvocation invocation) {
         Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY,
-                ConversationAdapter.getAdapter().getViewContext());
+        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
         invocation.getStack().push(stackItem);
     }
 
