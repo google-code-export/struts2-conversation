@@ -27,8 +27,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.rees.scope.ScopeAdapterFactory;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.StrutsStatics;
+
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationException;
+import com.google.code.rees.scope.conversation.context.ConversationContextManager;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.struts2.StrutsConversationAdapter;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -55,23 +63,23 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     private static final long serialVersionUID = -3567083451289146237L;
 
     private T model;
-    private ScopeAdapterFactory adapterFactory;
     protected long maxIdleTime;
+	private ConversationManager conversationManager;
+	private HttpConversationContextManagerFactory conversationContextManagerFactory;
     
     @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
     public void setMaxIdleTime(long maxIdleTime) {
     	this.maxIdleTime = maxIdleTime;
     }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
+    public void setConversationManager(ConversationManager manager) {
+        this.conversationManager = manager;
+    }
 
-    /**
-     * Sets a {@link ScopeAdapterFactory} used to create
-     * {@link ConversationAdapter ConversationAdapters}.
-     * 
-     * @param adapterFactory
-     */
-    @Inject(StrutsScopeConstants.SCOPE_ADAPTER_FACTORY_KEY)
-    public void setAdapterFactory(ScopeAdapterFactory adapterFactory) {
-        this.adapterFactory = adapterFactory;
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_FACTORY)
+    public void setHttpConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
+        this.conversationContextManagerFactory = conversationContextManagerFactory;
     }
 
     /**
@@ -83,8 +91,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     @Override
     public T getModel() {
         if (this.model == null) {
-            this.model = ProgrammaticModelDrivenConversationUtil.getModel(this,
-                    this.getModelName());
+            this.model = ProgrammaticModelDrivenConversationUtil.getModel(this, this.getModelName());
         }
         return this.model;
     }
@@ -97,8 +104,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      */
     @Override
     public void setModel(T model) {
-        ProgrammaticModelDrivenConversationUtil.setModel(model, this,
-                this.getModelName());
+        ProgrammaticModelDrivenConversationUtil.setModel(model, this, this.getModelName());
         this.model = model;
     }
 
@@ -120,11 +126,17 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * {@inheritDoc}
      */
     public void prepare() {
-        this.adapterFactory.createConversationAdapter();
-        Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY,
-                ConversationAdapter.getAdapter().getViewContext());
-        ActionContext.getContext().getValueStack().push(stackItem);
+    	ActionContext actionContext = ActionContext.getContext();
+    	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
+    	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
+        try {
+			this.conversationManager.processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
+			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
+	        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+	        actionContext.getValueStack().push(stackItem);
+        } catch (ConversationException e) {
+			LOG.error("Programmatic Conversation error in Prepare method", e);
+		}
     }
 
     /**
