@@ -13,7 +13,6 @@ import com.google.code.rees.scope.conversation.configuration.ConversationConfigu
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.struts2.ActionUtil;
 import com.google.code.rees.scope.struts2.ConversationInterceptor;
-import com.google.code.rees.scope.struts2.ScopeInterceptor;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 import com.opensymphony.xwork2.config.entities.InterceptorMapping;
@@ -46,7 +45,6 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     @Override
     public Set<String> getActionNames() {
         String namespace = this.getNamespace();
-        @SuppressWarnings("unchecked")
         Set<String> actionNames = new TreeSet<String>(this.configHelper.getActionNames(this.getNamespace()));
         for (String actionName : actionNames) {
             if (ActionConfig.WILDCARD.equals(actionName)) {
@@ -118,7 +116,7 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     protected boolean isConversationInterceptorApplied(ActionConfig actionConfig) {
         boolean hasConvoInterceptor = false;
         for (InterceptorMapping interceptorMapping : actionConfig.getInterceptors()) {
-            if (interceptorMapping.getInterceptor() instanceof ScopeInterceptor || interceptorMapping.getInterceptor() instanceof ConversationInterceptor) {
+            if (interceptorMapping.getInterceptor() instanceof ConversationInterceptor) {
                 hasConvoInterceptor = true;
                 break;
             }
