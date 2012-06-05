@@ -52,6 +52,16 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 <constant name="conversation.monitoring.thread.pool.size" value="20"/>
 }}}
 
+If you wish to have different timeouts for different conversations, the BeginConversation annotation can be used to specify a different timeout period:
+
+{{{
+//This conversation will only last 10 seconds!
+@BeginConversation(maxIdleTimeMillis=10000L)
+public String begin() {
+   return "hurry";
+}
+}}}
+
 It is important to note the an HttpSessionListener is used to cleanup each session's conversation resources when the session ends.  This listener will startup automatically for Servlet API 3.0+.  For earlier Servlet APIs, the listener should be configured in the web.xml:
 
 {{{
