@@ -52,7 +52,7 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 <constant name="conversation.monitoring.thread.pool.size" value="20"/>
 }}}
 
-If you wish to have different timeouts for different conversations, the BeginConversation annotation can be used to specify a different timeout period:
+If you wish to have different timeouts for different conversations, the BeginConversation annotation can be used to specify a different timeout period (this feature only available since version _1.6.1_:
 
 {{{
 //This conversation will only last 10 seconds!
@@ -75,7 +75,7 @@ It is important to note the an HttpSessionListener is used to cleanup each sessi
 
 ==Exception Mapping==
 
-_since 1.6.0_
+_since 1.6.1_
 
 Inevitably, users will sometimes submit a request that contains an ID for a conversation that has already expired or that has been explicitly ended on another tab that they have open.  When this happens, the framework will throw a ConversationException.  This exception can be used to map to a result of your choosing to gracefully (or not!) handle the situation:
 
