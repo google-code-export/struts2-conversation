@@ -3,7 +3,7 @@
 
   # [#Conversation_Redirects Conversation Redirects]
   # [#Memory_Management Memory Management]
-
+  # [#Exception_Mapping Exception Mapping]
 
 ----
 
@@ -62,3 +62,21 @@ It is important to note the an HttpSessionListener is used to cleanup each sessi
 }}}
 
 ----
+
+==Exception Mapping==
+
+_since 1.6.0_
+
+Inevitably, users will sometimes submit a request that contains an ID for a conversation that has already expired or that has been explicitly ended on another tab that they have open.  When this happens, the framework will throw a ConversationException.  This exception can be used to map to a result of your choosing to gracefully (or not!) handle the situation:
+
+{{{
+        <global-results>
+            <result name="ConversationException">/GlobalConversationException.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="com.google.code.rees.scope.conversation.ConversationException" result="ConversationException"/>
+        </global-exception-mappings>
+}}}
+
+More on exception mapping in Struts2:  http://struts.apache.org/2.x/docs/exception-configuration.html
