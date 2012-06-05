@@ -52,7 +52,7 @@ Conversations have a default idle-time timeout of 8 hours in order to keep old c
 <constant name="conversation.monitoring.thread.pool.size" value="20"/>
 }}}
 
-If you wish to have different timeouts for different conversations, the BeginConversation annotation can be used to specify a different timeout period (this feature only available since version _1.6.1_:
+If you wish to have different timeouts for different conversations, the BeginConversation annotation can be used to specify a different timeout period (this feature only available since version _1.6.1_):
 
 {{{
 //This conversation will only last 10 seconds!
