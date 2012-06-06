@@ -31,10 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
+import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.util.ScopeUtil;
 
 /**
@@ -82,7 +82,7 @@ public class DefaultInjectionConversationManager extends SimpleConversationManag
                     
                 } else {
                 	
-                	throw new ConversationException("The following conversation name and id pair did not return an active ConversationContext:  Name: " + conversationName + ", ID:  " + conversationId + ".  This is likely due to the conversation having ended or expired.");
+                	this.handleInvalidId(conversationName, conversationId);
                 	
                 }
 

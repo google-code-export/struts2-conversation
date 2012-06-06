@@ -22,15 +22,12 @@
  * $Id: ConversationException.java Jun 3, 2012 5:05:20 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.conversation;
+package com.google.code.rees.scope.conversation.exceptions;
 
 /**
  * An exception thrown when exceptions occur in conversation processing.  {@link com.google.code.rees.scope.conversation.processing.ConversationManager 
  * ConversationManager's} should catch any other exceptions and wrap them with this class to allow for simple
  * exception mapping for any conversation-related exceptions.  
- * <p>
- * The most important and likely scenario for this exception occurring is when requests
- * come in with conversation IDs for conversations that have already ended or expired.
  * 
  * @author rees.byars
  *

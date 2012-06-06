@@ -26,8 +26,8 @@ package com.google.code.rees.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 
 /**
  * The primary conversation processing and management component.
