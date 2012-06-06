@@ -42,27 +42,22 @@ import com.google.code.rees.scope.conversation.configuration.ConversationConfigu
 public class ConversationEndProcessor implements ConversationPostProcessor {
 
     private static final long serialVersionUID = 2164492176500215404L;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ConversationEndProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConversationEndProcessor.class);
 
     /**
      * Removes the conversation context from the session context
      */
     @Override
-    public void postProcessConversation(
-            ConversationAdapter conversationAdapter,
-            ConversationConfiguration conversationConfig, String conversationId) {
+    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("In Conversation "
-                    + conversationConfig.getConversationName()
-                    + ", removing conversation map from session following conversation end.");
+            LOG.debug("In Conversation " + conversationConfig.getConversationName() + ", removing conversation map from session following conversation end.");
         }
         String conversationName = null;
         if (conversationConfig == null) {
-            for (Entry<String, String> nameIdPair : conversationAdapter
-                    .getRequestContext().entrySet()) {
+            for (Entry<String, String> nameIdPair : conversationAdapter.getRequestContext().entrySet()) {
                 if (nameIdPair.getValue().equals(conversationId)) {
                     conversationName = nameIdPair.getKey();
+                    break;
                 }
             }
         } else {

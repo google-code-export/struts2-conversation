@@ -36,7 +36,8 @@ import com.google.code.rees.scope.conversation.configuration.ConversationConfigu
  * 
  */
 public interface ConversationPostProcessorWrapperFactory extends Serializable {
-    /**
+    
+	/**
      * Returns an instance of a {@link ConversationPostProcessorWrapper}
      * 
      * @param conversationAdapter

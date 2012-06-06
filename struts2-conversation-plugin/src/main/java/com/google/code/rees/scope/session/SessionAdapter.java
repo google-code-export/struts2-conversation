@@ -73,8 +73,7 @@ public abstract class SessionAdapter implements Serializable {
      * 
      * @param sessionPostProcessor
      */
-    public abstract void addPostProcessor(
-            SessionPostProcessor sessionPostProcessor);
+    public abstract void addPostProcessor(SessionPostProcessor sessionPostProcessor);
 
     /**
      * Set the {@link ThreadLocal} SessionAdapter for use with the current
