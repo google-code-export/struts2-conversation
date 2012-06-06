@@ -176,9 +176,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             configuration = new ConversationConfiguration(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationConfiguration for Conversation " + conversation);
-                        }
                         
                         //yeah this code just got placed here because it was easy - again, this class and the arbitrator just need overhauling (but thats a lot of work!)
                         long maxIdleTime = this.maxIdleTimeMillis;
@@ -186,6 +183,11 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                 			BeginConversation beginConversation = method.getAnnotation(BeginConversation.class);
                 			maxIdleTime = beginConversation.maxIdleTimeMillis();
                 		}
+                		
+                		if (LOG.isDebugEnabled()) {
+                            LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationConfiguration for Conversation " + conversation + " with a timeout of " + maxIdleTime / 1000 + " seconds.");
+                        }
+                		
                         configuration.addBeginAction(methodName, maxIdleTime);
                     }
                 }

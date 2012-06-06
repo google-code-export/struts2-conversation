@@ -29,11 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.exceptions.ConversationException;
+import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 
 /**
  * A simple yet effective implementation of {@link ConversationManager} that
@@ -81,12 +82,14 @@ public class SimpleConversationManager implements ConversationManager {
 				}
 			}
 			
+		} catch (ConversationException ce) {
+			
+			//just catching to re-throw previously thrown ConversationExceptions instead of "generifying" them
+			throw ce;
+			
 		} catch (Exception e) {
 			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("An exception occurred while processing the conversations:  " + e.getMessage());
-			}
-			
+			LOG.error("An exception occurred while processing the conversations:  " + e.getMessage());
 			throw new ConversationException(e.getMessage());
 		}
 		
@@ -109,7 +112,7 @@ public class SimpleConversationManager implements ConversationManager {
 					conversationAdapter.getViewContext().put(conversationName, conversationId);
 				}
 			} else {
-            	throw new ConversationException("The following conversation name and id pair did not return an active ConversationContext:  Name: " + conversationName + ", ID:  " + conversationId + ".  This is likely due to the conversation having ended or expired.");
+            	this.handleInvalidId(conversationName, conversationId);
             }
 		} else if (conversationConfig.isBeginAction(actionId)) {
 			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
@@ -118,6 +121,12 @@ public class SimpleConversationManager implements ConversationManager {
             }
             ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
 		}
+	}
+	
+	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {
+		String idExceptionMessage = "The following conversation name and id pair did not return an active ConversationContext:  (name: " + conversationName + "|id:  " + conversationId + ").  This is likely due to the conversation having ended or expired.";
+    	LOG.warn(idExceptionMessage);
+    	throw new ConversationIdException(idExceptionMessage);
 	}
 
 }

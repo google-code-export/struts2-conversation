@@ -32,12 +32,12 @@ import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.conversation.processing.InjectionConversationManager;
 import com.opensymphony.xwork2.ActionInvocation;
@@ -173,6 +173,7 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     	try {
     		this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
     	} catch (ConversationException e) {
+    		LOG.warn("Exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
     		return CONVERSATION_EXCEPTION_RESULT;
     	}
         invocation.addPreResultListener(this);
