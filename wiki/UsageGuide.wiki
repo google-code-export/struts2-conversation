@@ -82,7 +82,7 @@ Inevitably, users will sometimes submit a request that contains an ID for a conv
 
 {{{
         <global-results>
-            <result name="conversation.exception" type="redirectAction">/GlobalConversationException.jsp</result>
+            <result name="conversation.exception">/GlobalConversationException.jsp</result>
         </global-results>
 }}}
 
