@@ -1,0 +1,17 @@
+com.google.code.rees.scope
+com.google.code.rees.scope.conversation
+com.google.code.rees.scope.conversation.annotations
+com.google.code.rees.scope.conversation.configuration
+com.google.code.rees.scope.conversation.context
+com.google.code.rees.scope.conversation.exceptions
+com.google.code.rees.scope.conversation.processing
+com.google.code.rees.scope.guice
+com.google.code.rees.scope.session
+com.google.code.rees.scope.spring
+com.google.code.rees.scope.struts2
+com.google.code.rees.scope.struts2.programmatic
+com.google.code.rees.scope.struts2.test
+com.google.code.rees.scope.struts2.ui
+com.google.code.rees.scope.util
+com.google.code.rees.scope.util.monitor
+com.google.code.rees.scope.util.thread
