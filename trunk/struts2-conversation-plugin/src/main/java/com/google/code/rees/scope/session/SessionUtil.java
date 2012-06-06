@@ -42,8 +42,7 @@ import com.google.code.rees.scope.util.ReflectionUtil;
  */
 public class SessionUtil {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SessionUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionUtil.class);
 
     /**
      * Given the name of a session-scoped field and its class, this method
@@ -113,11 +112,9 @@ public class SessionUtil {
                         setField(name, value);
                     }
                 } catch (IllegalArgumentException e) {
-                    LOG.info("Illegal Argument on session field "
-                            + field.getName());
+                    LOG.info("Illegal Argument on session field " + field.getName());
                 } catch (IllegalAccessException e) {
-                    LOG.info("Illegal Access on session field "
-                            + field.getName());
+                    LOG.info("Illegal Access on session field " + field.getName());
                 }
             }
         }
@@ -138,11 +135,9 @@ public class SessionUtil {
                 try {
                     field.set(target, value);
                 } catch (IllegalArgumentException e) {
-                    LOG.info("Illegal Argument on session field "
-                            + field.getName());
+                    LOG.info("Illegal Argument on session field " + field.getName());
                 } catch (IllegalAccessException e) {
-                    LOG.info("Illegal Access on session field "
-                            + field.getName());
+                    LOG.info("Illegal Access on session field " + field.getName());
                 }
             }
         }

@@ -38,8 +38,7 @@ public interface SessionManager extends Serializable {
      * 
      * @param configurationProvider
      */
-    public void setConfigurationProvider(
-            SessionConfigurationProvider configurationProvider);
+    public void setConfigurationProvider(SessionConfigurationProvider configurationProvider);
 
     /**
      * Process, manage, and inject the {@link SessionField SessionFields}

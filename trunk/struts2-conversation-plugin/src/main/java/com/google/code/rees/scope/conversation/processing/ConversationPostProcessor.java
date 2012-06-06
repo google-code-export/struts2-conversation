@@ -42,8 +42,6 @@ public interface ConversationPostProcessor extends Serializable {
      * @param conversationConfig
      * @param conversationId
      */
-    public void postProcessConversation(
-            ConversationAdapter conversationAdapter,
-            ConversationConfiguration conversationConfig, String conversationId);
+    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId);
 
 }

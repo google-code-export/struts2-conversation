@@ -32,12 +32,14 @@ import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationException;
 import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.InjectionConversationManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
@@ -45,10 +47,22 @@ import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
+/**
+ * 
+ * This interceptor uses an {@link InjectionConversationManager} to process conversation states and scopes.
+ * 
+ * @author rees.byars
+ *
+ */
 public class ConversationInterceptor implements Interceptor, PreResultListener {
 
     private static final long serialVersionUID = -72776817859403642L;
     private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
+    
+    /**
+     * The result returned when a user submits an ID for a conversation that has already expired or ended.
+     */
+    public static final String CONVERSATION_EXCEPTION_RESULT = "conversation.exception";
 
     protected ActionProvider finder;
     protected String actionSuffix;
@@ -149,11 +163,18 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
     	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
     	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
-        this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    	try {
+    		this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    	} catch (ConversationException e) {
+    		return CONVERSATION_EXCEPTION_RESULT;
+    	}
         invocation.addPreResultListener(this);
         return invocation.invoke();
     }

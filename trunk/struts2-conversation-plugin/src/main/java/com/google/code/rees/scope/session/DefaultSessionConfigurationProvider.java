@@ -39,12 +39,10 @@ import com.google.code.rees.scope.util.ReflectionUtil;
  * 
  * @author rees.byars
  */
-public class DefaultSessionConfigurationProvider implements
-        SessionConfigurationProvider {
+public class DefaultSessionConfigurationProvider implements SessionConfigurationProvider {
 
     private static final long serialVersionUID = 3703684121698557461L;
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultSessionConfigurationProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionConfigurationProvider.class);
     protected transient SessionConfiguration configuration = new SessionConfiguration();
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 
@@ -100,11 +98,8 @@ public class DefaultSessionConfigurationProvider implements
     protected void addFields(Class<?> clazz) {
         for (Field field : ReflectionUtil.getFields(clazz)) {
             if (field.isAnnotationPresent(SessionField.class)) {
-                LOG.debug("Adding @SessionField " + field.getName()
-                        + " from class " + clazz.getName()
-                        + " to the SessionConfiguration");
-                SessionField sessionField = (SessionField) field
-                        .getAnnotation(SessionField.class);
+                LOG.debug("Adding @SessionField " + field.getName() + " from class " + clazz.getName() + " to the SessionConfiguration");
+                SessionField sessionField = (SessionField) field.getAnnotation(SessionField.class);
                 String name = sessionField.name();
                 if (name.equals(SessionField.DEFAULT)) {
                     name = field.getName();
