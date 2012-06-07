@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.util.RequestContextUtil;
 
 /**
@@ -47,9 +47,9 @@ public class MockConversationAdapter extends ConversationAdapter {
 	Map<String, String> requestContext;
 	ConversationContextManager contextManager;
 	
-	public MockConversationAdapter(HttpServletRequest request, HttpConversationContextManagerFactory contextManagerFactory) {
+	public MockConversationAdapter(HttpServletRequest request, HttpConversationContextManagerProvider contextManagerProvider) {
 		this.requestContext = RequestContextUtil.getRequestContext(request);
-		this.contextManager = contextManagerFactory.getManager(request);
+		this.contextManager = contextManagerProvider.getManager(request);
 	}
 	
 	public void setAction(Object action) {
@@ -92,8 +92,8 @@ public class MockConversationAdapter extends ConversationAdapter {
 		return this.contextManager.remove(conversationName, conversationId);
 	}
 	
-	public static MockConversationAdapter init(HttpServletRequest request, HttpConversationContextManagerFactory contextManagerFactory) {
-		return new MockConversationAdapter(request, contextManagerFactory);
+	public static MockConversationAdapter init(HttpServletRequest request, HttpConversationContextManagerProvider contextManagerProvider) {
+		return new MockConversationAdapter(request, contextManagerProvider);
 	}
 
 }

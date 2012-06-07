@@ -8,8 +8,8 @@ import org.springframework.mock.web.MockHttpSession;
 
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory;
-import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.mocks.MockConversationAdapter;
 import com.google.code.rees.scope.util.monitor.TimeoutListener;
 
@@ -27,11 +27,11 @@ public class ConversationUtilTest implements TimeoutListener<ConversationContext
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setSession(session);
 		request.setParameter(mockConversationName, mockConversationId);
-		HttpConversationContextManagerFactory managerFactory = new DefaultHttpConversationContextManagerFactory();
-		managerFactory.setConversationContextFactory(new DefaultConversationContextFactory());
-		managerFactory.setMonitoringFrequency(1L);
-		managerFactory.init();
-		MockConversationAdapter.init(request, managerFactory);
+		HttpConversationContextManagerProvider managerProvider = new DefaultHttpConversationContextManagerProvider();
+		managerProvider.setConversationContextFactory(new DefaultConversationContextFactory());
+		managerProvider.setMonitoringFrequency(1L);
+		managerProvider.init();
+		MockConversationAdapter.init(request, managerProvider);
 		ConversationContext context = ConversationUtil.begin(mockConversationName, 50L);
 		context.addTimeoutListener(this);
 		context.setMaxIdleTime(50L);

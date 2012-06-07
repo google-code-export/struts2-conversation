@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationManager.java reesbyars $
+ *  $Id: ConversationProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -35,7 +35,7 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
  * @author rees.byars
  * 
  */
-public interface ConversationManager extends Serializable {
+public interface ConversationProcessor extends Serializable {
 
     /**
      * Set the configuration provider for this manager

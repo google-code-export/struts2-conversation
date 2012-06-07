@@ -25,8 +25,8 @@
 package com.google.code.rees.scope.conversation.exceptions;
 
 /**
- * An exception thrown when exceptions occur in conversation processing.  {@link com.google.code.rees.scope.conversation.processing.ConversationManager 
- * ConversationManager's} should catch any other exceptions and wrap them with this class to allow for simple
+ * An exception thrown when exceptions occur in conversation processing.  {@link com.google.code.rees.scope.conversation.processing.ConversationProcessor 
+ * ConversationProcessor's} should catch any other exceptions and wrap them with this class to allow for simple
  * exception mapping for any conversation-related exceptions.  
  * 
  * @author rees.byars

@@ -33,9 +33,9 @@ import org.apache.struts2.StrutsStatics;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 import com.google.code.rees.scope.struts2.StrutsConversationAdapter;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.ActionContext;
@@ -64,22 +64,22 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
 
     private T model;
     protected long maxIdleTime;
-	private ConversationManager conversationManager;
-	private HttpConversationContextManagerFactory conversationContextManagerFactory;
+	private ConversationProcessor conversationProcessor;
+	private HttpConversationContextManagerProvider conversationContextManagerProvider;
     
     @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
     public void setMaxIdleTime(long maxIdleTime) {
     	this.maxIdleTime = maxIdleTime;
     }
     
-    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
-    public void setConversationManager(ConversationManager manager) {
-        this.conversationManager = manager;
+    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
+    public void setConversationManager(ConversationProcessor manager) {
+        this.conversationProcessor = manager;
     }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_FACTORY)
-    public void setHttpConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
-        this.conversationContextManagerFactory = conversationContextManagerFactory;
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
+    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+        this.conversationContextManagerProvider = conversationContextManagerProvider;
     }
 
     /**
@@ -128,9 +128,9 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     public void prepare() {
     	ActionContext actionContext = ActionContext.getContext();
     	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
+    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
         try {
-			this.conversationManager.processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
+			this.conversationProcessor.processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
 			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
 	        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
 	        actionContext.getValueStack().push(stackItem);

@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultHttpConversationContextManagerFactory.java reesbyars $
+ *  $Id: DefaultHttpConversationContextManagerProvider.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.context;
 
@@ -39,16 +39,16 @@ import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
  * The default implementation of the
- * {@link HttpConversationContextManagerFactory}
+ * {@link HttpConversationContextManagerProvider}
  * 
  * @author rees.byars
  * 
  */
-public class DefaultHttpConversationContextManagerFactory implements HttpConversationContextManagerFactory {
+public class DefaultHttpConversationContextManagerProvider implements HttpConversationContextManagerProvider {
 
     private static final long serialVersionUID = 1500381458203865515L;
 
-    private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerFactory.class);
+    private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerProvider.class);
 
     protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
     protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;

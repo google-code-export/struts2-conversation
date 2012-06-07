@@ -23,14 +23,15 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.session.SessionConfigurationProvider;
 import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * A Struts2 {@link Interceptor} that uses bi-jects @SessionField annotated fields in action classes.

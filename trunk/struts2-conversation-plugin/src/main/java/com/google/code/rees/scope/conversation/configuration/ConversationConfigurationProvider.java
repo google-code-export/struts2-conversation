@@ -27,10 +27,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
- * This class is used by {@link ConversationManager ConversationManagers} to
+ * This class is used by {@link ConversationProcessor ConversationManagers} to
  * obtain the {@link ConversationConfiguration ConversationConfigurations} for a
  * given action/controller class
  * 

@@ -34,8 +34,8 @@ import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
-import com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
+import com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationProcessor;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.ConventionConstants;
@@ -49,17 +49,17 @@ import com.opensymphony.xwork2.ActionContext;
  */
 public class ScopeTestUtil {
 
-    private static DefaultInjectionConversationManager manager;
+    private static DefaultInjectionConversationProcessor manager;
     private static DefaultConversationArbitrator arbitrator = new DefaultConversationArbitrator();
     private static String actionSuffix;
 
-    protected static DefaultInjectionConversationManager getconversationManager() {
+    protected static DefaultInjectionConversationProcessor getconversationManager() {
         if (manager == null) {
-            manager = (DefaultInjectionConversationManager) Dispatcher
+            manager = (DefaultInjectionConversationProcessor) Dispatcher
                     .getInstance()
                     .getContainer()
-                    .getInstance(ConversationManager.class,
-                            StrutsScopeConstants.CONVERSATION_MANAGER_KEY);
+                    .getInstance(ConversationProcessor.class,
+                            StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY);
         }
         return manager;
     }

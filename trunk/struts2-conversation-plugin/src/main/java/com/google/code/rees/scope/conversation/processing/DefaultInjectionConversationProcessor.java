@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultInjectionConversationManager.java reesbyars $
+ *  $Id: DefaultInjectionConversationProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -38,14 +38,14 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.util.ScopeUtil;
 
 /**
- * The default implementation of the {@link InjectionConversationManager}
+ * The default implementation of the {@link InjectionConversationProcessor}
  * 
  * @author rees.byars
  */
-public class DefaultInjectionConversationManager extends SimpleConversationManager implements InjectionConversationManager, ConversationPostProcessor {
+public class DefaultInjectionConversationProcessor extends SimpleConversationProcessor implements InjectionConversationProcessor, ConversationPostProcessor {
 
     private static final long serialVersionUID = 8632020943340087L;
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultInjectionConversationManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInjectionConversationProcessor.class);
 
     /**
      * {@inheritDoc}

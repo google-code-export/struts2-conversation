@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: HttpConversationContextManagerFactory.java reesbyars $
+ *  $Id: HttpConversationContextManagerProvider.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.context;
 
@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author rees.byars
  * 
  */
-public interface HttpConversationContextManagerFactory extends Serializable {
+public interface HttpConversationContextManagerProvider extends Serializable {
 	
 	/**
 	 * initialize this factory.  

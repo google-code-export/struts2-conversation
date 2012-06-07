@@ -74,21 +74,21 @@
 		type="com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider"
 		class="com.google.code.rees.scope.conversation.configuration.DefaultConversationConfigurationProvider" />
 		
-	<bean name="struts.conversation.conversationManager"
-		type="com.google.code.rees.scope.conversation.processing.ConversationManager"
-		class="com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationManager" />
+	<bean name="struts.conversation.conversationProcessor"
+		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
+		class="com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationProcessor" />
 		
-	<bean name="conversation.simple.manager"
-		type="com.google.code.rees.scope.conversation.processing.ConversationManager"
-		class="com.google.code.rees.scope.conversation.processing.SimpleConversationManager" />
+	<bean name="conversation.simple.processor"
+		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
+		class="com.google.code.rees.scope.conversation.processing.SimpleConversationProcessor" />
 
 	<bean name="struts.session.sessionManager"
 		type="com.google.code.rees.scope.session.SessionManager"
 		class="com.google.code.rees.scope.session.DefaultSessionManager" />
 		
-	<bean name="conversation.context.manager.factory" 
-		type="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory" 
-		class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory"/>
+	<bean name="conversation.context.manager.provider" 
+		type="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider" 
+		class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider"/>
 		
 	<bean name="conversation.context.factory" 
 		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 

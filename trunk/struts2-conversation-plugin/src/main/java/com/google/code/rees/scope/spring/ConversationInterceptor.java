@@ -32,36 +32,36 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
- * This Spring MVC interceptor uses a {@link ConversationManager} to
+ * This Spring MVC interceptor uses a {@link ConversationProcessor} to
  * process conversations before and after controller execution.
  * 
  * @author rees.byars
  */
 public class ConversationInterceptor implements HandlerInterceptor {
 
-    protected ConversationManager conversationManager;
-    protected HttpConversationContextManagerFactory conversationContextManagerFactory;
+    protected ConversationProcessor conversationProcessor;
+    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
 
     /**
-     * Set the {@link ConversationManager}
+     * Set the {@link ConversationProcessor}
      * 
-     * @param conversationManager
+     * @param conversationProcessor
      */
-    public void setConversationManager(ConversationManager conversationManager) {
-        this.conversationManager = conversationManager;
+    public void setConversationManager(ConversationProcessor conversationProcessor) {
+        this.conversationProcessor = conversationProcessor;
     }
 
     /**
-     * Set the {@link HttpConversationContextManagerFactory}
+     * Set the {@link HttpConversationContextManagerProvider}
      * 
-     * @param conversationContextManagerFactory
+     * @param conversationContextManagerProvider
      */
-    public void setConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
-        this.conversationContextManagerFactory = conversationContextManagerFactory;
+    public void setConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+        this.conversationContextManagerProvider = conversationContextManagerProvider;
     }
 
     /**
@@ -82,14 +82,14 @@ public class ConversationInterceptor implements HandlerInterceptor {
 
     /**
      * Calls
-     * {@link ConversationManager#processConversations(ConversationAdapter)} and
+     * {@link ConversationProcessor#processConversations(ConversationAdapter)} and
      * passes in a {@link SpringConversationAdapter}.
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        ConversationContextManager contextManager = conversationContextManagerFactory.getManager(request);
+        ConversationContextManager contextManager = conversationContextManagerProvider.getManager(request);
         ConversationAdapter adapter = new SpringConversationAdapter(request, (HandlerMethod) handler, contextManager);
-        conversationManager.processConversations(adapter);
+        conversationProcessor.processConversations(adapter);
         return true;
     }
 
