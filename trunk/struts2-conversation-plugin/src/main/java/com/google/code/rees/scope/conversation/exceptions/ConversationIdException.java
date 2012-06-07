@@ -27,17 +27,29 @@ package com.google.code.rees.scope.conversation.exceptions;
 
 /**
  * @author rees.byars
- *
  */
 public class ConversationIdException extends ConversationException {
 
 	private static final long serialVersionUID = -1729010468518612616L;
+	
+	private String conversationName;
+	private String conversationId;
 
 	/**
 	 * @param message
 	 */
-	public ConversationIdException(String message) {
+	public ConversationIdException(String message, String conversationName, String conversationId) {
 		super(message);
+		this.conversationName = conversationName;
+		this.conversationId = conversationId;
+	}
+	
+	public String getConversationName() {
+		return this.conversationName;
+	}
+	
+	public String getConversationId() {
+		return this.conversationId;
 	}
 
 }

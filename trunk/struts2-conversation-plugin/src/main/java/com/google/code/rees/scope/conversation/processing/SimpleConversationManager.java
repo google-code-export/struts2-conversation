@@ -126,7 +126,7 @@ public class SimpleConversationManager implements ConversationManager {
 	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {
 		String idExceptionMessage = "The following conversation name and id pair did not return an active ConversationContext:  (name: " + conversationName + "|id:  " + conversationId + ").  This is likely due to the conversation having ended or expired.";
     	LOG.warn(idExceptionMessage);
-    	throw new ConversationIdException(idExceptionMessage);
+    	throw new ConversationIdException(idExceptionMessage, conversationName, conversationId);
 	}
 
 }

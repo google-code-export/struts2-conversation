@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,12 +38,14 @@ import com.google.code.rees.scope.conversation.context.ConversationContextFactor
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
+import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationManager;
 import com.google.code.rees.scope.conversation.processing.InjectionConversationManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
+import com.opensymphony.xwork2.util.LocalizedTextUtil;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
@@ -63,6 +65,14 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
      * The result returned when a user submits an ID for a conversation that has already expired or ended.
      */
     public static final String CONVERSATION_EXCEPTION_RESULT = "conversation.exception";
+    
+    /**
+     * This key can be used in a message resource bundle to specify an action
+     */
+    public static final String CONVERSATION_EXCEPTION_MESSAGE_KEY = "struts.conversation.invalid.id";
+    
+    public static final String CONVERSATION_EXCEPTION_NAME_STACK_KEY = "conversation.name";
+    public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
     protected ActionProvider finder;
     protected String actionSuffix;
@@ -168,14 +178,27 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
      */
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
+    	
     	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
     	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
+    	
     	try {
+    		
     		this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    		
+    	} catch (ConversationIdException cie) {
+    		
+    		//TODO to actionError, or not to actionError?
+    		return this.handleIdException(invocation, cie);
+    		
     	} catch (ConversationException e) {
-    		LOG.warn("Exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
+    		
+    		//TODO need to do similarly to ID exception with message for UI
+    		LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
     		return CONVERSATION_EXCEPTION_RESULT;
+    		
     	}
+    	
         invocation.addPreResultListener(this);
         return invocation.invoke();
     }
@@ -185,10 +208,42 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
      */
     @Override
     public void beforeResult(ActionInvocation invocation, String result) {
+    	
         ConversationAdapter.getAdapter().executePostProcessors();
-        Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-        invocation.getStack().push(stackItem);
+        invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+        
+    }
+    
+    protected String handleIdException(ActionInvocation invocation, ConversationIdException cie) {
+    	
+    	LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
+		
+		Locale locale = invocation.getInvocationContext().getLocale();
+		Map<String, Object> stackContext = invocation.getStack().getContext();
+		
+		//Placing exception details on stack for OGNL retrieval in messages
+		stackContext.put(CONVERSATION_EXCEPTION_NAME_STACK_KEY, cie.getConversationName());
+		stackContext.put(CONVERSATION_EXCEPTION_ID_STACK_KEY, cie.getConversationId());
+		
+		//First, we attempt to get a conversation-specific message from a bundle
+		String errorMessage = LocalizedTextUtil.findText(this.getClass(), 
+				new StringBuilder(CONVERSATION_EXCEPTION_MESSAGE_KEY).append(".").append(cie.getConversationName()).toString(), 
+				locale);
+		
+		//If conversation specific message not found, get generic message, if that not found use default
+		if (errorMessage == null) {
+			errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_EXCEPTION_MESSAGE_KEY, locale,
+                    "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed.", new Object[0]);
+		}
+		
+		if (LOG.isDebugEnabled()) {
+    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_EXCEPTION_MESSAGE_KEY);
+    	}
+		
+		//Placing message on stack instead of in actionErrors for retrieval in UI
+		invocation.getStack().getContext().put(CONVERSATION_EXCEPTION_MESSAGE_KEY, errorMessage);
+		
+		return CONVERSATION_EXCEPTION_RESULT;
     }
 
 }
