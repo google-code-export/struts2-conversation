@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.StrutsStatics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
@@ -36,22 +38,20 @@ import com.google.code.rees.scope.conversation.configuration.ConversationArbitra
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerFactory;
+import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
-import com.google.code.rees.scope.conversation.processing.InjectionConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
+import com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.LocalizedTextUtil;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * 
- * This interceptor uses an {@link InjectionConversationManager} to process conversation states and scopes.
+ * This interceptor uses an {@link InjectionConversationProcessor} to process conversation states and scopes.
  * 
  * @author rees.byars
  *
@@ -62,16 +62,33 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
     
     /**
-     * The result returned when a user submits an ID for a conversation that has already expired or ended.
+     * This key can be used in a message resource bundle to specify a message in the case of a user
+     * submitting a request with an invalid conversation ID (i.e. the conversation has already ended or expired)
+     * and also to map results as this will be the result value
      */
-    public static final String CONVERSATION_EXCEPTION_RESULT = "conversation.exception";
+    public static final String CONVERSATION_ID_EXCEPTION_KEY = "struts.conversation.invalid.id";
     
     /**
-     * This key can be used in a message resource bundle to specify an action
+     * This key can be used in a message resource bundle to specify a message in the case of a an
+     * unexpected error occurring during conversation processing and also to map results as this will 
+     * be the result value.
+     * <p>
+     * Of course, we don't expect that this will happen ;)
      */
-    public static final String CONVERSATION_EXCEPTION_MESSAGE_KEY = "struts.conversation.invalid.id";
+    public static final String CONVERSATION_EXCEPTION_KEY = "struts.conversation.general.error";
     
+    /**
+     * In the case of an invalid id result, this key can be used to retrieve the offending
+     * conversation's name from the {@link com.opensymphony.xwork2.util.ValueStack ValueStack}.
+     * This value can then be referenced in a message with the expression ${conversation.name}
+     */
     public static final String CONVERSATION_EXCEPTION_NAME_STACK_KEY = "conversation.name";
+    
+    /**
+     * In the case of an invalid id result, this key can be used to retrieve the offending
+     * conversation ID from the {@link com.opensymphony.xwork2.util.ValueStack ValueStack}.
+     * This value can then be referenced in a message with the expression ${conversation.id}
+     */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
     protected ActionProvider finder;
@@ -79,8 +96,8 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 	protected long maxIdleTime;
     protected ConversationArbitrator arbitrator;
     protected ConversationConfigurationProvider conversationConfigurationProvider;
-    protected ConversationManager conversationManager;
-    protected HttpConversationContextManagerFactory conversationContextManagerFactory;
+    protected ConversationProcessor conversationProcessor;
+    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
     protected int monitoringThreadPoolSize;
     protected long monitoringFrequency;
     protected int maxInstances;
@@ -111,14 +128,14 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
         this.conversationConfigurationProvider = conversationConfigurationProvider;
     }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_MANAGER_KEY)
-    public void setConversationManager(ConversationManager manager) {
-        this.conversationManager = manager;
+    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
+    public void setConversationManager(ConversationProcessor manager) {
+        this.conversationProcessor = manager;
     }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_FACTORY)
-    public void setHttpConversationContextManagerFactory(HttpConversationContextManagerFactory conversationContextManagerFactory) {
-        this.conversationContextManagerFactory = conversationContextManagerFactory;
+    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
+    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+        this.conversationContextManagerProvider = conversationContextManagerProvider;
     }
     
     @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
@@ -161,13 +178,13 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
         this.conversationConfigurationProvider.init(this.finder.getActionClasses());
-        this.conversationManager.setConfigurationProvider(this.conversationConfigurationProvider);
+        this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
         
-        this.conversationContextManagerFactory.setConversationContextFactory(this.conversationContextFactory);
-        this.conversationContextManagerFactory.setMaxInstances(this.maxInstances);
-        this.conversationContextManagerFactory.setMonitoringFrequency(this.monitoringFrequency);
-        this.conversationContextManagerFactory.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
-        this.conversationContextManagerFactory.init();
+        this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
+        this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
+        this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
+        this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
+        this.conversationContextManagerProvider.init();
         
         LOG.info("...Conversation Interceptor successfully initialized.");
 
@@ -180,27 +197,27 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     public String intercept(ActionInvocation invocation) throws Exception {
     	
     	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerFactory.getManager(request);
+    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
     	
     	try {
     		
-    		this.conversationManager.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    		this.conversationProcessor.processConversations(new StrutsConversationAdapter(invocation, contextManager));
     		
     	} catch (ConversationIdException cie) {
     		
     		//TODO to actionError, or not to actionError?
     		return this.handleIdException(invocation, cie);
     		
-    	} catch (ConversationException e) {
+    	} catch (ConversationException ce) {
     		
-    		//TODO need to do similarly to ID exception with message for UI
-    		LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
-    		return CONVERSATION_EXCEPTION_RESULT;
+    		return this.handleUnexpectedException(invocation, ce);
     		
     	}
     	
         invocation.addPreResultListener(this);
+        
         return invocation.invoke();
+        
     }
 
     /**
@@ -208,15 +225,13 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
      */
     @Override
     public void beforeResult(ActionInvocation invocation, String result) {
-    	
         ConversationAdapter.getAdapter().executePostProcessors();
         invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-        
     }
     
     protected String handleIdException(ActionInvocation invocation, ConversationIdException cie) {
     	
-    	LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_RESULT);
+    	LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_ID_EXCEPTION_KEY);
 		
 		Locale locale = invocation.getInvocationContext().getLocale();
 		Map<String, Object> stackContext = invocation.getStack().getContext();
@@ -227,23 +242,44 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 		
 		//First, we attempt to get a conversation-specific message from a bundle
 		String errorMessage = LocalizedTextUtil.findText(this.getClass(), 
-				new StringBuilder(CONVERSATION_EXCEPTION_MESSAGE_KEY).append(".").append(cie.getConversationName()).toString(), 
+				new StringBuilder(CONVERSATION_ID_EXCEPTION_KEY).append(".").append(cie.getConversationName()).toString(), 
 				locale);
 		
 		//If conversation specific message not found, get generic message, if that not found use default
 		if (errorMessage == null) {
-			errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_EXCEPTION_MESSAGE_KEY, locale,
+			errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_ID_EXCEPTION_KEY, locale,
                     "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed.", new Object[0]);
 		}
 		
 		if (LOG.isDebugEnabled()) {
-    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_EXCEPTION_MESSAGE_KEY);
+    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_ID_EXCEPTION_KEY);
     	}
 		
 		//Placing message on stack instead of in actionErrors for retrieval in UI
-		invocation.getStack().getContext().put(CONVERSATION_EXCEPTION_MESSAGE_KEY, errorMessage);
+		stackContext.put(CONVERSATION_ID_EXCEPTION_KEY, errorMessage);
 		
-		return CONVERSATION_EXCEPTION_RESULT;
+		return CONVERSATION_ID_EXCEPTION_KEY;
     }
+    
+    protected String handleUnexpectedException(ActionInvocation invocation, ConversationException ce) {
+    	
+    	LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_KEY);
+		
+		Locale locale = invocation.getInvocationContext().getLocale();
+		
+		String errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_EXCEPTION_KEY, locale,
+                    "An unexpected error occurred while processing you request.  Please try again.", new Object[0]);
+		
+		if (LOG.isDebugEnabled()) {
+    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_EXCEPTION_KEY);
+    	}
+		
+		//Placing message on stack instead of in actionErrors for retrieval in UI
+		invocation.getStack().getContext().put(CONVERSATION_EXCEPTION_KEY, errorMessage);
+		
+		return CONVERSATION_EXCEPTION_KEY;
+    }
+    
+    
 
 }

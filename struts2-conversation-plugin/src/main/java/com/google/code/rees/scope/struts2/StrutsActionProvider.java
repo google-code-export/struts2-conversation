@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.StrutsConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.opensymphony.xwork2.ActionContext;
@@ -45,8 +47,6 @@ import com.opensymphony.xwork2.util.finder.ClassLoaderInterface;
 import com.opensymphony.xwork2.util.finder.ClassLoaderInterfaceDelegate;
 import com.opensymphony.xwork2.util.finder.Test;
 import com.opensymphony.xwork2.util.finder.UrlSet;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * Struts2 implementation of the {@link ActionProvider}.
@@ -57,8 +57,7 @@ public class StrutsActionProvider implements ActionProvider {
 
     private static final long serialVersionUID = 6728107973559862449L;
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(StrutsActionProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StrutsActionProvider.class);
 
     private Set<Class<?>> actionClasses;
     private String[] actionPackages;

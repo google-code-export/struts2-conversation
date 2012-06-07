@@ -13,25 +13,25 @@ import org.springframework.mock.web.MockHttpSession;
 import com.google.code.rees.scope.testutil.SerializableObjectTest;
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
 
-public class DefaultHttpConversationContextManagerFactoryTest extends
-        SerializableObjectTest<DefaultHttpConversationContextManagerFactory> {
+public class DefaultHttpConversationContextManagerProviderTest extends
+        SerializableObjectTest<DefaultHttpConversationContextManagerProvider> {
 
     @Test
     public void testGetManager() throws IOException, ClassNotFoundException {
 
-        HttpConversationContextManagerFactory managerFactory = new DefaultHttpConversationContextManagerFactory();
+        HttpConversationContextManagerProvider managerProvider = new DefaultHttpConversationContextManagerProvider();
 
         MockHttpServletRequest request1 = new MockHttpServletRequest();
         MockHttpSession session1 = new MockHttpSession();
         request1.setSession(session1);
-        ConversationContextManager manager1 = managerFactory
+        ConversationContextManager manager1 = managerProvider
                 .getManager(request1);
         assertNotNull(manager1);
 
         MockHttpServletRequest request2 = new MockHttpServletRequest();
         MockHttpSession session2 = new MockHttpSession();
         request2.setSession(session2);
-        ConversationContextManager manager2 = managerFactory
+        ConversationContextManager manager2 = managerProvider
                 .getManager(request2);
         assertNotNull(manager2);
 
@@ -39,16 +39,16 @@ public class DefaultHttpConversationContextManagerFactoryTest extends
 
         request1 = new MockHttpServletRequest();
         request1.setSession(session1);
-        ConversationContextManager manager11 = managerFactory
+        ConversationContextManager manager11 = managerProvider
                 .getManager(request1);
         assertEquals(manager1, manager11);
 
-        managerFactory = SerializationTestingUtil
-                .getSerializedCopy(managerFactory);
+        managerProvider = SerializationTestingUtil
+                .getSerializedCopy(managerProvider);
 
         request1 = new MockHttpServletRequest();
         request1.setSession(session1);
-        manager11 = managerFactory.getManager(request1);
+        manager11 = managerProvider.getManager(request1);
         assertEquals(manager1, manager11);
 
     }

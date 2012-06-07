@@ -32,14 +32,14 @@ import java.util.Set;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
  * This class is used to cache the fields and action IDs for a single
  * class for a single conversation.
  * 
  * @see {@link ConversationConfigurationProvider}
- * @see {@link ConversationManager}
+ * @see {@link ConversationProcessor}
  * 
  * @author rees.byars
  * 

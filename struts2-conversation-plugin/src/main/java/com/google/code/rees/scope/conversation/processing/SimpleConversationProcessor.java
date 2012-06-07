@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: SimpleConversationManager.java reesbyars $
+ *  $Id: SimpleConversationProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -37,17 +37,17 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 
 /**
- * A simple yet effective implementation of {@link ConversationManager} that
+ * A simple yet effective implementation of {@link ConversationProcessor} that
  * manages conversation life cycles, but does not inject
  * {@link ConversationField ConversationFields}. Ideal for using in cases such
  * as when field injection will be handled by Spring.
  * 
  * @author rees.byars
  */
-public class SimpleConversationManager implements ConversationManager {
+public class SimpleConversationProcessor implements ConversationProcessor {
 
 	private static final long serialVersionUID = -518452439785782433L;
-	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationProcessor.class);
 	
 	protected ConversationConfigurationProvider configurationProvider;
 

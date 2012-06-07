@@ -24,12 +24,12 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import com.google.code.rees.scope.conversation.processing.ConversationManager;
-import com.google.code.rees.scope.conversation.processing.SimpleConversationManager;
+import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
+import com.google.code.rees.scope.conversation.processing.SimpleConversationProcessor;
 import com.opensymphony.xwork2.inject.Inject;
 
 /**
- * This interceptor uses the {@link SimpleConversationManager}, so it does not perform any
+ * This interceptor uses the {@link SimpleConversationProcessor}, so it does not perform any
  * injection of @ConversationField annotated classes, however it will still work with
  * Spring or Guice.
  * 
@@ -41,9 +41,9 @@ public class SimpleConversationInterceptor extends ConversationInterceptor {
 	private static final long serialVersionUID = 4778868311224251616L;
 
 	@Override
-	@Inject(StrutsScopeConstants.SIMPLE_CONVERSATION_MANAGER_KEY)
-    public void setConversationManager(ConversationManager manager) {
-        this.conversationManager = manager;
+	@Inject(StrutsScopeConstants.SIMPLE_CONVERSATION_PROCESSOR_KEY)
+    public void setConversationManager(ConversationProcessor manager) {
+        this.conversationProcessor = manager;
     }
 
 }

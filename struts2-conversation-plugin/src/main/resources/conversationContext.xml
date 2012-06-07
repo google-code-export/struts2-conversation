@@ -20,11 +20,11 @@
 		<property name="arbitrator" ref="conversationArbitrator" />
 	</bean>
 	
-	<bean id="conversationManager" class="com.google.code.rees.scope.conversation.processing.SimpleConversationManager">
+	<bean id="conversationProcessor" class="com.google.code.rees.scope.conversation.processing.SimpleConversationProcessor">
 		<property name="configurationProvider" ref="conversationConfigurationProvider" />
 	</bean>
 	
-	<bean id="conversationContextManagerFactory" class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerFactory" />
+	<bean id="conversationContextManagerProvider" class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider" />
 
 	<bean id="requestDataValueProcessor" class="com.google.code.rees.scope.spring.ConversationRequestDataValueProcessor" />
 

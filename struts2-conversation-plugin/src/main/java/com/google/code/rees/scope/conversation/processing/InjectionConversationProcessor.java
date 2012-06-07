@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: InjectionConversationManager.java reesbyars $
+ *  $Id: InjectionConversationProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -32,7 +32,7 @@ import com.google.code.rees.scope.conversation.annotations.ConversationField;
  * 
  * @author rees.byars
  */
-public interface InjectionConversationManager extends ConversationManager {
+public interface InjectionConversationProcessor extends ConversationProcessor {
 
     /**
      * Inject the {@link ConversationField ConversationFields} on the target
