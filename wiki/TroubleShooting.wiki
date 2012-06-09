@@ -44,7 +44,7 @@ The extension is available from the Downloads link above or though Maven with th
 <dependency>
    <groupId>com.googlecode.struts2-conversation</groupId>
    <artifactId>struts2-conversation-config-browser-extension</artifactId>
-   <version>1.6.1</version>
+   <version>1.6.2</version>
 </dependency>
 }}}
 
