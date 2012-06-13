@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.struts2.ActionUtil;
 import com.google.code.rees.scope.struts2.ConversationInterceptor;
@@ -66,9 +66,9 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
         Map<String, String> conversations = new HashMap<String, String>();
         
         if (this.isConversationInterceptorApplied(actionConfig)) {
-            Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
+            Collection<ConversationClassConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
             String methodName = this.getMethodName(actionConfig); 
-            for (ConversationConfiguration realConfig : realConfigs) {
+            for (ConversationClassConfiguration realConfig : realConfigs) {
                 String name = realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, "");
                 if (realConfig.isBeginAction(methodName)) {
                     conversations.put(name, "Begin");
@@ -89,9 +89,9 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
         Map<String, String> conversationFields = new HashMap<String, String>();
         
         if (this.isConversationInterceptorApplied(actionConfig)) {
-            Collection<ConversationConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
+            Collection<ConversationClassConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
             String methodName = this.getMethodName(actionConfig);
-            for (ConversationConfiguration realConfig : realConfigs) {
+            for (ConversationClassConfiguration realConfig : realConfigs) {
                 if (realConfig.containsAction(methodName)) {
                     Map<String, Field> fields = realConfig.getFields();
                     if (fields.size() > 0) {
@@ -109,7 +109,7 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
         return conversationFields;
     }
     
-    protected Collection<ConversationConfiguration> getConversationConfigurations(ActionConfig actionConfig) throws ClassNotFoundException {
+    protected Collection<ConversationClassConfiguration> getConversationConfigurations(ActionConfig actionConfig) throws ClassNotFoundException {
         return this.conversationConfigurationProvider.getConfigurations(Class.forName(actionConfig.getClassName()));
     }
     
