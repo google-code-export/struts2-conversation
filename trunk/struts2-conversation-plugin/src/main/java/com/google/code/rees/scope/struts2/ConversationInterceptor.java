@@ -44,6 +44,7 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationIdExceptio
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 import com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor;
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
@@ -205,7 +206,6 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     		
     	} catch (ConversationIdException cie) {
     		
-    		//TODO to actionError, or not to actionError?
     		return this.handleIdException(invocation, cie);
     		
     	} catch (ConversationException ce) {
@@ -222,6 +222,7 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
     public void beforeResult(ActionInvocation invocation, String result) {
@@ -229,6 +230,13 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
         invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
     }
     
+    /**
+     * Handles logging and UI messages for ConversationIdExceptions
+     * 
+     * @param invocation
+     * @param cie
+     * @return
+     */
     protected String handleIdException(ActionInvocation invocation, ConversationIdException cie) {
     	
     	LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_ID_EXCEPTION_KEY);
@@ -252,15 +260,24 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 		}
 		
 		if (LOG.isDebugEnabled()) {
-    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_ID_EXCEPTION_KEY);
+			LOG.debug("Placing Conversation Error Message on stack (key={" + CONVERSATION_ID_EXCEPTION_KEY + "}):  " + errorMessage);
     	}
 		
 		//Placing message on stack instead of in actionErrors for retrieval in UI
 		stackContext.put(CONVERSATION_ID_EXCEPTION_KEY, errorMessage);
 		
+		this.handleConversationErrorAware(invocation.getProxy(), errorMessage);
+		
 		return CONVERSATION_ID_EXCEPTION_KEY;
     }
     
+    /**
+     * Handles logging and UI messages for ConversationExceptions
+     * 
+     * @param invocation
+     * @param ce
+     * @return
+     */
     protected String handleUnexpectedException(ActionInvocation invocation, ConversationException ce) {
     	
     	LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_KEY);
@@ -271,15 +288,34 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
                     "An unexpected error occurred while processing you request.  Please try again.", new Object[0]);
 		
 		if (LOG.isDebugEnabled()) {
-    		LOG.debug("Placing Conversation Error Message on stack (key={0}):  " + errorMessage, CONVERSATION_EXCEPTION_KEY);
+    		LOG.debug("Placing Conversation Error Message on stack (key={" + CONVERSATION_EXCEPTION_KEY + "}):  " + errorMessage);
     	}
 		
 		//Placing message on stack instead of in actionErrors for retrieval in UI
 		invocation.getStack().getContext().put(CONVERSATION_EXCEPTION_KEY, errorMessage);
 		
+		this.handleConversationErrorAware(invocation.getProxy(), errorMessage);
+		
 		return CONVERSATION_EXCEPTION_KEY;
     }
     
-    
+    /**
+	 * This provides extra functionality over placing on stack in that it allows for
+	 * easily propagating the error through a redirect using a static result param:
+	 * <p>
+	 * <tt>&ltparam name="conversationError">${conversationError}&lt/param></tt>
+	 */
+    protected void handleConversationErrorAware(ActionProxy proxy, String errorMessage) {
+    	
+		Object action = proxy.getAction();
+		
+		if (action instanceof ConversationErrorAware) {
+			
+			LOG.debug("Action is an instance of ConversationErrorAware; setting conversation error.");
+			
+			((ConversationErrorAware) action).setConversationError(errorMessage);
+			
+		}
+    }
 
 }

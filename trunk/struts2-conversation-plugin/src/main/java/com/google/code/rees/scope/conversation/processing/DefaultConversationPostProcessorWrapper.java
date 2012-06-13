@@ -24,7 +24,7 @@
 package com.google.code.rees.scope.conversation.processing;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
  * The default implementation of the {@link ConversationPostProcessorWrapper}
@@ -36,7 +36,7 @@ public class DefaultConversationPostProcessorWrapper implements
 
     private static final long serialVersionUID = -8235162251071925835L;
 
-    private transient ConversationConfiguration conversationConfig;
+    private transient ConversationClassConfiguration conversationConfig;
     private String conversationId;
     private ConversationPostProcessor postProcessor;
     private ConversationAdapter conversationAdapter;
@@ -44,7 +44,7 @@ public class DefaultConversationPostProcessorWrapper implements
     public DefaultConversationPostProcessorWrapper(
             ConversationAdapter conversationAdapter,
             ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId) {
+            ConversationClassConfiguration conversationConfig, String conversationId) {
         this.conversationAdapter = conversationAdapter;
         this.postProcessor = postProcessor;
         this.conversationConfig = conversationConfig;

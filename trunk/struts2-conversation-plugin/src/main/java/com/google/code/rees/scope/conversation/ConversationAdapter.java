@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.processing.ConversationPostProcessor;
@@ -131,7 +131,7 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @param conversationConfig
 	 * @param conversationId
 	 */
-	public void addPostProcessor(ConversationPostProcessor postProcessor, ConversationConfiguration conversationConfig, String conversationId) {
+	public void addPostProcessor(ConversationPostProcessor postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
 		ConversationPostProcessorWrapper wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
 		this.postProcessors.add(wrapper);
 	}
@@ -139,7 +139,7 @@ public abstract class ConversationAdapter implements Serializable {
 	/**
 	 * Executes all {@link ConversationPostProcessor ConversationPostProcessors}
 	 * that have been added using
-	 * {@link #addPostProcessor(ConversationPostProcessor, ConversationConfiguration, String)}
+	 * {@link #addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)}
 	 */
 	public void executePostProcessors() {
 		for (ConversationPostProcessorWrapper postProcessor : this.postProcessors) {

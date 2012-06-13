@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationUtil;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
-import com.google.code.rees.scope.util.ScopeUtil;
+import com.google.code.rees.scope.util.InjectionUtil;
 
 /**
  * The default implementation of the {@link InjectionConversationProcessor}
@@ -52,7 +52,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
      * @throws ConversationException 
      */
     @Override
-    protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
+    protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
         String actionId = conversationAdapter.getActionId();
         String conversationName = conversationConfig.getConversationName();
@@ -77,7 +77,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
                     Map<String, Field> actionConversationFields = conversationConfig.getFields();
                     
                     if (actionConversationFields != null) {
-                        ScopeUtil.setFieldValues(action, actionConversationFields, conversationContext);
+                        InjectionUtil.setFieldValues(action, actionConversationFields, conversationContext);
                     }
                     
                 } else {
@@ -112,7 +112,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
      * {@inheritDoc}
      */
     @Override
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId) {
+    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
 
     	String conversationName = conversationConfig.getConversationName();
     	
@@ -133,7 +133,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
             Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
             
             if (conversationContext != null) {
-            	conversationContext.putAll(ScopeUtil.getFieldValues(action, actionConversationFields));
+            	conversationContext.putAll(InjectionUtil.getFieldValues(action, actionConversationFields));
             }
 
         }
@@ -149,9 +149,9 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
      */
     @Override
     public void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
-        Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
+        Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
         if (actionConversationConfigs != null) {
-            for (ConversationConfiguration conversation : actionConversationConfigs) {
+            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
                 String conversationName = conversation.getConversationName();
                 String conversationId = conversationAdapter.getRequestContext().get(conversationName);
                 if (conversationId != null) {
@@ -159,7 +159,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
                     if (conversationContext != null) {
                         Map<String, Field> actionConversationFields = conversation.getFields();
                         if (actionConversationFields != null) {
-                            ScopeUtil.setFieldValues(target, actionConversationFields, conversationContext);
+                            InjectionUtil.setFieldValues(target, actionConversationFields, conversationContext);
                         }
                     }
                 }
@@ -172,9 +172,9 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
      */
     @Override
     public void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
-        Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
+        Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
         if (actionConversationConfigs != null) {
-            for (ConversationConfiguration conversation : actionConversationConfigs) {
+            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
 
                 Map<String, Field> actionConversationFields = conversation.getFields();
                 String conversationName = conversation.getConversationName();
@@ -185,7 +185,7 @@ public class DefaultInjectionConversationProcessor extends SimpleConversationPro
 	                if (actionConversationFields != null) {
 	
 	                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-	                    conversationContext.putAll(ScopeUtil.getFieldValues(target, actionConversationFields));
+	                    conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
 	                }
 	
 	                conversationAdapter.getViewContext().put(conversationName, conversationId);

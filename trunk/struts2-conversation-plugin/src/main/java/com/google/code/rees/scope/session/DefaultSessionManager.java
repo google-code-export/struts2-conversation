@@ -29,7 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.util.ScopeUtil;
+import com.google.code.rees.scope.util.InjectionUtil;
 
 /**
  * The default implementation of the {@link SessionManager}. Also
@@ -69,7 +69,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
             }
 
             Map<String, Object> sessionContext = sessionAdapter.getSessionContext();
-            ScopeUtil.setFieldValues(action, classSessionFields, sessionContext);
+            InjectionUtil.setFieldValues(action, classSessionFields, sessionContext);
             sessionAdapter.addPostProcessor(this);
 
         } else if (LOG.isDebugEnabled()) {
@@ -95,7 +95,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
                 LOG.debug("Getting SessionField values following action execution from action of class " + action.getClass());
             }
 
-            Map<String, Object> classSessionFieldValues = ScopeUtil.getFieldValues(action, classSessionFields);
+            Map<String, Object> classSessionFieldValues = InjectionUtil.getFieldValues(action, classSessionFields);
             Map<String, Object> sessionContext = sessionAdapter.getSessionContext();
             sessionContext.putAll(classSessionFieldValues);
 

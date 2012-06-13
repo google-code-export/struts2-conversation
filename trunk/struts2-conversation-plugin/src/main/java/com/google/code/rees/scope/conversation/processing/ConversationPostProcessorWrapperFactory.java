@@ -26,7 +26,7 @@ package com.google.code.rees.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
  * Creates {@link ConversationPostProcessorWrapper
@@ -49,5 +49,5 @@ public interface ConversationPostProcessorWrapperFactory extends Serializable {
     public ConversationPostProcessorWrapper create(
             ConversationAdapter conversationAdapter,
             ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId);
+            ConversationClassConfiguration conversationConfig, String conversationId);
 }

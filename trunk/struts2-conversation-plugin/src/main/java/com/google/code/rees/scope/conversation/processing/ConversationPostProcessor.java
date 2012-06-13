@@ -26,11 +26,11 @@ package com.google.code.rees.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
  * This interface allows for post-processing of a conversation.  Registered via
- * {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationConfiguration, String)
+ * {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)
  * @author rees.byars
  */
 public interface ConversationPostProcessor extends Serializable {
@@ -42,6 +42,6 @@ public interface ConversationPostProcessor extends Serializable {
      * @param conversationConfig
      * @param conversationId
      */
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId);
+    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId);
 
 }

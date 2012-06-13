@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationConfiguration.java reesbyars $
+ *  $Id: ConversationClassConfiguration.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.configuration;
 
@@ -44,7 +44,7 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
  * @author rees.byars
  * 
  */
-public class ConversationConfiguration {
+public class ConversationClassConfiguration {
 
     private Map<String, Field> fields;
     private Set<String> actionIds;
@@ -53,7 +53,7 @@ public class ConversationConfiguration {
     private Map<String, Long> beginActionIdleTimes;
     private String conversationName;
 
-    public ConversationConfiguration(String conversationName) {
+    public ConversationClassConfiguration(String conversationName) {
         fields = new HashMap<String, Field>();
         actionIds = new HashSet<String>();
         beginActionIds = new HashSet<String>();

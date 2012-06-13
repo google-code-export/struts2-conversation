@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import com.google.code.rees.scope.testutil.SerializationTestingUtil;
 import com.google.code.rees.scope.util.thread.BasicTaskThread;
 import com.google.code.rees.scope.util.thread.TaskThread;
 import com.google.code.rees.scope.util.thread.ThreadTask;
+
 
 public class DefaultConversationContextManagerTest {
 	
@@ -38,6 +40,11 @@ public class DefaultConversationContextManagerTest {
 
     }
     
+    /**
+     * 
+     * test takes a long time, run manually
+     */
+    @Ignore
     @Test
     public void testConcurrentModification() throws InterruptedException {
     	

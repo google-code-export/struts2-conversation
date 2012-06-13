@@ -29,12 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
  * A {@link ConversationPostProcessor} used to remove a conversation context
  * from the session context after an action has been executed.  Is registered
- * for execution via {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationConfiguration, String)
+ * for execution via {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)
  * 
  * @author rees.byars
  * 
@@ -48,7 +48,7 @@ public class ConversationEndProcessor implements ConversationPostProcessor {
      * Removes the conversation context from the session context
      */
     @Override
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationConfiguration conversationConfig, String conversationId) {
+    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("In Conversation " + conversationConfig.getConversationName() + ", removing conversation map from session following conversation end.");
         }

@@ -19,31 +19,29 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: SimpleConversationInterceptor.java Jun 3, 2012 10:25:36 PM reesbyars $
+ * $Id: ConversationErrorAware.java Jun 7, 2012 2:40:47 PM reesbyars $
  *
  **********************************************************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
-import com.google.code.rees.scope.conversation.processing.SimpleConversationProcessor;
-import com.opensymphony.xwork2.inject.Inject;
-
 /**
- * This interceptor uses the {@link SimpleConversationProcessor}, so it does not perform any
- * injection of @ConversationField annotated classes, however it will still work with
- * Spring or Guice.
+ * Action classes implementing this will have conversation error messages set on them
+ * that can then be easily accessed from the UI.
  * 
  * @author rees.byars
- *
  */
-public class SimpleConversationInterceptor extends ConversationInterceptor {
-
-	private static final long serialVersionUID = 4778868311224251616L;
-
-	@Override
-	@Inject(StrutsScopeConstants.SIMPLE_CONVERSATION_PROCESSOR_KEY)
-    public void setConversationManager(ConversationProcessor manager) {
-        this.conversationProcessor = manager;
-    }
+public interface ConversationErrorAware {
+	
+	/**
+	 * 
+	 * @param conversationError
+	 */
+	public void setConversationError(String conversationError);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getConversationError();
 
 }
