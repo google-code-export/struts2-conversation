@@ -33,6 +33,7 @@ public interface TimeoutMonitorFactory<T extends Timeoutable<T>> {
 
 	/**
 	 * Sets the monitoring frequency of the monitors produced by this factory
+	 * 
 	 * @param frequencyMillis
 	 */
 	public void setMonitoringFrequency(long frequencyMillis);

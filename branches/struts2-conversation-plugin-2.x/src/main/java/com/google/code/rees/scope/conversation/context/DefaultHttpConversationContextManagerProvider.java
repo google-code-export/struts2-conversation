@@ -46,86 +46,86 @@ import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
  */
 public class DefaultHttpConversationContextManagerProvider implements HttpConversationContextManagerProvider {
 
-    private static final long serialVersionUID = 1500381458203865515L;
+	private static final long serialVersionUID = 1500381458203865515L;
 
-    private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerProvider.class);
+	private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerProvider.class);
 
-    protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
-    protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
-    protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
-    protected ConversationContextFactory conversationContextFactory;
-    protected transient ScheduledExecutorService scheduler;
-    
-    @PostConstruct
-    public void init() {
-    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
-    	LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
-    	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
-    }
+	protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
+	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+	protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
+	protected ConversationContextFactory conversationContextFactory;
+	protected transient ScheduledExecutorService scheduler;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMonitoringFrequency(long monitoringFrequency) {
-    	double monitoringFrequencyMinutes = monitoringFrequency / (1000.0 * 60);
-    	LOG.info("Setting conversation timeout monitoring frequency:  " + monitoringFrequency + " milliseconds.");
-    	LOG.info("Converted monitoring frequency:  " + String.format("%.2f", monitoringFrequencyMinutes) + " minutes.");
-        this.monitoringFrequency = monitoringFrequency;
-    }
+	@PostConstruct
+	public void init() {
+		this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMaxInstances(int maxInstances) {
-    	LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
-        this.maxInstances = maxInstances;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
+		LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
+		this.monitoringThreadPoolSize = monitoringThreadPoolSize;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
-        this.conversationContextFactory = conversationContextFactory;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMonitoringFrequency(long monitoringFrequency) {
+		double monitoringFrequencyMinutes = monitoringFrequency / (1000.0 * 60);
+		LOG.info("Setting conversation timeout monitoring frequency:  " + monitoringFrequency + " milliseconds.");
+		LOG.info("Converted monitoring frequency:  " + String.format("%.2f", monitoringFrequencyMinutes) + " minutes.");
+		this.monitoringFrequency = monitoringFrequency;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ConversationContextManager getManager(HttpServletRequest request) { 
-    	HttpSession session = request.getSession();
-    	ConversationContextManager contextManager = HttpConversationUtil.getContextManager(session);
-        if (contextManager == null) {
-        	contextManager = this.createContextManager(session);
-        } else {
-        	ScheduledExecutorTimeoutMonitor<ConversationContext> monitor = (ScheduledExecutorTimeoutMonitor<ConversationContext>) HttpConversationUtil.getTimeoutMonitor(session);
-        	monitor.setScheduler(this.scheduler);
-        }
-        return contextManager;
-    }
-    
-    protected ConversationContextManager createContextManager(HttpSession session) {
-    	if (LOG.isDebugEnabled()) {
-    		LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
-    	}
-    	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
-    	contextManager.setMaxInstances(this.maxInstances);
-    	contextManager.setContextFactory(this.conversationContextFactory);
-        TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);
-        contextManager.setTimeoutMonitor(timeoutMonitor);
-        HttpConversationUtil.setContextManager(session, contextManager);
-        HttpConversationUtil.setTimeoutMonitor(session, timeoutMonitor);
-        return contextManager;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMaxInstances(int maxInstances) {
+		LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
+		this.maxInstances = maxInstances;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
+		this.conversationContextFactory = conversationContextFactory;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConversationContextManager getManager(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ConversationContextManager contextManager = HttpConversationUtil.getContextManager(session);
+		if (contextManager == null) {
+			contextManager = this.createContextManager(session);
+		} else {
+			ScheduledExecutorTimeoutMonitor<ConversationContext> monitor = (ScheduledExecutorTimeoutMonitor<ConversationContext>) HttpConversationUtil.getTimeoutMonitor(session);
+			monitor.setScheduler(this.scheduler);
+		}
+		return contextManager;
+	}
+
+	protected ConversationContextManager createContextManager(HttpSession session) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
+		}
+		TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
+		contextManager.setMaxInstances(this.maxInstances);
+		contextManager.setContextFactory(this.conversationContextFactory);
+		TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);
+		contextManager.setTimeoutMonitor(timeoutMonitor);
+		HttpConversationUtil.setContextManager(session, contextManager);
+		HttpConversationUtil.setTimeoutMonitor(session, timeoutMonitor);
+		return contextManager;
+	}
 
 }

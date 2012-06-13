@@ -31,23 +31,23 @@ import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
  * @author rees.byars
- *
+ * 
  */
 public class HttpConversationUtil {
-	
+
 	public static ConversationContextManager getContextManager(HttpSession session) {
 		return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
 	}
-	
+
 	public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
 		session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static TimeoutMonitor<ConversationContext> getTimeoutMonitor(HttpSession session) {
 		return (TimeoutMonitor<ConversationContext>) session.getAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY);
 	}
-	
+
 	public static void setTimeoutMonitor(HttpSession session, TimeoutMonitor<ConversationContext> monitor) {
 		session.setAttribute(ConversationConstants.CONVERSATION_TIMEOUT_MONITOR_KEY, monitor);
 	}

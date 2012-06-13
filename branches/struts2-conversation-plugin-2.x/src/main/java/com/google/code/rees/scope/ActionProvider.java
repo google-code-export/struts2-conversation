@@ -30,19 +30,19 @@ import com.google.code.rees.scope.conversation.configuration.ConversationConfigu
 import com.google.code.rees.scope.session.SessionConfigurationProvider;
 
 /**
- * Provides a Set of action classes for initializing configurations. In
- * the future, will be employed by the {@link ConversationConfigurationProvider}
- * and the {@link SessionConfigurationProvider}.
+ * Provides a Set of action classes for initializing configurations. In the
+ * future, will be employed by the {@link ConversationConfigurationProvider} and
+ * the {@link SessionConfigurationProvider}.
  * 
  * @author rees.byars
  */
 public interface ActionProvider extends Serializable {
 
-    /**
-     * Returns the set of action classes
-     * 
-     * @return
-     */
-    public Set<Class<?>> getActionClasses();
+	/**
+	 * Returns the set of action classes
+	 * 
+	 * @return
+	 */
+	public Set<Class<?>> getActionClasses();
 
 }

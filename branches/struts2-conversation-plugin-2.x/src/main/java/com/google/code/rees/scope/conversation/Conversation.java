@@ -19,18 +19,22 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: Conversation.java Jun 11, 2012 10:27:07 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.conversation;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.google.code.rees.scope.conversation.annotations.GuardType;
 
 /**
  * @author rees.byars
- * 
+ *
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public interface Conversation {
+	
+	public String getName();
+	public long getMaxIdleMinutes();
+	public int getMaxInstances();
+	public GuardType getGuardType();
 
 }

@@ -44,155 +44,156 @@ import com.google.code.rees.scope.util.InjectionUtil;
  */
 public class DefaultInjectionConversationProcessor extends SimpleConversationProcessor implements InjectionConversationProcessor, ConversationPostProcessor {
 
-    private static final long serialVersionUID = 8632020943340087L;
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultInjectionConversationProcessor.class);
+	private static final long serialVersionUID = 8632020943340087L;
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultInjectionConversationProcessor.class);
 
-    /**
-     * {@inheritDoc}
-     * @throws ConversationException 
-     */
-    @Override
-    protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws ConversationException
+	 */
+	@Override
+	protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
-        String actionId = conversationAdapter.getActionId();
-        String conversationName = conversationConfig.getConversationName();
-        String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+		String actionId = conversationAdapter.getActionId();
+		String conversationName = conversationConfig.getConversationName();
+		String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing request for " + conversationName + " and action " + actionId + " of class " + action.getClass());
-        }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Processing request for " + conversationName + " and action " + actionId + " of class " + action.getClass());
+		}
 
-        if (conversationId != null) {
+		if (conversationId != null) {
 
-            if (conversationConfig.containsAction(actionId)) {
+			if (conversationConfig.containsAction(actionId)) {
 
-                Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+				Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
-                }
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
+				}
 
-                if (conversationContext != null) {
+				if (conversationContext != null) {
 
-                    Map<String, Field> actionConversationFields = conversationConfig.getFields();
-                    
-                    if (actionConversationFields != null) {
-                        InjectionUtil.setFieldValues(action, actionConversationFields, conversationContext);
-                    }
-                    
-                } else {
-                	
-                	this.handleInvalidId(conversationName, conversationId);
-                	
-                }
+					Map<String, Field> actionConversationFields = conversationConfig.getFields();
 
-                if (conversationConfig.isEndAction(actionId)) {
-                    conversationAdapter.addPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
-                } else {
-                    conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
-                    conversationAdapter.getViewContext().put(conversationName, conversationId);
-                }
-            }
-        } else if (conversationConfig.isBeginAction(actionId)) {
-            
-            long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
-            }
-            
-            ConversationContext newConversationContext = ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
-            conversationId = newConversationContext.getId();
-            conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
-            
-        }
-    }
+					if (actionConversationFields != null) {
+						InjectionUtil.setFieldValues(action, actionConversationFields, conversationContext);
+					}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
+				} else {
 
-    	String conversationName = conversationConfig.getConversationName();
-    	
-    	if (LOG.isDebugEnabled()) {
-            LOG.debug("Performing post-processing of  " + conversationName + " with ID of " + conversationId + "...");
-        }
-    	
-        Object action = conversationAdapter.getAction();
+					this.handleInvalidId(conversationName, conversationId);
 
-        Map<String, Field> actionConversationFields = conversationConfig.getFields();
+				}
 
-        if (actionConversationFields != null) {
+				if (conversationConfig.isEndAction(actionId)) {
+					conversationAdapter.addPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
+				} else {
+					conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
+					conversationAdapter.getViewContext().put(conversationName, conversationId);
+				}
+			}
+		} else if (conversationConfig.isBeginAction(actionId)) {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting conversation fields for " + conversationName + " following execution of action " + conversationAdapter.getActionId());
-            }
-            
-            Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-            
-            if (conversationContext != null) {
-            	conversationContext.putAll(InjectionUtil.getFieldValues(action, actionConversationFields));
-            }
+			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
 
-        }
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("...completed post-processing of  " + conversationName + " with ID of " + conversationId + ".");
-        }
-        
-    }
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Beginning new " + conversationName + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
+			}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
-        Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
-        if (actionConversationConfigs != null) {
-            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
-                String conversationName = conversation.getConversationName();
-                String conversationId = conversationAdapter.getRequestContext().get(conversationName);
-                if (conversationId != null) {
-                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-                    if (conversationContext != null) {
-                        Map<String, Field> actionConversationFields = conversation.getFields();
-                        if (actionConversationFields != null) {
-                            InjectionUtil.setFieldValues(target, actionConversationFields, conversationContext);
-                        }
-                    }
-                }
-            }
-        }
-    }
+			ConversationContext newConversationContext = ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
+			conversationId = newConversationContext.getId();
+			conversationAdapter.addPostProcessor(this, conversationConfig, conversationId);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
-        Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
-        if (actionConversationConfigs != null) {
-            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
+		}
+	}
 
-                Map<String, Field> actionConversationFields = conversation.getFields();
-                String conversationName = conversation.getConversationName();
-                String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
 
-                if (conversationId != null) {
+		String conversationName = conversationConfig.getConversationName();
 
-	                if (actionConversationFields != null) {
-	
-	                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-	                    conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
-	                }
-	
-	                conversationAdapter.getViewContext().put(conversationName, conversationId);
-                
-                }
-            }
-        }
-    }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Performing post-processing of  " + conversationName + " with ID of " + conversationId + "...");
+		}
+
+		Object action = conversationAdapter.getAction();
+
+		Map<String, Field> actionConversationFields = conversationConfig.getFields();
+
+		if (actionConversationFields != null) {
+
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Getting conversation fields for " + conversationName + " following execution of action " + conversationAdapter.getActionId());
+			}
+
+			Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+
+			if (conversationContext != null) {
+				conversationContext.putAll(InjectionUtil.getFieldValues(action, actionConversationFields));
+			}
+
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("...completed post-processing of  " + conversationName + " with ID of " + conversationId + ".");
+		}
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
+		Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
+		if (actionConversationConfigs != null) {
+			for (ConversationClassConfiguration conversation : actionConversationConfigs) {
+				String conversationName = conversation.getConversationName();
+				String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+				if (conversationId != null) {
+					Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+					if (conversationContext != null) {
+						Map<String, Field> actionConversationFields = conversation.getFields();
+						if (actionConversationFields != null) {
+							InjectionUtil.setFieldValues(target, actionConversationFields, conversationContext);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
+		Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(target.getClass());
+		if (actionConversationConfigs != null) {
+			for (ConversationClassConfiguration conversation : actionConversationConfigs) {
+
+				Map<String, Field> actionConversationFields = conversation.getFields();
+				String conversationName = conversation.getConversationName();
+				String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+
+				if (conversationId != null) {
+
+					if (actionConversationFields != null) {
+
+						Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+						conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
+					}
+
+					conversationAdapter.getViewContext().put(conversationName, conversationId);
+
+				}
+			}
+		}
+	}
 
 }

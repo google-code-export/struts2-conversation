@@ -31,21 +31,22 @@ import com.google.code.rees.scope.util.monitor.TimeoutListener;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
- * This class extends the {@link DefaultConversationContextManager} and uses a {@link TimeoutMonitor} to
- * monitor conversations for timeouts.  Using the {@link TimeoutListener} interface, it removes conversations
- * from its cache when they have expired.
+ * This class extends the {@link DefaultConversationContextManager} and uses a
+ * {@link TimeoutMonitor} to monitor conversations for timeouts. Using the
+ * {@link TimeoutListener} interface, it removes conversations from its cache
+ * when they have expired.
  * 
  * @author rees.byars
- *
+ * 
  */
 public class TimeoutConversationContextManager extends DefaultConversationContextManager implements TimeoutListener<ConversationContext> {
 
 	private static final long serialVersionUID = -4431057690602876686L;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(TimeoutConversationContextManager.class);
-	
+
 	protected TimeoutMonitor<ConversationContext> conversationTimeoutMonitor;
-	
+
 	public void setTimeoutMonitor(TimeoutMonitor<ConversationContext> conversationTimeoutMonitor) {
 		this.conversationTimeoutMonitor = conversationTimeoutMonitor;
 	}
@@ -86,7 +87,7 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 		}
 		super.remove(expiredConversation.getConversationName(), expiredConversation.getId());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

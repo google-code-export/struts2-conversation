@@ -37,19 +37,19 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
  */
 public interface ConversationProcessor extends Serializable {
 
-    /**
-     * Set the configuration provider for this manager
-     * 
-     * @param configurationProvider
-     */
-    public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider);
+	/**
+	 * Set the configuration provider for this manager
+	 * 
+	 * @param configurationProvider
+	 */
+	public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider);
 
-    /**
-     * Process the conversations for the current request using the given adapter
-     * 
-     * @param conversationAdapter
-     * @throws ConversationException 
-     */
-    public void processConversations(ConversationAdapter conversationAdapter) throws ConversationException;
+	/**
+	 * Process the conversations for the current request using the given adapter
+	 * 
+	 * @param conversationAdapter
+	 * @throws ConversationException
+	 */
+	public void processConversations(ConversationAdapter conversationAdapter) throws ConversationException;
 
 }

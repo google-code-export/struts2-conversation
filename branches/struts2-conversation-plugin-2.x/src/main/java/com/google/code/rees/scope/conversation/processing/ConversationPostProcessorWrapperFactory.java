@@ -36,18 +36,16 @@ import com.google.code.rees.scope.conversation.configuration.ConversationClassCo
  * 
  */
 public interface ConversationPostProcessorWrapperFactory extends Serializable {
-    
+
 	/**
-     * Returns an instance of a {@link ConversationPostProcessorWrapper}
-     * 
-     * @param conversationAdapter
-     * @param postProcessor
-     * @param conversationConfig
-     * @param conversationId
-     * @return
-     */
-    public ConversationPostProcessorWrapper create(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationClassConfiguration conversationConfig, String conversationId);
+	 * Returns an instance of a {@link ConversationPostProcessorWrapper}
+	 * 
+	 * @param conversationAdapter
+	 * @param postProcessor
+	 * @param conversationConfig
+	 * @param conversationId
+	 * @return
+	 */
+	public ConversationPostProcessorWrapper create(ConversationAdapter conversationAdapter, ConversationPostProcessor postProcessor, ConversationClassConfiguration conversationConfig,
+			String conversationId);
 }

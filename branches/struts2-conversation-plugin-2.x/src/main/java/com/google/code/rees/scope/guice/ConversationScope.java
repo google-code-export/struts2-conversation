@@ -33,26 +33,26 @@ import com.google.inject.Scope;
  */
 public class ConversationScope implements Scope {
 
-    @Override
-    public <T> Provider<T> scope(final Key<T> key, final Provider<T> provider) {
+	@Override
+	public <T> Provider<T> scope(final Key<T> key, final Provider<T> provider) {
 
-        return new Provider<T>() {
+		return new Provider<T>() {
 
-            public T get() {
+			public T get() {
 
-                String contextKey = String.valueOf(key.hashCode());
+				String contextKey = String.valueOf(key.hashCode());
 
-                @SuppressWarnings("unchecked")
-                T value = (T) ConversationUtil.getField(contextKey);
+				@SuppressWarnings("unchecked")
+				T value = (T) ConversationUtil.getField(contextKey);
 
-                if (value == null) {
-                    value = provider.get();
-                    ConversationUtil.setField(contextKey, value);
-                }
+				if (value == null) {
+					value = provider.get();
+					ConversationUtil.setField(contextKey, value);
+				}
 
-                return value;
-            }
-        };
-    }
+				return value;
+			}
+		};
+	}
 
 }

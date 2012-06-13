@@ -27,16 +27,18 @@ package com.google.code.rees.scope.util.monitor;
 import java.io.Serializable;
 
 /**
- * A handy runnable interface whose implementations should have a {@link #run()} method
- * that will be executed periodically to perform monitoring of its {@link Timeoutable}.
+ * A handy runnable interface whose implementations should have a {@link #run()}
+ * method that will be executed periodically to perform monitoring of its
+ * {@link Timeoutable}.
  * 
  * 
  * @author rees.byars
  */
 public interface TimeoutRunner<T extends Timeoutable<T>> extends Runnable, Serializable {
-	
+
 	/**
 	 * acquire the Timeoutable that this runner is monitoring
+	 * 
 	 * @return
 	 */
 	public T getTimeoutable();

@@ -38,35 +38,35 @@ import java.util.Map;
  */
 public class SessionConfiguration {
 
-    private Map<Class<?>, Map<String, Field>> fields;
+	private Map<Class<?>, Map<String, Field>> fields;
 
-    public SessionConfiguration() {
-        fields = new HashMap<Class<?>, Map<String, Field>>();
-    }
+	public SessionConfiguration() {
+		fields = new HashMap<Class<?>, Map<String, Field>>();
+	}
 
-    /**
-     * Caches the given field in the configuration
-     * 
-     * @param clazz
-     * @param name
-     * @param field
-     */
-    public void addField(Class<?> clazz, String name, Field field) {
-        Map<String, Field> classFields = fields.get(clazz);
-        if (classFields == null) {
-            classFields = new HashMap<String, Field>();
-        }
-        classFields.put(name, field);
-        fields.put(clazz, classFields);
-    }
+	/**
+	 * Caches the given field in the configuration
+	 * 
+	 * @param clazz
+	 * @param name
+	 * @param field
+	 */
+	public void addField(Class<?> clazz, String name, Field field) {
+		Map<String, Field> classFields = fields.get(clazz);
+		if (classFields == null) {
+			classFields = new HashMap<String, Field>();
+		}
+		classFields.put(name, field);
+		fields.put(clazz, classFields);
+	}
 
-    /**
-     * Returns the cached fields for the given class
-     * 
-     * @param clazz
-     * @return
-     */
-    public Map<String, Field> getFields(Class<?> clazz) {
-        return fields.get(clazz);
-    }
+	/**
+	 * Returns the cached fields for the given class
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public Map<String, Field> getFields(Class<?> clazz) {
+		return fields.get(clazz);
+	}
 }

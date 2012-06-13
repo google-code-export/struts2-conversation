@@ -36,9 +36,10 @@ public class BladeRunner<T extends Timeoutable<T>> implements TimeoutRunner<T> {
 	private static final long serialVersionUID = -2296155896962664978L;
 	private ThreadTask threadTask;
 	private T timeoutable;
-	
-	protected BladeRunner(){}
-	
+
+	protected BladeRunner() {
+	}
+
 	/**
 	 * creates and returns a BladeRunner instance
 	 * 
@@ -68,17 +69,17 @@ public class BladeRunner<T extends Timeoutable<T>> implements TimeoutRunner<T> {
 	public T getTimeoutable() {
 		return this.timeoutable;
 	}
-	
+
 	protected void setTimeoutable(T timeoutable) {
 		this.timeoutable = timeoutable;
 	}
-	
+
 	protected ThreadTask getThreadTask() {
 		return this.threadTask;
 	}
-	
+
 	protected void setThreadTask(ThreadTask threadTask) {
 		this.threadTask = threadTask;
 	}
-	
+
 }

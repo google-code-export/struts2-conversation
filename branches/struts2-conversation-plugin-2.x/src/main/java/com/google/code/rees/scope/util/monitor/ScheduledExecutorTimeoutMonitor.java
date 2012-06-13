@@ -32,31 +32,36 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An implementation of the {@link TimeoutMonitor} that makes use of a {@link ScheduledExecutorService}.
+ * An implementation of the {@link TimeoutMonitor} that makes use of a
+ * {@link ScheduledExecutorService}.
  * 
- * Cache's tasks and will add them to a new ScheduledExecutorService after serialization in order
- * to continue monitoring in cases such as cluster replication.
+ * Cache's tasks and will add them to a new ScheduledExecutorService after
+ * serialization in order to continue monitoring in cases such as cluster
+ * replication.
  * 
- * Of note:  this class depends on being given a new scheduler after serialization, is does not
- * create its own schedulers.  Likewise, it must be given an instance when it is first created as well.
+ * Of note: this class depends on being given a new scheduler after
+ * serialization, is does not create its own schedulers. Likewise, it must be
+ * given an instance when it is first created as well.
  * 
  * @author rees.byars
  */
 public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMonitor<T>, TimeoutListener<T> {
 
 	private static final long serialVersionUID = -1502605748762224777L;
-	
+
 	/**
-	 * the delay between adding a Timeoutable to the scheduler and the time of the first check of the Timeoutable's remaining time
+	 * the delay between adding a Timeoutable to the scheduler and the time of
+	 * the first check of the Timeoutable's remaining time
 	 */
 	public static final long MONITORING_DELAY = 1000L;
-	
+
 	protected Map<String, TimeoutRunner<T>> timeoutRunners = new HashMap<String, TimeoutRunner<T>>();
 	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
 	protected transient ScheduledExecutorService scheduler = null;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
-	
-	protected ScheduledExecutorTimeoutMonitor(){}
+
+	protected ScheduledExecutorTimeoutMonitor() {
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -65,7 +70,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	public void setMonitoringFrequency(long frequencyMillis) {
 		this.monitoringFrequency = frequencyMillis;
 	}
-	
+
 	/**
 	 * sets the scheduler to be used
 	 */
@@ -75,13 +80,13 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 			this.init();
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void init() {
-		synchronized(this.timeoutRunners) {
+		synchronized (this.timeoutRunners) {
 			if (this.scheduledFutures == null) {
 				this.scheduledFutures = new HashMap<String, ScheduledFuture<?>>();
 			}
@@ -101,7 +106,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void destroy() {
-		synchronized(this.timeoutRunners) {
+		synchronized (this.timeoutRunners) {
 			for (ScheduledFuture<?> future : this.scheduledFutures.values()) {
 				future.cancel(true);
 			}
@@ -132,7 +137,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void removeTimeoutable(T timeoutable) {
-		synchronized(this.timeoutRunners) {
+		synchronized (this.timeoutRunners) {
 			String targetId = timeoutable.getId();
 			ScheduledFuture<?> future = this.scheduledFutures.remove(targetId);
 			if (future != null) {
@@ -149,7 +154,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	public void onTimeout(T timeoutable) {
 		this.removeTimeoutable(timeoutable);
 	}
-	
+
 	/**
 	 * used to create an instance
 	 * 

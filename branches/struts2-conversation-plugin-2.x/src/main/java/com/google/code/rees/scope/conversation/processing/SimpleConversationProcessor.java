@@ -1,25 +1,32 @@
 /*******************************************************************************
  * 
- *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
- *  =================================================================================================================
+ * Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope
+ * Solution for Struts2-based Applications
+ * ============================================================================
+ * =====================================
  * 
- *  Copyright (C) 2012 by Rees Byars
- *  http://code.google.com/p/struts2-conversation/
+ * Copyright (C) 2012 by Rees Byars
+ * http://code.google.com/p/struts2-conversation/
  * 
- * **********************************************************************************************************************
+ * *****************************************************************************
+ * *****************************************
  * 
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- *  the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- *  specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  * 
- * **********************************************************************************************************************
+ * *****************************************************************************
+ * *****************************************
  * 
- *  $Id: SimpleConversationProcessor.java reesbyars $
+ * $Id: SimpleConversationProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -48,7 +55,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 
 	private static final long serialVersionUID = -518452439785782433L;
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationProcessor.class);
-	
+
 	protected ConversationConfigurationProvider configurationProvider;
 
 	/**
@@ -61,38 +68,40 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 
 	/**
 	 * {@inheritDoc}
-	 * @throws ConversationException 
+	 * 
+	 * @throws ConversationException
 	 */
 	@Override
 	public void processConversations(ConversationAdapter conversationAdapter) throws ConversationException {
-		
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Beginning processing of conversations...");
-            LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
-        }
-		
+			LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
+		}
+
 		try {
-			
+
 			Object action = conversationAdapter.getAction();
-			
+
 			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
 			if (actionConversationConfigs != null) {
 				for (ConversationClassConfiguration conversationConfig : actionConversationConfigs) {
 					processConversation(conversationConfig, conversationAdapter, action);
 				}
 			}
-			
+
 		} catch (ConversationException ce) {
-			
-			//just catching to re-throw previously thrown ConversationExceptions instead of "generifying" them
+
+			// just catching to re-throw previously thrown
+			// ConversationExceptions instead of "generifying" them
 			throw ce;
-			
+
 		} catch (Exception e) {
-			
+
 			LOG.error("An exception occurred while processing the conversations:  " + e.getMessage());
 			throw new ConversationException(e.getMessage());
 		}
-		
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("...processing of conversations complete.");
 		}
@@ -103,7 +112,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 		String actionId = conversationAdapter.getActionId();
 		String conversationName = conversationConfig.getConversationName();
 		String conversationId = (String) conversationAdapter.getRequestContext().get(conversationName);
-		
+
 		if (conversationId != null) {
 			if (conversationConfig.containsAction(actionId)) {
 				if (conversationConfig.isEndAction(actionId)) {
@@ -112,21 +121,22 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 					conversationAdapter.getViewContext().put(conversationName, conversationId);
 				}
 			} else {
-            	this.handleInvalidId(conversationName, conversationId);
-            }
+				this.handleInvalidId(conversationName, conversationId);
+			}
 		} else if (conversationConfig.isBeginAction(actionId)) {
 			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
 			if (LOG.isDebugEnabled()) {
-                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
-            }
-            ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
+				LOG.debug("Beginning new " + conversationName + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
+			}
+			ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
 		}
 	}
-	
+
 	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {
-		String idExceptionMessage = "The following conversation name and id pair did not return an active ConversationContext:  (name: " + conversationName + "|id:  " + conversationId + ").  This is likely due to the conversation having ended or expired.";
-    	LOG.warn(idExceptionMessage);
-    	throw new ConversationIdException(idExceptionMessage, conversationName, conversationId);
+		String idExceptionMessage = "The following conversation name and id pair did not return an active ConversationContext:  (name: " + conversationName + "|id:  " + conversationId
+				+ ").  This is likely due to the conversation having ended or expired.";
+		LOG.warn(idExceptionMessage);
+		throw new ConversationIdException(idExceptionMessage, conversationName, conversationId);
 	}
 
 }

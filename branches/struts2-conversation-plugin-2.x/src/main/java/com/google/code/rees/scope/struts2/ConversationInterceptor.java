@@ -52,270 +52,279 @@ import com.opensymphony.xwork2.util.LocalizedTextUtil;
 
 /**
  * 
- * This interceptor uses an {@link InjectionConversationProcessor} to process conversation states and scopes.
+ * This interceptor uses an {@link InjectionConversationProcessor} to process
+ * conversation states and scopes.
  * 
  * @author rees.byars
- *
+ * 
  */
 public class ConversationInterceptor implements Interceptor, PreResultListener {
 
-    private static final long serialVersionUID = -72776817859403642L;
-    private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
-    
-    /**
-     * This key can be used in a message resource bundle to specify a message in the case of a user
-     * submitting a request with an invalid conversation ID (i.e. the conversation has already ended or expired)
-     * and also to map results as this will be the result value
-     */
-    public static final String CONVERSATION_ID_EXCEPTION_KEY = "struts.conversation.invalid.id";
-    
-    /**
-     * This key can be used in a message resource bundle to specify a message in the case of a an
-     * unexpected error occurring during conversation processing and also to map results as this will 
-     * be the result value.
-     * <p>
-     * Of course, we don't expect that this will happen ;)
-     */
-    public static final String CONVERSATION_EXCEPTION_KEY = "struts.conversation.general.error";
-    
-    /**
-     * In the case of an invalid id result, this key can be used to retrieve the offending
-     * conversation's name from the {@link com.opensymphony.xwork2.util.ValueStack ValueStack}.
-     * This value can then be referenced in a message with the expression ${conversation.name}
-     */
-    public static final String CONVERSATION_EXCEPTION_NAME_STACK_KEY = "conversation.name";
-    
-    /**
-     * In the case of an invalid id result, this key can be used to retrieve the offending
-     * conversation ID from the {@link com.opensymphony.xwork2.util.ValueStack ValueStack}.
-     * This value can then be referenced in a message with the expression ${conversation.id}
-     */
-    public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
+	private static final long serialVersionUID = -72776817859403642L;
+	private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
 
-    protected ActionProvider finder;
-    protected String actionSuffix;
+	/**
+	 * This key can be used in a message resource bundle to specify a message in
+	 * the case of a user submitting a request with an invalid conversation ID
+	 * (i.e. the conversation has already ended or expired) and also to map
+	 * results as this will be the result value
+	 */
+	public static final String CONVERSATION_ID_EXCEPTION_KEY = "struts.conversation.invalid.id";
+
+	/**
+	 * This key can be used in a message resource bundle to specify a message in
+	 * the case of a an unexpected error occurring during conversation
+	 * processing and also to map results as this will be the result value.
+	 * <p>
+	 * Of course, we don't expect that this will happen ;)
+	 */
+	public static final String CONVERSATION_EXCEPTION_KEY = "struts.conversation.general.error";
+
+	/**
+	 * In the case of an invalid id result, this key can be used to retrieve the
+	 * offending conversation's name from the
+	 * {@link com.opensymphony.xwork2.util.ValueStack ValueStack}. This value
+	 * can then be referenced in a message with the expression
+	 * ${conversation.name}
+	 */
+	public static final String CONVERSATION_EXCEPTION_NAME_STACK_KEY = "conversation.name";
+
+	/**
+	 * In the case of an invalid id result, this key can be used to retrieve the
+	 * offending conversation ID from the
+	 * {@link com.opensymphony.xwork2.util.ValueStack ValueStack}. This value
+	 * can then be referenced in a message with the expression
+	 * ${conversation.id}
+	 */
+	public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
+
+	protected ActionProvider finder;
+	protected String actionSuffix;
 	protected long maxIdleTime;
-    protected ConversationArbitrator arbitrator;
-    protected ConversationConfigurationProvider conversationConfigurationProvider;
-    protected ConversationProcessor conversationProcessor;
-    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
-    protected int monitoringThreadPoolSize;
-    protected long monitoringFrequency;
-    protected int maxInstances;
-    protected ConversationContextFactory conversationContextFactory;
+	protected ConversationArbitrator arbitrator;
+	protected ConversationConfigurationProvider conversationConfigurationProvider;
+	protected ConversationProcessor conversationProcessor;
+	protected HttpConversationContextManagerProvider conversationContextManagerProvider;
+	protected int monitoringThreadPoolSize;
+	protected long monitoringFrequency;
+	protected int maxInstances;
+	protected ConversationContextFactory conversationContextFactory;
 
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-    public void setActionClassFinder(ActionProvider finder) {
-        this.finder = finder;
-    }
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+	public void setActionClassFinder(ActionProvider finder) {
+		this.finder = finder;
+	}
 
-    @Inject(ConventionConstants.ACTION_SUFFIX)
-    public void setActionSuffix(String suffix) {
-        this.actionSuffix = suffix;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
-        this.maxIdleTime = Long.parseLong(defaultMaxIdleTimeString);
-    }
+	@Inject(ConventionConstants.ACTION_SUFFIX)
+	public void setActionSuffix(String suffix) {
+		this.actionSuffix = suffix;
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
-    public void setArbitrator(ConversationArbitrator arbitrator) {
-        this.arbitrator = arbitrator;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
-    public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
-        this.conversationConfigurationProvider = conversationConfigurationProvider;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+	public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
+		this.maxIdleTime = Long.parseLong(defaultMaxIdleTimeString);
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
-    public void setConversationManager(ConversationProcessor manager) {
-        this.conversationProcessor = manager;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
+	public void setArbitrator(ConversationArbitrator arbitrator) {
+		this.arbitrator = arbitrator;
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
-    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
-        this.conversationContextManagerProvider = conversationContextManagerProvider;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
-    public void setMonitoringThreadPoolSize(String monitoringThreadPoolSizeString) {
-    	this.monitoringThreadPoolSize = Integer.parseInt(monitoringThreadPoolSizeString);
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
+	public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
+		this.conversationConfigurationProvider = conversationConfigurationProvider;
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
-    public void setMonitoringFrequency(String monitoringFrequencyString) {
-    	this.monitoringFrequency = Long.parseLong(monitoringFrequencyString);
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
+	public void setConversationManager(ConversationProcessor manager) {
+		this.conversationProcessor = manager;
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
-    public void setMaxInstances(String maxInstancesString) {
-    	this.maxInstances = Integer.parseInt(maxInstancesString);
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
+	public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+		this.conversationContextManagerProvider = conversationContextManagerProvider;
+	}
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
-    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
-        this.conversationContextFactory = conversationContextFactory;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
+	public void setMonitoringThreadPoolSize(String monitoringThreadPoolSizeString) {
+		this.monitoringThreadPoolSize = Integer.parseInt(monitoringThreadPoolSizeString);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy() {
-        LOG.info("Destroying the ConversationInterceptor...");
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
+	public void setMonitoringFrequency(String monitoringFrequencyString) {
+		this.monitoringFrequency = Long.parseLong(monitoringFrequencyString);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init() {
+	@Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
+	public void setMaxInstances(String maxInstancesString) {
+		this.maxInstances = Integer.parseInt(maxInstancesString);
+	}
 
-        LOG.info("Initializing the Conversation Interceptor...");
+	@Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
+	public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
+		this.conversationContextFactory = conversationContextFactory;
+	}
 
-        this.arbitrator.setActionSuffix(this.actionSuffix);
-        this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
-        this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
-        this.conversationConfigurationProvider.init(this.finder.getActionClasses());
-        this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
-        
-        this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
-        this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
-        this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
-        this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
-        this.conversationContextManagerProvider.init();
-        
-        LOG.info("...Conversation Interceptor successfully initialized.");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void destroy() {
+		LOG.info("Destroying the ConversationInterceptor...");
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String intercept(ActionInvocation invocation) throws Exception {
-    	
-    	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
-    	
-    	try {
-    		
-    		this.conversationProcessor.processConversations(new StrutsConversationAdapter(invocation, contextManager));
-    		
-    	} catch (ConversationIdException cie) {
-    		
-    		return this.handleIdException(invocation, cie);
-    		
-    	} catch (ConversationException ce) {
-    		
-    		return this.handleUnexpectedException(invocation, ce);
-    		
-    	}
-    	
-        invocation.addPreResultListener(this);
-        
-        return invocation.invoke();
-        
-    }
+		LOG.info("Initializing the Conversation Interceptor...");
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    @Override
-    public void beforeResult(ActionInvocation invocation, String result) {
-        ConversationAdapter.getAdapter().executePostProcessors();
-        invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-    }
-    
-    /**
-     * Handles logging and UI messages for ConversationIdExceptions
-     * 
-     * @param invocation
-     * @param cie
-     * @return
-     */
-    protected String handleIdException(ActionInvocation invocation, ConversationIdException cie) {
-    	
-    	LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_ID_EXCEPTION_KEY);
-		
+		this.arbitrator.setActionSuffix(this.actionSuffix);
+		this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
+		this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
+		this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+		this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
+
+		this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
+		this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
+		this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
+		this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
+		this.conversationContextManagerProvider.init();
+
+		LOG.info("...Conversation Interceptor successfully initialized.");
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String intercept(ActionInvocation invocation) throws Exception {
+
+		HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+		ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+
+		try {
+
+			this.conversationProcessor.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+
+		} catch (ConversationIdException cie) {
+
+			return this.handleIdException(invocation, cie);
+
+		} catch (ConversationException ce) {
+
+			return this.handleUnexpectedException(invocation, ce);
+
+		}
+
+		invocation.addPreResultListener(this);
+
+		return invocation.invoke();
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 */
+	@Override
+	public void beforeResult(ActionInvocation invocation, String result) {
+		ConversationAdapter.getAdapter().executePostProcessors();
+		invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+	}
+
+	/**
+	 * Handles logging and UI messages for ConversationIdExceptions
+	 * 
+	 * @param invocation
+	 * @param cie
+	 * @return
+	 */
+	protected String handleIdException(ActionInvocation invocation, ConversationIdException cie) {
+
+		LOG.warn("ConversationIdException occurred in Conversation Processing, returning result of " + CONVERSATION_ID_EXCEPTION_KEY);
+
 		Locale locale = invocation.getInvocationContext().getLocale();
 		Map<String, Object> stackContext = invocation.getStack().getContext();
-		
-		//Placing exception details on stack for OGNL retrieval in messages
+
+		// Placing exception details on stack for OGNL retrieval in messages
 		stackContext.put(CONVERSATION_EXCEPTION_NAME_STACK_KEY, cie.getConversationName());
 		stackContext.put(CONVERSATION_EXCEPTION_ID_STACK_KEY, cie.getConversationId());
-		
-		//First, we attempt to get a conversation-specific message from a bundle
-		String errorMessage = LocalizedTextUtil.findText(this.getClass(), 
-				new StringBuilder(CONVERSATION_ID_EXCEPTION_KEY).append(".").append(cie.getConversationName()).toString(), 
-				locale);
-		
-		//If conversation specific message not found, get generic message, if that not found use default
+
+		// First, we attempt to get a conversation-specific message from a
+		// bundle
+		String errorMessage = LocalizedTextUtil.findText(this.getClass(), new StringBuilder(CONVERSATION_ID_EXCEPTION_KEY).append(".").append(cie.getConversationName()).toString(), locale);
+
+		// If conversation specific message not found, get generic message, if
+		// that not found use default
 		if (errorMessage == null) {
 			errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_ID_EXCEPTION_KEY, locale,
-                    "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed.", new Object[0]);
+					"The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed.", new Object[0]);
 		}
-		
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Placing Conversation Error Message on stack (key={" + CONVERSATION_ID_EXCEPTION_KEY + "}):  " + errorMessage);
-    	}
-		
-		//Placing message on stack instead of in actionErrors for retrieval in UI
+		}
+
+		// Placing message on stack instead of in actionErrors for retrieval in
+		// UI
 		stackContext.put(CONVERSATION_ID_EXCEPTION_KEY, errorMessage);
-		
+
 		this.handleConversationErrorAware(invocation.getProxy(), errorMessage);
-		
+
 		return CONVERSATION_ID_EXCEPTION_KEY;
-    }
-    
-    /**
-     * Handles logging and UI messages for ConversationExceptions
-     * 
-     * @param invocation
-     * @param ce
-     * @return
-     */
-    protected String handleUnexpectedException(ActionInvocation invocation, ConversationException ce) {
-    	
-    	LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_KEY);
-		
+	}
+
+	/**
+	 * Handles logging and UI messages for ConversationExceptions
+	 * 
+	 * @param invocation
+	 * @param ce
+	 * @return
+	 */
+	protected String handleUnexpectedException(ActionInvocation invocation, ConversationException ce) {
+
+		LOG.error("An unexpected exception occurred in Conversation Processing, returning result of " + CONVERSATION_EXCEPTION_KEY);
+
 		Locale locale = invocation.getInvocationContext().getLocale();
-		
-		String errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_EXCEPTION_KEY, locale,
-                    "An unexpected error occurred while processing you request.  Please try again.", new Object[0]);
-		
+
+		String errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_EXCEPTION_KEY, locale, "An unexpected error occurred while processing you request.  Please try again.",
+				new Object[0]);
+
 		if (LOG.isDebugEnabled()) {
-    		LOG.debug("Placing Conversation Error Message on stack (key={" + CONVERSATION_EXCEPTION_KEY + "}):  " + errorMessage);
-    	}
-		
-		//Placing message on stack instead of in actionErrors for retrieval in UI
+			LOG.debug("Placing Conversation Error Message on stack (key={" + CONVERSATION_EXCEPTION_KEY + "}):  " + errorMessage);
+		}
+
+		// Placing message on stack instead of in actionErrors for retrieval in
+		// UI
 		invocation.getStack().getContext().put(CONVERSATION_EXCEPTION_KEY, errorMessage);
-		
+
 		this.handleConversationErrorAware(invocation.getProxy(), errorMessage);
-		
+
 		return CONVERSATION_EXCEPTION_KEY;
-    }
-    
-    /**
-	 * This provides extra functionality over placing on stack in that it allows for
-	 * easily propagating the error through a redirect using a static result param:
+	}
+
+	/**
+	 * This provides extra functionality over placing on stack in that it allows
+	 * for easily propagating the error through a redirect using a static result
+	 * param:
 	 * <p>
 	 * <tt>&ltparam name="conversationError">${conversationError}&lt/param></tt>
 	 */
-    protected void handleConversationErrorAware(ActionProxy proxy, String errorMessage) {
-    	
+	protected void handleConversationErrorAware(ActionProxy proxy, String errorMessage) {
+
 		Object action = proxy.getAction();
-		
+
 		if (action instanceof ConversationErrorAware) {
-			
+
 			LOG.debug("Action is an instance of ConversationErrorAware; setting conversation error.");
-			
+
 			((ConversationErrorAware) action).setConversationError(errorMessage);
-			
+
 		}
-    }
+	}
 
 }

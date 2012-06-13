@@ -36,19 +36,19 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RequestContextUtil {
 
-    public static Map<String, String> getRequestContext(HttpServletRequest request) {
+	public static Map<String, String> getRequestContext(HttpServletRequest request) {
 
-        Map<String, String> requestContext = new HashMap<String, String>();
-        if (request != null) {
-            Map<String, String[]> params = request.getParameterMap();
-            for (Entry<String, String[]> param : params.entrySet()) {
-            	String candidateConversationName = param.getKey();
-            	String candidateConversationId = param.getValue()[0];
-                requestContext.put(candidateConversationName, candidateConversationId);
-            }
-        }
+		Map<String, String> requestContext = new HashMap<String, String>();
+		if (request != null) {
+			Map<String, String[]> params = request.getParameterMap();
+			for (Entry<String, String[]> param : params.entrySet()) {
+				String candidateConversationName = param.getKey();
+				String candidateConversationId = param.getValue()[0];
+				requestContext.put(candidateConversationName, candidateConversationId);
+			}
+		}
 
-        return requestContext;
-    }
+		return requestContext;
+	}
 
 }

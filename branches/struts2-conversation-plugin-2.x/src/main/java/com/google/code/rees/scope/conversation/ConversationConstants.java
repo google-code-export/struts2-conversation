@@ -29,35 +29,35 @@ package com.google.code.rees.scope.conversation;
  * @author rees.byars
  */
 public class ConversationConstants {
-	
+
 	/**
 	 * 20
 	 */
 	public static final int DEFAULT_MONITORING_THREAD_POOL_SIZE = 20;
-	
+
 	/**
 	 * 20
 	 */
 	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
-	
+
 	/**
 	 * 8 hours
 	 */
 	public static final long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
-	
+
 	/**
-	 * used as a key to identify the {@link com.google.code.rees.scope.conversation.context.ConversationContextManager ConversationContextManager} 
-	 * within the session context
+	 * used as a key to identify the
+	 * {@link com.google.code.rees.scope.conversation.context.ConversationContextManager
+	 * ConversationContextManager} within the session context
 	 */
-    public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
-    
-    /**
-	 * used as a key to identify the TimeoutMonitor 
-	 * within the session context
+	public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
+
+	/**
+	 * used as a key to identify the TimeoutMonitor within the session context
 	 */
-    public static final String CONVERSATION_TIMEOUT_MONITOR_KEY = "rees.scope.conversation.timeout.monitor.key";
-    
-    public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
-    public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
-    
+	public static final String CONVERSATION_TIMEOUT_MONITOR_KEY = "rees.scope.conversation.timeout.monitor.key";
+
+	public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
+	public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+
 }

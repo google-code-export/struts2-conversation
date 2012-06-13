@@ -37,81 +37,68 @@ import com.google.code.rees.scope.conversation.configuration.DefaultConversation
 import com.google.code.rees.scope.util.NamingUtil;
 
 /**
- * A {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
+ * A
+ * {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
  * ConversationArbitrator} for use with Spring MVC. Looks for
- * {@link RequestMapping} annotations
- * to identify controller action methods.
+ * {@link RequestMapping} annotations to identify controller action methods.
  * 
  * @author rees.byars
  */
 public class SpringConversationArbitrator extends DefaultConversationArbitrator {
 
-    private static final long serialVersionUID = -2131295964932528989L;
+	private static final long serialVersionUID = -2131295964932528989L;
 
-    @Override
-    protected String[] getConversationsWithInheritance(Class<?> clazz,
-            String actionSuffix) {
-        List<String> conversations = new ArrayList<String>();
-        for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
-            if (clazz.isAnnotationPresent(ConversationController.class)) {
-                ConversationController controller = conversationControllerClass
-                        .getAnnotation(ConversationController.class);
-                String[] newConversations = controller.conversations();
-                if (controller.value().equals(
-                        ConversationController.DEFAULT_VALUE)) {
-                    if (newConversations.length == 0) {
-                        newConversations = new String[] { NamingUtil
-                                .getConventionName(conversationControllerClass,
-                                        actionSuffix) };
-                    }
-                } else {
-                    conversations.add(controller.value());
-                }
-                conversations.addAll(Arrays.asList(newConversations));
-            } else {
-                com.google.code.rees.scope.spring.ConversationController controller = conversationControllerClass
-                        .getAnnotation(com.google.code.rees.scope.spring.ConversationController.class);
-                String[] newConversations = controller.conversations();
-                if (controller
-                        .value()
-                        .equals(com.google.code.rees.scope.spring.ConversationController.DEFAULT_VALUE)) {
-                    if (newConversations.length == 0) {
-                        newConversations = new String[] { NamingUtil
-                                .getConventionName(conversationControllerClass,
-                                        actionSuffix) };
-                    }
-                } else {
-                    conversations.add(controller.value());
-                }
-                conversations.addAll(Arrays.asList(newConversations));
-            }
-        }
-        return conversations.toArray(new String[] {});
-    }
+	@Override
+	protected String[] getConversationsWithInheritance(Class<?> clazz, String actionSuffix) {
+		List<String> conversations = new ArrayList<String>();
+		for (Class<?> conversationControllerClass : getConversationControllers(clazz)) {
+			if (clazz.isAnnotationPresent(ConversationController.class)) {
+				ConversationController controller = conversationControllerClass.getAnnotation(ConversationController.class);
+				String[] newConversations = controller.conversations();
+				if (controller.value().equals(ConversationController.DEFAULT_VALUE)) {
+					if (newConversations.length == 0) {
+						newConversations = new String[] { NamingUtil.getConventionName(conversationControllerClass, actionSuffix) };
+					}
+				} else {
+					conversations.add(controller.value());
+				}
+				conversations.addAll(Arrays.asList(newConversations));
+			} else {
+				com.google.code.rees.scope.spring.ConversationController controller = conversationControllerClass.getAnnotation(com.google.code.rees.scope.spring.ConversationController.class);
+				String[] newConversations = controller.conversations();
+				if (controller.value().equals(com.google.code.rees.scope.spring.ConversationController.DEFAULT_VALUE)) {
+					if (newConversations.length == 0) {
+						newConversations = new String[] { NamingUtil.getConventionName(conversationControllerClass, actionSuffix) };
+					}
+				} else {
+					conversations.add(controller.value());
+				}
+				conversations.addAll(Arrays.asList(newConversations));
+			}
+		}
+		return conversations.toArray(new String[] {});
+	}
 
-    @Override
-    protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
-        Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
-        for (Class<?> clazzClass : clazz.getInterfaces()) {
-            if (clazzClass.isAnnotationPresent(ConversationController.class)
-                    || clazzClass
-                            .isAnnotationPresent(com.google.code.rees.scope.spring.ConversationController.class)) {
-                annotatedClasses.add(clazzClass);
-            }
-        }
-        if (clazz.isAnnotationPresent(ConversationController.class)
-                || clazz.isAnnotationPresent(com.google.code.rees.scope.spring.ConversationController.class)) {
-            annotatedClasses.add(clazz);
-        }
-        Class<?> superClass = clazz.getSuperclass();
-        if (superClass != null) {
-            annotatedClasses.addAll(getConversationControllers(superClass));
-        }
-        return annotatedClasses;
-    }
+	@Override
+	protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
+		Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
+		for (Class<?> clazzClass : clazz.getInterfaces()) {
+			if (clazzClass.isAnnotationPresent(ConversationController.class) || clazzClass.isAnnotationPresent(com.google.code.rees.scope.spring.ConversationController.class)) {
+				annotatedClasses.add(clazzClass);
+			}
+		}
+		if (clazz.isAnnotationPresent(ConversationController.class) || clazz.isAnnotationPresent(com.google.code.rees.scope.spring.ConversationController.class)) {
+			annotatedClasses.add(clazz);
+		}
+		Class<?> superClass = clazz.getSuperclass();
+		if (superClass != null) {
+			annotatedClasses.addAll(getConversationControllers(superClass));
+		}
+		return annotatedClasses;
+	}
 
-    @Override
-    protected boolean isAction(Method method) {
-        return method.isAnnotationPresent(RequestMapping.class);
-    }
+	@Override
+	protected boolean isAction(Method method) {
+		return method.isAnnotationPresent(RequestMapping.class);
+	}
 }

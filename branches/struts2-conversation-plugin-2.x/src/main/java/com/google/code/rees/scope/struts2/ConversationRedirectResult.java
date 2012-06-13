@@ -39,27 +39,24 @@ import com.google.code.rees.scope.util.RedirectUtil;
  */
 public class ConversationRedirectResult extends ServletRedirectResult {
 
-    private static final long serialVersionUID = 2405888426696017242L;
+	private static final long serialVersionUID = 2405888426696017242L;
 
-    /**
-     * Sends the redirection with the conversation IDs included as parameters
-     * 
-     * @param response
-     *        The response
-     * @param finalLocation
-     *        The location URI
-     * @throws IOException
-     */
-    @Override
-    protected void sendRedirect(HttpServletResponse response,
-            String finalLocation) throws IOException {
+	/**
+	 * Sends the redirection with the conversation IDs included as parameters
+	 * 
+	 * @param response
+	 *            The response
+	 * @param finalLocation
+	 *            The location URI
+	 * @throws IOException
+	 */
+	@Override
+	protected void sendRedirect(HttpServletResponse response, String finalLocation) throws IOException {
 
-        String finalLocationWithConversationIds = RedirectUtil
-                .getUrlParamString(finalLocation, ConversationAdapter
-                        .getAdapter().getViewContext());
+		String finalLocationWithConversationIds = RedirectUtil.getUrlParamString(finalLocation, ConversationAdapter.getAdapter().getViewContext());
 
-        super.sendRedirect(response, finalLocationWithConversationIds);
+		super.sendRedirect(response, finalLocationWithConversationIds);
 
-    }
+	}
 
 }

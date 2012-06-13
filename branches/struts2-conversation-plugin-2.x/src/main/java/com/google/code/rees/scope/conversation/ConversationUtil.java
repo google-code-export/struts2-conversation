@@ -106,7 +106,7 @@ public class ConversationUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getField(String fieldName, Class<T> fieldClass,String[] conversations) {
+	public static <T> T getField(String fieldName, Class<T> fieldClass, String[] conversations) {
 		T field = null;
 		ConversationAdapter adapter = ConversationAdapter.getAdapter();
 		if (adapter != null) {
@@ -146,7 +146,7 @@ public class ConversationUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * A convenience method for beginning a conversation programmatically
 	 * 
@@ -157,7 +157,7 @@ public class ConversationUtil {
 	public static ConversationContext begin(String name, long maxIdleTimeMillis) {
 		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
 	}
-	
+
 	/**
 	 * A convenience method for beginning a conversation programmatically
 	 * 

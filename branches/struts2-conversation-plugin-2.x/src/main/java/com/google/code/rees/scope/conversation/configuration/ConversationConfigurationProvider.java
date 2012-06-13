@@ -31,14 +31,14 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
  * This class is used by {@link ConversationProcessor ConversationManagers} to
- * obtain the {@link ConversationClassConfiguration ConversationConfigurations} for a
- * given action/controller class
+ * obtain the {@link ConversationClassConfiguration ConversationConfigurations}
+ * for a given action/controller class
  * 
  * @author rees.byars
  * 
  */
 public interface ConversationConfigurationProvider extends Serializable {
-	
+
 	/**
 	 * Set the default max idle time for conversations
 	 * 
@@ -46,29 +46,28 @@ public interface ConversationConfigurationProvider extends Serializable {
 	 */
 	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
 
-    /**
-     * Set the {@link ConversationArbitrator} to be used for building the
-     * configurations
-     * 
-     * @param arbitrator
-     */
-    public void setArbitrator(ConversationArbitrator arbitrator);
+	/**
+	 * Set the {@link ConversationArbitrator} to be used for building the
+	 * configurations
+	 * 
+	 * @param arbitrator
+	 */
+	public void setArbitrator(ConversationArbitrator arbitrator);
 
-    /**
-     * Initialize the configuration caches for a given set of classes
-     * 
-     * @param actionClasses
-     */
-    public void init(Set<Class<?>> actionClasses);
+	/**
+	 * Initialize the configuration caches for a given set of classes
+	 * 
+	 * @param actionClasses
+	 */
+	public void init(Set<Class<?>> actionClasses);
 
-    /**
-     * Get the {@link ConversationClassConfiguration ConversationConfigurations} for
-     * a given class
-     * 
-     * @param actionClass
-     * @return
-     */
-    public Collection<ConversationClassConfiguration> getConfigurations(
-            Class<?> actionClass);
+	/**
+	 * Get the {@link ConversationClassConfiguration ConversationConfigurations}
+	 * for a given class
+	 * 
+	 * @param actionClass
+	 * @return
+	 */
+	public Collection<ConversationClassConfiguration> getConfigurations(Class<?> actionClass);
 
 }

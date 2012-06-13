@@ -30,13 +30,12 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * A basic TaskThread implementation that uses a {@link CopyOnWriteArraySet} to manage concurrent read/write/removal
- * of {@link ThreadTask ThreadTasks}.
+ * A basic TaskThread implementation that uses a {@link CopyOnWriteArraySet} to
+ * manage concurrent read/write/removal of {@link ThreadTask ThreadTasks}.
  * 
  * @author rees.byars
  */
-public class BasicTaskThread extends AbstractEasyThread implements
-		TaskThread {
+public class BasicTaskThread extends AbstractEasyThread implements TaskThread {
 
 	protected Set<ThreadTask> tasks;
 

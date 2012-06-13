@@ -36,61 +36,61 @@ import com.google.code.rees.scope.conversation.context.HttpConversationContextMa
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
- * This Spring MVC interceptor uses a {@link ConversationProcessor} to
- * process conversations before and after controller execution.
+ * This Spring MVC interceptor uses a {@link ConversationProcessor} to process
+ * conversations before and after controller execution.
  * 
  * @author rees.byars
  */
 public class ConversationInterceptor implements HandlerInterceptor {
 
-    protected ConversationProcessor conversationProcessor;
-    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
+	protected ConversationProcessor conversationProcessor;
+	protected HttpConversationContextManagerProvider conversationContextManagerProvider;
 
-    /**
-     * Set the {@link ConversationProcessor}
-     * 
-     * @param conversationProcessor
-     */
-    public void setConversationManager(ConversationProcessor conversationProcessor) {
-        this.conversationProcessor = conversationProcessor;
-    }
+	/**
+	 * Set the {@link ConversationProcessor}
+	 * 
+	 * @param conversationProcessor
+	 */
+	public void setConversationManager(ConversationProcessor conversationProcessor) {
+		this.conversationProcessor = conversationProcessor;
+	}
 
-    /**
-     * Set the {@link HttpConversationContextManagerProvider}
-     * 
-     * @param conversationContextManagerProvider
-     */
-    public void setConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
-        this.conversationContextManagerProvider = conversationContextManagerProvider;
-    }
+	/**
+	 * Set the {@link HttpConversationContextManagerProvider}
+	 * 
+	 * @param conversationContextManagerProvider
+	 */
+	public void setConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+		this.conversationContextManagerProvider = conversationContextManagerProvider;
+	}
 
-    /**
-     * Calls {@link ConversationAdapter#executePostProcessors()}
-     */
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
-        ConversationAdapter.getAdapter().executePostProcessors();
-    }
+	/**
+	 * Calls {@link ConversationAdapter#executePostProcessors()}
+	 */
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
+		ConversationAdapter.getAdapter().executePostProcessors();
+	}
 
-    /**
-     * This method not used by the Interceptor
-     */
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        // do nothing
-    }
+	/**
+	 * This method not used by the Interceptor
+	 */
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+		// do nothing
+	}
 
-    /**
-     * Calls
-     * {@link ConversationProcessor#processConversations(ConversationAdapter)} and
-     * passes in a {@link SpringConversationAdapter}.
-     */
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        ConversationContextManager contextManager = conversationContextManagerProvider.getManager(request);
-        ConversationAdapter adapter = new SpringConversationAdapter(request, (HandlerMethod) handler, contextManager);
-        conversationProcessor.processConversations(adapter);
-        return true;
-    }
+	/**
+	 * Calls
+	 * {@link ConversationProcessor#processConversations(ConversationAdapter)}
+	 * and passes in a {@link SpringConversationAdapter}.
+	 */
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		ConversationContextManager contextManager = conversationContextManagerProvider.getManager(request);
+		ConversationAdapter adapter = new SpringConversationAdapter(request, (HandlerMethod) handler, contextManager);
+		conversationProcessor.processConversations(adapter);
+		return true;
+	}
 
 }

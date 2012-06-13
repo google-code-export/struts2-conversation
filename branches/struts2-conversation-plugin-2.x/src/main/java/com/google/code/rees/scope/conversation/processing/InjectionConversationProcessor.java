@@ -34,26 +34,24 @@ import com.google.code.rees.scope.conversation.annotations.ConversationField;
  */
 public interface InjectionConversationProcessor extends ConversationProcessor {
 
-    /**
-     * Inject the {@link ConversationField ConversationFields} on the target
-     * from the appropriate conversation contexts for active conversations
-     * associated with the current request
-     * 
-     * @param target
-     * @param conversationAdapter
-     */
-    void injectConversationFields(Object target,
-            ConversationAdapter conversationAdapter);
+	/**
+	 * Inject the {@link ConversationField ConversationFields} on the target
+	 * from the appropriate conversation contexts for active conversations
+	 * associated with the current request
+	 * 
+	 * @param target
+	 * @param conversationAdapter
+	 */
+	void injectConversationFields(Object target, ConversationAdapter conversationAdapter);
 
-    /**
-     * Extract the {@link ConversationField ConversationFields} from the target
-     * and place them into the conversations' contexts for active conversations
-     * associated with the current request.
-     * 
-     * @param target
-     * @param conversationAdapter
-     */
-    void extractConversationFields(Object target,
-            ConversationAdapter conversationAdapter);
+	/**
+	 * Extract the {@link ConversationField ConversationFields} from the target
+	 * and place them into the conversations' contexts for active conversations
+	 * associated with the current request.
+	 * 
+	 * @param target
+	 * @param conversationAdapter
+	 */
+	void extractConversationFields(Object target, ConversationAdapter conversationAdapter);
 
 }

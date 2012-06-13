@@ -26,6 +26,7 @@ package com.google.code.rees.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfigurationImpl;
 
 /**
  * A wrapper class for {@link ConversationPostProcessor}. Allows for
@@ -38,11 +39,11 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
  */
 public interface ConversationPostProcessorWrapper extends Serializable {
 
-    /**
-     * Calls
-     * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationClassConfigurationImpl, String)}
-     * for an underlying post processor
-     */
-    public void postProcessConversation();
+	/**
+	 * Calls
+	 * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationClassConfigurationImpl, String)}
+	 * for an underlying post processor
+	 */
+	public void postProcessConversation();
 
 }

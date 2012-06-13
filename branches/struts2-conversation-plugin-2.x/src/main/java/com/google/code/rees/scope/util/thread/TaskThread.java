@@ -24,9 +24,9 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.thread;
 
-
 /**
- * An extension of the {@link EasyThread} interface that has methods for adding and removing {@link ThreadTask ThreadTasks}
+ * An extension of the {@link EasyThread} interface that has methods for adding
+ * and removing {@link ThreadTask ThreadTasks}
  * 
  * @author rees.byars
  */
@@ -34,12 +34,14 @@ public interface TaskThread extends EasyThread {
 
 	/**
 	 * Adds a {@link ThreadTask} to this thread.
+	 * 
 	 * @param task
 	 */
 	public void addTask(ThreadTask task);
 
 	/**
 	 * Removes a {@link ThreadTask} from this thread.
+	 * 
 	 * @param task
 	 */
 	public void removeTask(ThreadTask task);

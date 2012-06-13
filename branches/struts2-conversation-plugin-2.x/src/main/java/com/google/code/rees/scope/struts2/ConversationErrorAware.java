@@ -19,18 +19,29 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: ConversationErrorAware.java Jun 7, 2012 2:40:47 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
-
-import java.io.Serializable;
-import java.util.Map;
+package com.google.code.rees.scope.struts2;
 
 /**
- * @author rees.byars
+ * Action classes implementing this will have conversation error messages set on
+ * them that can then be easily accessed from the UI.
  * 
+ * @author rees.byars
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public interface ConversationErrorAware {
+
+	/**
+	 * 
+	 * @param conversationError
+	 */
+	public void setConversationError(String conversationError);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getConversationError();
 
 }

@@ -27,7 +27,8 @@ package com.google.code.rees.scope.util.monitor;
 import java.io.Serializable;
 
 /**
- * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple timeout mechanism
+ * This interface works in conjunction with the {@link Timeoutable} interface to
+ * provide a simple timeout mechanism
  * 
  * @author rees.byars
  */
@@ -39,10 +40,12 @@ public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable {
 	public static final long DEFAULT_MONITOR_FREQUENCY = 300000;
 
 	/**
-	 * The frequency, in milliseconds, that this monitor will check its {@link Timeoutable Timeoutables} for their remaining times.
-	 * It should be noted that the frequency is guaranteed to not be less the the given time, but it
-	 * may incrementally exceed the given time as more {@link Timeoutable Timeoutables} are added.  This is due
-	 * to the time required to check each of the Timeoutables.  
+	 * The frequency, in milliseconds, that this monitor will check its
+	 * {@link Timeoutable Timeoutables} for their remaining times. It should be
+	 * noted that the frequency is guaranteed to not be less the the given time,
+	 * but it may incrementally exceed the given time as more
+	 * {@link Timeoutable Timeoutables} are added. This is due to the time
+	 * required to check each of the Timeoutables.
 	 * 
 	 * @param frequencyMillis
 	 */
@@ -50,23 +53,27 @@ public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable {
 
 	/**
 	 * Adds the {@link Timeoutable} to this monitor
+	 * 
 	 * @param timeoutable
 	 */
 	public void addTimeoutable(T timeoutable);
 
 	/**
 	 * Removes this {@link Timeoutable} from this monitor
+	 * 
 	 * @param timeoutable
 	 */
 	public void removeTimeoutable(T timeoutable);
 
 	/**
-	 * Initializes this monitor, beginning a background thread for monitoring its {@link Timeoutable Timeoutables}.
+	 * Initializes this monitor, beginning a background thread for monitoring
+	 * its {@link Timeoutable Timeoutables}.
 	 */
 	public void init();
 
 	/**
-	 * Destroys this monitor, stopping its background thread and clearing its {@link Timeoutable} cache.
+	 * Destroys this monitor, stopping its background thread and clearing its
+	 * {@link Timeoutable} cache.
 	 */
 	public void destroy();
 

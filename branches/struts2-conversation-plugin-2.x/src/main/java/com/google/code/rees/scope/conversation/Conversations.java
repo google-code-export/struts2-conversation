@@ -19,18 +19,63 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: Conversations.java Jun 11, 2012 11:25:43 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.conversation;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.google.code.rees.scope.conversation.annotations.GuardType;
 
 /**
  * @author rees.byars
  * 
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public enum Conversations implements Conversation {
+
+	MAIN("main", 45L, 1, GuardType.NONE);
+
+	private String name;
+	private long maxIdleMinutes;
+	private int maxInstances;
+	private GuardType guardType;
+
+	private Conversations(String name, long maxIdleMinutes, int maxInstances, GuardType guardType) {
+		this.name = name + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+		this.maxIdleMinutes = maxIdleMinutes;
+		this.maxInstances = maxInstances;
+		this.guardType = guardType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getMaxIdleMinutes() {
+		return this.maxIdleMinutes;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getMaxInstances() {
+		return this.maxInstances;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public GuardType getGuardType() {
+		return this.guardType;
+	}
 
 }

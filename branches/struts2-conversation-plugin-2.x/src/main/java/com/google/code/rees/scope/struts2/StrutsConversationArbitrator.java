@@ -51,108 +51,107 @@ import com.opensymphony.xwork2.inject.Inject;
  */
 public class StrutsConversationArbitrator extends DefaultConversationArbitrator {
 
-    private static final long serialVersionUID = 6842124082407418415L;
+	private static final long serialVersionUID = 6842124082407418415L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(StrutsConversationArbitrator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StrutsConversationArbitrator.class);
 
-    private Map<Class<?>, Collection<String>> packageBasedConversations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<String>>());
+	private Map<Class<?>, Collection<String>> packageBasedConversations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<String>>());
 
-    protected boolean usePackageNesting;
-    protected ActionProvider actionProvider;
+	protected boolean usePackageNesting;
+	protected ActionProvider actionProvider;
 
-    @Inject(StrutsScopeConstants.CONVERSATION_PACKAGE_NESTING_KEY)
-    public void setUsePackageNesting(String usePackageNesting) {
-        this.usePackageNesting = "true".equals(usePackageNesting);
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_PACKAGE_NESTING_KEY)
+	public void setUsePackageNesting(String usePackageNesting) {
+		this.usePackageNesting = "true".equals(usePackageNesting);
+	}
 
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-    public void setActionProvider(ActionProvider actionProvider) {
-        this.actionProvider = actionProvider;
-    }
-    
-    @Override
-    protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
-    	if (this.isModelDrivenConversation(clazz)) {
-    		Set<Class<?>> controllers = super.getConversationControllers(clazz);
-    		controllers.add(clazz);
-    		return controllers;
-    	} else {
-    		return super.getConversationControllers(clazz);
-    	}
-    	
-    }
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+	public void setActionProvider(ActionProvider actionProvider) {
+		this.actionProvider = actionProvider;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String[] getConversationsWithInheritance(Class<?> clazz, String actionSuffix) {
-        List<String> conversations = new ArrayList<String>();
-        conversations.addAll(Arrays.asList(super.getConversationsWithInheritance(clazz, actionSuffix)));
-        if (this.usePackageNesting) {
-            synchronized (this.packageBasedConversations) {
-                Collection<String> packageConversations = this.packageBasedConversations.get(clazz);
-                if (packageConversations == null) {
-                    packageConversations = this.getPackageBasedConversations(clazz, actionSuffix);
-                    this.packageBasedConversations.put(clazz, packageConversations);
-                }
-                conversations.addAll(packageConversations);
-            }
-        }
-        return conversations.toArray(new String[] {});
-    }
+	@Override
+	protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
+		if (this.isModelDrivenConversation(clazz)) {
+			Set<Class<?>> controllers = super.getConversationControllers(clazz);
+			controllers.add(clazz);
+			return controllers;
+		} else {
+			return super.getConversationControllers(clazz);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String[] getConversationsWithoutInheritance(Class<?> clazz, String actionSuffix) {
-        List<String> conversations = new ArrayList<String>(Arrays.asList(super.getConversationsWithoutInheritance(clazz, actionSuffix)));
-        if (this.isModelDrivenConversation(clazz) && !clazz.isAnnotationPresent(ConversationController.class)) {
-            conversations.add(NamingUtil.getConventionName(clazz, actionSuffix));
-        }
-        return conversations.toArray(new String[] {});
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean isConversationController(Class<?> clazz) {
-        return getConversationControllers(clazz).size() > 0 || this.isModelDrivenConversation(clazz);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String[] getConversationsWithInheritance(Class<?> clazz, String actionSuffix) {
+		List<String> conversations = new ArrayList<String>();
+		conversations.addAll(Arrays.asList(super.getConversationsWithInheritance(clazz, actionSuffix)));
+		if (this.usePackageNesting) {
+			synchronized (this.packageBasedConversations) {
+				Collection<String> packageConversations = this.packageBasedConversations.get(clazz);
+				if (packageConversations == null) {
+					packageConversations = this.getPackageBasedConversations(clazz, actionSuffix);
+					this.packageBasedConversations.put(clazz, packageConversations);
+				}
+				conversations.addAll(packageConversations);
+			}
+		}
+		return conversations.toArray(new String[] {});
+	}
 
-    protected boolean isModelDrivenConversation(Class<?> clazz) {
-        return (ModelDrivenConversationSupport.class.isAssignableFrom(clazz)) && !clazz.equals(ModelDrivenConversationSupport.class);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String[] getConversationsWithoutInheritance(Class<?> clazz, String actionSuffix) {
+		List<String> conversations = new ArrayList<String>(Arrays.asList(super.getConversationsWithoutInheritance(clazz, actionSuffix)));
+		if (this.isModelDrivenConversation(clazz) && !clazz.isAnnotationPresent(ConversationController.class)) {
+			conversations.add(NamingUtil.getConventionName(clazz, actionSuffix));
+		}
+		return conversations.toArray(new String[] {});
+	}
 
-    protected Collection<String> getPackageBasedConversations(Class<?> clazz, String actionSuffix) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean isConversationController(Class<?> clazz) {
+		return getConversationControllers(clazz).size() > 0 || this.isModelDrivenConversation(clazz);
+	}
 
-        String className = clazz.getName();
+	protected boolean isModelDrivenConversation(Class<?> clazz) {
+		return (ModelDrivenConversationSupport.class.isAssignableFrom(clazz)) && !clazz.equals(ModelDrivenConversationSupport.class);
+	}
 
-        LOG.debug("Getting package-based conversations for " + className);
+	protected Collection<String> getPackageBasedConversations(Class<?> clazz, String actionSuffix) {
 
-        String classPackageString = className.substring(0, className.lastIndexOf("."));
+		String className = clazz.getName();
 
-        Collection<String> packageBasedConversations = new HashSet<String>();
+		LOG.debug("Getting package-based conversations for " + className);
 
-        for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
-            String superCandidateClassName = superCandidate.getName();
-            String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
-            if (classPackageString.contains(superCandidateClassPackageString) 
-            		&& !classPackageString.equals(superCandidateClassPackageString)) {
-                
-            	LOG.debug("Adding conversations from " + superCandidateClassName);
+		String classPackageString = className.substring(0, className.lastIndexOf("."));
 
-                String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
-                packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
-            }
-        }
+		Collection<String> packageBasedConversations = new HashSet<String>();
 
-        LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
+		for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
+			String superCandidateClassName = superCandidate.getName();
+			String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
+			if (classPackageString.contains(superCandidateClassPackageString) && !classPackageString.equals(superCandidateClassPackageString)) {
 
-        return packageBasedConversations;
+				LOG.debug("Adding conversations from " + superCandidateClassName);
 
-    }
+				String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
+				packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
+			}
+		}
+
+		LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
+
+		return packageBasedConversations;
+
+	}
 
 }

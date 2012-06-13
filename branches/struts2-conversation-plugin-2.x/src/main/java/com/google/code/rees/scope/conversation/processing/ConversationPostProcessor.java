@@ -35,13 +35,13 @@ import com.google.code.rees.scope.conversation.configuration.ConversationClassCo
  */
 public interface ConversationPostProcessor extends Serializable {
 
-    /**
-     * Perform the post-processing using the given parameters
-     * 
-     * @param conversationAdapter
-     * @param conversationConfig
-     * @param conversationId
-     */
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId);
+	/**
+	 * Perform the post-processing using the given parameters
+	 * 
+	 * @param conversationAdapter
+	 * @param conversationConfig
+	 * @param conversationId
+	 */
+	public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId);
 
 }

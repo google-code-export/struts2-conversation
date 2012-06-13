@@ -45,78 +45,77 @@ import com.google.code.rees.scope.util.SessionContextUtil;
  */
 public class SpringConversationAdapter extends ConversationAdapter {
 
-    private static final long serialVersionUID = 5664922664767226366L;
+	private static final long serialVersionUID = 5664922664767226366L;
 
-    protected ConversationContextManager conversationContextManager;
-    protected Map<String, Object> sessionContext;
-    protected Map<String, String> requestContext;
-    protected Object action;
-    protected String actionId;
-    protected HttpServletRequest request;
+	protected ConversationContextManager conversationContextManager;
+	protected Map<String, Object> sessionContext;
+	protected Map<String, String> requestContext;
+	protected Object action;
+	protected String actionId;
+	protected HttpServletRequest request;
 
-    public SpringConversationAdapter(HttpServletRequest request, HandlerMethod handler, ConversationContextManager conversationContextManager) {
-        this.sessionContext = SessionContextUtil.getSessionContext(request);
-        this.requestContext = RequestContextUtil.getRequestContext(request);
-        this.action = handler.getBean();
-        this.actionId = handler.getMethod().getName();
-        this.conversationContextManager = conversationContextManager;
-    }
+	public SpringConversationAdapter(HttpServletRequest request, HandlerMethod handler, ConversationContextManager conversationContextManager) {
+		this.sessionContext = SessionContextUtil.getSessionContext(request);
+		this.requestContext = RequestContextUtil.getRequestContext(request);
+		this.action = handler.getBean();
+		this.actionId = handler.getMethod().getName();
+		this.conversationContextManager = conversationContextManager;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getAction() {
-        return this.action;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object getAction() {
+		return this.action;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getActionId() {
-        return this.actionId;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getActionId() {
+		return this.actionId;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, String> getRequestContext() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, String> getRequestContext() {
 
-        HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        if (!currentRequest.equals(this.request)) {
-            this.request = currentRequest;
-            requestContext = RequestContextUtil.getRequestContext(currentRequest);
-        }
+		if (!currentRequest.equals(this.request)) {
+			this.request = currentRequest;
+			requestContext = RequestContextUtil.getRequestContext(currentRequest);
+		}
 
-        return this.requestContext;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
+		return this.requestContext;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
 		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ConversationContext getConversationContext(String conversationName, String conversationId) {
-        return this.conversationContextManager.getContext(conversationName, conversationId);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConversationContext getConversationContext(String conversationName, String conversationId) {
+		return this.conversationContextManager.getContext(conversationName, conversationId);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ConversationContext endConversation(String conversationName, String conversationId) {
-        return this.conversationContextManager.remove(conversationName, conversationId);
-    }
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConversationContext endConversation(String conversationName, String conversationId) {
+		return this.conversationContextManager.remove(conversationName, conversationId);
+	}
 
 }

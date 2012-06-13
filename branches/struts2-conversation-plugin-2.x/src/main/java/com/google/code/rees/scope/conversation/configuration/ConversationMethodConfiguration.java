@@ -19,18 +19,17 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: ConversationMethodConfiguration.java Jun 8, 2012 5:00:00 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
-
-import java.io.Serializable;
-import java.util.Map;
+package com.google.code.rees.scope.conversation.configuration;
 
 /**
  * @author rees.byars
- * 
+ *
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public interface ConversationMethodConfiguration {
+	
+	
 
 }

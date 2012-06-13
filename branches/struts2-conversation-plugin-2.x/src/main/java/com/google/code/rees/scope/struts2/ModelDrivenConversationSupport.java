@@ -37,58 +37,57 @@ import com.opensymphony.xwork2.ModelDriven;
  * 
  * All access to the model is through the {@link #getModel()} and
  * {@link #setModel(Serializable)} methods so that retrieval and insertion of
- * the model from and into conversation instances
- * can be managed on behalf of inheriting classes.
+ * the model from and into conversation instances can be managed on behalf of
+ * inheriting classes.
  * 
  * 
  * @author rees.byars
  * 
  * @param <T>
  */
-public abstract class ModelDrivenConversationSupport<T extends Serializable>
-        extends ActionSupport implements ModelDriven<T> {
+public abstract class ModelDrivenConversationSupport<T extends Serializable> extends ActionSupport implements ModelDriven<T> {
 
-    private static final long serialVersionUID = -8313905274280660299L;
-    private T model;
+	private static final long serialVersionUID = -8313905274280660299L;
+	private T model;
 
-    /**
-     * {@inheritDoc}
-     * 
-     * The model is scoped to the conversations associated with the current
-     * request and action.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public T getModel() {
-        if (this.model == null) {
-            this.model = (T) ConversationUtil.getField(this.getModelName());
-        }
-        return this.model;
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The model is scoped to the conversations associated with the current
+	 * request and action.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getModel() {
+		if (this.model == null) {
+			this.model = (T) ConversationUtil.getField(this.getModelName());
+		}
+		return this.model;
+	}
 
-    /**
-     * Set the model. The model is scoped to the conversations associated with
-     * the current request and action.
-     * 
-     * @param model
-     */
-    public void setModel(T model) {
-        ConversationUtil.setField(this.getModelName(), model);
-        this.model = model;
-    }
+	/**
+	 * Set the model. The model is scoped to the conversations associated with
+	 * the current request and action.
+	 * 
+	 * @param model
+	 */
+	public void setModel(T model) {
+		ConversationUtil.setField(this.getModelName(), model);
+		this.model = model;
+	}
 
-    /**
-     * The name of the model used to identify it in the
-     * {@link com.google.code.rees.scope.conversation.context.ConversationContext
-     * ConversationContext}.
-     * 
-     * This can be overridden to provide the name of choice. The default is
-     * <code>this.getClass().getName()</code>.
-     * 
-     * @return
-     */
-    protected String getModelName() {
-        return this.getClass().getName();
-    }
+	/**
+	 * The name of the model used to identify it in the
+	 * {@link com.google.code.rees.scope.conversation.context.ConversationContext
+	 * ConversationContext}.
+	 * 
+	 * This can be overridden to provide the name of choice. The default is
+	 * <code>this.getClass().getName()</code>.
+	 * 
+	 * @return
+	 */
+	protected String getModelName() {
+		return this.getClass().getName();
+	}
 
 }

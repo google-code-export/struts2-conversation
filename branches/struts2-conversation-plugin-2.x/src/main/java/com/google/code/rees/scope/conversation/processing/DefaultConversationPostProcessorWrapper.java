@@ -31,33 +31,29 @@ import com.google.code.rees.scope.conversation.configuration.ConversationClassCo
  * 
  * @author rees.byars
  */
-public class DefaultConversationPostProcessorWrapper implements
-        ConversationPostProcessorWrapper {
+public class DefaultConversationPostProcessorWrapper implements ConversationPostProcessorWrapper {
 
-    private static final long serialVersionUID = -8235162251071925835L;
+	private static final long serialVersionUID = -8235162251071925835L;
 
-    private transient ConversationClassConfiguration conversationConfig;
-    private String conversationId;
-    private ConversationPostProcessor postProcessor;
-    private ConversationAdapter conversationAdapter;
+	private transient ConversationClassConfiguration conversationConfig;
+	private String conversationId;
+	private ConversationPostProcessor postProcessor;
+	private ConversationAdapter conversationAdapter;
 
-    public DefaultConversationPostProcessorWrapper(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationClassConfiguration conversationConfig, String conversationId) {
-        this.conversationAdapter = conversationAdapter;
-        this.postProcessor = postProcessor;
-        this.conversationConfig = conversationConfig;
-        this.conversationId = conversationId;
-    }
+	public DefaultConversationPostProcessorWrapper(ConversationAdapter conversationAdapter, ConversationPostProcessor postProcessor, ConversationClassConfiguration conversationConfig,
+			String conversationId) {
+		this.conversationAdapter = conversationAdapter;
+		this.postProcessor = postProcessor;
+		this.conversationConfig = conversationConfig;
+		this.conversationId = conversationId;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postProcessConversation() {
-        this.postProcessor.postProcessConversation(conversationAdapter,
-                conversationConfig, conversationId);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void postProcessConversation() {
+		this.postProcessor.postProcessConversation(conversationAdapter, conversationConfig, conversationId);
+	}
 
 }

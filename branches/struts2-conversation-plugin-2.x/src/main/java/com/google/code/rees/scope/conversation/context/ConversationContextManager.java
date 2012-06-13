@@ -48,16 +48,16 @@ public interface ConversationContextManager extends Serializable {
 	 * @param contextFactory
 	 */
 	public void setContextFactory(ConversationContextFactory contextFactory);
-	
+
 	/**
-	 * Creates a new context for the given conversation name, using the given idle time
+	 * Creates a new context for the given conversation name, using the given
+	 * idle time
 	 * 
 	 * @param conversationName
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
 	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis);
-	
 
 	/**
 	 * Retrieve the context identified by the given information, creating a new
@@ -78,7 +78,7 @@ public interface ConversationContextManager extends Serializable {
 	 * @return
 	 */
 	public ConversationContext remove(String conversationName, String conversationId);
-	
+
 	/**
 	 * Cleanup and release the manager's resources
 	 */

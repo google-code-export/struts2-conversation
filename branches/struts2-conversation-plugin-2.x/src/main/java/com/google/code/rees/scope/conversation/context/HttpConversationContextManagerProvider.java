@@ -36,45 +36,46 @@ import javax.servlet.http.HttpServletRequest;
  * 
  */
 public interface HttpConversationContextManagerProvider extends Serializable {
-	
+
 	/**
-	 * initialize this factory.  
+	 * initialize this factory.
 	 */
 	public void init();
-	
+
 	/**
 	 * The number of threads that will be used to monitor conversation timeouts
 	 * 
 	 * @param monitoringThreadPoolSize
 	 */
 	public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize);
-	
+
 	/**
 	 * set the frequency in milliseconds for monitoring timeouts
 	 * 
 	 * @param monitoringFrequency
 	 */
 	public void setMonitoringFrequency(long monitoringFrequency);
-	
+
 	/**
 	 * set the max number of instances of conversations
 	 * 
 	 * @param maxInstances
 	 */
 	public void setMaxInstances(int maxInstances);
-	
+
 	/**
 	 * set the {@link ConversationContextFactory}
+	 * 
 	 * @param conversationContextFactory
 	 */
 	public void setConversationContextFactory(ConversationContextFactory conversationContextFactory);
 
-    /**
-     * Return the {@link ConversationContextManager} for this request
-     * 
-     * @param request
-     * @return
-     */
-    public ConversationContextManager getManager(HttpServletRequest request);
+	/**
+	 * Return the {@link ConversationContextManager} for this request
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public ConversationContextManager getManager(HttpServletRequest request);
 
 }

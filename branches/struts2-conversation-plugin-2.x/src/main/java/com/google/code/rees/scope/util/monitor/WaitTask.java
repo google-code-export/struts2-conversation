@@ -35,7 +35,7 @@ import com.google.code.rees.scope.util.thread.ThreadTask;
 public class WaitTask implements ThreadTask, Serializable {
 
 	private static final long serialVersionUID = 3539233042598738551L;
-	
+
 	private long wait;
 
 	protected WaitTask(long wait) {
@@ -62,7 +62,7 @@ public class WaitTask implements ThreadTask, Serializable {
 	public void cancel() {
 		// never!!!
 	}
-	
+
 	public void setWait(long waitMillis) {
 		this.wait = waitMillis;
 	}

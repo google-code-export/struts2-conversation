@@ -19,18 +19,39 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: ConversationSupport.java Jun 7, 2012 2:36:21 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.struts2;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author rees.byars
+ * An extension of the {@link ActionSupport} that also implements
+ * {@link ConversationErrorAware}.
  * 
+ * @author rees.byars
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public class ConversationSupport extends ActionSupport implements ConversationErrorAware {
+
+	private static final long serialVersionUID = -7232415823361670467L;
+
+	protected String conversationError;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setConversationError(String conversationError) {
+		this.conversationError = conversationError;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getConversationError() {
+		return this.conversationError;
+	}
 
 }

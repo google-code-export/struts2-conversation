@@ -34,64 +34,65 @@ import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 
 /**
- * A Struts2 {@link Interceptor} that uses bi-jects @SessionField annotated fields in action classes.
+ * A Struts2 {@link Interceptor} that uses bi-jects @SessionField annotated
+ * fields in action classes.
  * 
  * @author rees.byars
  */
 public class SessionInterceptor implements Interceptor {
 
-    private static final long serialVersionUID = 3222190171260674636L;
-    private static final Logger LOG = LoggerFactory.getLogger(SessionInterceptor.class);
+	private static final long serialVersionUID = 3222190171260674636L;
+	private static final Logger LOG = LoggerFactory.getLogger(SessionInterceptor.class);
 
-    protected SessionManager sessionManager;
-    protected SessionConfigurationProvider sessionConfigurationProvider;
-    protected ActionProvider finder;
+	protected SessionManager sessionManager;
+	protected SessionConfigurationProvider sessionConfigurationProvider;
+	protected ActionProvider finder;
 
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-    public void setActionClassFinder(ActionProvider finder) {
-        this.finder = finder;
-    }
+	@Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+	public void setActionClassFinder(ActionProvider finder) {
+		this.finder = finder;
+	}
 
-    @Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
-    public void setSessionManager(SessionManager manager) {
-        this.sessionManager = manager;
-    }
+	@Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
+	public void setSessionManager(SessionManager manager) {
+		this.sessionManager = manager;
+	}
 
-    @Inject(StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
-    public void setSessionConfigurationProvider(SessionConfigurationProvider sessionConfigurationProvider) {
-        this.sessionConfigurationProvider = sessionConfigurationProvider;
-    }
+	@Inject(StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
+	public void setSessionConfigurationProvider(SessionConfigurationProvider sessionConfigurationProvider) {
+		this.sessionConfigurationProvider = sessionConfigurationProvider;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroy() {
-        LOG.info("Destroying the SessionInterceptor...");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void destroy() {
+		LOG.info("Destroying the SessionInterceptor...");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init() {
 
-    	LOG.info("Initializing the Session Interceptor...");
+		LOG.info("Initializing the Session Interceptor...");
 
-        this.sessionConfigurationProvider.init(finder.getActionClasses());
-        this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
-        
-        LOG.info("...Session Interceptor successfully initialized.");
+		this.sessionConfigurationProvider.init(finder.getActionClasses());
+		this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
 
-    }
+		LOG.info("...Session Interceptor successfully initialized.");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String intercept(ActionInvocation invocation) throws Exception {
-        this.sessionManager.processSessionFields(new StrutsSessionAdapter(invocation));
-        return invocation.invoke();
-    }
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String intercept(ActionInvocation invocation) throws Exception {
+		this.sessionManager.processSessionFields(new StrutsSessionAdapter(invocation));
+		return invocation.invoke();
+	}
 
 }

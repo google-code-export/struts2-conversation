@@ -49,8 +49,8 @@ import com.opensymphony.xwork2.inject.Inject;
  * 
  * All access to the model is through the {@link #getModel()} and
  * {@link #setModel(Serializable)} methods so that retrieval and insertion of
- * the model from and into conversation instances
- * can be managed on behalf of inheriting classes.
+ * the model from and into conversation instances can be managed on behalf of
+ * inheriting classes.
  * 
  * Use of this class requires zero configuration (no interceptors, etc.).
  * 
@@ -60,104 +60,104 @@ import com.opensymphony.xwork2.inject.Inject;
  */
 public abstract class ProgrammaticModelDrivenConversationSupport<T extends Serializable> extends ActionSupport implements ProgrammaticModelDrivenConversation<T>, Preparable {
 
-    private static final long serialVersionUID = -3567083451289146237L;
+	private static final long serialVersionUID = -3567083451289146237L;
 
-    private T model;
-    protected long maxIdleTime;
+	private T model;
+	protected long maxIdleTime;
 	private ConversationProcessor conversationProcessor;
 	private HttpConversationContextManagerProvider conversationContextManagerProvider;
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setMaxIdleTime(long maxIdleTime) {
-    	this.maxIdleTime = maxIdleTime;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
-    public void setConversationManager(ConversationProcessor manager) {
-        this.conversationProcessor = manager;
-    }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
-    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
-        this.conversationContextManagerProvider = conversationContextManagerProvider;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
+	public void setMaxIdleTime(long maxIdleTime) {
+		this.maxIdleTime = maxIdleTime;
+	}
 
-    /**
-     * {@inheritDoc}
-     * 
-     * The model is scoped to the conversations indicated by
-     * {@link #getConversations()}
-     */
-    @Override
-    public T getModel() {
-        if (this.model == null) {
-            this.model = ProgrammaticModelDrivenConversationUtil.getModel(this, this.getModelName());
-        }
-        return this.model;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
+	public void setConversationManager(ConversationProcessor manager) {
+		this.conversationProcessor = manager;
+	}
 
-    /**
-     * {@inheritDoc}
-     * 
-     * The model is scoped to the conversations indicated by
-     * {@link #getConversations()}
-     */
-    @Override
-    public void setModel(T model) {
-        ProgrammaticModelDrivenConversationUtil.setModel(model, this, this.getModelName());
-        this.model = model;
-    }
+	@Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
+	public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+		this.conversationContextManagerProvider = conversationContextManagerProvider;
+	}
 
-    /**
-     * The name of the model used to identify it in the
-     * {@link com.google.code.rees.scope.conversation.context.ConversationContext
-     * ConversationContext}.
-     * 
-     * This can be overridden to provide the name of choice. The default is
-     * <code>this.getClass().getName()</code>.
-     * 
-     * @return
-     */
-    protected String getModelName() {
-        return this.getClass().getName();
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The model is scoped to the conversations indicated by
+	 * {@link #getConversations()}
+	 */
+	@Override
+	public T getModel() {
+		if (this.model == null) {
+			this.model = ProgrammaticModelDrivenConversationUtil.getModel(this, this.getModelName());
+		}
+		return this.model;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public void prepare() {
-    	ActionContext actionContext = ActionContext.getContext();
-    	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
-        try {
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The model is scoped to the conversations indicated by
+	 * {@link #getConversations()}
+	 */
+	@Override
+	public void setModel(T model) {
+		ProgrammaticModelDrivenConversationUtil.setModel(model, this, this.getModelName());
+		this.model = model;
+	}
+
+	/**
+	 * The name of the model used to identify it in the
+	 * {@link com.google.code.rees.scope.conversation.context.ConversationContext
+	 * ConversationContext}.
+	 * 
+	 * This can be overridden to provide the name of choice. The default is
+	 * <code>this.getClass().getName()</code>.
+	 * 
+	 * @return
+	 */
+	protected String getModelName() {
+		return this.getClass().getName();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void prepare() {
+		ActionContext actionContext = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
+		ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+		try {
 			this.conversationProcessor.processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
 			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-	        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-	        actionContext.getValueStack().push(stackItem);
-        } catch (ConversationException e) {
+			stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+			actionContext.getValueStack().push(stackItem);
+		} catch (ConversationException e) {
 			LOG.error("Programmatic Conversation error in Prepare method", e);
 		}
-    }
+	}
 
-    /**
-     * Begins new instances of this class's conversations
-     */
-    protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime);
-    }
+	/**
+	 * Begins new instances of this class's conversations
+	 */
+	protected void beginConversations() {
+		ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime);
+	}
 
-    /**
-     * Continues this class's conversations associated with the current request
-     */
-    protected void continueConversations() {
-        ProgrammaticModelDrivenConversationUtil.persist(this);
-    }
+	/**
+	 * Continues this class's conversations associated with the current request
+	 */
+	protected void continueConversations() {
+		ProgrammaticModelDrivenConversationUtil.persist(this);
+	}
 
-    /**
-     * Ends this class's conversations associated with the current request
-     */
-    protected void endConversations() {
-        ProgrammaticModelDrivenConversationUtil.end(this);
-    }
+	/**
+	 * Ends this class's conversations associated with the current request
+	 */
+	protected void endConversations() {
+		ProgrammaticModelDrivenConversationUtil.end(this);
+	}
 
 }

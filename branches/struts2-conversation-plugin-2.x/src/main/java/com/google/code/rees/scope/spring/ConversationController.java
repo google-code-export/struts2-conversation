@@ -43,14 +43,14 @@ import org.springframework.stereotype.Controller;
 @Documented
 public @interface ConversationController {
 
-    public final static String DEFAULT_VALUE = "";
+	public final static String DEFAULT_VALUE = "";
 
-    public abstract String value() default DEFAULT_VALUE;
+	public abstract String value() default DEFAULT_VALUE;
 
-    /**
-     * @see {@link com.google.code.rees.scope.conversation.annotations.ConversationController#conversations()
-     *      ConversationController.conversations()}
-     * @return
-     */
-    public abstract String[] conversations() default {};
+	/**
+	 * @see {@link com.google.code.rees.scope.conversation.annotations.ConversationController#conversations()
+	 *      ConversationController.conversations()}
+	 * @return
+	 */
+	public abstract String[] conversations() default {};
 }

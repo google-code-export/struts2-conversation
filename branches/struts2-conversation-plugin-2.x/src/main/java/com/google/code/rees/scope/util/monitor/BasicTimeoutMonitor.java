@@ -34,9 +34,10 @@ import com.google.code.rees.scope.util.thread.BasicTaskThread;
 import com.google.code.rees.scope.util.thread.TaskThread;
 
 /**
- * This is a {@link Serializable} implementation of the {@link TimeoutMonitor} interface.  When serialized,
- * it stops its {@TaskThread}.  When deserialized, it calls {@link #init()}, creating a new task thread
- * and adding its serializable cache of {@link TimeoutTask TimeoutTasks} to the thread.
+ * This is a {@link Serializable} implementation of the {@link TimeoutMonitor}
+ * interface. When serialized, it stops its {@TaskThread}. When
+ * deserialized, it calls {@link #init()}, creating a new task thread and adding
+ * its serializable cache of {@link TimeoutTask TimeoutTasks} to the thread.
  * 
  * @author rees.byars
  */
@@ -48,8 +49,9 @@ public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMon
 	protected transient TaskThread taskThread;
 	protected WaitTask waiter;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
-	
-	protected BasicTimeoutMonitor() {}
+
+	protected BasicTimeoutMonitor() {
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -123,13 +125,13 @@ public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMon
 	public void onTimeout(T timeoutable) {
 		this.timeoutTasks.remove(timeoutable.getId());
 	}
-	
+
 	public static <TT extends Timeoutable<TT>> BasicTimeoutMonitor<TT> spawnInstance() {
 		BasicTimeoutMonitor<TT> monitor = new BasicTimeoutMonitor<TT>();
 		monitor.init();
 		return monitor;
 	}
-	
+
 	public static <TT extends Timeoutable<TT>> BasicTimeoutMonitor<TT> spawnInstance(long frequencyMillis) {
 		BasicTimeoutMonitor<TT> monitor = new BasicTimeoutMonitor<TT>();
 		monitor.setMonitoringFrequency(frequencyMillis);
@@ -138,9 +140,9 @@ public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMon
 	}
 
 	/**
-	 * An override of the writeObject method for serialization.  It just makes sure
-	 * that the {@link #taskThread} is destroyed.  Not likely to be necessary in
-	 * the real world, but good for a safe measure.
+	 * An override of the writeObject method for serialization. It just makes
+	 * sure that the {@link #taskThread} is destroyed. Not likely to be
+	 * necessary in the real world, but good for a safe measure.
 	 * 
 	 * @param oos
 	 * @throws IOException
@@ -151,17 +153,16 @@ public class BasicTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMon
 	}
 
 	/**
-	 * An override of the readObject method for serialization.  It
-	 * calls {@link #init()} after deserialization in order to startup
-	 * a new {@link #taskThread} and assign it the {@link #timeoutTasks}
-	 * in order to have the monitor continue monitoring after serialization.
+	 * An override of the readObject method for serialization. It calls
+	 * {@link #init()} after deserialization in order to startup a new
+	 * {@link #taskThread} and assign it the {@link #timeoutTasks} in order to
+	 * have the monitor continue monitoring after serialization.
 	 * 
 	 * @param ois
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	private void readObject(ObjectInputStream ois)
-			throws ClassNotFoundException, IOException {
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
 		ois.defaultReadObject();
 		this.init();
 	}

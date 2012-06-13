@@ -89,7 +89,7 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @return
 	 */
 	public abstract Map<String, String> getRequestContext();
-	
+
 	/**
 	 * begins a new conversation, returning the context for the new conversation
 	 * 

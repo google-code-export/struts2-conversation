@@ -19,18 +19,40 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: GuardType.java Jun 8, 2012 10:50:27 AM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
-
-import java.io.Serializable;
-import java.util.Map;
+package com.google.code.rees.scope.conversation.annotations;
 
 /**
- * @author rees.byars
  * 
+ * This enum is used to designate the type of action guarding to apply to conversation actions.
+ * Guarding is used to prevent actions from executing in the absence of valid Conversation IDs.  
+ * An ID is valid only if it corresponds to an active conversation.  This can be used to prevent
+ * users from generating odd or undesired behavior by executing conversation actions outside of
+ * a conversation context.  
+ * 
+ * @author rees.byars
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Map<K, V>, Timeoutable<T>, Serializable {
+public enum GuardType {
+	
+	/**
+	 * With {@link GuardType#NONE}, conversation actions are not guarded at all.
+	 */
+	NONE, 
+	/**
+	 * With {@link GuardType#ALL}, the conversation action will be guarded for all of its conversations, i.e. 
+	 * a valid conversation ID must be present on the request for all conversations of which the action
+	 * is a member.
+	 */
+	ALL, 
+	/**
+	 * With {@link GuardType#SUBSET}, the conversation action will be guarded for a specified subset of its conversations, i.e. 
+	 * a valid conversation ID must be present on the request for all conversations of which the action
+	 * is a member and that are in the subset.
+	 * <p>
+	 * The subset may be specified using <code>guardedConversations</code> attribute on the conversation annotations.
+	 */
+	SUBSET;
 
 }
