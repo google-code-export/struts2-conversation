@@ -29,7 +29,7 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 
 /**
  * A wrapper class for {@link ConversationPostProcessor}. Allows for
- * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationConfiguration, String)}
+ * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationClassConfigurationImpl, String)}
  * to be called without the caller needing to provide the parameters
  * 
  * @see {@link ConversationPostProcessorWrapperFactory}
@@ -40,7 +40,7 @@ public interface ConversationPostProcessorWrapper extends Serializable {
 
     /**
      * Calls
-     * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationConfiguration, String)}
+     * {@link ConversationPostProcessor#postProcessConversation(ConversationAdapter, ConversationClassConfigurationImpl, String)}
      * for an underlying post processor
      */
     public void postProcessConversation();

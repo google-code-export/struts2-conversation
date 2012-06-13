@@ -31,7 +31,7 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
  * This class is used by {@link ConversationProcessor ConversationManagers} to
- * obtain the {@link ConversationConfiguration ConversationConfigurations} for a
+ * obtain the {@link ConversationClassConfiguration ConversationConfigurations} for a
  * given action/controller class
  * 
  * @author rees.byars
@@ -62,13 +62,12 @@ public interface ConversationConfigurationProvider extends Serializable {
     public void init(Set<Class<?>> actionClasses);
 
     /**
-     * Get the {@link ConversationConfiguration ConversationConfigurations} for
+     * Get the {@link ConversationClassConfiguration ConversationConfigurations} for
      * a given class
      * 
      * @param actionClass
      * @return
      */
-    public Collection<ConversationConfiguration> getConfigurations(
-            Class<?> actionClass);
+    public Collection<ConversationClassConfiguration> getConfigurations(Class<?> actionClass);
 
 }

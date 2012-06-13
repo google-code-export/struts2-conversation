@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ScopeUtil.java reesbyars $
+ *  $Id: InjectionUtil.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.util;
 
@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author rees.byars
  */
-public class ScopeUtil {
+public class InjectionUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScopeUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InjectionUtil.class);
 
     public static Map<String, Object> getFieldValues(Object action, Map<String, Field> classScopeConfig) {
 

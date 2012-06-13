@@ -24,6 +24,7 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.monitor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.code.rees.scope.conversation.context.ConversationContext;
@@ -36,6 +37,7 @@ import com.google.code.rees.scope.testutil.SerializationTestingUtil;
  */
 public class BasicTimeoutMonitorTest {
 	
+	@Ignore
 	@Test
 	public void testSerialization() {
 		

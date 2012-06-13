@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
@@ -75,9 +75,9 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 			
 			Object action = conversationAdapter.getAction();
 			
-			Collection<ConversationConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
+			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
 			if (actionConversationConfigs != null) {
-				for (ConversationConfiguration conversationConfig : actionConversationConfigs) {
+				for (ConversationClassConfiguration conversationConfig : actionConversationConfigs) {
 					processConversation(conversationConfig, conversationAdapter, action);
 				}
 			}
@@ -98,7 +98,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 		}
 	}
 
-	protected void processConversation(ConversationConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
+	protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
 		String actionId = conversationAdapter.getActionId();
 		String conversationName = conversationConfig.getConversationName();

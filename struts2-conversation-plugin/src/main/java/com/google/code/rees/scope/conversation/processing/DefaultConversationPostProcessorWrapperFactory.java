@@ -24,7 +24,7 @@
 package com.google.code.rees.scope.conversation.processing;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
  * The default implementation of the
@@ -44,7 +44,7 @@ public class DefaultConversationPostProcessorWrapperFactory implements
     public ConversationPostProcessorWrapper create(
             ConversationAdapter conversationAdapter,
             ConversationPostProcessor postProcessor,
-            ConversationConfiguration conversationConfig, String conversationId) {
+            ConversationClassConfiguration conversationConfig, String conversationId) {
         return new DefaultConversationPostProcessorWrapper(conversationAdapter,
                 postProcessor, conversationConfig, conversationId);
     }
