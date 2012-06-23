@@ -28,6 +28,12 @@
 		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/</connection>
 		<url>http://struts2-conversation.googlecode.com/svn/trunk/</url>
 	</scm>
+	
+	<modules>
+		<module>struts2-conversation-scope-plugin</module>
+		<module>struts2-conversation-config-browser-extension</module>
+		<module>struts2-junit4-plugin</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
