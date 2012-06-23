@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +13,7 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
-	
+
 	<url>http://code.google.com/p/struts2-conversation/</url>
 
 	<licenses>
@@ -22,13 +23,13 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<scm>
 		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/</developerConnection>
 		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/</connection>
 		<url>http://struts2-conversation.googlecode.com/svn/trunk/</url>
 	</scm>
-	
+
 	<modules>
 		<module>struts2-conversation-plugin</module>
 		<module>struts2-conversation-config-browser-extension</module>
@@ -56,7 +57,7 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	  
+
 	<profiles>
 		<profile>
 			<id>release-sign-artifacts</id>
@@ -86,7 +87,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -95,6 +96,15 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<mavenExecutorId>forked-path</mavenExecutorId>
+					<useReleaseProfile>false</useReleaseProfile>
+					<arguments>-Psonatype-oss-release</arguments>
 				</configuration>
 			</plugin>
 		</plugins>
