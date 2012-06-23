@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<!-- This is helpful for debugging but should be turned off for production deployments for performance and security reasons -->
+	<constant name="struts.devMode" value="true" />
+	
+	<!-- Tell Struts where to find our messages.  Go here for more about message bundles:  http://struts.apache.org/2.x/docs/message-resource-files.html-->
+	<constant name="struts.custom.i18n.resources" value="applicationResources" />
+	
+	<!-- Tell freemarker to cache its templates for better performance -->
+	<constant name="struts.freemarker.templatesCache" value="true"/>
+	
+	<!-- tell struts filter to ignore static content access -->
+	<constant name="struts.action.excludePattern" value="/static/.*"/>
+
+	<!-- Needed to inspect class files properly on startup on WebLogic for some versions
+	
+	<constant name="struts.convention.action.fileProtocols" value="jar,zip" />
+	<constant name="struts.convention.action.includeJars" value=".*_wl_cls_gen.*" />
+	
+	Fortunately, even if not found on startup, the classes will be parsed the first time
+	its action are executed, its just nicer if its done up front.
+	 -->
+	
+	<!-- Set this to help the Conversation Plugin find actions on startup (the default is 'Action', I just prefer 'Controller')-->
+	<constant name="struts.convention.action.suffix" value="Controller" />
+	
+	<!-- These constants can be used to configure the Conversation Plugin -->
+		<!-- see also:  http://code.google.com/p/struts2-conversation/wiki/NestingConversations -->
+		<!-- see also:  http://code.google.com/p/struts2-conversation/wiki/UsageGuide#Memory_Management -->
+	<constant name="conversation.package.nesting" value="false" /> 
+	<constant name="conversation.monitoring.frequency" value="10000"/> 
+	<constant name="conversation.idle.timeout" value="90000"/> 
+	<constant name="conversation.max.instances" value="4"/>
+	<constant name="conversation.monitoring.thread.pool.size" value="4"/>
+	
+	<bean type="org.byars.struts2.example.services.RegistrationService" class="org.byars.struts2.example.services.RegistrationServiceImpl" />
+
+	<package name="registration" namespace="/registration" extends="struts-conversation-default">
+	
+		<global-results>
+			<!-- This is the result if a user submits a request for an expired or dead conversation -->
+            <result name="struts.conversation.invalid.id" type="redirectAction">
+            	<param name="actionName">begin</param>
+            	<!-- This makes use of the ConversationErrorAware interface to pass error message for a redirect -->
+            	<param name="conversationError">${conversationError}</param> 
+            </result>
+        </global-results>
+
+		<action name="*" class="org.byars.struts2.example.actions.RegistrationController" method="{1}">
+			<!-- best to put jsps in web-inf so that they must be accessed only thru Struts2 filter -->
+			<result name="success">/WEB-INF/content/registration/{1}-success.jsp</result> 
+		</action>
+
+	</package>
+
+</struts>
