@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>com.googlecode.struts2-conversation</groupId>
 			<artifactId>struts2-junit4-plugin</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
