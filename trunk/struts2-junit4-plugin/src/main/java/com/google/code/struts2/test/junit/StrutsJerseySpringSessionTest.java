@@ -15,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.google.code.struts2.test.junit.StringUtil;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.sun.jersey.api.core.PackagesResourceConfig;
@@ -23,60 +22,60 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 
 public abstract class StrutsJerseySpringSessionTest<T> extends StrutsSessionTest<T> {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(StrutsJerseySpringSessionTest.class);
-	
-	public static final int DEFAULT_PORT = 9992;
-	public static final String DEFAULT_HOST = "http://localhost:" + DEFAULT_PORT;
-	public static final String DEFAULT_SPRING_CONTEXT_LOCATION = "classpath:applicationContext.xml";
-	public static final String DEFAULT_SERVLET_MAPPING = "/*";
-	public static final String DEFAULT_BASE_SERVICES_PATH = "/";
-	
-	protected static Server server;
-	protected static ApplicationContext applicationContext;
-	protected static RestConfig restConfig;
 
-	@Before
-	@Override
-	public void setUp() throws Exception {
-		if (server == null) {
-			processRestConfig();
-			initServer();
-		}
-		injectDependencies();
-		super.setUp();
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(StrutsJerseySpringSessionTest.class);
 
-	@AfterClass
-	public static void afterClass() throws Exception {
-		destroyServer();
-		StrutsSessionTest.afterClass();
-	}
-	
-	@Override
-	protected void setupBeforeInitDispatcher() {
-		 servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
-	}
-	
-	protected void processRestConfig() {
-		if (this.getClass().isAnnotationPresent(RestConfig.class)) {
-			restConfig = this.getClass().getAnnotation(RestConfig.class);
-		} else {
-			LOG.warn("No RestConfig declared.  Use @RestConfig annotation to set configuration.  Using defaults.");
-		}
-	}
-	
-	protected void injectDependencies() {
-		applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
-	}
-	
-	protected void initServer() throws Exception {
-		LOG.info("Initializing Jetty server...");
-		ServletHolder sh = new ServletHolder(ServletContainer.class);
+    public static final int DEFAULT_PORT = 9992;
+    public static final String DEFAULT_HOST = "http://localhost:" + DEFAULT_PORT;
+    public static final String DEFAULT_SPRING_CONTEXT_LOCATION = "classpath:applicationContext.xml";
+    public static final String DEFAULT_SERVLET_MAPPING = "/*";
+    public static final String DEFAULT_BASE_SERVICES_PATH = "/";
+
+    protected static Server server;
+    protected static ApplicationContext applicationContext;
+    protected static RestConfig restConfig;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        if (server == null) {
+            processRestConfig();
+            initServer();
+        }
+        injectDependencies();
+        super.setUp();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        destroyServer();
+        StrutsSessionTest.afterClass();
+    }
+
+    @Override
+    protected void setupBeforeInitDispatcher() {
+        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
+    }
+
+    protected void processRestConfig() {
+        if (this.getClass().isAnnotationPresent(RestConfig.class)) {
+            restConfig = this.getClass().getAnnotation(RestConfig.class);
+        } else {
+            LOG.warn("No RestConfig declared.  Use @RestConfig annotation to set configuration.  Using defaults.");
+        }
+    }
+
+    protected void injectDependencies() {
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
+    }
+
+    protected void initServer() throws Exception {
+        LOG.info("Initializing Jetty server...");
+        ServletHolder sh = new ServletHolder(ServletContainer.class);
         sh.setInitParameter(ServletContainer.RESOURCE_CONFIG_CLASS, PackagesResourceConfig.class.getName());
         sh.setInitParameter(PackagesResourceConfig.PROPERTY_PACKAGES, getPackages());
         sh.setServlet(new SpringServlet());
-        
+
         server = new Server(getPort());
         Context context = new Context(server, getBasePath(), Context.SESSIONS);
         Map<String, String> params = new HashMap<String, String>();
@@ -88,50 +87,50 @@ public abstract class StrutsJerseySpringSessionTest<T> extends StrutsSessionTest
         server.start();
         LOG.info("Jetty server running.");
         applicationContext = WebApplicationContextUtils.getWebApplicationContext(context.getServletContext());
-	}
-	
-	protected static void destroyServer() throws Exception {
-		LOG.info("Stopping Jetty server...");
-		server.stop();
-		LOG.info("Jetty server stopped...");
-		LOG.info("Destroying Jetty server...");
-		server.destroy();
-		server = null;
-		LOG.info("Jetty server destroyed.");
-	}
-	
-	protected String getPackages() {
-		return this.getClass().getPackage().getName();
-	}
-	
-	protected String getBasePath() {
-		String basePath = DEFAULT_BASE_SERVICES_PATH;
-		if (restConfig != null) {
-			basePath = restConfig.baseServicesPath();
-		}
-		return basePath;
-	}
-	
-	protected String getHost() {
-		return DEFAULT_HOST;
-	}
-	
-	protected int getPort() {
-		return DEFAULT_PORT;
-	}
-	
-	protected String getSpringContextLocation() {
-		if (this.getClass().isAnnotationPresent(ContextConfiguration.class)) {
-			ContextConfiguration config = this.getClass().getAnnotation(ContextConfiguration.class);
-			String[] locations = config.locations();
-			return StringUtil.unsplit(",", locations);
-		} else {
-			return DEFAULT_SPRING_CONTEXT_LOCATION;
-		}
-	}
-	
-	protected String getServletMapping() {
-		return DEFAULT_SERVLET_MAPPING;
-	}
+    }
+
+    protected static void destroyServer() throws Exception {
+        LOG.info("Stopping Jetty server...");
+        server.stop();
+        LOG.info("Jetty server stopped...");
+        LOG.info("Destroying Jetty server...");
+        server.destroy();
+        server = null;
+        LOG.info("Jetty server destroyed.");
+    }
+
+    protected String getPackages() {
+        return this.getClass().getPackage().getName();
+    }
+
+    protected String getBasePath() {
+        String basePath = DEFAULT_BASE_SERVICES_PATH;
+        if (restConfig != null) {
+            basePath = restConfig.baseServicesPath();
+        }
+        return basePath;
+    }
+
+    protected String getHost() {
+        return DEFAULT_HOST;
+    }
+
+    protected int getPort() {
+        return DEFAULT_PORT;
+    }
+
+    protected String getSpringContextLocation() {
+        if (this.getClass().isAnnotationPresent(ContextConfiguration.class)) {
+            ContextConfiguration config = this.getClass().getAnnotation(ContextConfiguration.class);
+            String[] locations = config.locations();
+            return StringUtil.unsplit(",", locations);
+        } else {
+            return DEFAULT_SPRING_CONTEXT_LOCATION;
+        }
+    }
+
+    protected String getServletMapping() {
+        return DEFAULT_SERVLET_MAPPING;
+    }
 
 }

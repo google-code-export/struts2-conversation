@@ -17,6 +17,9 @@ public class TestActionProxy implements ActionProxy {
         this.parentProxy = parentProxy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addExecutionListener(ProxyExecutionListener listener) {
         listeners.add(listener);
     }
@@ -69,6 +72,11 @@ public class TestActionProxy implements ActionProxy {
     @Override
     public void setExecuteResult(boolean execute) {
         this.parentProxy.setExecuteResult(execute);
+    }
+
+    @Override
+    public boolean isMethodSpecified() {
+        return this.parentProxy.isMethodSpecified();
     }
 
 }

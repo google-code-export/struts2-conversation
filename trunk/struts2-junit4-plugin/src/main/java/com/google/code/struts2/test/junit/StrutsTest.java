@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.SessionMap;
@@ -101,8 +101,7 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         if (action instanceof ValidationAware) {
             return ((ValidationAware) action).hasActionErrors();
         }
-        throw new UnsupportedOperationException(
-                "Current action does not implement ValidationAware interface");
+        throw new UnsupportedOperationException("Current action does not implement ValidationAware interface");
     }
 
     /**
@@ -111,18 +110,15 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
      * For this to work the configured result for the action needs to be
      * FreeMarker, or Velocity (JSPs can be used with the Embedded JSP plugin)
      */
-    protected String executeAction(String uri) throws ServletException,
-            UnsupportedEncodingException {
+    protected String executeAction(String uri) throws ServletException, UnsupportedEncodingException {
         request.setRequestURI(uri);
         ActionMapping mapping = getActionMapping(request);
 
         assertNotNull(mapping);
-        Dispatcher.getInstance().serviceAction(request, response,
-                servletContext, mapping);
+        Dispatcher.getInstance().serviceAction(request, response, servletContext, mapping);
 
         if (response.getStatus() != HttpServletResponse.SC_OK)
-            throw new ServletException("Error code [" + response.getStatus()
-                    + "], Error: [" + response.getErrorMessage() + "]");
+            throw new ServletException("Error code [" + response.getStatus() + "], Error: [" + response.getErrorMessage() + "]");
 
         return response.getContentAsString();
     }
@@ -141,34 +137,28 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         return proxy;
     }
 
-    protected ActionProxy getActionProxy(String multipartName, File file,
-            String actionUri) {
+    protected ActionProxy getActionProxy(String multipartName, File file, String actionUri) {
         preProxySetup();
         ActionProxy proxy = this.getProxy(actionUri);
-        proxy.getInvocation().getInvocationContext()
-                .setParameters(buildMultipartParams(multipartName, file));
+        proxy.getInvocation().getInvocationContext().setParameters(buildMultipartParams(multipartName, file));
         return proxy;
     }
 
-    protected ActionProxy getTokenReadyActionProxy(String multipartName,
-            File file, String actionUri) {
+    protected ActionProxy getTokenReadyActionProxy(String multipartName, File file, String actionUri) {
         this.preProxySetup();
         this.setTokens();
         ActionProxy proxy = this.getProxy(actionUri);
-        proxy.getInvocation().getInvocationContext()
-                .setParameters(buildMultipartParams(multipartName, file));
+        proxy.getInvocation().getInvocationContext().setParameters(buildMultipartParams(multipartName, file));
         return proxy;
     }
 
-    protected Map<String, Object> buildMultipartParams(String multipartName,
-            File file) {
+    protected Map<String, Object> buildMultipartParams(String multipartName, File file) {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(request.getParameterMap());
         params.put(multipartName, file);
         params.put(multipartName + "FileName", file.getName());
-        params.put(multipartName + "ContentType", MimetypesFileTypeMap
-                .getDefaultFileTypeMap().getContentType(file));
+        params.put(multipartName + "ContentType", MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(file));
         return params;
     }
 
@@ -181,17 +171,13 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         String name = mapping.getName();
         String method = mapping.getMethod();
 
-        ActionProxy proxy = this.actionProxyFactory.createActionProxy(
-                namespace, name, method, new HashMap<String, Object>(), true,
-                false);
+        ActionProxy proxy = this.actionProxyFactory.createActionProxy(namespace, name, method, new HashMap<String, Object>(), true, false);
         TestActionProxy testProxy = new TestActionProxy(proxy);
         testProxy.addExecutionListener(this);
         this.actionFromProxy = (T) proxy.getAction();
         proxy.setExecuteResult(isExecuteResult());
-        ActionContext invocationContext = proxy.getInvocation()
-                .getInvocationContext();
-        invocationContext.setParameters(new HashMap<String, Object>(request
-                .getParameterMap()));
+        ActionContext invocationContext = proxy.getInvocation().getInvocationContext();
+        invocationContext.setParameters(new HashMap<String, Object>(request.getParameterMap()));
         invocationContext.setSession(session);
         // set the action context to the one used by the proxy
         ActionContext.setContext(invocationContext);
@@ -228,8 +214,7 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         /*
          * Add token name and token to request
          */
-        request.addParameter(TokenHelper.TOKEN_NAME_FIELD,
-                TokenHelper.DEFAULT_TOKEN_NAME);
+        request.addParameter(TokenHelper.TOKEN_NAME_FIELD, TokenHelper.DEFAULT_TOKEN_NAME);
         request.addParameter(TokenHelper.DEFAULT_TOKEN_NAME, TEST_TOKEN);
 
         /*
@@ -243,8 +228,7 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
      * Finds an ActionMapping for a given request
      */
     protected ActionMapping getActionMapping(HttpServletRequest request) {
-        return container.getInstance(ActionMapper.class).getMapping(request,
-                configurationManager);
+        return container.getInstance(ActionMapper.class).getMapping(request, configurationManager);
     }
 
     /**
@@ -292,16 +276,14 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         setupBeforeInitDispatcher();
         initDispatcherParams();
         initDispatcher(dispatcherInitParams);
-        actionProxyFactory = ((ActionProxyFactory) container
-                .getInstance(ActionProxyFactory.class));
+        actionProxyFactory = ((ActionProxyFactory) container.getInstance(ActionProxyFactory.class));
         injectStrutsDependencies(this);
     }
 
     protected void initDispatcherParams() {
         if (StringUtils.isNotBlank(getConfigPath())) {
             dispatcherInitParams = new HashMap<String, String>();
-            dispatcherInitParams.put("config", "struts-default.xml,"
-                    + getConfigPath());
+            dispatcherInitParams.put("config", "struts-default.xml," + getConfigPath());
         }
     }
 
@@ -309,11 +291,8 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         Dispatcher du = new Dispatcher(servletContext, params);
         du.init();
         Dispatcher.setInstance(du);
-        ValueStack stack = ((ValueStackFactory) du.getContainer().getInstance(
-                ValueStackFactory.class)).createValueStack();
-        stack.getContext().put(
-                "com.opensymphony.xwork2.ActionContext.container",
-                du.getContainer());
+        ValueStack stack = ((ValueStackFactory) du.getContainer().getInstance(ValueStackFactory.class)).createValueStack();
+        stack.getContext().put("com.opensymphony.xwork2.ActionContext.container", du.getContainer());
         ActionContext.setContext(new ActionContext(stack.getContext()));
         configurationManager = du.getConfigurationManager();
         configuration = configurationManager.getConfiguration();
@@ -370,16 +349,13 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
     protected void processAnnotations(String methodName) throws Exception {
         strutsConfigs = "";
         if (this.getClass().isAnnotationPresent(StrutsConfiguration.class)) {
-            StrutsConfiguration classLevelStrutsConfig = this.getClass()
-                    .getAnnotation(StrutsConfiguration.class);
-            strutsConfigs += StringUtil.unsplit(",",
-                    classLevelStrutsConfig.locations());
+            StrutsConfiguration classLevelStrutsConfig = this.getClass().getAnnotation(StrutsConfiguration.class);
+            strutsConfigs += StringUtil.unsplit(",", classLevelStrutsConfig.locations());
             strutsConfigs += ",";
         }
         Method method = this.getClass().getMethod(methodName);
         if (method.isAnnotationPresent(StrutsConfiguration.class)) {
-            StrutsConfiguration strutsConfig = method
-                    .getAnnotation(StrutsConfiguration.class);
+            StrutsConfiguration strutsConfig = method.getAnnotation(StrutsConfiguration.class);
             strutsConfigs += StringUtil.unsplit(",", strutsConfig.locations());
         }
     }
