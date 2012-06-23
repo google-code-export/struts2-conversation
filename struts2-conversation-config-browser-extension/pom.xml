@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>com.googlecode.struts2-conversation</groupId>
 			<artifactId>struts2-conversation-scope-plugin</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		
 	</dependencies>
