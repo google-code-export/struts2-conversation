@@ -11,8 +11,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<struts2.version>2.3.4</struts2.version>
-		<struts2.conversation.version>1.6.3-SNAPSHOT</struts2.conversation.version>
-		<slf4j.version>1.6.4</slf4j.version>
+		<struts2.conversation.version>1.7.0</struts2.conversation.version>
+		<slf4j.version>1.6.6</slf4j.version>
 	</properties>
 
 	<dependencies>
