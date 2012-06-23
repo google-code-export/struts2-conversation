@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.googlecode.struts2-conversation</groupId>
-	<artifactId>struts2-parent</artifactId>
+	<artifactId>struts2-conversation</artifactId>
 	<version>1.6.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
