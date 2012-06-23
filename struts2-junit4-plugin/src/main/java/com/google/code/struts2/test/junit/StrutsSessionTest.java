@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.util.StrutsTestCaseHelper;
@@ -47,16 +47,13 @@ public class StrutsSessionTest<T> extends StrutsTest<T> {
             processAnnotations(currentlyExecutingTest.getMethodName());
             if (StringUtils.isNotBlank(getConfigPath())) {
                 dispatcherInitParams = new HashMap<String, String>();
-                dispatcherInitParams.put("config", "struts-default.xml,"
-                        + getConfigPath());
+                dispatcherInitParams.put("config", "struts-default.xml," + getConfigPath());
             }
-            Dispatcher dispatcher = StrutsTestCaseHelper.initDispatcher(
-                    servletContext, dispatcherInitParams);
+            Dispatcher dispatcher = StrutsTestCaseHelper.initDispatcher(servletContext, dispatcherInitParams);
             configurationManager = dispatcher.getConfigurationManager();
             configuration = configurationManager.getConfiguration();
             container = configuration.getContainer();
-            actionProxyFactory = ((ActionProxyFactory) container
-                    .getInstance(ActionProxyFactory.class));
+            actionProxyFactory = ((ActionProxyFactory) container.getInstance(ActionProxyFactory.class));
         }
         super.configuration = configuration;
         super.configurationManager = configurationManager;
