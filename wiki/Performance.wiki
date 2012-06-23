@@ -2,7 +2,7 @@
 
 To get some gauge of the performance cost of using the Conversation Plugin, a tweaked version of the [http://code.google.com/p/struts2-conversation/wiki/EclipseAndMavenGuide simple-annotation-example app] was deployed on the [http://www.heroku.com/ Heroku] Cedar Stack using the free, single Web Dyno.
 
-For comparison, the same class was configured in two different packages in the struts.xml:  in one package, the Conversation Plugin's scopeInjection interceptor was applied, in the other package the XWork scopedModelDriven interceptor was applied.
+For comparison, the same class was configured in two different packages in the struts.xml:  in one package, the Conversation Plugin's conversation interceptor was applied, in the other package the XWork scopedModelDriven interceptor was applied.
 
 The begin action was chosen for the test URL for both packages.  The first begin action of a session is the most expensive conversation action:  various session-scoped conversation components are not created until first needed.  For both packages, the Jetty container (the container used on the Cedar Stack) has to create new HttpSessions for each request.
 
@@ -18,17 +18,13 @@ The graphs below display the results of the tests:
 
 ==Conversation Plugin Performance==
 
-http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-response-times.PNG
-
-http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-begin-action-load-test-report-hit-rate.PNG
+http://struts2-conversation.googlecode.com/svn/wiki/img/heroku-conversation-response-times-6-23-2012.PNG
 
 ----
 
 ==ScopedModelDrivenInterceptor Performance==
 
-http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-scoped-model-action-load-test-report-response-times.PNG
-
-http://struts2-conversation.googlecode.com/svn/wiki/img/struts2-conversation-showcase-scoped-model-action-load-test-report-hit-rate.PNG
+http://struts2-conversation.googlecode.com/svn/wiki/img/heroku-scoped-model-response-times-6-23-2012.PNG
 
 ----
 
