@@ -1,7 +1,7 @@
 This setup guide includes directions for installing Eclipse and adding the Maven and SVN plugins and for checking out and running an example application.
 
 ===Install Eclipse===
-Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&url=http://www.gtlib.gatech.edu/pub/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32.zip&mirror_id=337 32-bit]] [[http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&url=http://mirrors.xmission.com/eclipse/technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-win32-x86_64.zip&mirror_id=518 64-bit]]
+Download Eclipse and install it. [[http://www.eclipse.org/downloads/ download page]]
 
 ===Install M2E Maven Plugin===
  # Open Eclipse
