@@ -22,7 +22,7 @@ Download Eclipse and install it.  Eclipse downloads: [[http://www.eclipse.org/do
  # You should now see the "SVN Repositories" sub-window on the left.
  # Right-click in the white area of the SVN Repositories view.
  # Select New->Repository Location
- # Enter the following as the URL:  http://struts2-conversation.googlecode.com/svn/trunk/examples
+ # Enter the following as the URL:  http://struts2-conversation.googlecode.com/svn/support/examples
  # Expand the new repository directory.
  # You should see folders for each of the example projects.
  # Right click on one of the projects and select "Checkout..."
