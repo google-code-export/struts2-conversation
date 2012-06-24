@@ -92,7 +92,7 @@ More on global result mapping in Struts2:  http://struts.apache.org/2.x/docs/exc
 
 ----
 
-  ===Unit Testing===
+==Unit Testing==
 This is an example of how to test actions against the interceptor stack
 {{{
 public class RegistrationControllerTest extends StrutsJUnit4TestCase<RegistrationController> {
@@ -132,7 +132,7 @@ public class RegistrationControllerTest extends StrutsJUnit4TestCase<Registratio
 }
 }}}
 ----
-===Spring===
+==Spring==
 For use with the Spring IoC container, a custom conversation scope is provided.  Add the following to your applicationContext.xml:
 {{{
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
