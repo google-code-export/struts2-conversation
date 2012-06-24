@@ -4,6 +4,8 @@
   # [#Conversation_Redirects Conversation Redirects]
   # [#Memory_Management Memory Management]
   # [#Error_Mapping Error Mapping]
+  # [#Unit_Testing Unit Testing]
+  # [#Spring Spring]
 
 ----
 
@@ -87,3 +89,105 @@ Inevitably, users will sometimes submit a request that contains an ID for a conv
 }}}
 
 More on global result mapping in Struts2:  http://struts.apache.org/2.x/docs/exception-configuration.html
+
+----
+
+  ===Unit Testing===
+This is an example of how to test actions against the interceptor stack
+{{{
+public class RegistrationControllerTest extends StrutsJUnit4TestCase<RegistrationController> {
+
+     @ConversationField
+     RegistrationModel registrationModel;
+
+     @Test
+     public testContinueRegistration() throws Exception {
+
+         //set test data
+         registrationModel = RegistrationFactory.getNewModel();
+         registrationModel.setSomeField("oopy doopy");
+		
+         //place IDs on request
+	 ScopeTestUtil.setConversationIdsOnRequest(request);
+	
+         //create proxy for the action
+	 ActionProxy proxy = this.getActionProxy("/registration/continue-registration.action");
+		
+         //extract the test data from the test class into the session
+	 ScopeTestUtil.extractScopeFields(this);
+		
+         //execute the action/proxy and obtain result
+	 String result = proxy.execute();
+	
+         //assert result
+	 assertEquals(Action.SUCCESS, result);
+		
+         //inject the scoped fields back into the test from the session
+	 ScopeTestUtil.injectScopeFields(this);
+
+         //assert some value
+         assertEquals("Cinco Phone", registrationModel.getSomeField());
+     }
+
+}
+}}}
+----
+===Spring===
+For use with the Spring IoC container, a custom conversation scope is provided.  Add the following to your applicationContext.xml:
+{{{
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="conversation">
+                    <bean class="com.google.code.rees.scope.spring.ConversationScope"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="registrationModel" class="com.google.code.rees.scope.mocks.beans.RegistrationModel" scope="conversation"/>
+}}}
+Then in your java classes, you can autowire conversation-scoped dependencies:
+{{{
+@ConversationController
+public class RegistrationController extends ActionSupport implements ModelDriven<RegistrationModel> {
+
+     //injection of this field now managed by Spring IoC container
+     //yet its scope is still managed by the Struts2 ConversationManager.
+     //The scope must be declared as "conversation" in a context file
+     //or using the @Scope("conversation") annotation on the model class
+     @Autowired
+     private RegistrationModel registrationModel; 
+
+     @Action("begin-registration")
+     public String beginRegistration() {
+          return SUCCESS;
+     }
+
+     @Action("continue-registration")
+     public String continueRegistration() {
+          return SUCCESS;
+     }
+
+     @Action("end-registration")
+     public String endRegistration() {
+          return SUCCESS;
+     }
+
+     public RegistrationModel getModel() {
+          return registrationModel;
+     }
+}
+}}}
+Using Spring, the conversation-scoped beans now become available in other Spring-managed beans as well:
+{{{
+public class ConversationRegistrationService implements RegistrationService {
+
+     @Autowired
+     private RegistrationModel registrationModel; 
+
+     ......
+
+}
+}}}
+----
