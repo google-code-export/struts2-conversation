@@ -57,7 +57,7 @@ http://struts2-conversation.googlecode.com/svn/wiki/img/heroku-scoped-model-resp
 		<interceptors>
 			
 			<interceptor-stack name="registrationStack">
-				<interceptor-ref name="scopeInjection" />
+				<interceptor-ref name="conversation" />
 				<interceptor-ref name="i18n" />
 				<interceptor-ref name="modelDriven" />
 				<interceptor-ref name="actionMappingParams"/>
