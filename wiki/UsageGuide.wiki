@@ -78,7 +78,7 @@ It is important to note the an HttpSessionListener is used to cleanup each sessi
 
 ==Error Mapping==
 
-_since 1.7.0_
+_since v1.7.0_ (in v1.6.2, the result key was "conversation.exception" and the message functionality was absent)
 
 Inevitably, users will sometimes submit a request that contains an ID for a conversation that has already expired or that has been explicitly ended on another tab that they have open.  When this happens, the framework will produce a "conversation.exception" result.  This value can be used to map conversation errors gracefully (or not!):
 
