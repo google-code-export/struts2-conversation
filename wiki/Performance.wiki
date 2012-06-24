@@ -10,7 +10,7 @@ The [http://blitz.io/ Blitz load testing app] was used to perform load testing.
 
 The free version of Blitz will simulate up to 250 concurrent users making repeated requests to a URL for 1 minute.  This ends up being about 7,000 requests in a minute.  If the response is not received within 1 second, the request times-out.
 
-The results support the assumption that the conversation-processing overhead is minimal and that it compares favorably with the performance of the ScopedModelDrivenInterceptor.  
+The results support the assumption that the conversation-processing overhead is minimal and that it compares favorably with the performance of the ScopedModelDrivenInterceptor.  Yet the conversation approach is simpler to configure, simpler to code in the action classes, and offers greater functionality than the basic session-scope approach.
 
 These tests were run multiple times.
 
