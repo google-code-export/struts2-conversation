@@ -12,7 +12,9 @@ The free version of Blitz will simulate up to 250 concurrent users making repeat
 
 The results support the assumption that the conversation-processing overhead is minimal and that it compares favorably with the performance of the ScopedModelDrivenInterceptor.  
 
-The graphs below display the results of the tests:
+These tests were run multiple times.
+
+The graphs below display a typical set of results of from these tests:
 
 ----
 
