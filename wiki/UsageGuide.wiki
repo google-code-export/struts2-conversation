@@ -78,17 +78,31 @@ It is important to note the an HttpSessionListener is used to cleanup each sessi
 
 ==Error Mapping==
 
-_since 1.6.2_
+_since 1.7.0_
 
 Inevitably, users will sometimes submit a request that contains an ID for a conversation that has already expired or that has been explicitly ended on another tab that they have open.  When this happens, the framework will produce a "conversation.exception" result.  This value can be used to map conversation errors gracefully (or not!):
 
 {{{
         <global-results>
-            <result name="conversation.exception">/GlobalConversationException.jsp</result>
+            <result name="struts.conversation.invalid.id">/globalConversationException.jsp</result>
         </global-results>
 }}}
 
 More on global result mapping in Struts2:  http://struts.apache.org/2.x/docs/exception-configuration.html
+
+Add messages in this format to a resource bundle to customize conversation error messages for your users (yes, these are stupid messages intended for learning purposes):
+{{{
+struts.conversation.invalid.id=Your request did not contain a valid ID.  Please try again. (${conversation.name}:${conversation.id})
+struts.conversation.invalid.id.registration_conversation=This Registration Session has expired.  Please begin a new one, Jack.
+}}}
+
+The first message above would display the conversation name and ID.  These could be included in a message to help in debugging, etc.
+
+The second message above uses the conversation name in the key.  In this way, conversation-specific messages can be provided in place of the default (the first message).
+
+If no message are specified, then the default message is: "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed."
+
+These messages are placed on the ValueStack, so they can be referenced from the view using {{{<s:property value="struts.conversation.invalid.id" />}}}.  Note that this is always the key used, don't try appending the conversation name like is done in the resource bundle.
 
 ----
 
