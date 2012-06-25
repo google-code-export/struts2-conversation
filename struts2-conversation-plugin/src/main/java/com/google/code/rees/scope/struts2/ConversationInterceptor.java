@@ -248,13 +248,14 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
 		stackContext.put(CONVERSATION_EXCEPTION_NAME_STACK_KEY, cie.getConversationName());
 		stackContext.put(CONVERSATION_EXCEPTION_ID_STACK_KEY, cie.getConversationId());
 		
+		//message key for the conversation
+		final String conversationSpecificMessageKey = CONVERSATION_ID_EXCEPTION_KEY + "." + cie.getConversationName();
+		
 		//First, we attempt to get a conversation-specific message from a bundle
-		String errorMessage = LocalizedTextUtil.findText(this.getClass(), 
-				new StringBuilder(CONVERSATION_ID_EXCEPTION_KEY).append(".").append(cie.getConversationName()).toString(), 
-				locale);
+		String errorMessage = LocalizedTextUtil.findText(this.getClass(), conversationSpecificMessageKey, locale);
 		
 		//If conversation specific message not found, get generic message, if that not found use default
-		if (errorMessage == null) {
+		if (errorMessage == null || errorMessage.equals(conversationSpecificMessageKey)) {
 			errorMessage = LocalizedTextUtil.findText(this.getClass(), CONVERSATION_ID_EXCEPTION_KEY, locale,
                     "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed.", new Object[0]);
 		}
