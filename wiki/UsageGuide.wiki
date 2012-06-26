@@ -73,6 +73,8 @@ It is important to note the an HttpSessionListener is used to cleanup each sessi
 </listener>
 }}}
 
+Another important point for @ConversationField annotated fields is to be aware of the default field-to-conversation assignment behavior.  By default, conversation fields declared in sub-conversations are also stored in the context of the super conversations.  This is the default behavior because it lends to quicker development time and incurs little cost unless the field has a large memory imprint.  For such cases as when the field has a large memory cost that needs to be minimized, the _conversations_ attribute of the @ConversationField annotation should be used to specify the exact conversations whose context should include the field.  
+
 ----
 
 
