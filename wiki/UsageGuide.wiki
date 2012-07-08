@@ -33,7 +33,7 @@ public class ExampleAction extends ActionSupport implements ModelDriven<ExampleM
     }
     
     public String intermediateAction() {
-        exampleModel = new ExampleModel();
+        //do something with the data
         return SUCCESS;
     }
     
@@ -66,7 +66,6 @@ public class ExampleAction extends ActionSupport implements ModelDriven<ExampleM
     
     @ConversationAction(conversations = "example") 
     public String intermediateAction() {
-        exampleModel = new ExampleModel();
         return SUCCESS;
     }
     
