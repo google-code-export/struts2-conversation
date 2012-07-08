@@ -1,12 +1,83 @@
 #labels Phase-Implementation
 =Sections=
 
+  # [#Annotations Annotations]
   # [#Conversation_Redirects Conversation Redirects]
   # [#Memory_Management Memory Management]
   # [#Error_Mapping Error Mapping]
-  # [#Annotations Annotations]
   # [#Unit_Testing Unit Testing]
   # [#Spring Spring]
+
+----
+
+==Annotations==
+
+Examples of the available annotations:
+
+The @ConversationController annotation is a "convention-over-configuration" tool that can be used to include all the actions in an action class as conversation actions, using the convention that action methods that begin with "begin" or "end" will begin or end the controller's conversation, respectively, and that the default conversation name will be the action class name minus the action suffix (so in the below example the conversation name is "example"):  
+
+{{{
+@ConversationController
+public class ExampleAction extends ActionSupport implements ModelDriven<ExampleModel> {
+    
+    @ConversationField private ExampleModel exampleModel;
+    
+    public String beginAction() {
+        exampleModel = new ExampleModel();
+        return SUCCESS;
+    }
+    
+    public String intermediateAction() {
+        exampleModel = new ExampleModel();
+        return SUCCESS;
+    }
+    
+    public String endAction() {
+        //do something with the data
+        return SUCCESS;
+    }
+
+    @Override
+    public ExampleModel getModel() {
+        return exampleModel;
+    }
+
+}
+}}}
+
+Alternatively, the @BeginConversation, @ConversationAction, and @EndConversation annotations can be used:
+
+{{{
+public class ExampleAction extends ActionSupport implements ModelDriven<ExampleModel> {
+    
+    @ConversationField(conversations = "example") 
+    private ExampleModel exampleModel;
+    
+    @BeginConversation(conversations = "example") 
+    public String beginAction() {
+        exampleModel = new ExampleModel();
+        return SUCCESS;
+    }
+    
+    @ConversationAction(conversations = "example") 
+    public String intermediateAction() {
+        exampleModel = new ExampleModel();
+        return SUCCESS;
+    }
+    
+    @EndConversation(conversations = "example") 
+    public String endAction() {
+        //do something with the data
+        return SUCCESS;
+    }
+
+    @Override
+    public ExampleModel getModel() {
+        return exampleModel;
+    }
+
+}
+}}}
 
 ----
 
@@ -106,77 +177,6 @@ The second message above uses the conversation name in the key.  In this way, co
 If no message are specified, then the default message is: "The workflow that you are attempting to continue has ended or expired.  Your requested action was not processed."
 
 These messages are placed on the ValueStack, so they can be referenced from the view using {{{<s:property value="struts.conversation.invalid.id" />}}}.  Note that this is always the key used, don't try appending the conversation name like is done in the resource bundle.
-
-----
-
-==Annotations==
-
-Examples of the available annotations:
-
-The @ConversationController annotation is a "convention-over-configuration" tool that can be used to include all the actions in an action class as conversation actions, using the convention that action methods that begin with "begin" or "end" will begin or end the controller's conversation, respectively, and that the default conversation name will be the action class name minus the action suffix (so in the below example the conversation name is "example"):  
-
-{{{
-@ConversationController
-public class ExampleAction extends ActionSupport implements ModelDriven<ExampleModel> {
-    
-    @ConversationField private ExampleModel exampleModel;
-    
-    public String beginAction() {
-        exampleModel = new ExampleModel();
-        return SUCCESS;
-    }
-    
-    public String intermediateAction() {
-        exampleModel = new ExampleModel();
-        return SUCCESS;
-    }
-    
-    public String endAction() {
-        //do something with the data
-        return SUCCESS;
-    }
-
-    @Override
-    public ExampleModel getModel() {
-        return exampleModel;
-    }
-
-}
-}}}
-
-Alternatively, the @BeginConversation, @ConversationAction, and @EndConversation annotations can be used:
-
-{{{
-public class ExampleAction extends ActionSupport implements ModelDriven<ExampleModel> {
-    
-    @ConversationField(conversations = "example") 
-    private ExampleModel exampleModel;
-    
-    @BeginConversation(conversations = "example") 
-    public String beginAction() {
-        exampleModel = new ExampleModel();
-        return SUCCESS;
-    }
-    
-    @ConversationAction(conversations = "example") 
-    public String intermediateAction() {
-        exampleModel = new ExampleModel();
-        return SUCCESS;
-    }
-    
-    @EndConversation(conversations = "example") 
-    public String endAction() {
-        //do something with the data
-        return SUCCESS;
-    }
-
-    @Override
-    public ExampleModel getModel() {
-        return exampleModel;
-    }
-
-}
-}}}
 
 ----
 
