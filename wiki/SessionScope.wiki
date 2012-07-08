@@ -9,6 +9,8 @@ Use of this approach is a matter of taste:  instead of XML configuration, boiler
 Compare the following:
 
 ===SessionAware Approach===
+
+java:
 {{{
 public class ExampleAction extends ActionSupport implements SessionAware, ModelDriven<ExampleModel> {
     
@@ -105,6 +107,7 @@ xml:
 <interceptor-ref name="exampleModelInterceptor" />
 }}}
 ===@SessionField Approach===
+
 the java:
 {{{
 public class ExampleAction extends ActionSupport implements ModelDriven<ExampleModel> {
@@ -128,8 +131,11 @@ public class ExampleAction extends ActionSupport implements ModelDriven<ExampleM
 
 }
 }}}
+
 the xml:
 {{{
 <!-- add to your interceptor stack -->
 <interceptor-ref name="sessionField" />
 }}}
+
+----
