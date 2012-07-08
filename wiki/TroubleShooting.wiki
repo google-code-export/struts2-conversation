@@ -5,21 +5,11 @@ This page covers solutions to simple setup/detail issues that can be big headach
 
 The plugin uses slf4j for logging.  Without having the slf4j jars in your WAR file, the plugin's classes cannot be loaded.
 
-To download the API, go [http://repo2.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/ here].
-
-For Maven users, include this dependency:
-
-{{{
-<dependency>
-   <groupId>org.slf4j</groupId>
-   <artifactId>slf4j-api</artifactId>
-   <version>1.6.4</version>
-</dependency>
-}}}
+To download the API, go [http://repo2.maven.org/maven2/org/slf4j/slf4j-api/1.6.6/ here].
 
 The API will also need an implementation.  I use log4j.
 
-Download it [http://repo2.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.4/ here].
+Download it [http://repo2.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.6/ here].
 
 And for Maven:
 
@@ -27,7 +17,7 @@ And for Maven:
 <dependency>
    <groupId>org.slf4j</groupId>
    <artifactId>slf4j-log4j12</artifactId>
-   <version>1.6.4</version>
+   <version>1.6.6</version>
 </dependency>
 }}}
 
@@ -36,7 +26,7 @@ And for Maven:
 
 Sometimes with a larger application, it may become difficult to keep track of and quickly trouble shoot the conversation-flow aspects of all the actions.  
 
-The Conversation Config Browser is a simple to use drop-in extension to the [http://mvnrepository.com/artifact/org.apache.struts/struts2-config-browser-plugin/2.3.1.2 Struts2 Config Browser Plugin] that includes a tab for viewing the Conversation flow details of each action in the application at run-time.
+The Conversation Config Browser is a simple to use drop-in extension to the [http://mvnrepository.com/artifact/org.apache.struts/struts2-config-browser-plugin/2.3.4 Struts2 Config Browser Plugin] that includes a tab for viewing the Conversation flow details of each action in the application at run-time.
 
 The extension is available from the Downloads link above or though Maven with the following dependency:
 
@@ -44,7 +34,7 @@ The extension is available from the Downloads link above or though Maven with th
 <dependency>
    <groupId>com.googlecode.struts2-conversation</groupId>
    <artifactId>struts2-conversation-config-browser-extension</artifactId>
-   <version>1.6.2</version>
+   <version>${struts.conversation.version}</version>
 </dependency>
 }}}
 
