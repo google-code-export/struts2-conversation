@@ -1,0 +1,18 @@
+#labels Phase-Requirements
+This space is for suggestion and discussion of future features and listing of planned features.
+
+Leave a comment to provide your two cents or make a feature request.
+
+===Planned Features===
+  * Add a _maxInstances_ attribute to the _@BeginConversation_ annotation to allow finer-grained control and configuration.  _Planned version:  1.8.0_
+  * Add OGNL expression evaluation support for the _maxIdleTimeMillis_ attribute of the _@BeginConversation_ annotation.  This will allow for dynamically setting the timeout of a conversation by, for instance, putting a _getTimeout()_ method in your action class and setting _maxIdleTimeMillis="${timeout}"_.  _Planned version:  1.8.0_
+  * Add Spring/Hibernate session/transaction support to make it simple to bind a transaction to a conversation.  _Planned version:  1.9.0_
+
+
+===Tentative Release Schedule===
+  *  v1.8.0 - August 2012
+  *  v1.9.0 - September 2012
+
+
+
+Please leave any feedback or suggestions that you have; don't be shy!
