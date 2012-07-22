@@ -11,7 +11,7 @@ Leave a comment to provide your two cents or make a feature request.
 
 ===Tentative Release Schedule===
   *  v1.8.0 - September 2012
-  *  v1.9.0 - October 2012
+  *  v1.9.0 - November 2012
 
 
 
