@@ -44,6 +44,13 @@
 			<email>reesDOTbyarsATG00GLEMAIL</email>
 		</developer>
 	</developers>
+	
+	<inceptionYear>2012</inceptionYear>
+	
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/struts2-conversation/issues/</url>
+	</issueManagement>
 
 	<scm>
 		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/</developerConnection>
@@ -55,7 +62,6 @@
 		<module>struts2-conversation-plugin</module>
 		<module>struts2-conversation-config-browser-extension</module>
 		<module>struts2-junit4-plugin</module>
-		<module>struts2-conversation-parent</module>
 	</modules>
 
 	<properties>
