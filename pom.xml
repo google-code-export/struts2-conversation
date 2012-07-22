@@ -22,6 +22,28 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Rees Byars</name>
+			<roles>
+				<role>
+					Creator
+				</role>
+				<role>
+					Lead Designer
+				</role>
+				<role>
+					Lead Engineer
+				</role>
+				<role>
+					Lead Coffee Brewer
+				</role>
+			</roles>
+			<timezone>-4</timezone>
+			<email>reesDOTbyarsATG00GLEMAIL</email>
+		</developer>
+	</developers>
 
 	<scm>
 		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/</developerConnection>
@@ -33,11 +55,11 @@
 		<module>struts2-conversation-plugin</module>
 		<module>struts2-conversation-config-browser-extension</module>
 		<module>struts2-junit4-plugin</module>
+		<module>struts2-conversation-parent</module>
 	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<currentVersion>${project.version}</currentVersion>
 		<struts2.version>2.3.4</struts2.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
 	</properties>
