@@ -244,6 +244,18 @@ public class ConversationUtil {
 		}
 		return adapter.getConversationContext(name, id);
 	}
+	
+	/**
+	 * Given the conversation name without the "_conversation" suffix, returns that conversation's context for the
+	 * current request.
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext getContextUsingSimpleName(String name) {
+		return getContext(name + ConversationConstants.CONVERSATION_NAME_SUFFIX);
+	}
 
 	/**
 	 * An array of all active conversations for the current request.

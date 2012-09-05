@@ -81,6 +81,14 @@ public abstract class ConversationAdapter implements Serializable {
 	 * @return
 	 */
 	public abstract String getActionId();
+	
+	/**
+	 * The context for the action execution (models, etc.).  Guaranteed to have the active conversation contexts placed in it prior to action execution.
+	 * This responsibility lies with the ConversationProcessor.
+	 * 
+	 * @return
+	 */
+	public abstract Map<String, Object> getActionContext();
 
 	/**
 	 * Returns a map containing, at a minimum, conversation name/id key/value
@@ -146,7 +154,30 @@ public abstract class ConversationAdapter implements Serializable {
 			postProcessor.postProcessConversation();
 		}
 	}
-
+	
+	/**
+	 * Use the underlying framework's dynamic expression evaluation mechanism to evaluate/execute 
+	 * expressions with the current action's context and the conversation contexts
+	 * associated with the {@link #getRequestContext() request context}.  So, this will include
+	 * conversation contexts that are about to end or are continuing, but not contexts that are about
+	 * to begin.  This should only be called before the ConversationProcessor processes the 
+	 * conversations because, after processing, the conversations
+	 * that are ending will no longer exist.
+	 */
+	public abstract Object preEvaluate(String expression);
+	
+	/**
+	 * Use the underlying framework's dynamic expression evaluation mechanism to evaluate/execute 
+	 * expressions with the current action's context and the conversation contexts
+	 * associated with the {@link #getViewContext() view context}.  So, this will include
+	 * conversation contexts that have just begun or are continuing, but not contexts that are ending (i.e.
+	 * the same contexts that will be available from the Action Context.
+	 * <p>
+	 * guaranteed to have the conversation contexts already present in the {@link #getActionContext() action context}
+	 * after <code>ConversationProcessor.processConversations()</code> is called
+	 */
+	public abstract Object postEvaluate(String expression);
+	
 	/**
 	 * Set the {@link ThreadLocal} ConversationAdapter for use with the current
 	 * request. Called in the constructor to force new instances into the
@@ -167,4 +198,12 @@ public abstract class ConversationAdapter implements Serializable {
 	public static ConversationAdapter getAdapter() {
 		return conversationAdapter.get();
 	}
+	
+	/**
+	 * clean up this resource once processing is completed for the request
+	 */
+	public static void cleanup() {
+		conversationAdapter.remove();
+	}
+	
 }

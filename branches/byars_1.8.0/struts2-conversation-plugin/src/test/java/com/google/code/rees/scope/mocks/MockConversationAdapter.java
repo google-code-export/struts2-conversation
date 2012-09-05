@@ -96,4 +96,22 @@ public class MockConversationAdapter extends ConversationAdapter {
 		return new MockConversationAdapter(request, contextManagerProvider);
 	}
 
+	@Override
+	public Map<String, Object> getActionContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object preEvaluate(String expression) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object postEvaluate(String expression) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

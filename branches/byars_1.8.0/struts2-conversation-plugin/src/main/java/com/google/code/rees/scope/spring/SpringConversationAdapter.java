@@ -117,6 +117,33 @@ public class SpringConversationAdapter extends ConversationAdapter {
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Map<String, Object> getActionContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public Object preEvaluate(String expression) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public Object postEvaluate(String expression) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }

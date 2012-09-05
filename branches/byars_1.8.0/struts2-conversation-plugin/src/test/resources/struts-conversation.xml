@@ -14,6 +14,8 @@
 	
 	<constant name="struts.convention.package.locators" value="actions" />
 	
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"/>
+	
 	<package name="session-field-convention-test-default" extends="struts-conversation-default">
 		
 		<action name="configuration-action"

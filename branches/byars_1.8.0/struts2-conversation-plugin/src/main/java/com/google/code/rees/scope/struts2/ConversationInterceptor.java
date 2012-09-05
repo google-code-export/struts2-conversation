@@ -228,6 +228,7 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     public void beforeResult(ActionInvocation invocation, String result) {
         ConversationAdapter.getAdapter().executePostProcessors();
         invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+        //ConversationAdapter.cleanup();
     }
     
     /**

@@ -28,6 +28,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.google.code.rees.scope.conversation.ConversationConstants;
+
 /**
  * Denotes a method as a conversation-initiating method. Depending on
  * the {@link com.google.code.rees.scope.conversation.configuration.ConversationArbitrator
@@ -57,8 +59,26 @@ public @interface BeginConversation {
     public abstract String[] conversations() default {};
     
     /**
-     * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.
+     * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.  An OGNL expression
+     * can be used set the threshold dynamically.
      */
     public abstract long maxIdleTimeMillis() default -1L;
+    
+    /**
+     * The max number of instances allowed for this conversation.
+     */
+    public abstract int maxInstances() default ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+    
+    /**
+     * if set to <code>true</code>, the framework will manage opening and closing a JPA transaction when the conversation begin and end/expires, respectively.
+     * the default value is <code>false</code>.
+     */
+    public abstract boolean transactional() default false;
+    
+    /**
+     * An OGNL expression that will be evaluated against the ***********************
+     * @return
+     */
+    public abstract String preExpression() default "";
 
 }
