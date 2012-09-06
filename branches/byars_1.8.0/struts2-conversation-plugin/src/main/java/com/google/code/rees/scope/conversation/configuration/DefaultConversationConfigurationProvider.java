@@ -128,7 +128,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                     for (String conversation : fieldConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationClassConfiguration(conversation);
+                            configuration = new ConversationClassConfigurationImpl(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
@@ -149,7 +149,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                     for (String conversation : methodConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationClassConfiguration(conversation);
+                            configuration = new ConversationClassConfigurationImpl(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
@@ -168,7 +168,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                     for (String conversation : methodBeginConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationClassConfiguration(conversation);
+                            configuration = new ConversationClassConfigurationImpl(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         
@@ -196,7 +196,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                     for (String conversation : methodEndConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
-                            configuration = new ConversationClassConfiguration(conversation);
+                            configuration = new ConversationClassConfigurationImpl(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {

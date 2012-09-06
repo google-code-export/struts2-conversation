@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.junit.Before;
 
+//TODO:  add mock adapter and test the conversation functions
+//TODO:  add active conversation context exploration with three columns:  name/key, class, toString
 public abstract class EvalTest {
 	
 	protected Eval eval;

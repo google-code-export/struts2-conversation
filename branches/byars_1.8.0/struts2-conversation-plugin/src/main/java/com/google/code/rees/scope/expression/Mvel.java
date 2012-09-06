@@ -17,11 +17,11 @@ public class Mvel implements Eval {
 	private static final String CONVERSATION_ACCESSOR = 
 			"${ if (isdef cGet) { return '';} def cGet(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.getContextUsingSimpleName(c_name); } return ''; }";
 	private static final String CONVERSATION_TERMINATOR = 
-			"${ if (isdef cEnd) { return '';} def cEnd(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.end(c_name + com.google.code.rees.scope.conversation.ConversationConstants.CONVERSATION_NAME_SUFFIX); } return ''; }";
+			"${ if (isdef cEnd) { return '';} def cEnd(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name); } return ''; }";
 	private static final String CONVERSATION_INITIATOR = 
-			"${ if (isdef cBeg) { return '';} def cBeg(c_name, c_len) { com.google.code.rees.scope.conversation.ConversationUtil.begin(c_name + com.google.code.rees.scope.conversation.ConversationConstants.CONVERSATION_NAME_SUFFIX, c_len); } return ''; }";
+			"${ if (isdef cBeg) { return '';} def cBeg(c_name, c_len) { com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len); } return ''; }";
 	private static final String CONVERSATION_CONTINUATOR = 
-			"${ if (isdef cCon) { return '';} def cCon(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.persist(c_name + com.google.code.rees.scope.conversation.ConversationConstants.CONVERSATION_NAME_SUFFIX); } return ''; }";
+			"${ if (isdef cCon) { return '';} def cCon(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name); } return ''; }";
 	
 	private final Map<String, CompiledTemplate> templateCache = new ConcurrentHashMap<String, CompiledTemplate>();
 

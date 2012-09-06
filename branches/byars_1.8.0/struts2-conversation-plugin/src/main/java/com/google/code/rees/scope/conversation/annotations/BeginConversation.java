@@ -59,10 +59,29 @@ public @interface BeginConversation {
     public abstract String[] conversations() default {};
     
     /**
-     * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.  An OGNL expression
-     * can be used set the threshold dynamically.
+     * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.
      */
     public abstract long maxIdleTimeMillis() default -1L;
+    
+    /**
+     * An expression that returns the idle time after which this conversation will be timed out and cleaned up.
+     * <p>
+     * Two types of expressions are supported:  a simple, static expression indicating days, hours, etc. and a dynamic
+     * expression that will be evaluated using the configured {@link com.google.code.rees.scope.expression.Eval Eval}.
+     * <p>
+     * The following valid examples indicate the simple syntax that can be used:
+     * <ul>
+     * <li><code>"3d 8h 30m 15s"</code></li>
+     * <li><code>"36h 15s"</code></li>
+     * <li><code>"30m"</code></li>
+     * <li><code>"1d"</code></li>
+     * <li><code>"45s"</code></li>
+     * </ul>
+     * For the dynamic expressions, an expression like <code>${timeout}</code> could be used to call getTimeout() 
+     * on the action class or model (whichever is the root object).  All that is required is that the result is of type long or Long
+     * 
+     */
+    public abstract String maxIdleTime() default "";
     
     /**
      * The max number of instances allowed for this conversation.
@@ -76,9 +95,15 @@ public @interface BeginConversation {
     public abstract boolean transactional() default false;
     
     /**
-     * An OGNL expression that will be evaluated against the ***********************
+     * An expression that will be evaluated against the conversations alive on the request using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
      * @return
      */
     public abstract String preExpression() default "";
+    
+    /**
+     * An expression that will be evaluated against the conversations alive after action execution using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * @return
+     */
+    public abstract String postExpression() default "";
 
 }

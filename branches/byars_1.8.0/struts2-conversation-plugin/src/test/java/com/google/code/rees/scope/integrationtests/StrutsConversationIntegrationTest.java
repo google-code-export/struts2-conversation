@@ -93,8 +93,7 @@ public class StrutsConversationIntegrationTest extends
         eval.evaluate("${#cGet('oopy')['sookie'] = 'pookie'}", ConversationAdapter.getAdapter().getActionContext(), this.getAction());
         System.out.println(eval.evaluate("${#oopy_conversation['conversationString']}cheeko ${#cGet('oopy')['sookie']} and stuff"));
         System.out.println(eval.evaluate("cheeko ${#cBeg('oopy', 789)['sookie']} and stuff"));
-        System.out.println(eval.evaluate("cheeko ${#cEnd('oopy')['sookie']} and stuff"));
-        System.out.println(eval.evaluate("cheeko ${#cGet('oopy')['sookie']} and stuff"));
+        //System.out.println(eval.evaluate("cheeko ${#cEnd('oopy')['sookie']} and stuff"));
         
         eval = new Mvel();
         System.out.println(eval.evaluate("cheeko ${cGet('oopy').sookie = 'jangalang'} and stuff"));

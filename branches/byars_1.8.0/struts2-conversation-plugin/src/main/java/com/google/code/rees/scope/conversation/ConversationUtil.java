@@ -173,6 +173,17 @@ public class ConversationUtil {
 		adapter.getRequestContext().put(name, id);
 		return context;
 	}
+	
+	/**
+	 * A convenience method for beginning a conversation programmatically
+	 * 
+	 * @param name
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public static ConversationContext beginUsingSimpleName(String name, long maxIdleTimeMillis) {
+		return begin(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
+	}
 
 	/**
 	 * Persist a conversation programmatically
@@ -200,6 +211,17 @@ public class ConversationUtil {
 		adapter.getViewContext().put(name, id);
 		return adapter.getConversationContext(name, id);
 	}
+	
+	/**
+	 * Persist a conversation programmatically
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext persistUsingSimpleName(String name) {
+		return persist(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter());
+	}
 
 	/**
 	 * A convenience method for ending a conversation programmatically.
@@ -226,6 +248,17 @@ public class ConversationUtil {
 		}
 		adapter.getViewContext().remove(name);
 		return adapter.endConversation(name, id);
+	}
+	
+	/**
+	 * A convenience method for ending a conversation programmatically.
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext endUsingSimpleName(String name) {
+		return end(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter());
 	}
 
 	/**

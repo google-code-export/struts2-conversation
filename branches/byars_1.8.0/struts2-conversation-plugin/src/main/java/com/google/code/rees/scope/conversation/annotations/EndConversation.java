@@ -56,5 +56,17 @@ public @interface EndConversation {
      * order to associate this end point.
      */
     public abstract String[] conversations() default {};
+    
+    /**
+     * An expression that will be evaluated against the conversations alive on the request using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * @return
+     */
+    public abstract String preExpression() default "";
+    
+    /**
+     * An expression that will be evaluated against the conversations alive after action execution using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * @return
+     */
+    public abstract String postExpression() default "";
 
 }
