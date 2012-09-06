@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
@@ -69,6 +70,14 @@ public class SpringConversationAdapter extends ConversationAdapter {
     public Object getAction() {
         return this.action;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Map<String, Object> getActionContext() {
+		return ((Model) this.action).asMap();
+	}
 
     /**
      * {@inheritDoc}
@@ -117,33 +126,6 @@ public class SpringConversationAdapter extends ConversationAdapter {
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-	@Override
-	public Map<String, Object> getActionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-	public Object preEvaluate(String expression) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-	public Object postEvaluate(String expression) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 
 }

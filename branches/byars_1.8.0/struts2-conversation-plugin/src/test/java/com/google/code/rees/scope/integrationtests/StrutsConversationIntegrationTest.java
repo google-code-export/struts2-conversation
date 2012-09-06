@@ -103,15 +103,6 @@ public class StrutsConversationIntegrationTest extends
         eval.evaluate("${cheeba = cBeg('treeeeeeeeeeee', -100).remainingTime; System.out.println(cheeba)}");
         eval.evaluate("${cheeba = cGet('treeeeeeeeeeee').remainingTime; System.out.println(cheeba)}");
         
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${conversationString}"));
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${#oopy_conversation.conversationString}chai-tea${bean.echo}"));
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${conversationString.equals('initialState') ? chubby : bean.echo}shesaid"));
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${conversationString = chubby}"));
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${conversationString}"));
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${23}"));
-        ConversationAdapter.getAdapter().postEvaluate("${#oopy_conversation.cheeba = conversationString}");
-        System.out.println(ConversationAdapter.getAdapter().postEvaluate("${#oopy_conversation.cheeba}"));
-        
         eval = new Groovy();
         System.out.println(eval.evaluate("${oopy_conversation.conversationString}reeeeeeeeeeeesruuuuuuuuuuules${action.bean.echo}"));
         System.out.println(eval.evaluate("cheeko ${cgGet('oopy').sookie} and stuff"));

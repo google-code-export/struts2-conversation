@@ -123,6 +123,33 @@ public interface ConversationClassConfiguration {
      * @return
      */
     public long getMaxIdleTime(String beginActionId);
+    
+    /**
+     * 
+     * @param beginActionId
+     * @return
+     */
+    public String getMaxIdleTimeExpression(String beginActionId);
+    
+    /**
+     * 
+     * @param acitonId
+     * @return
+     */
+    public String getPreExpression(String acitonId);
+    
+    /**
+     * 
+     * @param acitonId
+     * @return
+     */
+    public String getPostExpression(String acitonId);
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean isTransactional();
 
     /**
      * Returns the name of the conversation that this configuration is for

@@ -156,29 +156,6 @@ public abstract class ConversationAdapter implements Serializable {
 	}
 	
 	/**
-	 * Use the underlying framework's dynamic expression evaluation mechanism to evaluate/execute 
-	 * expressions with the current action's context and the conversation contexts
-	 * associated with the {@link #getRequestContext() request context}.  So, this will include
-	 * conversation contexts that are about to end or are continuing, but not contexts that are about
-	 * to begin.  This should only be called before the ConversationProcessor processes the 
-	 * conversations because, after processing, the conversations
-	 * that are ending will no longer exist.
-	 */
-	public abstract Object preEvaluate(String expression);
-	
-	/**
-	 * Use the underlying framework's dynamic expression evaluation mechanism to evaluate/execute 
-	 * expressions with the current action's context and the conversation contexts
-	 * associated with the {@link #getViewContext() view context}.  So, this will include
-	 * conversation contexts that have just begun or are continuing, but not contexts that are ending (i.e.
-	 * the same contexts that will be available from the Action Context.
-	 * <p>
-	 * guaranteed to have the conversation contexts already present in the {@link #getActionContext() action context}
-	 * after <code>ConversationProcessor.processConversations()</code> is called
-	 */
-	public abstract Object postEvaluate(String expression);
-	
-	/**
 	 * Set the {@link ThreadLocal} ConversationAdapter for use with the current
 	 * request. Called in the constructor to force new instances into the
 	 * ThreadLocal.

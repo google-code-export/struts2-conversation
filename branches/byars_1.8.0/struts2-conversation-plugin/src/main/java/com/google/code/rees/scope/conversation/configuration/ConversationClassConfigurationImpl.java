@@ -108,6 +108,38 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     public long getMaxIdleTime(String beginActionId) {
     	return beginActionIdleTimes.get(beginActionId);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public String getMaxIdleTimeExpression(String beginActionId) {
+		return null;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public String getPreExpression(String acitonId) {
+		return null;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public String getPostExpression(String acitonId) {
+		return null;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public boolean isTransactional() {
+		return false;
+	}
 
     /**
      * {@inheritDoc}

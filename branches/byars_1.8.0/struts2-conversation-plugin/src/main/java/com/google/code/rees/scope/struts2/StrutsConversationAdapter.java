@@ -25,7 +25,6 @@ package com.google.code.rees.scope.struts2;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +33,6 @@ import org.apache.struts2.StrutsStatics;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
-import com.google.code.rees.scope.expression.Ognl;
 import com.google.code.rees.scope.util.RequestContextUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
@@ -128,32 +126,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     @Override
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Object preEvaluate(String expression) {
-    	if (this.preEvaluationContext == null) {
-    		this.preEvaluationContext = new HashMap<String, Object>();
-    		this.preEvaluationContext.putAll(this.actionContext.getContextMap());
-    		for (Entry<String, String> conversationEntry : this.getRequestContext().entrySet()) {
-        		String conversationName = conversationEntry.getKey();
-        		ConversationContext conversationContext = this.getConversationContext(conversationEntry.getKey(), conversationEntry.getValue());
-        		this.preEvaluationContext.put(conversationName, conversationContext);
-        	}
-    	}
-    	return new Ognl().evaluate(expression, this.preEvaluationContext, getAction());
-	}
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public Object postEvaluate(String expression) {
-    	return new Ognl().evaluate(expression, this.getActionContext(), getAction());
-    	//return TextParseUtil.translateVariables('$', expression, this.actionContext.getValueStack());
     }
 
 }

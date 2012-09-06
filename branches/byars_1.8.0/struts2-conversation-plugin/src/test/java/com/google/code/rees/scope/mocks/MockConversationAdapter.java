@@ -24,6 +24,7 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.mocks;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ public class MockConversationAdapter extends ConversationAdapter {
 	
 	Object action = null;
 	String actionId = null;
+	Map<String, Object> actionContext = new HashMap<String, Object>();
 	Map<String, String> requestContext;
 	ConversationContextManager contextManager;
 	
@@ -59,6 +61,15 @@ public class MockConversationAdapter extends ConversationAdapter {
 	@Override
 	public Object getAction() {
 		return this.action;
+	}
+	
+	public void setActionContext(Map<String, Object> actionContext) {
+		this.actionContext = actionContext;
+	}
+	
+	@Override
+	public Map<String, Object> getActionContext() {
+		return this.actionContext;
 	}
 	
 	public void setActionId(String actionId) {
@@ -94,24 +105,6 @@ public class MockConversationAdapter extends ConversationAdapter {
 	
 	public static MockConversationAdapter init(HttpServletRequest request, HttpConversationContextManagerProvider contextManagerProvider) {
 		return new MockConversationAdapter(request, contextManagerProvider);
-	}
-
-	@Override
-	public Map<String, Object> getActionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object preEvaluate(String expression) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object postEvaluate(String expression) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
