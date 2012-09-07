@@ -17,13 +17,13 @@ public class Groovy implements Eval {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Groovy.class);
 	private static final String CONVERSATION_ACCESSOR = 
-			"<% cgGet = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.getContextUsingSimpleName(c_name) } %>";
+			"<% cGet = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.getContextUsingSimpleName(c_name) } %>";
 	private static final String CONVERSATION_TERMINATOR = 
-			"<% cgEnd = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name) } %>";
+			"<% cEnd = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name) } %>";
 	private static final String CONVERSATION_INITIATOR = 
-			"<% cgBeg = { c_name, c_len -> com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len) } %>";
+			"<% cBeg = { c_name, c_len -> com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len) } %>";
 	private static final String CONVERSATION_CONTINUATOR = 
-			"<% cgCon = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name) } %>";
+			"<% cCon = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name) } %>";
 	
 	private final SimpleTemplateEngine engine = new SimpleTemplateEngine();
 	private final Map<String, Template> templateCache = new ConcurrentHashMap<String, Template>();

@@ -104,5 +104,4 @@ public class Spel implements Eval {
 			
 		};
 	}
-
 }
