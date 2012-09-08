@@ -86,14 +86,13 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      */
     @Override
     public Map<String, String> getRequestContext() {
-        ActionContext actionContext = ActionContext.getContext();
-        if (actionContext != null) {
-            HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
+    	if (this.requestContext == null) {
+    		HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
             if (!currentRequest.equals(this.request)) {
                 this.request = currentRequest;
                 requestContext = RequestContextUtil.getRequestContext(currentRequest);
             }
-        }
+    	}
         return requestContext;
     }
     

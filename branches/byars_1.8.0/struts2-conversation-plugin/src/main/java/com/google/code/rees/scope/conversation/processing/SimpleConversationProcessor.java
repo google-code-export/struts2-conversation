@@ -33,6 +33,7 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 
@@ -101,26 +102,54 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
 		String actionId = conversationAdapter.getActionId();
-		String conversationName = conversationConfig.getConversationName();
-		String conversationId = (String) conversationAdapter.getRequestContext().get(conversationName);
-		
-		if (conversationId != null) {
-			if (conversationConfig.containsAction(actionId)) {
-				if (conversationConfig.isEndAction(actionId)) {
-					conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
-				} else {
-					conversationAdapter.getViewContext().put(conversationName, conversationId);
-				}
-			} else {
-            	this.handleInvalidId(conversationName, conversationId);
+        String conversationName = conversationConfig.getConversationName();
+        String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing request for " + conversationName + " and action " + actionId + " of class " + action.getClass());
+        }
+
+        if (conversationId != null) {
+
+            if (conversationConfig.containsAction(actionId)) {
+
+            	ConversationContext conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
+                }
+                
+                if (conversationContext != null) {
+                    if (conversationConfig.isEndAction(actionId)) {
+                        this.handleEnding(conversationConfig, conversationAdapter, action, conversationContext);
+                    } else {
+                        this.handleContinuing(conversationConfig, conversationAdapter, action, conversationContext);
+                    }
+                } else {
+                	this.handleInvalidId(conversationName, conversationId);
+                }
             }
-		} else if (conversationConfig.isBeginAction(actionId)) {
-			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
-			if (LOG.isDebugEnabled()) {
-                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
-            }
-            ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
-		}
+        } else if (conversationConfig.isBeginAction(actionId)) {
+            this.handleBeginning(conversationConfig, conversationAdapter, action);
+        }
+	}
+	
+	protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+        conversationAdapter.getViewContext().put(conversationContext.getConversationName(), conversationContext.getId());
+	}
+	
+	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+		conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
+	}
+	
+	protected void handleBeginning(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
+		long maxIdleTime = conversationConfig.getMaxIdleTime(conversationAdapter.getActionId());
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
+        }
+        
+        ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime);
 	}
 	
 	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {
