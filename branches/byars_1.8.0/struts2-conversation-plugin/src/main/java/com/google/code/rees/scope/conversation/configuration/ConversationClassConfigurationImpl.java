@@ -129,8 +129,18 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     /**
      * {@inheritDoc}
      */
+    @Override
+	public String getPreActionExpression(String actionId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public String getPreExpression(String acitonId) {
+	public String getPostActionExpression(String actionId) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -138,7 +148,8 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      * {@inheritDoc}
      */
 	@Override
-	public String getPostExpression(String acitonId) {
+	public String getPostViewExpression(String actionId) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

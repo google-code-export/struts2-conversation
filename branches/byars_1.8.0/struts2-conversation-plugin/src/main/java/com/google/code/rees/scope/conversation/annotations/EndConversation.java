@@ -59,21 +59,28 @@ public @interface EndConversation {
     
     /**
      * An expression that will be evaluated against the conversations alive on the request using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * prior to the action execution
      * @return
      */
-    public abstract String preExpression() default "";
+    public abstract String preActionExpression() default "";
     
     /**
-     * An expression that will be evaluated against the conversations alive after action execution using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * An expression that will be evaluated against the conversations alive after action execution but before view rendering using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
      * @return
      */
-    public abstract String postExpression() default "";
+    public abstract String postActionExpression() default "";
+    
+    /**
+     * An expression that will be evaluated against the conversations alive after action execution and after view rendering using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
+     * @return
+     */
+    public abstract String postViewExpression() default "";
     
     /**
      * whether or not the ending ConversationContext should be available to the next view immediately after the conversation ends.
      * the default is true.
      * @return
      */
-    public boolean afterView() default true;
+    public boolean accessibleFromView() default true;
 
 }

@@ -143,14 +143,21 @@ public interface ConversationClassConfiguration {
      * @param acitonId
      * @return
      */
-    public String getPreExpression(String actionId);
+    public String getPreActionExpression(String actionId);
     
     /**
      * 
      * @param acitonId
      * @return
      */
-    public String getPostExpression(String actionId);
+    public String getPostActionExpression(String actionId);
+    
+    /**
+     * 
+     * @param acitonId
+     * @return
+     */
+    public String getPostViewExpression(String actionId);
     
     /**
      * 

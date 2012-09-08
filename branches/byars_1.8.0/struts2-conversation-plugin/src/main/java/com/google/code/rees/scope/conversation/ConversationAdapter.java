@@ -206,7 +206,7 @@ public abstract class ConversationAdapter implements Serializable {
 	 * clean up this resource once processing is completed for the request
 	 */
 	public void cleanup() {
-		//conversationAdapter.remove();  //TODO: necessary?
+		conversationAdapter.remove();
 		this.postActionProcessors.clear();
 		this.postViewProcessors.clear();
 		this.viewContext.clear();

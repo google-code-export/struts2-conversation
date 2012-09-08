@@ -23,7 +23,6 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +50,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     protected ActionContext actionContext;
     protected HttpServletRequest request;
     protected Map<String, String> requestContext;
-    protected Map<String, Object> preEvaluationContext;
 
     public StrutsConversationAdapter(ActionInvocation invocation, ConversationContextManager conversationContextManager) {
         this.invocation = invocation;
@@ -95,10 +93,6 @@ public class StrutsConversationAdapter extends ConversationAdapter {
                 this.request = currentRequest;
                 requestContext = RequestContextUtil.getRequestContext(currentRequest);
             }
-        } else {
-            // TODO: this is a hack to get unit tests to work with spring
-            // autowiring - revisit to determine more optimal solution
-            requestContext = new HashMap<String, String>();
         }
         return requestContext;
     }
@@ -126,6 +120,20 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     @Override
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cleanup() {
+    	super.cleanup();
+    	this.viewContext.clear();
+    	this.invocation = null;
+    	this.requestContext.clear();
+    	this.requestContext = null;
+    	this.actionContext = null;
+    	this.request = null;
     }
 
 }

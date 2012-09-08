@@ -228,7 +228,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
         
         adapter.executePostViewProcessors();
         
-        adapter.cleanup();
+        ConversationAdapter.getAdapter().cleanup();
         
         return result;
         
