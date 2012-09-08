@@ -32,10 +32,11 @@ import java.util.Map;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
-import com.google.code.rees.scope.conversation.processing.ConversationPostProcessor;
-import com.google.code.rees.scope.conversation.processing.ConversationPostProcessorWrapper;
-import com.google.code.rees.scope.conversation.processing.ConversationPostProcessorWrapperFactory;
-import com.google.code.rees.scope.conversation.processing.DefaultConversationPostProcessorWrapperFactory;
+import com.google.code.rees.scope.conversation.processing.PostActionProcessor;
+import com.google.code.rees.scope.conversation.processing.PostProcessorWrapper;
+import com.google.code.rees.scope.conversation.processing.PostProcessorWrapperFactory;
+import com.google.code.rees.scope.conversation.processing.DefaultPostProcessorWrapperFactory;
+import com.google.code.rees.scope.conversation.processing.PostViewProcessor;
 
 /**
  * This class is used to adapt/integrate the major components of the
@@ -58,8 +59,9 @@ public abstract class ConversationAdapter implements Serializable {
 	private static final long serialVersionUID = -8006640931436858515L;
 	protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();
 	protected Map<String, String> viewContext = new HashMap<String, String>();
-	protected ConversationPostProcessorWrapperFactory postProcessorFactory = new DefaultConversationPostProcessorWrapperFactory();
-	protected Collection<ConversationPostProcessorWrapper> postProcessors = new HashSet<ConversationPostProcessorWrapper>();
+	protected PostProcessorWrapperFactory postProcessorFactory = new DefaultPostProcessorWrapperFactory();
+	protected Collection<PostProcessorWrapper<PostActionProcessor>> postActionProcessors = new HashSet<PostProcessorWrapper<PostActionProcessor>>();
+	protected Collection<PostProcessorWrapper<PostViewProcessor>> postViewProcessors = new HashSet<PostProcessorWrapper<PostViewProcessor>>();
 
 	public ConversationAdapter() {
 		conversationAdapter.set(this);
@@ -132,25 +134,49 @@ public abstract class ConversationAdapter implements Serializable {
 	}
 
 	/**
-	 * Add a {@link ConversationPostProcessor} that is guaranteed to be executed
-	 * after action execution by a call to {@link #executePostProcessors()}
+	 * Add a {@link PostActionProcessor} that is guaranteed to be executed
+	 * after action execution by a call to {@link #executePostActionProcessors()}
 	 * 
 	 * @param postProcessor
 	 * @param conversationConfig
 	 * @param conversationId
 	 */
-	public void addPostProcessor(ConversationPostProcessor postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
-		ConversationPostProcessorWrapper wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
-		this.postProcessors.add(wrapper);
+	public void addPostActionProcessor(PostActionProcessor postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
+		PostProcessorWrapper<PostActionProcessor> wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
+		this.postActionProcessors.add(wrapper);
 	}
 
 	/**
-	 * Executes all {@link ConversationPostProcessor ConversationPostProcessors}
+	 * Executes all {@link PostActionProcessor PostActionProcessors}
 	 * that have been added using
-	 * {@link #addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)}
+	 * {@link #addPostActionProcessor(PostActionProcessor, ConversationClassConfiguration, String)}
 	 */
-	public void executePostProcessors() {
-		for (ConversationPostProcessorWrapper postProcessor : this.postProcessors) {
+	public void executePostActionProcessors() {
+		for (PostProcessorWrapper<PostActionProcessor> postProcessor : this.postActionProcessors) {
+			postProcessor.postProcessConversation();
+		}
+	}
+	
+	/**
+	 * Add a {@link PostViewProcessor} that is guaranteed to be executed
+	 * after action execution by a call to {@link #executePostViewProcessors()}
+	 * 
+	 * @param postProcessor
+	 * @param conversationConfig
+	 * @param conversationId
+	 */
+	public void addPostViewProcessor(PostViewProcessor postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
+		PostProcessorWrapper<PostViewProcessor> wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
+		this.postViewProcessors.add(wrapper);
+	}
+
+	/**
+	 * Executes all {@link PostActionProcessor PostActionProcessors}
+	 * that have been added using
+	 * {@link #addPostActionProcessor(PostActionProcessor, ConversationClassConfiguration, String)}
+	 */
+	public void executePostViewProcessors() {
+		for (PostProcessorWrapper<PostViewProcessor> postProcessor : this.postViewProcessors) {
 			postProcessor.postProcessConversation();
 		}
 	}
@@ -179,8 +205,11 @@ public abstract class ConversationAdapter implements Serializable {
 	/**
 	 * clean up this resource once processing is completed for the request
 	 */
-	public static void cleanup() {
-		conversationAdapter.remove();
+	public void cleanup() {
+		//conversationAdapter.remove();  //TODO: necessary?
+		this.postActionProcessors.clear();
+		this.postViewProcessors.clear();
+		this.viewContext.clear();
 	}
 	
 }

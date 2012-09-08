@@ -107,7 +107,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 		if (conversationId != null) {
 			if (conversationConfig.containsAction(actionId)) {
 				if (conversationConfig.isEndAction(actionId)) {
-					conversationAdapter.addPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
+					conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
 				} else {
 					conversationAdapter.getViewContext().put(conversationName, conversationId);
 				}

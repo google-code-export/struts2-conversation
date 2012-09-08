@@ -74,7 +74,7 @@
 		
 	<bean name="struts.conversation.conversationProcessor"
 		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
-		class="com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationProcessor" />
+		class="com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor" />
 		
 	<bean name="conversation.simple.processor"
 		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"

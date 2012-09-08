@@ -15,6 +15,10 @@ import com.google.code.rees.scope.conversation.context.DefaultConversationContex
 import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider;
 import com.google.code.rees.scope.mocks.MockConversationAdapter;
 
+//TODO:  implement new confiuration items
+//TODO:  implement conversation end processor shit - force after view?  allow option?
+//TODO:  make contexts available in view using expression - add to action context or what?
+//TODO:  remove injectionconversationprocessor
 //TODO:  in-memory context manager and JpaContextManager
 //TODO:  string interning
 //TODO:  conversations attribute on tags, accept ognl map and place it on stack in place of id map

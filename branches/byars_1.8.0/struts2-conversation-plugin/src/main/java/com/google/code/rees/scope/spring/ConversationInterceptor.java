@@ -65,11 +65,11 @@ public class ConversationInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Calls {@link ConversationAdapter#executePostProcessors()}
+     * Calls {@link ConversationAdapter#executePostActionProcessors()}
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
-        ConversationAdapter.getAdapter().executePostProcessors();
+        ConversationAdapter.getAdapter().executePostActionProcessors();
     }
 
     /**

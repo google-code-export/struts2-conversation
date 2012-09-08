@@ -105,6 +105,15 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      * {@inheritDoc}
      */
     @Override
+	public boolean endAfterView(String actionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long getMaxIdleTime(String beginActionId) {
     	return beginActionIdleTimes.get(beginActionId);
     }

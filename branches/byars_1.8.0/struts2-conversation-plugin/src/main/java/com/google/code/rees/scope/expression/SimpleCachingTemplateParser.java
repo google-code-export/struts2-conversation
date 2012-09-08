@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * not fast at parsing, but effective for our needs and fast enough through caching 
  * 
  * @author reesbyars
  *
@@ -20,8 +21,6 @@ public class SimpleCachingTemplateParser implements TemplateParser {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleCachingTemplateParser.class);
 	private final Map<String, List<String>> preparsedCache = new ConcurrentHashMap<String, List<String>>();
 	private Pattern pattern = Pattern.compile("(\\$\\{)(.*?)(\\})");
-	protected String prefix = "${";
-	protected String suffix = "}";
 	
 	public SimpleCachingTemplateParser() {
 	}
@@ -68,8 +67,12 @@ public class SimpleCachingTemplateParser implements TemplateParser {
             	
             	endOfLast = matcher.end();
             }
+            
+            //no expressions found, add all as plain text
             if (endOfLast == 0) {
             	parsedExpressions.add("'" + templateText + "'");
+            	
+            //trailing plain text
             } else if (endOfLast < templateText.length()) {
             	parsedExpressions.add("'" + templateText.substring(endOfLast, templateText.length()) + "'");
         	}

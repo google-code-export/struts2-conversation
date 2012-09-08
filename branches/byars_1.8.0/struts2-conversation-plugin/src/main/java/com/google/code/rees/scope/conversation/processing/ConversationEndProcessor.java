@@ -32,25 +32,25 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
- * A {@link ConversationPostProcessor} used to remove a conversation context
- * from the session context after an action has been executed.  Is registered
- * for execution via {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)
+ * A {@link PostProcessor} used to remove a conversation context either after an action has been executed or after the view has been rendered.  Is registered
+ * for execution via {@link ConversationAdapter#addPostProcessor(PostActionProcessor, ConversationClassConfiguration, String)}
+ * or {@link ConversationAdapter#addPostViewProcessor(PostViewProcessor, ConversationClassConfiguration, String)}.
  * 
  * @author rees.byars
  * 
  */
-public class ConversationEndProcessor implements ConversationPostProcessor {
+public class ConversationEndProcessor implements PostActionProcessor, PostViewProcessor {
 
     private static final long serialVersionUID = 2164492176500215404L;
     private static final Logger LOG = LoggerFactory.getLogger(ConversationEndProcessor.class);
 
     /**
-     * Removes the conversation context from the session context
+     * Removes the conversation context
      */
     @Override
     public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("In Conversation " + conversationConfig.getConversationName() + ", removing conversation map from session following conversation end.");
+            LOG.debug("In Conversation " + conversationConfig.getConversationName() + ", removing conversation context following conversation end.");
         }
         String conversationName = null;
         if (conversationConfig == null) {

@@ -117,6 +117,13 @@ public interface ConversationClassConfiguration {
     public boolean isEndAction(String actionId);
     
     /**
+     * given the id of an end action, returns true if the ConversationContext should be removed after the view is rendered
+     * @param actionId
+     * @return
+     */
+    public boolean endAfterView(String actionId);
+    
+    /**
      * given the begin action's ID, returns the max idle time (in milliseconds) for the conversation created by that action
      * 
      * @param beginActionId
@@ -136,14 +143,14 @@ public interface ConversationClassConfiguration {
      * @param acitonId
      * @return
      */
-    public String getPreExpression(String acitonId);
+    public String getPreExpression(String actionId);
     
     /**
      * 
      * @param acitonId
      * @return
      */
-    public String getPostExpression(String acitonId);
+    public String getPostExpression(String actionId);
     
     /**
      * 

@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultConversationPostProcessorWrapperFactory.java reesbyars $
+ *  $Id: PostActionProcessor.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -27,26 +27,9 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
- * The default implementation of the
- * {@link ConversationPostProcessorWrapperFactory}
- * 
+ * This interface allows for post-action-processing of a conversation.  Registered via
+ * {@link ConversationAdapter#addPostActionProcessor(PostActionProcessor, ConversationClassConfiguration, String)}
  * @author rees.byars
  */
-public class DefaultConversationPostProcessorWrapperFactory implements
-        ConversationPostProcessorWrapperFactory {
-
-    private static final long serialVersionUID = -8906181370354593161L;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ConversationPostProcessorWrapper create(
-            ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
-            ConversationClassConfiguration conversationConfig, String conversationId) {
-        return new DefaultConversationPostProcessorWrapper(conversationAdapter,
-                postProcessor, conversationConfig, conversationId);
-    }
-
+public interface PostActionProcessor extends PostProcessor {
 }

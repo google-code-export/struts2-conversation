@@ -68,5 +68,12 @@ public @interface EndConversation {
      * @return
      */
     public abstract String postExpression() default "";
+    
+    /**
+     * whether or not the ending ConversationContext should be available to the next view immediately after the conversation ends.
+     * the default is true.
+     * @return
+     */
+    public boolean afterView() default true;
 
 }

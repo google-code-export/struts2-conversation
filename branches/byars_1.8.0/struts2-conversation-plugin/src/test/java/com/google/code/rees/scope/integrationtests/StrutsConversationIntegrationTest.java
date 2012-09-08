@@ -118,14 +118,4 @@ public class StrutsConversationIntegrationTest extends
 
     }
 
-    @Test
-    public void testCrossActionWorkflowFieldPersistence() throws Exception {
-        // TODO
-    }
-
-    @Test
-    public void testActionWithNoWorkflows() throws Exception {
-        // TODO
-    }
-
 }

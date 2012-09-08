@@ -42,11 +42,10 @@ import com.google.code.rees.scope.conversation.context.HttpConversationContextMa
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
-import com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.interceptor.Interceptor;
+import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.LocalizedTextUtil;
 
@@ -57,7 +56,7 @@ import com.opensymphony.xwork2.util.LocalizedTextUtil;
  * @author rees.byars
  *
  */
-public class ConversationInterceptor implements Interceptor, PreResultListener {
+public class ConversationInterceptor extends MethodFilterInterceptor {
 
     private static final long serialVersionUID = -72776817859403642L;
     private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
@@ -195,14 +194,15 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
      * {@inheritDoc}
      */
     @Override
-    public String intercept(ActionInvocation invocation) throws Exception {
+    public String doIntercept(ActionInvocation invocation) throws Exception {
     	
     	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
     	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+    	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
     	
     	try {
     		
-    		this.conversationProcessor.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    		this.conversationProcessor.processConversations(adapter);
     		
     	} catch (ConversationIdException cie) {
     		
@@ -214,21 +214,24 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     		
     	}
     	
-        invocation.addPreResultListener(this);
-        
-        return invocation.invoke();
-        
-    }
+        invocation.addPreResultListener(new PreResultListener() {
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    @Override
-    public void beforeResult(ActionInvocation invocation, String result) {
-        ConversationAdapter.getAdapter().executePostProcessors();
-        invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-        //ConversationAdapter.cleanup();
+			@Override
+			public void beforeResult(ActionInvocation invocation, String resultCode) {
+				adapter.executePostActionProcessors();
+				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
+			}
+        	
+        });
+        
+        String result = invocation.invoke();
+        
+        adapter.executePostViewProcessors();
+        
+        adapter.cleanup();
+        
+        return result;
+        
     }
     
     /**
