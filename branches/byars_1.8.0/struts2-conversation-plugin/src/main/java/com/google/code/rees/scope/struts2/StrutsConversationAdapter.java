@@ -100,8 +100,8 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
 	@Override
-	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
-		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 	}
 
     /**
@@ -125,8 +125,8 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
     @Override
-    public void cleanup() {
-    	super.cleanup();
+    protected void doCleanup() {
+    	super.doCleanup();
     	this.viewContext.clear();
     	this.invocation = null;
     	this.requestContext.clear();

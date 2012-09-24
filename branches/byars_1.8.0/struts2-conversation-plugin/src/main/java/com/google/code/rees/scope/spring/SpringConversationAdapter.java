@@ -107,8 +107,8 @@ public class SpringConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
 	@Override
-	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
-		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 	}
 
     /**
@@ -125,6 +125,21 @@ public class SpringConversationAdapter extends ConversationAdapter {
     @Override
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doCleanup() {
+    	super.doCleanup();
+    	this.action = null;
+    	this.actionId = null;
+    	this.request = null;
+    	this.requestContext.clear();
+    	this.requestContext = null;
+    	this.sessionContext.clear();
+    	this.sessionContext = null;
     }
 	
 

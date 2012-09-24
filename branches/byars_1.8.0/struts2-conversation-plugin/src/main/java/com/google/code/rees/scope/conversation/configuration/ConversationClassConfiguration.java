@@ -61,27 +61,24 @@ public interface ConversationClassConfiguration {
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addAction(String actionId);
+    public void addAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression);
 
     /**
      * Add an actionId for a begin action
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addBeginAction(String actionId, Long maxIdleTimeMillis);
+    public void addBeginAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional);
 
     /**
      * Add an actionId for an end action
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addEndAction(String actionId);
+    public void addEndAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, boolean endAfterView);
 
     /**
      * Indicates whether the actionId identifies the action as an intermediate
@@ -139,6 +136,14 @@ public interface ConversationClassConfiguration {
     public String getMaxIdleTimeExpression(String beginActionId);
     
     /**
+     * given the begin action's ID, returns the max number of instances
+     * 
+     * @param beginActionId
+     * @return
+     */
+    public int getMaxInstances(String beginActionId);
+    
+    /**
      * 
      * @param acitonId
      * @return
@@ -163,7 +168,7 @@ public interface ConversationClassConfiguration {
      * 
      * @return
      */
-    public boolean isTransactional();
+    public boolean isTransactional(String beginActionId);
 
     /**
      * Returns the name of the conversation that this configuration is for

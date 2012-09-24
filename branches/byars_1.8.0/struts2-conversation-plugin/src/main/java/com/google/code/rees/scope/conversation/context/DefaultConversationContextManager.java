@@ -31,8 +31,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.conversation.ConversationConstants;
-
 /**
  * The default implementation of the {@link ConversationContextManager}.
  * 
@@ -46,16 +44,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 
     protected ConversationContextFactory contextFactory;
 	protected Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
-	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
 	protected long nextId = 0L;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setMaxInstances(int maxInstances) {
-		this.maxInstances = maxInstances;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -69,7 +58,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis) {
+	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis, int maxInstances) {
 		
 		ConversationContext context = null;
 		
@@ -96,13 +85,13 @@ public class DefaultConversationContextManager implements ConversationContextMan
 			context = this.contextFactory.create(conversationName, conversationId, maxIdleTimeMillis);
 			conversationContexts.put(conversationId, context);
 				
-			if (conversationContexts.size() > this.maxInstances) {
+			if (conversationContexts.size() > maxInstances) {
 				
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Cached instances of conversation " + conversationName + " exceeds limit.  Removing stale conversations.");
 				}
 				
-				this.removeMostStaleConversation(conversationContexts, conversationName, context.getRemainingTime());
+				this.removeMostStaleConversation(conversationContexts, maxInstances, conversationName, context.getRemainingTime());
 				
 			}
 			
@@ -199,7 +188,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	 * Recursively removes the least-recently accessed conversations until the
 	 * number of remaining conversations equals {@link #maxInstances}
 	 */
-	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, String conversationName, long defaultDuration) {
+	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, int maxInstances, String conversationName, long defaultDuration) {
 
 		String mostStaleId = null;
 		long leastRemainingTime = defaultDuration;
@@ -226,8 +215,8 @@ public class DefaultConversationContextManager implements ConversationContextMan
 			LOG.debug("Remaining " + conversationName + " contexts for this session:  " + conversationContexts.size());
 		}
 
-		if (conversationContexts.size() > this.maxInstances) {
-			removeMostStaleConversation(conversationContexts, conversationName, defaultDuration);
+		if (conversationContexts.size() > maxInstances) {
+			removeMostStaleConversation(conversationContexts, maxInstances, conversationName, defaultDuration);
 		}
 
 	}

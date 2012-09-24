@@ -21,7 +21,7 @@ public class Groovy implements Eval {
 	private static final String CONVERSATION_TERMINATOR = 
 			"<% cEnd = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name) } %>";
 	private static final String CONVERSATION_INITIATOR = 
-			"<% cBeg = { c_name, c_len -> com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len) } %>";
+			"<% cBeg = { c_name, c_len, c_max -> com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len, c_max) } %>";
 	private static final String CONVERSATION_CONTINUATOR = 
 			"<% cCon = { c_name -> com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name) } %>";
 	

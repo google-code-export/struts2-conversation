@@ -35,14 +35,6 @@ import java.io.Serializable;
 public interface ConversationContextManager extends Serializable {
 
 	/**
-	 * Set the max number of cached {@link ConversationContext
-	 * ConversationContexts}.
-	 * 
-	 * @param maxInstances
-	 */
-	public void setMaxInstances(int maxInstances);
-
-	/**
 	 * Set the {@link ConversationContextFactory} to be used by this manager
 	 * 
 	 * @param contextFactory
@@ -54,9 +46,10 @@ public interface ConversationContextManager extends Serializable {
 	 * 
 	 * @param conversationName
 	 * @param maxIdleTimeMillis
+	 * @param maxInstances
 	 * @return
 	 */
-	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis);
+	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis, int maxInstances);
 	
 
 	/**

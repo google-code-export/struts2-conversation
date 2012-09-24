@@ -49,11 +49,11 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
      * {@inheritDoc}
      */
     @Override
-    protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+    protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
     	Map<String, Field> actionConversationFields = conversationConfig.getFields();
         
         if (actionConversationFields != null) {
-            InjectionUtil.setFieldValues(action, actionConversationFields, conversationContext);
+            InjectionUtil.setFieldValues(conversationAdapter.getAction(), actionConversationFields, conversationContext);
         }
         
         conversationAdapter.addPostActionProcessor(this, conversationConfig, conversationContext.getId());
@@ -64,11 +64,11 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
      * {@inheritDoc}
      */
     @Override
-	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
     	Map<String, Field> actionConversationFields = conversationConfig.getFields();
         
         if (actionConversationFields != null) {
-            InjectionUtil.setFieldValues(action, actionConversationFields, conversationContext);
+            InjectionUtil.setFieldValues(conversationAdapter.getAction(), actionConversationFields, conversationContext);
         }
         
         conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
@@ -78,14 +78,15 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
      * {@inheritDoc}
      */
     @Override
-    protected void handleBeginning(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
+    protected void handleBeginning(String actionId, ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter) {
+    	
 		long maxIdleTime = conversationConfig.getMaxIdleTime(conversationAdapter.getActionId());
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
         }
         
-        ConversationContext newConversationContext = ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime);
+        ConversationContext newConversationContext = ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime, conversationConfig.getMaxInstances(actionId));
         conversationAdapter.addPostActionProcessor(this, conversationConfig, newConversationContext.getId());
 	}
 

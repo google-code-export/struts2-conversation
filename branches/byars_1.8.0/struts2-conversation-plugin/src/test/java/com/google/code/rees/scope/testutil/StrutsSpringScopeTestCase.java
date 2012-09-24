@@ -14,8 +14,6 @@ import com.opensymphony.xwork2.ActionInvocation;
  * 
  */
 public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
-	
-	ConversationAdapter adapter;
     
     @Override
 	public void beforeResult(ActionInvocation invocation, String resultCode) {
@@ -46,8 +44,8 @@ public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
 
 			@Override
 			public ConversationContext beginConversation(
-					String conversationName, long maxIdleTimeMillis) {
-				return adapter.beginConversation(conversationName, maxIdleTimeMillis);
+					String conversationName, long maxIdleTimeMillis, int maxInstances) {
+				return adapter.beginConversation(conversationName, maxIdleTimeMillis, maxInstances);
 			}
 
 			@Override
@@ -63,8 +61,8 @@ public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
 			}
 			
 			@Override
-			public void cleanup() {
-				
+			public void doCleanup() {
+				conversationAdapter.set(adapter);
 			}
     		
     	});

@@ -19,7 +19,7 @@ public class Mvel implements Eval {
 	private static final String CONVERSATION_TERMINATOR = 
 			"${ if (isdef cEnd) { return '';} def cEnd(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name); } return ''; }";
 	private static final String CONVERSATION_INITIATOR = 
-			"${ if (isdef cBeg) { return '';} def cBeg(c_name, c_len) { com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len); } return ''; }";
+			"${ if (isdef cBeg) { return '';} def cBeg(c_name, c_len, c_max) { com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len, c_max); } return ''; }";
 	private static final String CONVERSATION_CONTINUATOR = 
 			"${ if (isdef cCon) { return '';} def cCon(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name); } return ''; }";
 	

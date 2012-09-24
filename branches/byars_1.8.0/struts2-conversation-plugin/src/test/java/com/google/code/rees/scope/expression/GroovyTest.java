@@ -22,7 +22,7 @@ public class GroovyTest extends EvalTest {
 	
 	@Test
 	public void testEvaluateWithConvenienceFunctions() {
-		eval.evaluate("ginger ${cBeg('oopy', 789);} and stuff");
+		eval.evaluate("ginger ${cBeg('oopy', 789, 3);} and stuff");
 		assertEquals(this.contextManager.getContext("oopy_conversation", "1").getRemainingTime(), 789L);
         eval.evaluate("ginger ${cGet('oopy').sookie = action.bean2.value} and stuff");
         assertEquals(this.contextManager.getContext("oopy_conversation", "1").get("sookie"), this.bean2.getValue());

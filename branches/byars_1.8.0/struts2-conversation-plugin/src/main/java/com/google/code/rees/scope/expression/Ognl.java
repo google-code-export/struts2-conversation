@@ -27,8 +27,8 @@ public class Ognl implements Eval {
 			return ConversationUtil.getContextUsingSimpleName(name);
 		}
 		@SuppressWarnings("unused")
-		public ConversationContext beg(String name, long time) {
-			return ConversationUtil.beginUsingSimpleName(name, time);
+		public ConversationContext beg(String name, long time, int instances) {
+			return ConversationUtil.beginUsingSimpleName(name, time, instances);
 		}
 		@SuppressWarnings("unused")
 		public ConversationContext con(String name) {

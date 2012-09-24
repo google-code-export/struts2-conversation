@@ -105,9 +105,10 @@ public abstract class ConversationAdapter implements Serializable {
 	 * 
 	 * @param conversationName
 	 * @param maxIdleTimeMillis
+	 * @param maxInstances
 	 * @return
 	 */
-	public abstract ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis);
+	public abstract ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances);
 
 	/**
 	 * Returns a ConversationContext for the given name and ID
@@ -203,10 +204,18 @@ public abstract class ConversationAdapter implements Serializable {
 	}
 	
 	/**
-	 * clean up this resource once processing is completed for the request
+	 * clean up this resource once processing is completed for the request, static to guarantee that it references current thread's instance
 	 */
-	public void cleanup() {
+	public static void cleanup() {
+		ConversationAdapter adapter = conversationAdapter.get();
 		conversationAdapter.remove();
+		adapter.doCleanup();
+	}
+	
+	/**
+	 * called by {@link #cleanup()}, can be overridden to tweak
+	 */
+	protected void doCleanup() {
 		this.postActionProcessors.clear();
 		this.postViewProcessors.clear();
 		this.viewContext.clear();

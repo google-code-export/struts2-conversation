@@ -51,7 +51,6 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     private static Logger LOG = LoggerFactory.getLogger(DefaultHttpConversationContextManagerProvider.class);
 
     protected long monitoringFrequency = TimeoutMonitor.DEFAULT_MONITOR_FREQUENCY;
-    protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
     protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
     protected ConversationContextFactory conversationContextFactory;
     protected transient ScheduledExecutorService scheduler;
@@ -85,15 +84,6 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
-    public void setMaxInstances(int maxInstances) {
-    	LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
-        this.maxInstances = maxInstances;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
     }
@@ -119,7 +109,6 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     		LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
     	}
     	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
-    	contextManager.setMaxInstances(this.maxInstances);
     	contextManager.setContextFactory(this.conversationContextFactory);
         TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);
         contextManager.setTimeoutMonitor(timeoutMonitor);

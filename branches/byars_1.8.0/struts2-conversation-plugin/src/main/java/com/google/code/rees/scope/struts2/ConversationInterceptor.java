@@ -42,6 +42,7 @@ import com.google.code.rees.scope.conversation.context.HttpConversationContextMa
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
@@ -51,7 +52,11 @@ import com.opensymphony.xwork2.util.LocalizedTextUtil;
 
 /**
  * 
- * This interceptor uses an {@link InjectionConversationProcessor} to process conversation states and scopes.
+ * This interceptor uses an {@link ConversationProcessor} to process conversation states and scopes.  This
+ * is the entry/exit, integration point for the conversation framework within the Struts2 framework.  If
+ * something such as a {@link ConversationIdException} occurs, the interceptor short-circuits the action
+ * invocation and returns either a {@link #CONVERSATION_EXCEPTION_KEY} or a {@link #CONVERSATION_ID_EXCEPTION_KEY}
+ * result with the error message present on the value stack.  
  * 
  * @author rees.byars
  *
@@ -177,11 +182,11 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
         this.arbitrator.setActionSuffix(this.actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
+        this.conversationConfigurationProvider.setDefaultMaxInstances(this.maxInstances);
         this.conversationConfigurationProvider.init(this.finder.getActionClasses());
         this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
         
         this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
-        this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
         this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
         this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
         this.conversationContextManagerProvider.init();
@@ -196,13 +201,37 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
     	
-    	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
-    	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
-    	
     	try {
     		
+    		HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+        	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+        	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
+    		
     		this.conversationProcessor.processConversations(adapter);
+    		
+    		invocation.addPreResultListener(new PreResultListener() {
+
+    			@Override
+    			public void beforeResult(ActionInvocation invocation, String resultCode) {
+    				adapter.executePostActionProcessors();
+    				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
+    			}
+            	
+            });
+            
+            String result = invocation.invoke();
+            
+            if (Action.INPUT.equals(result)) {
+            	result = this.handleInputResult(invocation, adapter);
+            } else if (Action.ERROR.equals(result)) {
+            	result = this.handleErrorResult(invocation, adapter);
+            } else if (Action.LOGIN.equals(result)) {
+            	result = this.handleLoginResult(invocation, adapter);
+            } else {
+            	result = this.handleResult(result, invocation, adapter);
+            }
+            
+            return result;
     		
     	} catch (ConversationIdException cie) {
     		
@@ -212,25 +241,11 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     		
     		return this.handleUnexpectedException(invocation, ce);
     		
+    	} finally {
+    		
+    		ConversationAdapter.cleanup();
+    		
     	}
-    	
-        invocation.addPreResultListener(new PreResultListener() {
-
-			@Override
-			public void beforeResult(ActionInvocation invocation, String resultCode) {
-				adapter.executePostActionProcessors();
-				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
-			}
-        	
-        });
-        
-        String result = invocation.invoke();
-        
-        adapter.executePostViewProcessors();
-        
-        ConversationAdapter.getAdapter().cleanup();
-        
-        return result;
         
     }
     
@@ -321,6 +336,23 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 			((ConversationErrorAware) action).setConversationError(errorMessage);
 			
 		}
+    }
+    
+    protected String handleInputResult(ActionInvocation invocation, ConversationAdapter adapter) {
+    	return Action.INPUT;
+    }
+    
+    protected String handleErrorResult(ActionInvocation invocation, ConversationAdapter adapter) {
+    	return Action.ERROR;
+    }
+    
+    protected String handleLoginResult(ActionInvocation invocation, ConversationAdapter adapter) {
+    	return Action.LOGIN;
+    }
+    
+    protected String handleResult(String result, ActionInvocation invocation, ConversationAdapter adapter) {
+    	adapter.executePostViewProcessors();
+    	return result;
     }
 
 }

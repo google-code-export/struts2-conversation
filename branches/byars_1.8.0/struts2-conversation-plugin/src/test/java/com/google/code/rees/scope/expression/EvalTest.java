@@ -58,7 +58,7 @@ public abstract class EvalTest {
 		adapter.setAction(this);
 		
 		this.contextManager.setContextFactory(new DefaultConversationContextFactory());
-		this.contextManager.createContext(mockConversationName, 1L);
+		this.contextManager.createContext(mockConversationName, 1L, 20);
 	}
 	
 	@After

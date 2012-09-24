@@ -22,7 +22,7 @@ public class SpelTest extends EvalTest {
 	
 	@Test
 	public void testEvaluateWithConvenienceFunctions() {
-		eval.evaluate("${#cBeg('oopy', 789)}");
+		eval.evaluate("${#cBeg('oopy', 789, 3)}");
 		assertEquals(this.contextManager.getContext("oopy_conversation", "1").getRemainingTime(), 789L);
         eval.evaluate("ginger ${#cGet('oopy')['sookie'] = bean2.value} and stuff");
         assertEquals(this.contextManager.getContext("oopy_conversation", "1").get("sookie"), this.bean2.getValue());

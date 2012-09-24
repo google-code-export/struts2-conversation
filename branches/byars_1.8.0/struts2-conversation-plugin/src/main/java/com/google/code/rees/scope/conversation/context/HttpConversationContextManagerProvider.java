@@ -57,13 +57,6 @@ public interface HttpConversationContextManagerProvider extends Serializable {
 	public void setMonitoringFrequency(long monitoringFrequency);
 	
 	/**
-	 * set the max number of instances of conversations
-	 * 
-	 * @param maxInstances
-	 */
-	public void setMaxInstances(int maxInstances);
-	
-	/**
 	 * set the {@link ConversationContextFactory}
 	 * @param conversationContextFactory
 	 */

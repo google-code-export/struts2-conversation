@@ -110,46 +110,42 @@ public class SimpleConversationProcessor implements ConversationProcessor {
         }
 
         if (conversationId != null) {
-
-            if (conversationConfig.containsAction(actionId)) {
-
-            	ConversationContext conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
-                }
-                
-                if (conversationContext != null) {
+        	ConversationContext conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+        	if (conversationContext != null) {
+        		if (conversationConfig.containsAction(actionId)) {
+	                if (LOG.isDebugEnabled()) {
+	                    LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
+	                }
                     if (conversationConfig.isEndAction(actionId)) {
-                        this.handleEnding(conversationConfig, conversationAdapter, action, conversationContext);
+                        this.handleEnding(conversationConfig, conversationAdapter, conversationContext);
                     } else {
-                        this.handleContinuing(conversationConfig, conversationAdapter, action, conversationContext);
+                        this.handleContinuing(conversationConfig, conversationAdapter, conversationContext);
                     }
-                } else {
-                	this.handleInvalidId(conversationName, conversationId);
-                }
+	            }
+        	} else {
+            	this.handleInvalidId(conversationName, conversationId);
             }
         } else if (conversationConfig.isBeginAction(actionId)) {
-            this.handleBeginning(conversationConfig, conversationAdapter, action);
+            this.handleBeginning(actionId, conversationConfig, conversationAdapter);
         }
 	}
 	
-	protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+	protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
         conversationAdapter.getViewContext().put(conversationContext.getConversationName(), conversationContext.getId());
 	}
 	
-	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action, ConversationContext conversationContext) {
+	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
 		conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
 	}
 	
-	protected void handleBeginning(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) {
-		long maxIdleTime = conversationConfig.getMaxIdleTime(conversationAdapter.getActionId());
+	protected void handleBeginning(String actionId, ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter) {
+		long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
         }
         
-        ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime);
+        ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime, conversationConfig.getMaxInstances(actionId));
 	}
 	
 	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {

@@ -32,7 +32,7 @@ public class Spel implements Eval {
 	static {
     	try {
     		CONVERSATION_ACCESSOR = ConversationUtil.class.getDeclaredMethod("getContextUsingSimpleName", new Class[] {String.class});
-    		CONVERSATION_INITIATOR = ConversationUtil.class.getDeclaredMethod("beginUsingSimpleName", new Class[] {String.class, long.class});
+    		CONVERSATION_INITIATOR = ConversationUtil.class.getDeclaredMethod("beginUsingSimpleName", new Class[] {String.class, long.class, int.class});
     		CONVERSATION_TERMINATOR = ConversationUtil.class.getDeclaredMethod("endUsingSimpleName", new Class[] {String.class});
     		CONVERSATION_CONTINUATOR = ConversationUtil.class.getDeclaredMethod("persistUsingSimpleName", new Class[] {String.class});
 		} catch (SecurityException e) {

@@ -154,8 +154,8 @@ public class ConversationUtil {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public static ConversationContext begin(String name, long maxIdleTimeMillis) {
-		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
+	public static ConversationContext begin(String name, long maxIdleTimeMillis, int maxInstances) {
+		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis, maxInstances);
 	}
 	
 	/**
@@ -166,8 +166,8 @@ public class ConversationUtil {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis) {
-		ConversationContext context = adapter.beginConversation(name, maxIdleTimeMillis);
+	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis, int maxInstances) {
+		ConversationContext context = adapter.beginConversation(name, maxIdleTimeMillis, maxInstances);
 		String id = context.getId();
 		adapter.getViewContext().put(name, id);
 		adapter.getRequestContext().put(name, id);
@@ -181,8 +181,8 @@ public class ConversationUtil {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public static ConversationContext beginUsingSimpleName(String name, long maxIdleTimeMillis) {
-		return begin(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
+	public static ConversationContext beginUsingSimpleName(String name, long maxIdleTimeMillis, int maxInstances) {
+		return begin(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter(), maxIdleTimeMillis, maxInstances);
 	}
 
 	/**
