@@ -3,15 +3,18 @@ This space is for suggestion and discussion of future features and listing of pl
 
 Leave a comment to provide your two cents or make a feature request.
 
-===Planned Features===
-  * Add a _maxInstances_ attribute to the _@BeginConversation_ annotation to allow finer-grained control and configuration.  _Planned version:  1.8.0_
-  * Add OGNL expression evaluation support for the _maxIdleTimeMillis_ attribute of the _@BeginConversation_ annotation.  This will allow for dynamically setting the timeout of a conversation by, for instance, putting a _getTimeout()_ method in your action class and setting _maxIdleTimeMillis="${timeout}"_.  _Planned version:  1.8.0_
-  * Add Spring/Hibernate session/transaction support to make it simple to bind a transaction to a conversation.  _Planned version:  1.9.0_
+As of 9/30/12, the planned releases of 1.8 and 1.9 have been rolled into a combined release, v2.0.  Most of the planned features have already been implemented in a development branch.  Due to a bit of scope-creep stemming from additional, as-yet-unannounced features and improvements being made, and the desire to fully test any changes and not rush anything to release, it was determined to move the planned releases together and move back the date.
 
+===Planned Features (incomplete list)===
+  * Adding a _maxInstances_ attribute to the _@BeginConversation_ annotation to allow finer-grained control and configuration.
+  * Adding a pluggable expression evaluation framework that will provide support for expressions (supported languages will be OGNL, MVEL, Groovy, and SPEL) in certain annotation fields, such as the _maxIdleTimeMillis_ attribute of the _@BeginConversation_ annotation.
+  * As well, support is being added for pre-action, post-action, and post-view expressions that can make use of special conversation flow commands to add some cool, powerful new flow and data handling possibilities.
+  * A mechanism for allowing validation failures to automatically map to the view from where the user just submitted the bad data.  This will help to greatly cut down on configuring "input" results when all you want to ever do is just reload the same page.  
+  * Add Spring/Hibernate session/transaction support to make it simple to bind a transaction to a conversation.
+  * Despite being a major release version, every effort is being taken to ensure that backward compatibility is 100%.  The major version change is really just to signify that a lot of new features and capabilities have been added.
 
 ===Tentative Release Schedule===
-  *  v1.8.0 - September 2012
-  *  v1.9.0 - November 2012
+  *  v2.0.0 - January 2012
 
 
 
