@@ -3,7 +3,7 @@ This space is for suggestion and discussion of future features and listing of pl
 
 Leave a comment to provide your two cents or make a feature request.
 
-As of 9/30/12, the planned releases of 1.8 and 1.9 have been rolled into a combined release, v2.0.  Most of the planned features have already been implemented in a development branch.  Due to a bit of scope-creep stemming from additional, as-yet-unannounced features and improvements being made, and the desire to fully test any changes and not rush anything to release, it was determined to move the planned releases together and move back the date.
+As of 9/30/12, the planned releases of 1.8 and 1.9 have been rolled into a combined release, v2.0.  Most of the planned features have already been implemented in a development branch.  Due to a bit of scope-creep stemming from additional, as-yet-unannounced features and improvements being made, and the desire to fully test any changes and not rush anything to release, it was determined to move the planned releases together and move back the date.  (Also, I'm a college football junkie, and that is gonna take about 12 hours of my time each week for the next couple of months)
 
 ===Planned Features (incomplete list)===
   * Adding a _maxInstances_ attribute to the _@BeginConversation_ annotation to allow finer-grained control and configuration.
