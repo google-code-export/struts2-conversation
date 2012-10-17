@@ -24,12 +24,14 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.monitor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 
 /**
  * An implementation of the {@link TimeoutMonitor} that makes use of a {@link ScheduledExecutorService}.
@@ -51,7 +53,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	public static final long MONITORING_DELAY = 1000L;
 	
-	protected Map<String, TimeoutRunner<T>> timeoutRunners = new HashMap<String, TimeoutRunner<T>>();
+	protected Map<String, TimeoutRunner<T>> timeoutRunners = new ConcurrentHashMap<String, TimeoutRunner<T>>();
 	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
 	protected transient ScheduledExecutorService scheduler = null;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
@@ -79,11 +81,12 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	/**
 	 * {@inheritDoc}
 	 */
+	@PostConstruct
 	@Override
 	public void init() {
 		synchronized(this.timeoutRunners) {
 			if (this.scheduledFutures == null) {
-				this.scheduledFutures = new HashMap<String, ScheduledFuture<?>>();
+				this.scheduledFutures = new ConcurrentHashMap<String, ScheduledFuture<?>>();
 			}
 			for (Entry<String, TimeoutRunner<T>> entry : this.timeoutRunners.entrySet()) {
 				String targetId = entry.getKey();
@@ -115,7 +118,6 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void addTimeoutable(T timeoutable) {
-		synchronized (this.timeoutRunners) {
 			String targetId = timeoutable.getId();
 			if (!this.timeoutRunners.containsKey(targetId)) {
 				TimeoutRunner<T> timeoutRunner = BladeRunner.create(timeoutable);
@@ -124,7 +126,6 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 				this.scheduledFutures.put(targetId, future);
 				timeoutable.addTimeoutListener(this);
 			}
-		}
 	}
 
 	/**
@@ -132,14 +133,12 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void removeTimeoutable(T timeoutable) {
-		synchronized(this.timeoutRunners) {
 			String targetId = timeoutable.getId();
 			ScheduledFuture<?> future = this.scheduledFutures.remove(targetId);
 			if (future != null) {
 				future.cancel(true);
 			}
 			this.timeoutRunners.remove(targetId);
-		}
 	}
 
 	/**

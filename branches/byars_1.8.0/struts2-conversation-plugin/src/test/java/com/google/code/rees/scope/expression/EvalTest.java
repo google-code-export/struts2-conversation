@@ -15,7 +15,6 @@ import com.google.code.rees.scope.conversation.context.DefaultConversationContex
 import com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider;
 import com.google.code.rees.scope.mocks.MockConversationAdapter;
 
-//TODO:  implement new confiuration items
 //TODO:  implement conversation end processor shit - force after view?  allow option?
 //TODO:  make contexts available in view using expression - add to action context or what?
 //TODO:  in-memory context manager and JpaContextManager
@@ -44,6 +43,7 @@ public abstract class EvalTest {
 	
 	@Before
 	public void setUp() {
+		
 		bean1.setName("supa");
 		bean1.setValue(42);
 		

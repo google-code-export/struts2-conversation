@@ -42,6 +42,7 @@ import com.google.code.rees.scope.conversation.context.HttpConversationContextMa
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
+import com.google.code.rees.scope.expression.Eval;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
@@ -107,6 +108,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     protected long monitoringFrequency;
     protected int maxInstances;
     protected ConversationContextFactory conversationContextFactory;
+    protected Eval eval;
 
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
@@ -161,6 +163,11 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
+    }
+    
+    @Inject(StrutsScopeConstants.EXPRESSION_EVAL)
+    public void setEval(Eval eval) {
+        this.eval = eval;
     }
 
     /**

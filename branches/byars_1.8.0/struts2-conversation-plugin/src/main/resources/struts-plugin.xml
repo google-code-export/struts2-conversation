@@ -91,6 +91,10 @@
 	<bean name="conversation.context.factory" 
 		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
 		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
+		
+	<bean name="conversation.expression.eval" 
+		type="com.google.code.rees.scope.expression.Eval" 
+		class="com.google.code.rees.scope.expression.Ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	
