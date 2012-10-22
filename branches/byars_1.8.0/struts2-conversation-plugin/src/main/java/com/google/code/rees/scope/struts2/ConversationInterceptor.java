@@ -245,8 +245,12 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     			}
             	
             });
+    		
+    		adapter.executePreActionProcessors();
             
             String result = invocation.invoke();
+            
+            adapter.executePostViewProcessors();
             
             if (Action.INPUT.equals(result)) {
             	result = this.handleInputResult(invocation, adapter);

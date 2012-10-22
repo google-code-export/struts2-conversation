@@ -2,7 +2,9 @@ package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
@@ -16,7 +18,7 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 public class ConversationClassConfigurationImpl implements ConversationClassConfiguration {
 	
 	private final Map<String, Field> fields = new HashMap<String, Field>();
-    private final Map<String, BaseConfig> actions = new HashMap<String, BaseConfig>();
+    private final Set<String> actions = new HashSet<String>();
     private final Map<String, BeginConfig> beginActions = new HashMap<String, BeginConfig>();
     private final Map<String, Boolean> endActions  = new HashMap<String, Boolean>();
     private final String conversationName;
@@ -45,16 +47,16 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      * {@inheritDoc}
      */
     @Override
-    public void addAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression) {
-        actions.put(actionId, new BaseConfig(preActionExpression, postActionExpression, postViewExpression));
+    public void addAction(String actionId) {
+        actions.add(actionId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addBeginAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional) {
-        this.addAction(actionId, preActionExpression, postActionExpression, postViewExpression);
+    public void addBeginAction(String actionId, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional) {
+        this.addAction(actionId);
         beginActions.put(actionId, new BeginConfig(maxIdleTimeMillis, maxIdleTime, maxInstances, transactional));
     }
 
@@ -62,8 +64,7 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      * {@inheritDoc}
      */
     @Override
-    public void addEndAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, boolean endAfterView) {
-    	this.addAction(actionId, preActionExpression, postActionExpression, postViewExpression);
+    public void addEndAction(String actionId, boolean endAfterView) {
         endActions.put(actionId, endAfterView);
     }
 
@@ -72,7 +73,7 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      */
     @Override
     public boolean containsAction(String actionId) {
-        return actions.containsKey(actionId);
+        return actions.contains(actionId);
     }
 
     /**
@@ -123,30 +124,6 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     	return beginActions.get(beginActionId).maxInstances;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-	public String getPreActionExpression(String actionId) {
-		return actions.get(actionId).preActionExpression;
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-	@Override
-	public String getPostActionExpression(String actionId) {
-		return actions.get(actionId).postActionExpression;
-	}
-
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-	public String getPostViewExpression(String actionId) {
-		return actions.get(actionId).postViewExpression;
-	}
-
 	/**
      * {@inheritDoc}
      */
@@ -163,6 +140,11 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
         return conversationName;
     }
     
+    /**
+     * 
+     * yuck....  TODO
+     *
+     */
     class BeginConfig {
     	long maxIdleTimeMillis;
     	String maxIdleTime;
@@ -173,17 +155,6 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     		this.maxIdleTime = maxIdleTime;
     		this.maxInstances = maxInstances;
     		this.transactional = transactional;
-    	}
-    }
-    
-    class BaseConfig {
-    	String preActionExpression;
-    	String postActionExpression;
-    	String postViewExpression;
-    	BaseConfig(String preActionExpression, String postActionExpression, String postViewExpression) {
-    		this.preActionExpression = preActionExpression;
-    		this.postActionExpression = postActionExpression;
-    		this.postViewExpression = postViewExpression;
     	}
     }
 

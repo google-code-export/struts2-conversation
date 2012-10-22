@@ -33,6 +33,7 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.configuration.ExpressionConfiguration;
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
@@ -85,13 +86,34 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 		try {
 			
 			Object action = conversationAdapter.getAction();
+			Class<?> actionClass = action.getClass();
 			
-			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
+			
+			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(actionClass);
 			if (actionConversationConfigs != null) {
 				for (ConversationClassConfiguration conversationConfig : actionConversationConfigs) {
 					processConversation(conversationConfig, conversationAdapter, action);
 				}
 			}
+			
+			//TODO this has design issues written all over it
+			ExpressionConfiguration expressionConfiguration = this.configurationProvider.getExpressionConfiguration(actionClass);
+			if (expressionConfiguration != null) {
+				String actionId = conversationAdapter.getActionId();
+				String pre = expressionConfiguration.getPreActionExpression(actionId);
+				if (pre != null && !"".equals(pre)) {
+					conversationAdapter.addPreActionProcessor(new ExpressionProcessor(eval, pre), null, null);
+				}
+				String postA = expressionConfiguration.getPostActionExpression(actionId);
+				if (postA != null && !"".equals(postA)) {
+					conversationAdapter.addPostActionProcessor(new ExpressionProcessor(eval, postA), null, null);
+				}
+				String postV = expressionConfiguration.getPostViewExpression(actionId);
+				if (postV != null && !"".equals(postV)) {
+					conversationAdapter.addPostViewProcessor(new ExpressionProcessor(eval, postV), null, null);
+				}
+			}
+			
 			
 		} catch (ConversationException ce) {
 			

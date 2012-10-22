@@ -37,6 +37,7 @@ import com.google.code.rees.scope.conversation.processing.PostProcessorWrapper;
 import com.google.code.rees.scope.conversation.processing.PostProcessorWrapperFactory;
 import com.google.code.rees.scope.conversation.processing.DefaultPostProcessorWrapperFactory;
 import com.google.code.rees.scope.conversation.processing.PostViewProcessor;
+import com.google.code.rees.scope.conversation.processing.PreActionProcessor;
 
 /**
  * This class is used to adapt/integrate the major components of the
@@ -60,6 +61,7 @@ public abstract class ConversationAdapter implements Serializable {
 	protected static ThreadLocal<ConversationAdapter> conversationAdapter = new ThreadLocal<ConversationAdapter>();
 	protected Map<String, String> viewContext = new HashMap<String, String>();
 	protected PostProcessorWrapperFactory postProcessorFactory = new DefaultPostProcessorWrapperFactory();
+	protected Collection<PostProcessorWrapper<PreActionProcessor>> preActionProcessors = new HashSet<PostProcessorWrapper<PreActionProcessor>>();
 	protected Collection<PostProcessorWrapper<PostActionProcessor>> postActionProcessors = new HashSet<PostProcessorWrapper<PostActionProcessor>>();
 	protected Collection<PostProcessorWrapper<PostViewProcessor>> postViewProcessors = new HashSet<PostProcessorWrapper<PostViewProcessor>>();
 
@@ -132,6 +134,30 @@ public abstract class ConversationAdapter implements Serializable {
 	 */
 	public Map<String, String> getViewContext() {
 		return this.viewContext;
+	}
+	
+	/**
+	 * Add a {@link PreActionProcessor} that is guaranteed to be executed
+	 * after action execution by a call to {@link #executePreActionProcessors()}
+	 * 
+	 * @param postProcessor
+	 * @param conversationConfig
+	 * @param conversationId
+	 */
+	public void addPreActionProcessor(PreActionProcessor postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
+		PostProcessorWrapper<PreActionProcessor> wrapper = this.postProcessorFactory.create(this, postProcessor, conversationConfig, conversationId);
+		this.preActionProcessors.add(wrapper);
+	}
+
+	/**
+	 * Executes all {@link PreActionProcessor PreActionProcessors}
+	 * that have been added using
+	 * {@link #addPreActionProcessor(PreActionProcessor, ConversationClassConfiguration, String)}
+	 */
+	public void executePreActionProcessors() {
+		for (PostProcessorWrapper<PreActionProcessor> postProcessor : this.preActionProcessors) {
+			postProcessor.postProcessConversation();
+		}
 	}
 
 	/**
@@ -216,6 +242,7 @@ public abstract class ConversationAdapter implements Serializable {
 	 * called by {@link #cleanup()}, can be overridden to tweak
 	 */
 	protected void doCleanup() {
+		this.preActionProcessors.clear();
 		this.postActionProcessors.clear();
 		this.postViewProcessors.clear();
 		this.viewContext.clear();

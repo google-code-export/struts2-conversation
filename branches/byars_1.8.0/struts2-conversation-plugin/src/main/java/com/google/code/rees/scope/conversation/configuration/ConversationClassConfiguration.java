@@ -62,7 +62,7 @@ public interface ConversationClassConfiguration {
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
      */
-    public void addAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression);
+    public void addAction(String actionId);
 
     /**
      * Add an actionId for a begin action
@@ -70,7 +70,7 @@ public interface ConversationClassConfiguration {
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
      */
-    public void addBeginAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional);
+    public void addBeginAction(String actionId, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional);
 
     /**
      * Add an actionId for an end action
@@ -78,7 +78,7 @@ public interface ConversationClassConfiguration {
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
      */
-    public void addEndAction(String actionId, String preActionExpression, String postActionExpression, String postViewExpression, boolean endAfterView);
+    public void addEndAction(String actionId, boolean endAfterView);
 
     /**
      * Indicates whether the actionId identifies the action as an intermediate
@@ -142,27 +142,6 @@ public interface ConversationClassConfiguration {
      * @return
      */
     public int getMaxInstances(String beginActionId);
-    
-    /**
-     * 
-     * @param acitonId
-     * @return
-     */
-    public String getPreActionExpression(String actionId);
-    
-    /**
-     * 
-     * @param acitonId
-     * @return
-     */
-    public String getPostActionExpression(String actionId);
-    
-    /**
-     * 
-     * @param acitonId
-     * @return
-     */
-    public String getPostViewExpression(String actionId);
     
     /**
      * 

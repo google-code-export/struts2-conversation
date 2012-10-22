@@ -21,7 +21,7 @@ import ognl.OgnlException;
 public class Ognl implements Eval {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Ognl.class);
-	private static final Object staticWrapper = new Object() {
+	private static final Object UTILITY_WRAPPER = new Object() {
 		@SuppressWarnings("unused")
 		public ConversationContext get(String name) {
 			return ConversationUtil.getContextUsingSimpleName(name);
@@ -50,7 +50,7 @@ public class Ognl implements Eval {
 		
 		Object result = expression;
 		Object compiledExpression = null;
-		evaluationContext.put("c", staticWrapper);
+		evaluationContext.put("c", UTILITY_WRAPPER);
 		
 		try {
 			compiledExpression = this.compiledExpressions.get(expression);
