@@ -92,9 +92,11 @@
 		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
 		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
 		
-	<bean name="conversation.expression.eval" 
+	<bean name="ognl" 
 		type="com.google.code.rees.scope.expression.Eval" 
 		class="com.google.code.rees.scope.expression.Ognl"/>
+		
+	<constant name="conversation.expression.eval.provider" value="ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	

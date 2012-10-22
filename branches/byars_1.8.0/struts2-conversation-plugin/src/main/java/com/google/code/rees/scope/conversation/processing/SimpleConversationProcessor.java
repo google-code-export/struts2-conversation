@@ -36,6 +36,7 @@ import com.google.code.rees.scope.conversation.configuration.ConversationConfigu
 import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
+import com.google.code.rees.scope.expression.Eval;
 
 /**
  * A simple yet effective implementation of {@link ConversationProcessor} that
@@ -51,6 +52,15 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationProcessor.class);
 	
 	protected ConversationConfigurationProvider configurationProvider;
+	protected Eval eval;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setEval(Eval eval) {
+		this.eval = eval;
+	}
 
 	/**
 	 * {@inheritDoc}

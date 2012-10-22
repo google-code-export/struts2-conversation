@@ -46,6 +46,7 @@ import com.google.code.rees.scope.expression.Eval;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
+import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
@@ -97,6 +98,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
      */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
+    protected Container container;
     protected ActionProvider finder;
     protected String actionSuffix;
 	protected long maxIdleTime;
@@ -109,7 +111,13 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     protected int maxInstances;
     protected ConversationContextFactory conversationContextFactory;
     protected Eval eval;
+    private String evalProviderName;
 
+    @Inject
+    public void setContainer(Container container) {
+        this.container = container;
+    }
+    
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
         this.finder = finder;
@@ -166,8 +174,8 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     }
     
     @Inject(StrutsScopeConstants.EXPRESSION_EVAL)
-    public void setEval(Eval eval) {
-        this.eval = eval;
+    public void setEvalProviderName(String evalProviderName) {
+        this.evalProviderName = evalProviderName;
     }
 
     /**
@@ -187,11 +195,23 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
         LOG.info("Initializing the Conversation Interceptor...");
 
         this.arbitrator.setActionSuffix(this.actionSuffix);
+
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
         this.conversationConfigurationProvider.setDefaultMaxInstances(this.maxInstances);
         this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+
+        this.eval = this.container.getInstance(Eval.class, this.evalProviderName);
+        if (this.eval == null) {
+        	LOG.error("No bean with name " + this.evalProviderName + " of " + Eval.class + 
+        			" was found.  Make sure the constant [" + StrutsScopeConstants.EXPRESSION_EVAL + "] is set to a valid value in your struts.xml." +
+        					"  Defaulting to use OGNL as the expression evaluation provider.");
+        } else {
+        	LOG.info("Conversation expression evaluation provider [" + this.evalProviderName + "] successfully acquired.");
+        }
+        
         this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
+        this.conversationProcessor.setEval(this.eval);
         
         this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
         this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);

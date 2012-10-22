@@ -46,5 +46,5 @@ public class StrutsScopeConstants {
     public static final String CONVERSATION_CONTEXT_MANAGER_PROVIDER = "conversation.context.manager.provider";
     public static final String SIMPLE_CONVERSATION_PROCESSOR_KEY = "conversation.simple.processor";
     public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
-    public final static String EXPRESSION_EVAL = "conversation.expression.eval";
+    public final static String EXPRESSION_EVAL = "conversation.expression.eval.provider";
 }

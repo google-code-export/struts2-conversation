@@ -2,20 +2,12 @@ package com.google.code.rees.scope.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.struts2.components.Text;
-import org.apache.struts2.views.freemarker.tags.TextAreaModel;
 import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.MockConventionController;
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
 import com.google.code.rees.scope.testutil.StrutsScopeTestCase;
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.util.TextParseUtil;
-import com.opensymphony.xwork2.util.ValueStack;
 
 public class StrutsSessionFieldIntegrationTest extends
         StrutsScopeTestCase<MockConventionController> {
@@ -64,29 +56,7 @@ public class StrutsSessionFieldIntegrationTest extends
     public void testActionWithNoSessionFields() throws Exception {
         this.getActionProxy("mock-no-session-field").execute();
         ActionProxy proxy = this.getActionProxy("configuration-action");
-        System.out.println(proxy.getActionName());
-        System.out.println(proxy.getConfig().getName());
-        HashMap map = new HashMap();
-        map.put("class", "shit");
-        
-        this.copyParams(map, ActionContext.getContext().getValueStack());
-        
-        System.out.println(ActionContext.getContext().getValueStack().findValue("class"));
+        proxy.execute();
     }
-    
-    public void copyParams(Map params, ValueStack stack) {
-    	stack.push(params);
-    	//stack.push(this);
-    	try {
-    		            for (Object o : params.entrySet()) {
-    	                Map.Entry entry = (Map.Entry) o;
-    	                String key = (String) entry.getKey();
-    		                stack.setValue(key, entry.getValue());
-    		            }
-    		        } finally {
-    	            stack.pop();
-    	            //stack.pop();
-    	        }
-    		    }
 
 }
