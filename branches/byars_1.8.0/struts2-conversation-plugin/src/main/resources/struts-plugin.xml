@@ -118,7 +118,9 @@
 				class="com.google.code.rees.scope.struts2.SessionInterceptor" />
 				
 			<interceptor name="conversation"
-				class="com.google.code.rees.scope.struts2.ConversationInterceptor" />
+				class="com.google.code.rees.scope.struts2.ConversationInterceptor">
+				<param name="shortCircuitResults">input,login,error</param>	
+			</interceptor>
 			
 			<interceptor-stack name="defaultConversationStack">
 				<interceptor-ref name="sessionField" />

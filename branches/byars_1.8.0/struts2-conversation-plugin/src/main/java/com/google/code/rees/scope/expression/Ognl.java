@@ -46,7 +46,7 @@ public class Ognl implements Eval {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) {
+	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) throws ExpressionEvaluationException {
 		
 		Object result = expression;
 		Object compiledExpression = null;
@@ -89,16 +89,19 @@ public class Ognl implements Eval {
 			}
 		} catch (OgnlException e) {
 			LOG.error("Failed to obtain compiled object graph for [" + expression + "].  Message:  " + e.getMessage() + "  Details:  " + e.getReason());
+			throw new ExpressionEvaluationException(expression, e);
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
 		}
 		
 		return result;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritDoc} 
 	 */
 	@Override
-	public Object evaluate(String expression) {
+	public Object evaluate(String expression) throws ExpressionEvaluationException {
 		return evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
 	}
 	

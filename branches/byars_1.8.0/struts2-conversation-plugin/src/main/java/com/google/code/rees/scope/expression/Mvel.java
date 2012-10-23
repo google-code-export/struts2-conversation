@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 
+/**
+ * 
+ * @author reesbyars
+ *
+ */
 public class Mvel implements Eval {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Mvel.class);
@@ -25,19 +30,33 @@ public class Mvel implements Eval {
 	
 	private final Map<String, CompiledTemplate> templateCache = new ConcurrentHashMap<String, CompiledTemplate>();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) {
-		CompiledTemplate template = this.templateCache.get(expression);
-		if (template == null) {
-			LOG.debug("Compiled template not found in cache, compiling template and caching.");
-			template = TemplateCompiler.compileTemplate(CONVERSATION_ACCESSOR + CONVERSATION_TERMINATOR + CONVERSATION_INITIATOR + CONVERSATION_CONTINUATOR + expression);
-			this.templateCache.put(expression, template);
+	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) throws ExpressionEvaluationException {
+		try {
+			CompiledTemplate template = this.templateCache.get(expression);
+			if (template == null) {
+				LOG.debug("Compiled template not found in cache, compiling template and caching.");
+				template = TemplateCompiler.compileTemplate(CONVERSATION_ACCESSOR + CONVERSATION_TERMINATOR + CONVERSATION_INITIATOR + CONVERSATION_CONTINUATOR + expression);
+				this.templateCache.put(expression, template);
+			}
+			return TemplateRuntime.execute(template, root, evaluationContext);
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
 		}
-		return TemplateRuntime.execute(template, root, evaluationContext);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Object evaluate(String expression) {
-		return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+	public Object evaluate(String expression) throws ExpressionEvaluationException {
+		try {
+			return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
+		}
 	}
 }

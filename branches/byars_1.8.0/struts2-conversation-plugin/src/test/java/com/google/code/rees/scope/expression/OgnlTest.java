@@ -15,13 +15,13 @@ public class OgnlTest extends EvalTest {
 	}
 	
 	@Test
-	public void testEvaluate() {
+	public void testEvaluate() throws ExpressionEvaluationException {
 		String expression = "total = ${#supa.value + #dupa.value}${bean1.name}";
 		assertEquals("total = 111supa", eval.evaluate(expression, context, this));
 	}
 	
 	@Test
-	public void testEvaluateWithConvenienceFunctions() {
+	public void testEvaluateWithConvenienceFunctions() throws ExpressionEvaluationException {
 		eval.evaluate("ginger ${#c.beg('oopy', 789, 3)} and stuff");
 		eval.evaluate("ginger ${#c.beg('zoopy', 789, 3)} and stuff");
 		assertEquals(this.contextManager.getContext("oopy_conversation", "1").getRemainingTime(), 789L);

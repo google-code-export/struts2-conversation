@@ -13,6 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 
+/**
+ * 
+ * @author reesbyars
+ *
+ */
 public class Groovy implements Eval {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Groovy.class);
@@ -28,29 +33,43 @@ public class Groovy implements Eval {
 	private final SimpleTemplateEngine engine = new SimpleTemplateEngine();
 	private final Map<String, Template> templateCache = new ConcurrentHashMap<String, Template>();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) {
-		Template template = this.templateCache.get(expression);
-		if (template == null) {
-			LOG.debug("Compiled template not found in cache, compiling template and caching.");
-			try {
-				template = engine.createTemplate(CONVERSATION_ACCESSOR + CONVERSATION_TERMINATOR + CONVERSATION_INITIATOR + CONVERSATION_CONTINUATOR + expression);
-			} catch (CompilationFailedException e) {
-				LOG.error("Could not compile template.  Message:  " + e.getMessage());
-			} catch (ClassNotFoundException e) {
-				LOG.error("Could not compile template.  Message:  " + e.getMessage());
-			} catch (IOException e) {
-				LOG.error("Could not compile template.  Message:  " + e.getMessage());
+	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) throws ExpressionEvaluationException {
+		try {
+			Template template = this.templateCache.get(expression);
+			if (template == null) {
+				LOG.debug("Compiled template not found in cache, compiling template and caching.");
+				try {
+					template = engine.createTemplate(CONVERSATION_ACCESSOR + CONVERSATION_TERMINATOR + CONVERSATION_INITIATOR + CONVERSATION_CONTINUATOR + expression);
+				} catch (CompilationFailedException e) {
+					LOG.error("Could not compile template.  Message:  " + e.getMessage());
+				} catch (ClassNotFoundException e) {
+					LOG.error("Could not compile template.  Message:  " + e.getMessage());
+				} catch (IOException e) {
+					LOG.error("Could not compile template.  Message:  " + e.getMessage());
+				}
+				this.templateCache.put(expression, template);
 			}
-			this.templateCache.put(expression, template);
+			evaluationContext.put("action", root);
+			return template.make(evaluationContext).toString();
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
 		}
-		evaluationContext.put("action", root);
-		return template.make(evaluationContext).toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Object evaluate(String expression) {
-		return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+	public Object evaluate(String expression) throws ExpressionEvaluationException {
+		try {
+			return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
+		}
 	}
 	
 }

@@ -63,23 +63,37 @@ public class Spel implements Eval {
     	
     };
 	
-	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) {
-		Expression parsedExpression = this.expressionCache.get(expression);
-		if (parsedExpression == null) {
-			parsedExpression = parser.parseExpression(expression, this.parserContext);
-			expressionCache.put(expression, parsedExpression);
+    /**
+     * {@inheritDoc}
+     */
+	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) throws ExpressionEvaluationException {
+		try {
+			Expression parsedExpression = this.expressionCache.get(expression);
+			if (parsedExpression == null) {
+				parsedExpression = parser.parseExpression(expression, this.parserContext);
+				expressionCache.put(expression, parsedExpression);
+			}
+			StandardEvaluationContext context = new StandardEvaluationContext(root);
+			context.setVariables(evaluationContext);
+			context.registerFunction("cGet", CONVERSATION_ACCESSOR);
+			context.registerFunction("cBeg", CONVERSATION_INITIATOR);
+			context.registerFunction("cEnd", CONVERSATION_TERMINATOR);
+			context.registerFunction("cCon", CONVERSATION_CONTINUATOR);
+			return parsedExpression.getValue(context);
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
 		}
-		StandardEvaluationContext context = new StandardEvaluationContext(root);
-		context.setVariables(evaluationContext);
-		context.registerFunction("cGet", CONVERSATION_ACCESSOR);
-		context.registerFunction("cBeg", CONVERSATION_INITIATOR);
-		context.registerFunction("cEnd", CONVERSATION_TERMINATOR);
-		context.registerFunction("cCon", CONVERSATION_CONTINUATOR);
-		return parsedExpression.getValue(context);
 	}
 	
-	public Object evaluate(String expression) {
-		return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+	/**
+	 * {@inheritDoc}
+	 */
+	public Object evaluate(String expression) throws ExpressionEvaluationException {
+		try {
+			return this.evaluate(expression, ConversationAdapter.getAdapter().getActionContext(), ConversationAdapter.getAdapter().getAction());
+		} catch (Exception e) {
+			throw new ExpressionEvaluationException(expression, e);
+		}
 	}
 	
 	public void setExpressionPrefix(final String prefix) {

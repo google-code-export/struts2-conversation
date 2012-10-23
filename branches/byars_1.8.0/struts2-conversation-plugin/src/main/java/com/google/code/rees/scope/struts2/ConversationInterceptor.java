@@ -23,8 +23,10 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,7 +45,6 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 import com.google.code.rees.scope.expression.Eval;
-import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Container;
@@ -51,6 +52,7 @@ import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.LocalizedTextUtil;
+import com.opensymphony.xwork2.util.TextParseUtil;
 
 /**
  * 
@@ -112,6 +114,12 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     protected ConversationContextFactory conversationContextFactory;
     protected Eval eval;
     private String evalProviderName;
+    
+    protected Set<String> shortCircuitResults = Collections.emptySet();
+    
+    public void setShortCircuitResults(String shortCircuitResults) {
+        this.shortCircuitResults = TextParseUtil.commaDelimitedStringToSet(shortCircuitResults);
+    }
 
     @Inject
     public void setContainer(Container container) {
@@ -237,27 +245,21 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     		this.conversationProcessor.processConversations(adapter);
     		
     		invocation.addPreResultListener(new PreResultListener() {
-
     			@Override
     			public void beforeResult(ActionInvocation invocation, String resultCode) {
-    				adapter.executePostActionProcessors();
+    				if (!ConversationInterceptor.this.shortCircuitResults.contains(resultCode)) {
+    					adapter.executePostActionProcessors();
+    				}
     				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
     			}
-            	
             });
     		
     		adapter.executePreActionProcessors();
             
             String result = invocation.invoke();
             
-            adapter.executePostViewProcessors();
-            
-            if (Action.INPUT.equals(result)) {
-            	result = this.handleInputResult(invocation, adapter);
-            } else if (Action.ERROR.equals(result)) {
-            	result = this.handleErrorResult(invocation, adapter);
-            } else if (Action.LOGIN.equals(result)) {
-            	result = this.handleLoginResult(invocation, adapter);
+            if (this.shortCircuitResults.contains(result)) {
+            	result = this.handleShortCircuitResult(result, invocation, adapter);
             } else {
             	result = this.handleResult(result, invocation, adapter);
             }
@@ -369,16 +371,8 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 		}
     }
     
-    protected String handleInputResult(ActionInvocation invocation, ConversationAdapter adapter) {
-    	return Action.INPUT;
-    }
-    
-    protected String handleErrorResult(ActionInvocation invocation, ConversationAdapter adapter) {
-    	return Action.ERROR;
-    }
-    
-    protected String handleLoginResult(ActionInvocation invocation, ConversationAdapter adapter) {
-    	return Action.LOGIN;
+    protected String handleShortCircuitResult(String result, ActionInvocation invocation, ConversationAdapter adapter) {
+    	return result;
     }
     
     protected String handleResult(String result, ActionInvocation invocation, ConversationAdapter adapter) {
