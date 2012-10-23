@@ -14,7 +14,6 @@ public class VisibilityAdapter {
         return DelegationHandlerImpl.getProxy(target, targetInterface);
     }
 
-    @SuppressWarnings("unchecked")
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
         return DelegationHandlerImpl.delegate(target, targetInterface, requireProxy);
     }

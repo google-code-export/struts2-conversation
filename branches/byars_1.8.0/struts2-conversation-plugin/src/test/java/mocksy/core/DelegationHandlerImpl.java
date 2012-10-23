@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
 
-    protected static final ThreadLocal<Map<Class<?>, DelegationHandler>> localHandlerCache = new ThreadLocal<Map<Class<?>, DelegationHandler>>();
+    protected static final ThreadLocal<Map<Class<?>, DelegationHandler<?>>> localHandlerCache = new ThreadLocal<Map<Class<?>, DelegationHandler<?>>>();
 
     protected DelegationInterceptor<T> interceptor;
 
@@ -50,7 +50,6 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
         return resolveHandler(target, targetInterface).getProxy();
     }
 
-    @SuppressWarnings("unchecked")
     protected static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
 
         if (requireProxy) {
@@ -65,7 +64,7 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
     }
 
     protected static void cleanup() {
-        Map<Class<?>, DelegationHandler> handlerCache = localHandlerCache.get();
+        Map<Class<?>, DelegationHandler<?>> handlerCache = localHandlerCache.get();
         if (handlerCache != null) {
             handlerCache.clear();
             localHandlerCache.remove();
@@ -78,10 +77,10 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
             throw new DelegationException("Target cannot be null.  If trying to create an empty proxy of an interface, use the EmptyMockFactory or the Mocksy.newEmptyMock() method.");
         }
 
-        Map<Class<?>, DelegationHandler> handlerCache = localHandlerCache.get();
+        Map<Class<?>, DelegationHandler<?>> handlerCache = localHandlerCache.get();
 
         if (handlerCache == null) {
-            handlerCache = new HashMap<Class<?>, DelegationHandler>();
+            handlerCache = new HashMap<Class<?>, DelegationHandler<?>>();
             localHandlerCache.set(handlerCache);
         }
 

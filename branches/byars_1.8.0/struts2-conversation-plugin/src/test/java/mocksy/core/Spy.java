@@ -48,7 +48,8 @@ public class Spy<T> {
         Hijacker(Class<T> type) {
             this.type = type;
         }
-        public T from(Object target) throws DelegationException {
+        @SuppressWarnings("unchecked")
+		public T from(Object target) throws DelegationException {
             Object real = Mocksy.real(target);
             for (Field field : real.getClass().getDeclaredFields()) {
                 if (field.getType().equals(type)) {

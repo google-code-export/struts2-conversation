@@ -33,5 +33,9 @@ public class SpringMocksyFactoryBean<C> implements FactoryBean<C> {
     public boolean isSingleton() {
         return true;
     }
+    
+    public static <C> SpringMocksyFactoryBean<C> getFor(Class<C> type) {
+    	return new SpringMocksyFactoryBean<C>(type);
+    }
 
 }

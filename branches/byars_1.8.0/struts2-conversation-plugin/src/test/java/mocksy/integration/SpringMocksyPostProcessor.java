@@ -20,10 +20,10 @@ import org.springframework.util.StringUtils;
  * <p/>
  * Example usage:
  * <pre>
- * &lt;bean class=&quot;gov.va.vba.vbms.test.mocksy.SpringMocksyPostProcessor&quot;&gt;
- *    &lt;property name=&quot;proxyPackages&quot; value=&quot;gov.va.vba.vbms&quot;/&gt;
- *    &lt;property name=&quot;lazyInitPackages&quot; value=&quot;gov.va.vba.vbms.dal, gov.va.vba.vbms.bl&quot;/&gt;
- *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;gov.va.vba.vbms.bl.SomeService, gov.va.vba.vbms.event.SomeOtherService&quot;/&gt;
+ * &lt;bean class=&quot;mocksy.SpringMocksyPostProcessor&quot;&gt;
+ *    &lt;property name=&quot;proxyPackages&quot; value=&quot;orb.byars&quot;/&gt;
+ *    &lt;property name=&quot;lazyInitPackages&quot; value=&quot;org.byars.foo, org.byars.bar&quot;/&gt;
+ *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
  * &lt;/bean&gt;
  * </pre>
  * <p/>
@@ -37,8 +37,8 @@ public class SpringMocksyPostProcessor implements BeanPostProcessor, BeanFactory
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringMocksyPostProcessor.class);
 
-    String[] mockifyPackages = {"gov.va.vba.vbms"};
-    String[] lazyInitPackages = {""};
+    String[] mockifyPackages = {"NONE"};
+    String[] lazyInitPackages = {"NONE"};
     String[] emptyMockClasses = {};
 
     public void setMockifyPackages(String mockifyPackages) {
@@ -92,9 +92,8 @@ public class SpringMocksyPostProcessor implements BeanPostProcessor, BeanFactory
         }
         for (String className : this.emptyMockClasses) {
             try {
-                Class beanClass = Class.forName(className);
-                @SuppressWarnings("unchecked")
-                FactoryBean factoryBean = new SpringMocksyFactoryBean(beanClass);
+                Class<?> beanClass = Class.forName(className);
+                FactoryBean<?> factoryBean = SpringMocksyFactoryBean.getFor(beanClass);
                 String name = className + "$MOCKSY_PROXY$";
                 beanFactory.registerSingleton(name, factoryBean);
             } catch (ClassNotFoundException e) {

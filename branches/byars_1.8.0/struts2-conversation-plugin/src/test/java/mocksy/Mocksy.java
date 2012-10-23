@@ -11,12 +11,8 @@ import mocksy.core.*;
  * {@link #delegate(Object)} method to assign/delegate mock implementations of methods to your Spring manged beans.  Yes,
  * its not really as good as JMockit, but I likes it, and its mines.
  * <p/>
- * The name is a sort of pun/portmanteau of Mock + Proxy + Moxy, get it? Yeah, OK, I'm sorry...  Should probably have
- * called it something like StupidAssWasteOfTime.
- * <p/>
- * Mocksy also supports multi-threaded, concurrent testing without worry of muddying your delegations.
- * <p/>
- * Made mostly on my free time at home, if anyone is curious.
+ * Mocksy also supports multi-threaded, concurrent testing without worry of muddying your delegations (not supported in JMockit, whose
+ * byte-code instrumentation approach is not thread safe).
  * <p/>
  * User: reesbyars
  * Date: 9/11/12
@@ -117,12 +113,10 @@ public class Mocksy {
         return delegate(target, null, false).getRealObject();
     }
 
-    @SuppressWarnings("unchecked")
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) throws DelegationException {
         return delegate(target, targetInterface, true); //true to enforce good practice
     }
 
-    @SuppressWarnings("unchecked")
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
         return VisibilityAdapter.delegate(target, targetInterface, requireProxy);
     }
@@ -138,7 +132,7 @@ public class Mocksy {
     public static void verify(Object proxy) throws DelegationException {
         Object delegate = delegate(proxy).getDelegate();
         if (delegate instanceof Mock) {
-            ((Mock) delegate).verify();
+            ((Mock<?>) delegate).verify();
         }
     }
 

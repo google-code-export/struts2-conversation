@@ -9,7 +9,9 @@ package mocksy.core;
  */
 public class DelegationException extends Exception {
 
-    DelegationException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	DelegationException(String message) {
         super(message);
     }
 }
