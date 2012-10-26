@@ -25,6 +25,7 @@
 package com.google.code.rees.scope.util.monitor;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.code.rees.scope.util.thread.ThreadTask;
 
@@ -39,27 +40,27 @@ public class TimeoutTask implements ThreadTask, Serializable {
 	private static final long serialVersionUID = 8002426005125447219L;
 
 	protected Timeoutable<?> timeoutable;
-	protected boolean active;
+	protected AtomicBoolean active;
 
 	protected TimeoutTask(Timeoutable<?> timeoutable) {
 		this.timeoutable = timeoutable;
-		this.active = true;
+		this.active = new AtomicBoolean(true);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized boolean isActive() {
-		return this.active;
+	public boolean isActive() {
+		return this.active.get();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void cancel() {
-		this.active = false;
+	public void cancel() {
+		this.active.set(false);
 	}
 
 	/**

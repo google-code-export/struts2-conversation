@@ -42,6 +42,7 @@ public class ScheduledExecutorTimeoutMonitorTest {
 				ConversationContext c = new DefaultConversationContext(
 						UUID.randomUUID().toString(),
 						UUID.randomUUID().toString(), 5000L);
+				c.put("hi", "uo");
 				queue.add(c);
 				m.addTimeoutable(c);
 				adds++;
@@ -57,12 +58,26 @@ public class ScheduledExecutorTimeoutMonitorTest {
 			public void doTask() {
 				ConversationContext c = queue.poll();
 				if (c != null) {
+					c.get("hi");
 					m.removeTimeoutable(c);
 					removes++;
 				}
 				Thread.yield();
 			}
 			
+		};
+		
+		ThreadTask accessingTask = new ThreadTask() {
+			public boolean isActive() {return true;}
+			public void cancel() {}
+			public void doTask() {
+				ConversationContext c = queue.poll();
+				if (c != null) {
+					c.remove("hi");
+					c.put("hi", "bluh");
+				}
+				Thread.yield();
+			}
 		};
 		
 		Set<TaskThread> addingThreads = new HashSet<TaskThread>();
@@ -81,13 +96,24 @@ public class ScheduledExecutorTimeoutMonitorTest {
 			removingThreads.add(t);
 		}
 		
-		Thread.sleep(1500L);
+		Set<TaskThread> accessingThreads = new HashSet<TaskThread>();
+		for (int i = 0; i < 4; i++) {
+			TaskThread t = BasicTaskThread.spawnInstance();
+			t.addTask(accessingTask);
+			removingThreads.add(t);
+		}
+		
+		Thread.sleep(10000L);
 		
 		for (TaskThread t : addingThreads) {
 			t.stop();
 		}
 		
 		for (TaskThread t : removingThreads) {
+			t.stop();
+		}
+		
+		for (TaskThread t : accessingThreads) {
 			t.stop();
 		}
 		

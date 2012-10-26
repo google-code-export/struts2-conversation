@@ -28,6 +28,7 @@ public class ExpressionProcessor implements PreActionProcessor, PostActionProces
 			this.eval.evaluate(expression, conversationAdapter.getActionContext(), conversationAdapter.getAction());
 		} catch (ExpressionEvaluationException e) {
 			LOG.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

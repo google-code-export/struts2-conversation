@@ -2,7 +2,6 @@ package com.google.code.rees.scope.mocks.actions;
 
 import org.apache.struts2.convention.annotation.Action;
 
-import com.google.code.rees.scope.conversation.annotations.ConversationAction;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.session.SessionField;
 
@@ -21,7 +20,6 @@ public class MockConventionController extends AbstractController {
     @SessionField
     private int smart = 2;
 
-    @ConversationAction(postActionExpression="${#c.get('oopy').sookie = bean2.value}")
     @Action(value = "begin")
     public String begin() {
         setSessionString(IN_PROGRESS);
@@ -30,8 +28,7 @@ public class MockConventionController extends AbstractController {
         setWorkflowString("hungee");
         return SUCCESS;
     }
-
-    @ConversationAction(postActionExpression="${#c.get('oopy').sookie = bean2.value}")
+    
     @Action(value = "continue1")
     public String continue1() {
     	System.out.println("***********************");

@@ -94,24 +94,5 @@ public @interface BeginConversation {
      * the default value is <code>false</code>.
      */
     public abstract boolean transactional() default false;
-    
-    /**
-     * An expression that will be evaluated against the conversations alive on the request using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
-     * prior to the action execution
-     * @return
-     */
-    public abstract String preActionExpression() default "";
-    
-    /**
-     * An expression that will be evaluated against the conversations alive after action execution but before view rendering using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
-     * @return
-     */
-    public abstract String postActionExpression() default "";
-    
-    /**
-     * An expression that will be evaluated against the conversations alive after action execution and after view rendering using the configured {@link com.google.code.rees.scope.expression.Eval Eval}
-     * @return
-     */
-    public abstract String postViewExpression() default "";
 
 }

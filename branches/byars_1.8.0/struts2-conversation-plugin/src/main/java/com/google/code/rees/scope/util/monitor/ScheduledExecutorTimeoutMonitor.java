@@ -118,14 +118,14 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void addTimeoutable(T timeoutable) {
-			String targetId = timeoutable.getId();
-			if (!this.timeoutRunners.containsKey(targetId)) {
-				TimeoutRunner<T> timeoutRunner = BladeRunner.create(timeoutable);
-				this.timeoutRunners.put(targetId, timeoutRunner);
-				ScheduledFuture<?> future = this.scheduler.scheduleAtFixedRate(timeoutRunner, MONITORING_DELAY, this.monitoringFrequency, TimeUnit.MILLISECONDS);
-				this.scheduledFutures.put(targetId, future);
-				timeoutable.addTimeoutListener(this);
-			}
+		String targetId = timeoutable.getId();
+		if (!this.timeoutRunners.containsKey(targetId)) {
+			TimeoutRunner<T> timeoutRunner = BladeRunner.create(timeoutable);
+			this.timeoutRunners.put(targetId, timeoutRunner);
+			ScheduledFuture<?> future = this.scheduler.scheduleAtFixedRate(timeoutRunner, MONITORING_DELAY, this.monitoringFrequency, TimeUnit.MILLISECONDS);
+			this.scheduledFutures.put(targetId, future);
+			timeoutable.addTimeoutListener(this);
+		}
 	}
 
 	/**
@@ -133,12 +133,12 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void removeTimeoutable(T timeoutable) {
-			String targetId = timeoutable.getId();
-			ScheduledFuture<?> future = this.scheduledFutures.remove(targetId);
-			if (future != null) {
-				future.cancel(true);
-			}
-			this.timeoutRunners.remove(targetId);
+		String targetId = timeoutable.getId();
+		ScheduledFuture<?> future = this.scheduledFutures.remove(targetId);
+		if (future != null) {
+			future.cancel(true);
+		}
+		this.timeoutRunners.remove(targetId);
 	}
 
 	/**

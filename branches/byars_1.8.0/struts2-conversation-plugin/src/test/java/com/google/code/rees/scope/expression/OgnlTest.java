@@ -24,7 +24,6 @@ public class OgnlTest extends EvalTest {
 	public void testEvaluateWithConvenienceFunctions() throws ExpressionEvaluationException {
 		eval.evaluate("ginger ${#c.beg('oopy', 789, 3)} and stuff");
 		eval.evaluate("ginger ${#c.beg('zoopy', 789, 3)} and stuff");
-		assertEquals(this.contextManager.getContext("oopy_conversation", "1").getRemainingTime(), 789L);
         eval.evaluate("ginger ${#c.get('oopy').sookie = bean2.value} and stuff");
         assertEquals(this.contextManager.getContext("oopy_conversation", "1").get("sookie"), this.bean2.getValue());
         eval.evaluate("ginger ${#c.con('oopy').sookie} and stuff");

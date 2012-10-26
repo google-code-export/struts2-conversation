@@ -24,19 +24,19 @@
 package com.google.code.rees.scope.util.monitor;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * A Serializable Hash implementation of the Map and Timeoutable interfaces.
- * Resets its own remaining time whenever the wrapped {@link HashMap} is
+ * A Serializable, thread-safe Hash implementation of the Map and Timeoutable interfaces.
+ * Resets its own remaining time whenever the underlying {@link ConcurrentHashMap} is
  * accessed.
  * 
  * @author rees.byars
  */
-public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends HashMap<K, V> implements MonitoredContext<K, V, T> {
+public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends ConcurrentHashMap<K, V> implements MonitoredContext<K, V, T> {
 
 	private static final long serialVersionUID = 5810194340880306239L;
 
@@ -46,7 +46,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 
 	public HashMonitoredContext(long maxIdleTime) {
 		this.maxIdleTime = maxIdleTime;
-		this.timeoutListeners = new HashSet<TimeoutListener<T>>();
+		this.timeoutListeners = new ConcurrentLinkedQueue<TimeoutListener<T>>();
 		this.ping();
 	}
 
@@ -65,6 +65,9 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@Override
 	public V put(K key, V value) {
 		this.ping();
+		if (value == null || key == null) {
+			return null;
+		}
 		return super.put(key, value);
 	}
 
@@ -152,12 +155,10 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@SuppressWarnings("unchecked")
 	@Override
 	public void timeout() {
-		synchronized (this.timeoutListeners) {
-			for (TimeoutListener<T> timeoutListener : this.timeoutListeners) {
-				timeoutListener.onTimeout((T) this);
-			}
-			this.timeoutListeners.clear();
+		for (TimeoutListener<T> timeoutListener : this.timeoutListeners) {
+			timeoutListener.onTimeout((T) this);
 		}
+		this.timeoutListeners.clear();
 		this.clear();
 	}
 

@@ -1,15 +1,17 @@
 package com.google.code.rees.scope.expression;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.mvel2.templates.CompiledTemplate;
-import org.mvel2.templates.TemplateCompiler;
-import org.mvel2.templates.TemplateRuntime;
+import org.mvel2.MVEL;
+import org.mvel2.ParserContext;
+import org.mvel2.compiler.ExpressionCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationUtil;
 
 /**
  * 
@@ -19,16 +21,22 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 public class Mvel implements Eval {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Mvel.class);
-	private static final String CONVERSATION_ACCESSOR = 
-			"${ if (isdef cGet) { return '';} def cGet(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.getContextUsingSimpleName(c_name); } return ''; }";
-	private static final String CONVERSATION_TERMINATOR = 
-			"${ if (isdef cEnd) { return '';} def cEnd(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.endUsingSimpleName(c_name); } return ''; }";
-	private static final String CONVERSATION_INITIATOR = 
-			"${ if (isdef cBeg) { return '';} def cBeg(c_name, c_len, c_max) { com.google.code.rees.scope.conversation.ConversationUtil.beginUsingSimpleName(c_name, c_len, c_max); } return ''; }";
-	private static final String CONVERSATION_CONTINUATOR = 
-			"${ if (isdef cCon) { return '';} def cCon(c_name) { com.google.code.rees.scope.conversation.ConversationUtil.persistUsingSimpleName(c_name); } return ''; }";
+	private final Map<String, Serializable> templateCache = new ConcurrentHashMap<String, Serializable>();
+	private final ParserContext context;
 	
-	private final Map<String, CompiledTemplate> templateCache = new ConcurrentHashMap<String, CompiledTemplate>();
+	public Mvel() {
+		context = new ParserContext();
+		try {
+			context.addImport("get", ConversationUtil.class.getMethod("getContextUsingSimpleName", String.class));
+			context.addImport("begin", ConversationUtil.class.getMethod("beginUsingSimpleName", new Class<?>[]{String.class, long.class, int.class}));
+			context.addImport("end", ConversationUtil.class.getMethod("endUsingSimpleName", String.class));
+			context.addImport("continue", ConversationUtil.class.getMethod("persistUsingSimpleName", String.class));
+		} catch (SecurityException e) {
+			LOG.error("Could not instantiate expression parsing context.  Evaluation of @Eval expressions may be compromised.", e);
+		} catch (NoSuchMethodException e) {
+			LOG.error("Could not instantiate expression parsing context.  Evaluation of @Eval expressions may be compromised.", e);
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -36,13 +44,15 @@ public class Mvel implements Eval {
 	@Override
 	public Object evaluate(String expression, Map<String, Object> evaluationContext, Object root) throws ExpressionEvaluationException {
 		try {
-			CompiledTemplate template = this.templateCache.get(expression);
+			Serializable template = this.templateCache.get(expression);
 			if (template == null) {
 				LOG.debug("Compiled template not found in cache, compiling template and caching.");
-				template = TemplateCompiler.compileTemplate(CONVERSATION_ACCESSOR + CONVERSATION_TERMINATOR + CONVERSATION_INITIATOR + CONVERSATION_CONTINUATOR + expression);
+				ExpressionCompiler compiler = new ExpressionCompiler(expression);
+				compiler.newContext(context);       
+				template = compiler.compile();
 				this.templateCache.put(expression, template);
 			}
-			return TemplateRuntime.execute(template, root, evaluationContext);
+			return MVEL.executeExpression(template, root, evaluationContext);
 		} catch (Exception e) {
 			throw new ExpressionEvaluationException(expression, e);
 		}

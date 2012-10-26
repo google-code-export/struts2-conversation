@@ -15,21 +15,25 @@ public class MvelTest extends EvalTest {
 	}
 	
 	@Test
-	public void testEvaluate() throws ExpressionEvaluationException {
-		String expression = "total = ${supa.value + dupa.value}${bean1.name}";
-		assertEquals("total = 111supa", eval.evaluate(expression, context, this));
-	}
-	
-	@Test
 	public void testEvaluateWithConvenienceFunctions() throws ExpressionEvaluationException {
-		eval.evaluate("ginger ${cBeg('oopy', 789, 3);} and stuff");
-		assertEquals(this.contextManager.getContext("oopy_conversation", "1").getRemainingTime(), 789L);
-        eval.evaluate("ginger ${cGet('oopy').sookie = bean2.value} and stuff");
+		eval.evaluate("begin('oopy', 789, 3)");
+        eval.evaluate("get('oopy').sookie = bean2.value");
+        eval.evaluate("get('oopy').sookie = bean2.value");
+        eval.evaluate("get('oopy').sookie = bean2.value");
+        eval.evaluate("get('oopy').sookie = bean2.value");
         assertEquals(this.contextManager.getContext("oopy_conversation", "1").get("sookie"), this.bean2.getValue());
-        eval.evaluate("ginger ${cCon('oopy').sookie} and stuff");
+        eval.evaluate("continue('oopy').sookie");
         assertEquals(this.adapter.getViewContext().get("oopy_conversation"), "1");
-        eval.evaluate("stfu ${cEnd('oopy').sookie} and stuff");
+        eval.evaluate("end('oopy').sookie");
         assertNull(this.contextManager.getContext("oopy_conversation", "1"));
+        
+        eval.evaluate("begin('oopy', 789, 3)");
+        eval.evaluate("get('oopy').sookie = bean2.value;");
+        assertEquals(this.contextManager.getContext("oopy_conversation", "2").get("sookie"), this.bean2.getValue());
+        eval.evaluate("continue('oopy').sookie");
+        assertEquals(this.adapter.getViewContext().get("oopy_conversation"), "2");
+        eval.evaluate("end('oopy').sookie");
+        assertNull(this.contextManager.getContext("oopy_conversation", "2"));
 	}
 
 }

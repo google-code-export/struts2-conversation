@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 
     protected ConversationContextFactory contextFactory;
 	protected Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
-	protected long nextId = 0L;
+	protected AtomicLong nextId = new AtomicLong();
 
 	/**
 	 * {@inheritDoc}
@@ -221,8 +222,8 @@ public class DefaultConversationContextManager implements ConversationContextMan
 
 	}
 	
-	protected synchronized String getNextId() {
-		return String.valueOf(this.nextId++);
+	protected String getNextId() {
+		return String.valueOf(this.nextId.getAndIncrement());
 	}
 
 }

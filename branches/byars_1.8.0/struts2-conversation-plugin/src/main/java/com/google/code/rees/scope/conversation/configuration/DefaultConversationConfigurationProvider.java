@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.annotations.BeginConversation;
-import com.google.code.rees.scope.conversation.annotations.ConversationAction;
 import com.google.code.rees.scope.conversation.annotations.EndConversation;
+import com.google.code.rees.scope.conversation.annotations.Eval;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
@@ -159,10 +159,14 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
             // TODO refactor into multiple methods to make more beautimous instead of atrocious
             for (Method method : this.arbitrator.getCandidateConversationMethods(clazz)) {
             	
+            	String methodName = this.arbitrator.getName(method);
+            	
+            	this.resolveExpressionConfig(clazz, method, methodName, expressionConfiguration);
+            	expressionConfigurations.put(clazz, expressionConfiguration);
+            	
             	//intermediate action methods
                 Collection<String> methodConversations = this.arbitrator.getConversations(clazz, method);
                 if (methodConversations != null) {
-                    String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
@@ -172,22 +176,13 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding method " + methodName + " as an Action to ConversationClassConfiguration for Conversation " + conversation);
                         }
-                        if (method.isAnnotationPresent(ConversationAction.class)) {
-                        	ConversationAction config = method.getAnnotation(ConversationAction.class);
-                        	expressionConfiguration.addExpressions(methodName, config.preActionExpression(), config.postActionExpression(), config.postViewExpression());
-                        	configuration.addAction(methodName);
-                        } else {
-                        	expressionConfiguration.addExpressions(methodName, "", "", "");
-                        	configuration.addAction(methodName);
-                        }
-                        
+                        configuration.addAction(methodName);
                     }
                 }
                 
                 //begin action methods
                 Collection<String> methodBeginConversations = this.arbitrator.getBeginConversations(clazz, method);
                 if (methodBeginConversations != null) {
-                    String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodBeginConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
@@ -200,10 +195,16 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         }
                         if (method.isAnnotationPresent(BeginConversation.class)) {
                         	BeginConversation config = method.getAnnotation(BeginConversation.class);
-                        	expressionConfiguration.addExpressions(methodName, config.preActionExpression(), config.postActionExpression(), config.postViewExpression());
-                        	configuration.addBeginAction(methodName, config.maxIdleTimeMillis(), config.maxIdleTime(), config.maxInstances(), config.transactional());
+                        	long maxIdle = config.maxIdleTimeMillis();
+                        	if (maxIdle == -1L) {
+                        		maxIdle = this.maxIdleTimeMillis;
+                        	}
+                        	int maxInstance = config.maxInstances();
+                        	if (maxInstance == 0) {
+                        		maxInstance = this.maxInstances;
+                        	}
+                        	configuration.addBeginAction(methodName, maxIdle, config.maxIdleTime(), maxInstance, config.transactional());
                         } else {
-                        	expressionConfiguration.addExpressions(methodName, "", "", "");
                         	configuration.addBeginAction(methodName, this.maxIdleTimeMillis, "", this.maxInstances, false);
                         }
                 		
@@ -213,7 +214,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                 //end action methods
                 Collection<String> methodEndConversations = this.arbitrator.getEndConversations(clazz, method);
                 if (methodEndConversations != null) {
-                    String methodName = this.arbitrator.getName(method);
                     for (String conversation : methodEndConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
@@ -225,16 +225,14 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         }
                         if (method.isAnnotationPresent(EndConversation.class)) {
                         	EndConversation config = method.getAnnotation(EndConversation.class);
-                        	expressionConfiguration.addExpressions(methodName, config.preActionExpression(), config.postActionExpression(), config.postViewExpression());
                         	configuration.addEndAction(methodName, config.accessibleFromView());
                         } else {
-                        	expressionConfiguration.addExpressions(methodName, "", "", "");
                         	configuration.addEndAction(methodName, false);
                         }
                     }
                 }
             }
-            expressionConfigurations.put(clazz, expressionConfiguration);
+            
             configurations.addAll(temporaryConversationMap.values());
             classConfigurations.putIfAbsent(clazz, configurations);
         }
@@ -248,6 +246,18 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 	@Override
 	public ExpressionConfiguration getExpressionConfiguration(Class<?> actionClass) {
 		return this.expressionConfigurations.get(actionClass);
+	}
+	
+	protected void resolveExpressionConfig(Class<?> clazz, Method method, String methodName, ExpressionConfiguration expressionConfiguration) {
+		if (method.isAnnotationPresent(Eval.class)) {
+			Eval eval = method.getAnnotation(Eval.class);
+			expressionConfiguration.addExpressions(methodName, eval.preAction(), eval.postAction(), eval.postView());
+		} else if (clazz.isAnnotationPresent(Eval.class)) {
+			Eval eval = clazz.getAnnotation(Eval.class);
+			expressionConfiguration.addExpressions(methodName, eval.preAction(), eval.postAction(), eval.postView());
+		} else {
+			expressionConfiguration.addExpressions(methodName, "", "", "");
+		}
 	}
 
 }
