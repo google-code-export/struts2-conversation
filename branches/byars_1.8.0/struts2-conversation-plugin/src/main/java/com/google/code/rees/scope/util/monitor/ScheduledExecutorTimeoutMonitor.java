@@ -24,9 +24,9 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.monitor;
 
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -48,12 +48,15 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 
 	private static final long serialVersionUID = -1502605748762224777L;
 	
+	private static final int INITIAL_CAPACITY = 8;
+	private static final float LOAD_FACTOR = .9f;
+	
 	/**
 	 * the delay between adding a Timeoutable to the scheduler and the time of the first check of the Timeoutable's remaining time
 	 */
 	public static final long MONITORING_DELAY = 1000L;
 	
-	protected Map<String, TimeoutRunner<T>> timeoutRunners = new ConcurrentHashMap<String, TimeoutRunner<T>>();
+	protected Map<String, TimeoutRunner<T>> timeoutRunners = new Hashtable<String, TimeoutRunner<T>>(INITIAL_CAPACITY, LOAD_FACTOR);
 	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
 	protected transient ScheduledExecutorService scheduler = null;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
@@ -86,7 +89,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	public void init() {
 		synchronized(this.timeoutRunners) {
 			if (this.scheduledFutures == null) {
-				this.scheduledFutures = new ConcurrentHashMap<String, ScheduledFuture<?>>();
+				this.scheduledFutures = new Hashtable<String, ScheduledFuture<?>>(INITIAL_CAPACITY, LOAD_FACTOR);
 			}
 			for (Entry<String, TimeoutRunner<T>> entry : this.timeoutRunners.entrySet()) {
 				String targetId = entry.getKey();

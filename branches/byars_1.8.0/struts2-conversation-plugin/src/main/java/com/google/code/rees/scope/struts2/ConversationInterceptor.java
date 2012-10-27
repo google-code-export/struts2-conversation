@@ -191,7 +191,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
      */
     @Override
     public void destroy() {
-        LOG.info("Destroying the ConversationInterceptor...");
+        LOG.info("Destroying the ConversationInterceptor");
     }
 
     /**
@@ -200,14 +200,18 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     @Override
     public void init() {
 
-        LOG.info("Initializing the Conversation Interceptor...");
+        LOG.info("Initializing the Conversation Interceptor");
 
         this.arbitrator.setActionSuffix(this.actionSuffix);
 
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
         this.conversationConfigurationProvider.setDefaultMaxInstances(this.maxInstances);
-        this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        try {
+        	this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        } catch (Exception e) {
+        	LOG.warn(e.getMessage());
+        }
 
         this.eval = this.container.getInstance(Eval.class, this.evalProviderName);
         if (this.eval == null) {
@@ -226,7 +230,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
         this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
         this.conversationContextManagerProvider.init();
         
-        LOG.info("...Conversation Interceptor successfully initialized.");
+        LOG.info("Conversation Interceptor successfully initialized");
 
     }
 
