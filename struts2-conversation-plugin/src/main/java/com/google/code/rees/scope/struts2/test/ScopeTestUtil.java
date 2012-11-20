@@ -23,6 +23,8 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2.test;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,13 +35,14 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
+import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
+import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
-import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
-import com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationProcessor;
 import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.session.SessionUtil;
 import com.google.code.rees.scope.struts2.ConventionConstants;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
+import com.google.code.rees.scope.util.InjectionUtil;
 import com.opensymphony.xwork2.ActionContext;
 
 /**
@@ -49,19 +52,19 @@ import com.opensymphony.xwork2.ActionContext;
  */
 public class ScopeTestUtil {
 
-    private static DefaultInjectionConversationProcessor manager;
+    private static ConversationConfigurationProvider configurationProvider;
     private static DefaultConversationArbitrator arbitrator = new DefaultConversationArbitrator();
     private static String actionSuffix;
 
-    protected static DefaultInjectionConversationProcessor getconversationManager() {
-        if (manager == null) {
-            manager = (DefaultInjectionConversationProcessor) Dispatcher
+    public static ConversationConfigurationProvider getConfigurationProvider() {
+        if (configurationProvider == null) {
+        	configurationProvider = (ConversationConfigurationProvider) Dispatcher
                     .getInstance()
                     .getContainer()
-                    .getInstance(ConversationProcessor.class,
-                            StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY);
+                    .getInstance(ConversationConfigurationProvider.class,
+                            StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY);
         }
-        return manager;
+        return configurationProvider;
     }
 
     protected static String getActionSuffix() {
@@ -115,8 +118,7 @@ public class ScopeTestUtil {
      */
     public static void extractScopeFields(Object target) {
         SessionUtil.extractFields(target);
-        getconversationManager().extractConversationFields(target,
-                ConversationAdapter.getAdapter());
+        extractConversationFields(target, ConversationAdapter.getAdapter());
     }
 
     /**
@@ -129,8 +131,51 @@ public class ScopeTestUtil {
      */
     public static void injectScopeFields(Object target) {
         SessionUtil.injectFields(target);
-        getconversationManager().injectConversationFields(target,
-                ConversationAdapter.getAdapter());
+        injectConversationFields(target, ConversationAdapter.getAdapter());
+    }
+    
+    
+    private static void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
+        Collection<ConversationClassConfiguration> actionConversationConfigs = getConfigurationProvider().getConfigurations(target.getClass());
+        if (actionConversationConfigs != null) {
+            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
+                String conversationName = conversation.getConversationName();
+                String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+                if (conversationId != null) {
+                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+                    if (conversationContext != null) {
+                        Map<String, Field> actionConversationFields = conversation.getFields();
+                        if (actionConversationFields != null) {
+                            InjectionUtil.setFieldValues(target, actionConversationFields, conversationContext);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void extractConversationFields(Object target, ConversationAdapter conversationAdapter) {
+        Collection<ConversationClassConfiguration> actionConversationConfigs = getConfigurationProvider().getConfigurations(target.getClass());
+        if (actionConversationConfigs != null) {
+            for (ConversationClassConfiguration conversation : actionConversationConfigs) {
+
+                Map<String, Field> actionConversationFields = conversation.getFields();
+                String conversationName = conversation.getConversationName();
+                String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+
+                if (conversationId != null) {
+
+	                if (actionConversationFields != null) {
+	
+	                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+	                    conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
+	                }
+	
+	                conversationAdapter.getViewContext().put(conversationName, conversationId);
+                
+                }
+            }
+        }
     }
 
 }

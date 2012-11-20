@@ -167,4 +167,19 @@ public abstract class ConversationAdapter implements Serializable {
 	public static ConversationAdapter getAdapter() {
 		return conversationAdapter.get();
 	}
+	
+	/**
+	 * clean up this resource once processing is completed for the request, static to guarantee that it references current thread's instance
+	 */
+	public static void cleanup() {
+		ConversationAdapter adapter = conversationAdapter.get();
+		conversationAdapter.remove();
+		adapter.doCleanup();
+	}
+	
+	/**
+	 * called by {@link #cleanup()}, can be overridden to tweak
+	 */
+	protected void doCleanup() {
+	}
 }
