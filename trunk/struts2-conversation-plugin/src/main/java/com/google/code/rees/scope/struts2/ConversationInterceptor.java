@@ -57,7 +57,7 @@ import com.opensymphony.xwork2.util.LocalizedTextUtil;
  * @author rees.byars
  *
  */
-public class ConversationInterceptor implements Interceptor, PreResultListener {
+public class ConversationInterceptor implements Interceptor {
 
     private static final long serialVersionUID = -72776817859403642L;
     private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
@@ -197,12 +197,23 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
     	
-    	HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
-    	
     	try {
     		
-    		this.conversationProcessor.processConversations(new StrutsConversationAdapter(invocation, contextManager));
+    		HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+        	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+        	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
+    		
+    		this.conversationProcessor.processConversations(adapter);
+    		
+    		invocation.addPreResultListener(new PreResultListener() {
+    			@Override
+    			public void beforeResult(ActionInvocation invocation, String resultCode) {
+    				adapter.executePostProcessors();
+    				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
+    			}
+            });
+            
+            return invocation.invoke();
     		
     	} catch (ConversationIdException cie) {
     		
@@ -212,22 +223,12 @@ public class ConversationInterceptor implements Interceptor, PreResultListener {
     		
     		return this.handleUnexpectedException(invocation, ce);
     		
+    	} finally {
+    		
+    		ConversationAdapter.cleanup();
+    		
     	}
-    	
-        invocation.addPreResultListener(this);
         
-        return invocation.invoke();
-        
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    @Override
-    public void beforeResult(ActionInvocation invocation, String result) {
-        ConversationAdapter.getAdapter().executePostProcessors();
-        invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
     }
     
     /**

@@ -9,7 +9,6 @@ import com.opensymphony.xwork2.config.entities.ActionConfig;
 
 public class TestActionProxy implements ActionProxy {
 
-    private static final long serialVersionUID = 2805432521606336576L;
     private List<ProxyExecutionListener> listeners = new ArrayList<ProxyExecutionListener>();
     private ActionProxy parentProxy;
 

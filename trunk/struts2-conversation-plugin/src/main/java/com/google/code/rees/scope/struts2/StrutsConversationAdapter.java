@@ -23,7 +23,6 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,18 +78,13 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      */
     @Override
     public Map<String, String> getRequestContext() {
-        ActionContext actionContext = ActionContext.getContext();
-        if (actionContext != null) {
-            HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
+    	if (this.requestContext == null) {
+    		HttpServletRequest currentRequest = ((HttpServletRequest) ActionContext.getContext().get(StrutsStatics.HTTP_REQUEST));
             if (!currentRequest.equals(this.request)) {
                 this.request = currentRequest;
                 requestContext = RequestContextUtil.getRequestContext(currentRequest);
             }
-        } else {
-            // TODO: this is a hack to get unit tests to work with spring
-            // autowiring - revisit to determine more optimal solution
-            requestContext = new HashMap<String, String>();
-        }
+    	}
         return requestContext;
     }
     

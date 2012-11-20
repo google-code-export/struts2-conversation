@@ -14,7 +14,7 @@ public class MockConversationController extends ActionSupport {
 	
 	private static final long serialVersionUID = 1L;
 	@ConversationField private String conversationString = "initialState";
-	@SessionField String chubby;
+	@SessionField public String chubby;
 	
 	@Autowired
 	private TestBean bean;

@@ -42,13 +42,14 @@ import com.opensymphony.xwork2.ValidationAware;
 import com.opensymphony.xwork2.config.Configuration;
 import com.opensymphony.xwork2.config.ConfigurationManager;
 import com.opensymphony.xwork2.inject.Container;
+import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.ValueStack;
 import com.opensymphony.xwork2.util.ValueStackFactory;
 
 /**
  * some of this code borrowed from struts2 junit plugin
  */
-public abstract class StrutsTest<T> implements ProxyExecutionListener {
+public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResultListener {
 
     /**
      * The token used for the
@@ -184,6 +185,8 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
         ServletActionContext.setServletContext(servletContext);
         ServletActionContext.setRequest(request);
         ServletActionContext.setResponse(response);
+        
+        proxy.getInvocation().addPreResultListener(this);
 
         return testProxy;
     }
@@ -363,9 +366,18 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void afterProxyExecution(ActionInvocation invocation, String result) {
         request = new MockHttpServletRequest(servletContext);
         request.setSession(httpSession);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public void beforeResult(ActionInvocation invocation, String resultCode) {
+    	
     }
 
 }

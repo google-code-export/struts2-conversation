@@ -25,7 +25,7 @@ import com.google.code.struts2.test.junit.StrutsConfiguration;
 public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
-    static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+	static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     static final String CONVERSATION_FIELD = "conversationString";
 
     @ConversationField(conversations = "oopy")
