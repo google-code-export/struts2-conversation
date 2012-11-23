@@ -136,20 +136,23 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
         Collection<String> packageBasedConversations = new HashSet<String>();
 
-        for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
-            String superCandidateClassName = superCandidate.getName();
-            String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
-            if (classPackageString.contains(superCandidateClassPackageString) 
-            		&& !classPackageString.equals(superCandidateClassPackageString)) {
-                
-            	LOG.debug("Adding conversations from " + superCandidateClassName);
+        try {
+        	for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
+                String superCandidateClassName = superCandidate.getName();
+                String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
+                if (classPackageString.contains(superCandidateClassPackageString) && !classPackageString.equals(superCandidateClassPackageString)) {
+                    
+                	LOG.debug("Adding conversations from " + superCandidateClassName);
 
-                String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
-                packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
+                    String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
+                    packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
+                }
             }
-        }
 
-        LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
+            LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
+        } catch (Exception e) {
+        	LOG.warn("Cannot resolve package-based conversation nesting due to Struts2 version incompatibility for this feature.  Update to latest Struts2 version to enable.");
+        }
 
         return packageBasedConversations;
 

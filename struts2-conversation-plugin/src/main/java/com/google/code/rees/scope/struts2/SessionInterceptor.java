@@ -78,7 +78,11 @@ public class SessionInterceptor implements Interceptor {
 
     	LOG.info("Initializing the Session Interceptor...");
 
-        this.sessionConfigurationProvider.init(finder.getActionClasses());
+        try {
+			this.sessionConfigurationProvider.init(finder.getActionClasses());
+		} catch (Exception e) {
+			LOG.warn(e.getMessage());
+		}
         this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
         
         LOG.info("...Session Interceptor successfully initialized.");

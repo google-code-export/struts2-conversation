@@ -178,7 +178,11 @@ public class ConversationInterceptor implements Interceptor {
         this.arbitrator.setActionSuffix(this.actionSuffix);
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
-        this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        try {
+			this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+		} catch (Exception e) {
+			LOG.warn(e.getMessage());
+		}
         this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
         
         this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
