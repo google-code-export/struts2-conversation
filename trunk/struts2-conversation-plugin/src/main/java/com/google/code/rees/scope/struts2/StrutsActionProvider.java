@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.FileManager;
+import com.opensymphony.xwork2.FileManagerFactory;
+import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.TextParseUtil;
 import com.opensymphony.xwork2.util.classloader.ReloadingClassLoader;
@@ -73,13 +76,30 @@ public class StrutsActionProvider implements ActionProvider {
     private boolean reload;
     private boolean excludeParentClassLoader;
     private boolean requireFollowsConvention;
+    private FileManager fileManager;
+    private Container container;
 
-    public Set<Class<?>> getActionClasses() {
-        if (actionClasses == null) {
-            initReloadClassLoader();
-            actionClasses = this.findActions();
-        }
-        return this.actionClasses;
+    public Set<Class<?>> getActionClasses() throws Exception {
+    	try {
+    		if (this.fileManager == null) {
+    			//retrieve this way instead of by injection in order to catch an handle errors/exceptions with older versions of struts2
+    			this.fileManager = this.container.getInstance(FileManagerFactory.class).getFileManager();
+    		}
+    		if (actionClasses == null) {
+                initReloadClassLoader();
+                actionClasses = this.findActions();
+            }
+            return this.actionClasses;
+            //This is a hack to make sure that changes to Struts2 classes used below don't blow up the whole plugin
+    	} catch (Throwable t) {
+    		throw new Exception("Could not load action classes on startup.  Configuration caches will be built on-demand.");
+    	}
+        
+    }
+    
+    @Inject
+    public void setContainer(Container container) {
+        this.container = container;
     }
 
     @Inject(StrutsConstants.STRUTS_DEVMODE)
@@ -386,17 +406,14 @@ public class StrutsActionProvider implements ActionProvider {
 
     private UrlSet buildUrlSet() throws IOException {
         ClassLoaderInterface classLoaderInterface = getClassLoaderInterface();
-        UrlSet urlSet = new UrlSet(classLoaderInterface, this.fileProtocols);
+        UrlSet urlSet = new UrlSet(fileManager, classLoaderInterface, this.fileProtocols);
 
-        // excluding the urls found by the parent class loader is desired, but
-        // fails in JBoss (all urls are removed)
+        //excluding the urls found by the parent class loader is desired, but fails in JBoss (all urls are removed)
         if (excludeParentClassLoader) {
-            // exclude parent of classloaders
+            //exclude parent of classloaders
             ClassLoaderInterface parent = classLoaderInterface.getParent();
-            // if reload is enabled, we need to step up one level, otherwise the
-            // UrlSet will be empty
-            // this happens because the parent of the realoding class loader is
-            // the web app classloader
+            //if reload is enabled, we need to step up one level, otherwise the UrlSet will be empty
+            //this happens because the parent of the realoding class loader is the web app classloader
             if (parent != null && isReloadEnabled())
                 parent = parent.getParent();
 
@@ -405,10 +422,8 @@ public class StrutsActionProvider implements ActionProvider {
 
             try {
                 // This may fail in some sandboxes, ie GAE
-                ClassLoader systemClassLoader = ClassLoader
-                        .getSystemClassLoader();
-                urlSet = urlSet.exclude(new ClassLoaderInterfaceDelegate(
-                        systemClassLoader.getParent()));
+                ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                urlSet = urlSet.exclude(new ClassLoaderInterfaceDelegate(systemClassLoader.getParent()));
 
             } catch (SecurityException e) {
                 if (LOG.isWarnEnabled())
@@ -416,35 +431,33 @@ public class StrutsActionProvider implements ActionProvider {
             }
         }
 
-        // try to find classes dirs inside war files
+        //try to find classes dirs inside war files
         urlSet = urlSet.includeClassesUrl(classLoaderInterface);
+
 
         urlSet = urlSet.excludeJavaExtDirs();
         urlSet = urlSet.excludeJavaEndorsedDirs();
         try {
-            urlSet = urlSet.excludeJavaHome();
+        	urlSet = urlSet.excludeJavaHome();
         } catch (NullPointerException e) {
-            // This happens in GAE since the sandbox contains no java.home
-            // directory
+        	// This happens in GAE since the sandbox contains no java.home directory
             if (LOG.isWarnEnabled())
-                LOG.warn("Could not exclude JAVA_HOME, is this a sandbox jvm?");
+        	    LOG.warn("Could not exclude JAVA_HOME, is this a sandbox jvm?");
         }
-        urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path",
-                ""));
+        urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
         urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
 
         if (includeJars == null) {
             urlSet = urlSet.exclude(".*?\\.jar(!/|/)?");
         } else {
-            // jar urls regexes were specified
+            //jar urls regexes were specified
             List<URL> rawIncludedUrls = urlSet.getUrls();
             Set<URL> includeUrls = new HashSet<URL>();
             boolean[] patternUsed = new boolean[includeJars.length];
 
             for (URL url : rawIncludedUrls) {
                 if (fileProtocols.contains(url.getProtocol())) {
-                    // it is a jar file, make sure it macthes at least a url
-                    // regex
+                    //it is a jar file, make sure it macthes at least a url regex
                     for (int i = 0; i < includeJars.length; i++) {
                         String includeJar = includeJars[i];
                         if (Pattern.matches(includeJar, url.toExternalForm())) {
@@ -454,7 +467,7 @@ public class StrutsActionProvider implements ActionProvider {
                         }
                     }
                 } else {
-                    // it is not a jar
+                    //it is not a jar
                     includeUrls.add(url);
                 }
             }
@@ -462,13 +475,11 @@ public class StrutsActionProvider implements ActionProvider {
             if (LOG.isWarnEnabled()) {
                 for (int i = 0; i < patternUsed.length; i++) {
                     if (!patternUsed[i]) {
-                        LOG.warn(
-                                "The includeJars pattern [#0] did not match any jars in the classpath",
-                                includeJars[i]);
+                        LOG.warn("The includeJars pattern [#0] did not match any jars in the classpath", includeJars[i]);
                     }
                 }
             }
-            return new UrlSet(includeUrls);
+            return new UrlSet(fileManager, includeUrls);
         }
 
         return urlSet;
