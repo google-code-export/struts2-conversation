@@ -4,7 +4,7 @@
 
 	<groupId>com.googlecode.struts2-conversation</groupId>
 	<artifactId>struts2-conversation</artifactId>
-	<version>1.7.2-SNAPSHOT</version>
+	<version>1.7.2</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -53,9 +53,9 @@
 	</issueManagement>
 
 	<scm>
-		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/trunk/</developerConnection>
-		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/trunk/</connection>
-		<url>http://struts2-conversation.googlecode.com/svn/trunk/</url>
+		<developerConnection>scm:svn:https://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-1.7.2</developerConnection>
+		<connection>scm:svn:http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-1.7.2</connection>
+		<url>http://struts2-conversation.googlecode.com/svn/tags/struts2-conversation-1.7.2</url>
 	</scm>
 
 	<modules>
