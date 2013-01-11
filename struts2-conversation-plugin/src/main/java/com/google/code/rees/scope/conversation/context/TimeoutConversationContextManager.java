@@ -54,8 +54,8 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis) {
-		ConversationContext context = super.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext createContext(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		ConversationContext context = super.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 		context.addTimeoutListener(this);
 		this.conversationTimeoutMonitor.addTimeoutable(context);
 		return context;

@@ -74,7 +74,7 @@
 		
 	<bean name="struts.conversation.conversationProcessor"
 		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
-		class="com.google.code.rees.scope.conversation.processing.DefaultInjectionConversationProcessor" />
+		class="com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor" />
 		
 	<bean name="conversation.simple.processor"
 		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
@@ -91,6 +91,12 @@
 	<bean name="conversation.context.factory" 
 		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
 		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
+		
+	<bean name="ognl" 
+		type="com.google.code.rees.scope.expression.Eval" 
+		class="com.google.code.rees.scope.expression.Ognl"/>
+		
+	<constant name="conversation.expression.eval.provider" value="ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	
@@ -112,7 +118,9 @@
 				class="com.google.code.rees.scope.struts2.SessionInterceptor" />
 				
 			<interceptor name="conversation"
-				class="com.google.code.rees.scope.struts2.ConversationInterceptor" />
+				class="com.google.code.rees.scope.struts2.ConversationInterceptor">
+				<param name="shortCircuitResults">input,login,error</param>	
+			</interceptor>
 			
 			<interceptor-stack name="defaultConversationStack">
 				<interceptor-ref name="sessionField" />

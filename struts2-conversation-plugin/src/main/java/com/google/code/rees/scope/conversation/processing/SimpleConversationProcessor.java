@@ -33,8 +33,11 @@ import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
+import com.google.code.rees.scope.conversation.configuration.ExpressionConfiguration;
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
+import com.google.code.rees.scope.expression.Eval;
 
 /**
  * A simple yet effective implementation of {@link ConversationProcessor} that
@@ -50,6 +53,15 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationProcessor.class);
 	
 	protected ConversationConfigurationProvider configurationProvider;
+	protected Eval eval;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setEval(Eval eval) {
+		this.eval = eval;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -74,13 +86,34 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 		try {
 			
 			Object action = conversationAdapter.getAction();
+			Class<?> actionClass = action.getClass();
 			
-			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(action.getClass());
+			
+			Collection<ConversationClassConfiguration> actionConversationConfigs = this.configurationProvider.getConfigurations(actionClass);
 			if (actionConversationConfigs != null) {
 				for (ConversationClassConfiguration conversationConfig : actionConversationConfigs) {
 					processConversation(conversationConfig, conversationAdapter, action);
 				}
 			}
+			
+			//TODO this has design issues written all over it
+			ExpressionConfiguration expressionConfiguration = this.configurationProvider.getExpressionConfiguration(actionClass);
+			if (expressionConfiguration != null) {
+				String actionId = conversationAdapter.getActionId();
+				String pre = expressionConfiguration.getPreActionExpression(actionId);
+				if (pre != null && !"".equals(pre)) {
+					conversationAdapter.addPreActionProcessor(new ExpressionProcessor(eval, pre), null, null);
+				}
+				String postA = expressionConfiguration.getPostActionExpression(actionId);
+				if (postA != null && !"".equals(postA)) {
+					conversationAdapter.addPostActionProcessor(new ExpressionProcessor(eval, postA), null, null);
+				}
+				String postV = expressionConfiguration.getPostViewExpression(actionId);
+				if (postV != null && !"".equals(postV)) {
+					conversationAdapter.addPostViewProcessor(new ExpressionProcessor(eval, postV), null, null);
+				}
+			}
+			
 			
 		} catch (ConversationException ce) {
 			
@@ -101,26 +134,50 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	protected void processConversation(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, Object action) throws ConversationException {
 
 		String actionId = conversationAdapter.getActionId();
-		String conversationName = conversationConfig.getConversationName();
-		String conversationId = (String) conversationAdapter.getRequestContext().get(conversationName);
-		
-		if (conversationId != null) {
-			if (conversationConfig.containsAction(actionId)) {
-				if (conversationConfig.isEndAction(actionId)) {
-					conversationAdapter.addPostProcessor(new ConversationEndProcessor(), conversationConfig, conversationId);
-				} else {
-					conversationAdapter.getViewContext().put(conversationName, conversationId);
-				}
-			} else {
+        String conversationName = conversationConfig.getConversationName();
+        String conversationId = conversationAdapter.getRequestContext().get(conversationName);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing request for " + conversationName + " and action " + actionId + " of class " + action.getClass());
+        }
+
+        if (conversationId != null) {
+        	ConversationContext conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+        	if (conversationContext != null) {
+        		if (conversationConfig.containsAction(actionId)) {
+	                if (LOG.isDebugEnabled()) {
+	                    LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
+	                }
+                    if (conversationConfig.isEndAction(actionId)) {
+                        this.handleEnding(conversationConfig, conversationAdapter, conversationContext);
+                    } else {
+                        this.handleContinuing(conversationConfig, conversationAdapter, conversationContext);
+                    }
+	            }
+        	} else {
             	this.handleInvalidId(conversationName, conversationId);
             }
-		} else if (conversationConfig.isBeginAction(actionId)) {
-			long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
-			if (LOG.isDebugEnabled()) {
-                LOG.debug("Beginning new " + conversationName+ " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + actionId);
-            }
-            ConversationUtil.begin(conversationName, conversationAdapter, maxIdleTime);
-		}
+        } else if (conversationConfig.isBeginAction(actionId)) {
+            this.handleBeginning(actionId, conversationConfig, conversationAdapter);
+        }
+	}
+	
+	protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
+        conversationAdapter.getViewContext().put(conversationContext.getConversationName(), conversationContext.getId());
+	}
+	
+	protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
+		conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
+	}
+	
+	protected void handleBeginning(String actionId, ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter) {
+		long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
+        }
+        
+        ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime, conversationConfig.getMaxInstances(actionId));
 	}
 	
 	protected void handleInvalidId(String conversationName, String conversationId) throws ConversationIdException {

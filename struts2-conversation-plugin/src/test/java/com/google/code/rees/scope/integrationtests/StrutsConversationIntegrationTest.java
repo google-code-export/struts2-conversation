@@ -18,6 +18,8 @@ import com.google.code.rees.scope.session.SessionField;
 import com.google.code.rees.scope.struts2.test.ScopeTestUtil;
 import com.google.code.rees.scope.testutil.StrutsSpringScopeTestCase;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.TextParseUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:*applicationContext.xml")
@@ -25,7 +27,7 @@ import com.google.code.struts2.test.junit.StrutsConfiguration;
 public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
-	static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+    static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     static final String CONVERSATION_FIELD = "conversationString";
 
     @ConversationField(conversations = "oopy")
@@ -44,14 +46,14 @@ public class StrutsConversationIntegrationTest extends
 
         this.getActionProxy("/conversation/begin").execute();
         System.out.println("1" + this.getAction().getBean().getEcho());
+        
+        
 
-        ScopeTestUtil.setConversationIdsOnRequest(request,
-                MockConversationController.class);
+        ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
         this.getActionProxy("/conversation/do1").execute();
         System.out.println("2" + this.getAction().getBean().getEcho());
 
-        ScopeTestUtil.setConversationIdsOnRequest(request,
-                MockConversationController.class);
+        ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
         this.getActionProxy("/conversation/do2").execute();
         System.out.println("3" + this.getAction().getBean().getEcho());
         System.out.println(ConversationAdapter.getAdapter().getActionId());
@@ -63,17 +65,20 @@ public class StrutsConversationIntegrationTest extends
         this.getActionProxy("/conversation/begin").execute();
         System.out.println(this.getAction().getBean().getEcho());
 
-        request.addParameter("oopy-conversation", id);
+        request.addParameter("oopy_conversation", id);
         this.getActionProxy("/conversation/do1").execute();
         System.out.println(this.getAction().getBean().getEcho());
-
+        
         bean = null;
         conversationString = null;
-        request.addParameter("oopy-conversation", id);
+        request.addParameter("oopy_conversation", id);
         this.getActionProxy("/conversation/do2").execute();
+        
         System.out.println(this.getAction().getConversationString());
         System.out.println(conversationString);
         System.out.println(bean.getEcho());
+        
+        System.out.println(TextParseUtil.translateVariables('$', "total = ${77 * 99}", ActionContext.getContext().getValueStack()));
     }
 
     @Test
@@ -111,16 +116,6 @@ public class StrutsConversationIntegrationTest extends
         this.getActionProxy("/conversation/do2").execute();
         assertEquals("initialState", this.getAction().getConversationString());
 
-    }
-
-    @Test
-    public void testCrossActionWorkflowFieldPersistence() throws Exception {
-        // TODO
-    }
-
-    @Test
-    public void testActionWithNoWorkflows() throws Exception {
-        // TODO
     }
 
 }

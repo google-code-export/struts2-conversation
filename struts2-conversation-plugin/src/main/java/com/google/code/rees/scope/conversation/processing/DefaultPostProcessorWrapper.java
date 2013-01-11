@@ -19,7 +19,7 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: DefaultConversationPostProcessorWrapper.java reesbyars $
+ *  $Id: DefaultPostProcessorWrapper.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
 
@@ -27,23 +27,22 @@ import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
- * The default implementation of the {@link ConversationPostProcessorWrapper}
+ * The default implementation of the {@link PostProcessorWrapper}
  * 
  * @author rees.byars
  */
-public class DefaultConversationPostProcessorWrapper implements
-        ConversationPostProcessorWrapper {
+public class DefaultPostProcessorWrapper<T extends PostProcessor> implements PostProcessorWrapper<T> {
 
     private static final long serialVersionUID = -8235162251071925835L;
 
     private transient ConversationClassConfiguration conversationConfig;
     private String conversationId;
-    private ConversationPostProcessor postProcessor;
+    private T postProcessor;
     private ConversationAdapter conversationAdapter;
 
-    public DefaultConversationPostProcessorWrapper(
+    public DefaultPostProcessorWrapper(
             ConversationAdapter conversationAdapter,
-            ConversationPostProcessor postProcessor,
+            T postProcessor,
             ConversationClassConfiguration conversationConfig, String conversationId) {
         this.conversationAdapter = conversationAdapter;
         this.postProcessor = postProcessor;
@@ -56,8 +55,7 @@ public class DefaultConversationPostProcessorWrapper implements
      */
     @Override
     public void postProcessConversation() {
-        this.postProcessor.postProcessConversation(conversationAdapter,
-                conversationConfig, conversationId);
+        this.postProcessor.postProcessConversation(conversationAdapter, conversationConfig, conversationId);
     }
 
 }

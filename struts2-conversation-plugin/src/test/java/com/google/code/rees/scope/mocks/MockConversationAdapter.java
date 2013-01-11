@@ -24,6 +24,7 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.mocks;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ public class MockConversationAdapter extends ConversationAdapter {
 	
 	Object action = null;
 	String actionId = null;
+	Map<String, Object> actionContext = new HashMap<String, Object>();
 	Map<String, String> requestContext;
 	ConversationContextManager contextManager;
 	
@@ -61,6 +63,15 @@ public class MockConversationAdapter extends ConversationAdapter {
 		return this.action;
 	}
 	
+	public void setActionContext(Map<String, Object> actionContext) {
+		this.actionContext = actionContext;
+	}
+	
+	@Override
+	public Map<String, Object> getActionContext() {
+		return this.actionContext;
+	}
+	
 	public void setActionId(String actionId) {
 		this.actionId = actionId;
 	}
@@ -74,12 +85,10 @@ public class MockConversationAdapter extends ConversationAdapter {
 	public Map<String, String> getRequestContext() {
 		return this.requestContext;
 	}
-	/**
-     * {@inheritDoc}
-     */
+	
 	@Override
-	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
-		return this.contextManager.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		return this.contextManager.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 	}
 	
 	@Override

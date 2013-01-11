@@ -9,17 +9,15 @@ import com.google.code.struts2.test.junit.StrutsSpringTest;
 import com.opensymphony.xwork2.ActionInvocation;
 
 /**
- * This test case should not currently be used as it depends on an as
- * yet unavailable Struts2 testing library. Sorry!
  * 
  * @author rees.byars
  * 
  */
 public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
-	
-	@Override
+    
+    @Override
 	public void beforeResult(ActionInvocation invocation, String resultCode) {
-    	final ConversationAdapter adapter = ConversationAdapter.getAdapter();
+    	final ConversationAdapter adapter = ConversationAdapter.getAdapter();;
     	ConversationAdapter.setAdapter(new ConversationAdapter() {
 
 			private static final long serialVersionUID = 1L;
@@ -35,14 +33,19 @@ public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
 			}
 
 			@Override
+			public Map<String, Object> getActionContext() {
+				return adapter.getActionContext();
+			}
+
+			@Override
 			public Map<String, String> getRequestContext() {
 				return adapter.getRequestContext();
 			}
 
 			@Override
 			public ConversationContext beginConversation(
-					String conversationName, long maxIdleTimeMillis) {
-				return adapter.beginConversation(conversationName, maxIdleTimeMillis);
+					String conversationName, long maxIdleTimeMillis, int maxInstances) {
+				return adapter.beginConversation(conversationName, maxIdleTimeMillis, maxInstances);
 			}
 
 			@Override
@@ -64,7 +67,7 @@ public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
     		
     	});
     }
-
+    
     @Override
     public void afterProxyExecution(ActionInvocation invocation, String result) {
         ScopeTestUtil.injectScopeFields(this);

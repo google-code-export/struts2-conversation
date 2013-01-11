@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
@@ -69,6 +70,14 @@ public class SpringConversationAdapter extends ConversationAdapter {
     public Object getAction() {
         return this.action;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Map<String, Object> getActionContext() {
+		return ((Model) this.action).asMap();
+	}
 
     /**
      * {@inheritDoc}
@@ -98,8 +107,8 @@ public class SpringConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
 	@Override
-	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
-		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 	}
 
     /**
@@ -116,6 +125,21 @@ public class SpringConversationAdapter extends ConversationAdapter {
     @Override
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doCleanup() {
+    	super.doCleanup();
+    	this.action = null;
+    	this.actionId = null;
+    	this.request = null;
+    	this.requestContext.clear();
+    	this.requestContext = null;
+    	this.sessionContext.clear();
+    	this.sessionContext = null;
     }
 	
 

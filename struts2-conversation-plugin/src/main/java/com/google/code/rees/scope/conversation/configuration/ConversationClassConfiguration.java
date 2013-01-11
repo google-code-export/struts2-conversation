@@ -24,14 +24,9 @@
 package com.google.code.rees.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationConstants;
-import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
@@ -44,25 +39,7 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
  * @author rees.byars
  * 
  */
-public class ConversationClassConfiguration {
-
-    private Map<String, Field> fields;
-    private Set<String> actionIds;
-    private Set<String> beginActionIds;
-    private Set<String> endActionIds;
-    private Map<String, Long> beginActionIdleTimes;
-    private String conversationName;
-
-    public ConversationClassConfiguration(String conversationName) {
-        fields = new HashMap<String, Field>();
-        actionIds = new HashSet<String>();
-        beginActionIds = new HashSet<String>();
-        endActionIds = new HashSet<String>();
-        beginActionIdleTimes = new HashMap<String, Long>();
-        this.conversationName = ConversationUtil
-                .sanitizeName(conversationName)
-                + ConversationConstants.CONVERSATION_NAME_SUFFIX;
-    }
+public interface ConversationClassConfiguration {
 
     /**
      * Add a field to the configuration
@@ -70,54 +47,38 @@ public class ConversationClassConfiguration {
      * @param name
      * @param field
      */
-    public void addField(String name, Field field) {
-        fields.put(name, field);
-    }
+    public void addField(String name, Field field);
 
     /**
      * Get the cached fields for conversation
      * 
      * @return
      */
-    public Map<String, Field> getFields() {
-        return fields;
-    }
+    public Map<String, Field> getFields();
 
     /**
      * Add an actionId for an intermediate action
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addAction(String actionId) {
-        actionIds.add(actionId);
-    }
+    public void addAction(String actionId);
 
     /**
      * Add an actionId for a begin action
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addBeginAction(String actionId, Long maxIdleTimeMillis) {
-        actionIds.add(actionId);
-        beginActionIds.add(actionId);
-        beginActionIdleTimes.put(actionId, maxIdleTimeMillis);
-    }
+    public void addBeginAction(String actionId, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional);
 
     /**
      * Add an actionId for an end action
      * 
      * @see {@link ConversationAdapter#getActionId()}
      * @see {@link ConversationArbitrator#getName(Method)}
-     * @param actionId
      */
-    public void addEndAction(String actionId) {
-        actionIds.add(actionId);
-        endActionIds.add(actionId);
-    }
+    public void addEndAction(String actionId, boolean endAfterView);
 
     /**
      * Indicates whether the actionId identifies the action as an intermediate
@@ -128,9 +89,7 @@ public class ConversationClassConfiguration {
      * @param actionId
      * @return
      */
-    public boolean containsAction(String actionId) {
-        return actionIds.contains(actionId);
-    }
+    public boolean containsAction(String actionId);
 
     /**
      * Indicates whether the actionId identifies the action as a begin
@@ -141,9 +100,7 @@ public class ConversationClassConfiguration {
      * @param actionId
      * @return
      */
-    public boolean isBeginAction(String actionId) {
-        return beginActionIds.contains(actionId);
-    }
+    public boolean isBeginAction(String actionId);
 
     /**
      * Indicates whether the actionId identifies the action as an end
@@ -154,9 +111,14 @@ public class ConversationClassConfiguration {
      * @param actionId
      * @return
      */
-    public boolean isEndAction(String actionId) {
-        return endActionIds.contains(actionId);
-    }
+    public boolean isEndAction(String actionId);
+    
+    /**
+     * given the id of an end action, returns true if the ConversationContext should be removed after the view is rendered
+     * @param actionId
+     * @return
+     */
+    public boolean endAfterView(String actionId);
     
     /**
      * given the begin action's ID, returns the max idle time (in milliseconds) for the conversation created by that action
@@ -164,16 +126,33 @@ public class ConversationClassConfiguration {
      * @param beginActionId
      * @return
      */
-    public long getMaxIdleTime(String beginActionId) {
-    	return beginActionIdleTimes.get(beginActionId);
-    }
+    public long getMaxIdleTime(String beginActionId);
+    
+    /**
+     * 
+     * @param beginActionId
+     * @return
+     */
+    public String getMaxIdleTimeExpression(String beginActionId);
+    
+    /**
+     * given the begin action's ID, returns the max number of instances
+     * 
+     * @param beginActionId
+     * @return
+     */
+    public int getMaxInstances(String beginActionId);
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean isTransactional(String beginActionId);
 
     /**
      * Returns the name of the conversation that this configuration is for
      * 
      * @return
      */
-    public String getConversationName() {
-        return conversationName;
-    }
+    public String getConversationName();
 }

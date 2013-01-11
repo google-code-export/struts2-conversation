@@ -27,6 +27,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
 
 /**
  * Denotes a method as a conversation-terminating method. Depending on
@@ -41,7 +42,7 @@ import java.lang.annotation.Target;
  * @see #conversations()
  * 
  */
-@Target({ java.lang.annotation.ElementType.METHOD })
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface EndConversation {
@@ -56,5 +57,12 @@ public @interface EndConversation {
      * order to associate this end point.
      */
     public abstract String[] conversations() default {};
+    
+    /**
+     * whether or not the ending ConversationContext should be available to the next view immediately after the conversation ends.
+     * the default is true.
+     * @return
+     */
+    public boolean accessibleFromView() default true;
 
 }

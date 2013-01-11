@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.code.rees.scope.conversation.context.ConversationContext;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
@@ -38,6 +39,14 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
  * 
  */
 public interface ConversationConfigurationProvider extends Serializable {
+	
+	/**
+	 * Set the max number of cached {@link ConversationContext
+	 * ConversationContexts}.
+	 * 
+	 * @param maxInstances
+	 */
+	public void setDefaultMaxInstances(int maxInstances);
 	
 	/**
 	 * Set the default max idle time for conversations
@@ -69,5 +78,14 @@ public interface ConversationConfigurationProvider extends Serializable {
      * @return
      */
     public Collection<ConversationClassConfiguration> getConfigurations(Class<?> actionClass);
+    
+    /**
+     * Get the {@link ExpressionConfiguration} for
+     * a given class
+     * 
+     * @param actionClass
+     * @return
+     */
+    public ExpressionConfiguration getExpressionConfiguration(Class<?> actionClass);
 
 }

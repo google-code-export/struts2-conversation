@@ -23,8 +23,10 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,22 +44,28 @@ import com.google.code.rees.scope.conversation.context.HttpConversationContextMa
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
-import com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor;
+import com.google.code.rees.scope.expression.Eval;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
+import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.interceptor.Interceptor;
+import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.opensymphony.xwork2.util.LocalizedTextUtil;
+import com.opensymphony.xwork2.util.TextParseUtil;
 
 /**
  * 
- * This interceptor uses an {@link InjectionConversationProcessor} to process conversation states and scopes.
+ * This interceptor uses an {@link ConversationProcessor} to process conversation states and scopes.  This
+ * is the entry/exit, integration point for the conversation framework within the Struts2 framework.  If
+ * something such as a {@link ConversationIdException} occurs, the interceptor short-circuits the action
+ * invocation and returns either a {@link #CONVERSATION_EXCEPTION_KEY} or a {@link #CONVERSATION_ID_EXCEPTION_KEY}
+ * result with the error message present on the value stack.  
  * 
  * @author rees.byars
  *
  */
-public class ConversationInterceptor implements Interceptor {
+public class ConversationInterceptor extends MethodFilterInterceptor {
 
     private static final long serialVersionUID = -72776817859403642L;
     private static final Logger LOG = LoggerFactory.getLogger(ConversationInterceptor.class);
@@ -92,6 +100,7 @@ public class ConversationInterceptor implements Interceptor {
      */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
+    protected Container container;
     protected ActionProvider finder;
     protected String actionSuffix;
 	protected long maxIdleTime;
@@ -103,7 +112,20 @@ public class ConversationInterceptor implements Interceptor {
     protected long monitoringFrequency;
     protected int maxInstances;
     protected ConversationContextFactory conversationContextFactory;
+    protected Eval eval;
+    private String evalProviderName;
+    
+    protected Set<String> shortCircuitResults = Collections.emptySet();
+    
+    public void setShortCircuitResults(String shortCircuitResults) {
+        this.shortCircuitResults = TextParseUtil.commaDelimitedStringToSet(shortCircuitResults);
+    }
 
+    @Inject
+    public void setContainer(Container container) {
+        this.container = container;
+    }
+    
     @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
     public void setActionClassFinder(ActionProvider finder) {
         this.finder = finder;
@@ -158,13 +180,18 @@ public class ConversationInterceptor implements Interceptor {
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
     }
+    
+    @Inject(StrutsScopeConstants.EXPRESSION_EVAL)
+    public void setEvalProviderName(String evalProviderName) {
+        this.evalProviderName = evalProviderName;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void destroy() {
-        LOG.info("Destroying the ConversationInterceptor...");
+        LOG.info("Destroying the ConversationInterceptor");
     }
 
     /**
@@ -173,25 +200,37 @@ public class ConversationInterceptor implements Interceptor {
     @Override
     public void init() {
 
-        LOG.info("Initializing the Conversation Interceptor...");
+        LOG.info("Initializing the Conversation Interceptor");
 
         this.arbitrator.setActionSuffix(this.actionSuffix);
+
         this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
         this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
+        this.conversationConfigurationProvider.setDefaultMaxInstances(this.maxInstances);
         try {
-			this.conversationConfigurationProvider.init(this.finder.getActionClasses());
-		} catch (Exception e) {
-			LOG.warn(e.getMessage());
-		}
+        	this.conversationConfigurationProvider.init(this.finder.getActionClasses());
+        } catch (Exception e) {
+        	LOG.warn(e.getMessage());
+        }
+
+        this.eval = this.container.getInstance(Eval.class, this.evalProviderName);
+        if (this.eval == null) {
+        	LOG.error("No bean with name " + this.evalProviderName + " of " + Eval.class + 
+        			" was found.  Make sure the constant [" + StrutsScopeConstants.EXPRESSION_EVAL + "] is set to a valid value in your struts.xml." +
+        					"  Defaulting to use OGNL as the expression evaluation provider.");
+        } else {
+        	LOG.info("Conversation expression evaluation provider [" + this.evalProviderName + "] successfully acquired.");
+        }
+        
         this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
+        this.conversationProcessor.setEval(this.eval);
         
         this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
-        this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
         this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
         this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
         this.conversationContextManagerProvider.init();
         
-        LOG.info("...Conversation Interceptor successfully initialized.");
+        LOG.info("Conversation Interceptor successfully initialized");
 
     }
 
@@ -199,7 +238,7 @@ public class ConversationInterceptor implements Interceptor {
      * {@inheritDoc}
      */
     @Override
-    public String intercept(ActionInvocation invocation) throws Exception {
+    public String doIntercept(ActionInvocation invocation) throws Exception {
     	
     	try {
     		
@@ -212,12 +251,24 @@ public class ConversationInterceptor implements Interceptor {
     		invocation.addPreResultListener(new PreResultListener() {
     			@Override
     			public void beforeResult(ActionInvocation invocation, String resultCode) {
-    				adapter.executePostProcessors();
+    				if (!ConversationInterceptor.this.shortCircuitResults.contains(resultCode)) {
+    					adapter.executePostActionProcessors();
+    				}
     				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
     			}
             });
+    		
+    		adapter.executePreActionProcessors();
             
-            return invocation.invoke();
+            String result = invocation.invoke();
+            
+            if (this.shortCircuitResults.contains(result)) {
+            	result = this.handleShortCircuitResult(result, invocation, adapter);
+            } else {
+            	result = this.handleResult(result, invocation, adapter);
+            }
+            
+            return result;
     		
     	} catch (ConversationIdException cie) {
     		
@@ -322,6 +373,15 @@ public class ConversationInterceptor implements Interceptor {
 			((ConversationErrorAware) action).setConversationError(errorMessage);
 			
 		}
+    }
+    
+    protected String handleShortCircuitResult(String result, ActionInvocation invocation, ConversationAdapter adapter) {
+    	return result;
+    }
+    
+    protected String handleResult(String result, ActionInvocation invocation, ConversationAdapter adapter) {
+    	adapter.executePostViewProcessors();
+    	return result;
     }
 
 }

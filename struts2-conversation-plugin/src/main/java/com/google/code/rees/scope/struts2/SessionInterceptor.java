@@ -67,7 +67,7 @@ public class SessionInterceptor implements Interceptor {
      */
     @Override
     public void destroy() {
-        LOG.info("Destroying the SessionInterceptor...");
+        LOG.info("Destroying the SessionInterceptor");
     }
 
     /**
@@ -76,16 +76,17 @@ public class SessionInterceptor implements Interceptor {
     @Override
     public void init() {
 
-    	LOG.info("Initializing the Session Interceptor...");
+    	LOG.info("Initializing the Session Interceptor");
 
-        try {
-			this.sessionConfigurationProvider.init(finder.getActionClasses());
-		} catch (Exception e) {
-			LOG.warn(e.getMessage());
-		}
+    	try {
+        	this.sessionConfigurationProvider.init(this.finder.getActionClasses());
+        } catch (Exception e) {
+        	LOG.warn(e.getMessage());
+        }
+    	
         this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
         
-        LOG.info("...Session Interceptor successfully initialized.");
+        LOG.info("Session Interceptor successfully initialized");
 
     }
 

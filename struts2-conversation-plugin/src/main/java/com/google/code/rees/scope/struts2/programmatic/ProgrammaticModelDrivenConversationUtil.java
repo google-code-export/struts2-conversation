@@ -43,10 +43,10 @@ import com.google.code.rees.scope.conversation.context.ConversationContext;
  */
 public class ProgrammaticModelDrivenConversationUtil {
 
-    public static <T extends ProgrammaticModelDrivenConversation<?>> void begin(T controller, long maxIdleTime) {
+    public static <T extends ProgrammaticModelDrivenConversation<?>> void begin(T controller, long maxIdleTime, int maxInstances) {
         Object model = controller.getModel();
         for (String conversationName : controller.getConversations()) {
-            ConversationContext conversationContext = ConversationUtil.begin(conversationName, maxIdleTime);
+            ConversationContext conversationContext = ConversationUtil.begin(conversationName, maxIdleTime, maxInstances);
             conversationContext.put(conversationName, model);
         }
     }

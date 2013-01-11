@@ -17,6 +17,7 @@ public class StrutsSessionFieldIntegrationTest extends
 
         request.setParameter("abstractField", "hello");
         ActionProxy proxy = this.getActionProxy("begin");
+        
         assertEquals("hola", this.getAction().getAbstractField());
         assertEquals(2, this.getAction().getDumb());
         assertEquals(2, this.getAction().getSmart());
@@ -55,8 +56,7 @@ public class StrutsSessionFieldIntegrationTest extends
     public void testActionWithNoSessionFields() throws Exception {
         this.getActionProxy("mock-no-session-field").execute();
         ActionProxy proxy = this.getActionProxy("configuration-action");
-        System.out.println(proxy.getActionName());
-        System.out.println(proxy.getConfig().getName());
+        proxy.execute();
     }
 
 }

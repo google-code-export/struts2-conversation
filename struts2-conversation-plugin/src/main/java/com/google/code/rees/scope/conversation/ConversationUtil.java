@@ -154,8 +154,8 @@ public class ConversationUtil {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public static ConversationContext begin(String name, long maxIdleTimeMillis) {
-		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis);
+	public static ConversationContext begin(String name, long maxIdleTimeMillis, int maxInstances) {
+		return begin(name, ConversationAdapter.getAdapter(), maxIdleTimeMillis, maxInstances);
 	}
 	
 	/**
@@ -166,12 +166,23 @@ public class ConversationUtil {
 	 * @param maxIdleTimeMillis
 	 * @return
 	 */
-	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis) {
-		ConversationContext context = adapter.beginConversation(name, maxIdleTimeMillis);
+	public static ConversationContext begin(String name, ConversationAdapter adapter, long maxIdleTimeMillis, int maxInstances) {
+		ConversationContext context = adapter.beginConversation(name, maxIdleTimeMillis, maxInstances);
 		String id = context.getId();
 		adapter.getViewContext().put(name, id);
 		adapter.getRequestContext().put(name, id);
 		return context;
+	}
+	
+	/**
+	 * A convenience method for beginning a conversation programmatically
+	 * 
+	 * @param name
+	 * @param maxIdleTimeMillis
+	 * @return
+	 */
+	public static ConversationContext beginUsingSimpleName(String name, long maxIdleTimeMillis, int maxInstances) {
+		return begin(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter(), maxIdleTimeMillis, maxInstances);
 	}
 
 	/**
@@ -200,6 +211,17 @@ public class ConversationUtil {
 		adapter.getViewContext().put(name, id);
 		return adapter.getConversationContext(name, id);
 	}
+	
+	/**
+	 * Persist a conversation programmatically
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext persistUsingSimpleName(String name) {
+		return persist(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter());
+	}
 
 	/**
 	 * A convenience method for ending a conversation programmatically.
@@ -227,6 +249,17 @@ public class ConversationUtil {
 		adapter.getViewContext().remove(name);
 		return adapter.endConversation(name, id);
 	}
+	
+	/**
+	 * A convenience method for ending a conversation programmatically.
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext endUsingSimpleName(String name) {
+		return end(name + ConversationConstants.CONVERSATION_NAME_SUFFIX, ConversationAdapter.getAdapter());
+	}
 
 	/**
 	 * Given the conversation name, returns that conversation's context for the
@@ -243,6 +276,18 @@ public class ConversationUtil {
 			return null;
 		}
 		return adapter.getConversationContext(name, id);
+	}
+	
+	/**
+	 * Given the conversation name without the "_conversation" suffix, returns that conversation's context for the
+	 * current request.
+	 * 
+	 * @param name
+	 * @return The {@link ConversationContext} or <code>null</code> if the
+	 *         conversation is not active
+	 */
+	public static ConversationContext getContextUsingSimpleName(String name) {
+		return getContext(name + ConversationConstants.CONVERSATION_NAME_SUFFIX);
 	}
 
 	/**

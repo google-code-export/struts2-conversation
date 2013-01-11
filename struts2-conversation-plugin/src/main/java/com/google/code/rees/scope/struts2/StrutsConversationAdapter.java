@@ -72,6 +72,14 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     public String getActionId() {
         return invocation.getProxy().getMethod();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Map<String, Object> getActionContext() {
+		return this.actionContext.getContextMap();
+	}
 
     /**
      * {@inheritDoc}
@@ -92,8 +100,8 @@ public class StrutsConversationAdapter extends ConversationAdapter {
      * {@inheritDoc}
      */
 	@Override
-	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis) {
-		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis);
+	public ConversationContext beginConversation(String conversationName, long maxIdleTimeMillis, int maxInstances) {
+		return this.conversationContextManager.createContext(conversationName, maxIdleTimeMillis, maxInstances);
 	}
 
     /**
@@ -111,6 +119,20 @@ public class StrutsConversationAdapter extends ConversationAdapter {
     @Override
     public ConversationContext endConversation(String conversationName, String conversationId) {
         return this.conversationContextManager.remove(conversationName, conversationId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doCleanup() {
+    	super.doCleanup();
+    	this.viewContext.clear();
+    	this.invocation = null;
+    	this.requestContext.clear();
+    	this.requestContext = null;
+    	this.actionContext = null;
+    	this.request = null;
     }
 
 }

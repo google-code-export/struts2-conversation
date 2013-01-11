@@ -32,7 +32,7 @@ public class ConversationUtilTest implements TimeoutListener<ConversationContext
 		managerProvider.setMonitoringFrequency(1L);
 		managerProvider.init();
 		MockConversationAdapter.init(request, managerProvider);
-		ConversationContext context = ConversationUtil.begin(mockConversationName, 50L);
+		ConversationContext context = ConversationUtil.begin(mockConversationName, 50L, 20);
 		context.addTimeoutListener(this);
 		context.setMaxIdleTime(50L);
 		try {

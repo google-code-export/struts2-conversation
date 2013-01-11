@@ -50,7 +50,6 @@ public class DefaultConversationContextManagerTest {
     	
     	ConversationContextManager manager = new DefaultConversationContextManager();
     	manager.setContextFactory(new DefaultConversationContextFactory());
-    	manager.setMaxInstances(4);
     	
     	TaskThread contractionThread = BasicTaskThread.spawnInstance();
     	CollectionContractionTask collectionContractionTask = new CollectionContractionTask(manager);

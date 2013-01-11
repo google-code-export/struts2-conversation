@@ -64,12 +64,18 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
 
     private T model;
     protected long maxIdleTime;
+    protected int maxInstances;
 	private ConversationProcessor conversationProcessor;
 	private HttpConversationContextManagerProvider conversationContextManagerProvider;
     
     @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
     public void setMaxIdleTime(long maxIdleTime) {
     	this.maxIdleTime = maxIdleTime;
+    }
+    
+    @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
+    public void setMaxInstances(int maxInstances) {
+    	this.maxInstances = maxInstances;
     }
     
     @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
@@ -143,7 +149,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime);
+        ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime, this.maxInstances);
     }
 
     /**

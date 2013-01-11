@@ -28,6 +28,7 @@ import java.io.Serializable;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
+import com.google.code.rees.scope.expression.Eval;
 
 /**
  * The primary conversation processing and management component.
@@ -36,6 +37,13 @@ import com.google.code.rees.scope.conversation.exceptions.ConversationException;
  * 
  */
 public interface ConversationProcessor extends Serializable {
+	
+	/**
+	 * Set the {@link Eval} instance for this processor
+	 * @param eval
+	 */
+	public void setEval(Eval eval);
+	
 
     /**
      * Set the configuration provider for this manager

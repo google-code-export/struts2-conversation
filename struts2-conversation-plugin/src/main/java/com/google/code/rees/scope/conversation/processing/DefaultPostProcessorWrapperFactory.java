@@ -19,29 +19,29 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: ConversationPostProcessor.java reesbyars $
+ *  $Id: DefaultPostProcessorWrapperFactory.java reesbyars $
  ******************************************************************************/
 package com.google.code.rees.scope.conversation.processing;
-
-import java.io.Serializable;
 
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 
 /**
- * This interface allows for post-processing of a conversation.  Registered via
- * {@link ConversationAdapter#addPostProcessor(ConversationPostProcessor, ConversationClassConfiguration, String)
+ * The default implementation of the
+ * {@link PostProcessorWrapperFactory}
+ * 
  * @author rees.byars
  */
-public interface ConversationPostProcessor extends Serializable {
+public class DefaultPostProcessorWrapperFactory implements PostProcessorWrapperFactory {
+
+    private static final long serialVersionUID = -8906181370354593161L;
 
     /**
-     * Perform the post-processing using the given parameters
-     * 
-     * @param conversationAdapter
-     * @param conversationConfig
-     * @param conversationId
+     * {@inheritDoc}
      */
-    public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId);
+    @Override
+    public <T extends PostProcessor> PostProcessorWrapper<T> create(ConversationAdapter conversationAdapter, T postProcessor, ConversationClassConfiguration conversationConfig, String conversationId) {
+        return new DefaultPostProcessorWrapper<T>(conversationAdapter, postProcessor, conversationConfig, conversationId);
+    }
 
 }

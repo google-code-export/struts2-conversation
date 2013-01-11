@@ -27,6 +27,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
+import com.google.code.rees.scope.conversation.ConversationConstants;
 
 /**
  * Denotes a method as a conversation-initiating method. Depending on
@@ -40,7 +43,7 @@ import java.lang.annotation.Target;
  * @see #conversations()
  * 
  */
-@Target({ java.lang.annotation.ElementType.METHOD })
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BeginConversation {
@@ -60,5 +63,36 @@ public @interface BeginConversation {
      * The idle time after which this conversation will be timed out and cleaned up, in milliseconds.
      */
     public abstract long maxIdleTimeMillis() default -1L;
+    
+    /**
+     * An expression that returns the idle time after which this conversation will be timed out and cleaned up.
+     * <p>
+     * Two types of expressions are supported:  a simple, static expression indicating days, hours, etc. and a dynamic
+     * expression that will be evaluated using the configured {@link com.google.code.rees.scope.expression.Eval Eval}.
+     * <p>
+     * The following valid examples indicate the simple syntax that can be used:
+     * <ul>
+     * <li><code>"3d 8h 30m 15s"</code></li>
+     * <li><code>"36h 15s"</code></li>
+     * <li><code>"30m"</code></li>
+     * <li><code>"1d"</code></li>
+     * <li><code>"45s"</code></li>
+     * </ul>
+     * For the dynamic expressions, an expression like <code>${timeout}</code> could be used to call getTimeout() 
+     * on the action class or model (whichever is the root object).  All that is required is that the result is of type long or Long
+     * 
+     */
+    public abstract String maxIdleTime() default "";
+    
+    /**
+     * The max number of instances allowed for this conversation.
+     */
+    public abstract int maxInstances() default ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+    
+    /**
+     * if set to <code>true</code>, the framework will manage opening and closing a JPA transaction when the conversation begin and end/expires, respectively.
+     * the default value is <code>false</code>.
+     */
+    public abstract boolean transactional() default false;
 
 }

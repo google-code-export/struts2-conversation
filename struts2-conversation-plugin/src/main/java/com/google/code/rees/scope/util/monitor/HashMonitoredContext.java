@@ -24,29 +24,35 @@
 package com.google.code.rees.scope.util.monitor;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * A Serializable Hash implementation of the Map and Timeoutable interfaces.
- * Resets its own remaining time whenever the wrapped {@link HashMap} is
- * accessed.
+ * A Serializable, thread-safe Hash implementation of the Map and Timeoutable interfaces.
+ * Resets its own remaining time whenever the underlying {@link Hashtable} is
+ * accessed.  Extends Hashtable for thread-safety without the heap-overhead of a
+ * ConcurrentHashMap - reasonable since scalable concurrency is not much concern,
+ * but scalable heap usage is.
  * 
  * @author rees.byars
  */
-public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends HashMap<K, V> implements MonitoredContext<K, V, T> {
+public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V, T>> extends Hashtable<K, V> implements MonitoredContext<K, V, T> {
 
 	private static final long serialVersionUID = 5810194340880306239L;
+	
+	//hashtable settings geared toward saving a little space - users aren't likely to access a context massively concurrently anyway
+	private static final int INITIAL_CAPACITY = 8;
+	private static final float LOAD_FACTOR = .9f;
 
-	protected Collection<TimeoutListener<T>> timeoutListeners;
+	protected Collection<TimeoutListener<T>> timeoutListeners = new ConcurrentLinkedQueue<TimeoutListener<T>>();
 	protected long timeOfMostRecentAccess;
 	protected long maxIdleTime;
 
 	public HashMonitoredContext(long maxIdleTime) {
+		super(INITIAL_CAPACITY, LOAD_FACTOR);
 		this.maxIdleTime = maxIdleTime;
-		this.timeoutListeners = new HashSet<TimeoutListener<T>>();
 		this.ping();
 	}
 
@@ -60,11 +66,24 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * TODO
 	 */
 	@Override
 	public V put(K key, V value) {
+		
 		this.ping();
+		
+		//null keys not allowed in hashtable
+		if (key == null) {
+			return null;
+		}
+		
+		//null values not allowed in hashtable, so we simulate by removing any current value
+		if (value == null) {
+			super.remove(key);
+			return null;
+		}
+		
 		return super.put(key, value);
 	}
 
