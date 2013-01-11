@@ -31,8 +31,8 @@ public class Mocksy {
      * @return
      * @throws mocksy.core.DelegationException
      */
-    public static <T> T mockify(T target) throws DelegationException {
-        return mockify(target, null);
+    public static <T> T mockify(T target) {
+    	return mockify(target, null);
     }
 
     /**
@@ -46,8 +46,12 @@ public class Mocksy {
      * @return
      * @throws DelegationException
      */
-    public static <I, T extends I> T mockify(T target, Class<I> targetInterface) throws DelegationException {
-        return VisibilityAdapter.mockify(target, targetInterface);
+    public static <I, T extends I> T mockify(T target, Class<I> targetInterface) {
+    	try {
+    		return VisibilityAdapter.mockify(target, targetInterface);
+    	} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
     }
 
     /**
@@ -85,8 +89,8 @@ public class Mocksy {
      * @return
      * @throws DelegationException
      */
-    public static <T> DelegationHandler<T> delegate(T target) throws DelegationException {
-        return delegate(target, null);
+    public static <T> DelegationHandler<T> delegate(T target) {
+    	return delegate(target, null);
     }
 
     /**
@@ -97,8 +101,8 @@ public class Mocksy {
      * @return
      * @throws DelegationException
      */
-    public static <T> T remove(T target) throws DelegationException {
-        return delegate(target, null).remove();
+    public static <T> T remove(T target) {
+    	return delegate(target, null).remove();
     }
 
     /**
@@ -109,16 +113,21 @@ public class Mocksy {
      * @return the real object behind the given proxy.  if the given object is not a proxy, it just returns that object
      * @throws DelegationException
      */
-    public static <T> T real(T target) throws DelegationException {
-        return delegate(target, null, false).getRealObject();
+    public static <T> T real(T target) {
+    	return delegate(target, null, false).getRealObject();
     }
 
-    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) throws DelegationException {
-        return delegate(target, targetInterface, true); //true to enforce good practice
+    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) {
+    	return delegate(target, targetInterface, true); //true to enforce good practice
+
     }
 
-    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
-        return VisibilityAdapter.delegate(target, targetInterface, requireProxy);
+    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
+    	try {
+    		return VisibilityAdapter.delegate(target, targetInterface, requireProxy);
+    	} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
     }
 
     /**
@@ -129,7 +138,7 @@ public class Mocksy {
         VisibilityAdapter.cleanup();
     }
 
-    public static void verify(Object proxy) throws DelegationException {
+    public static void verify(Object proxy) {
         Object delegate = delegate(proxy).getDelegate();
         if (delegate instanceof Mock) {
             ((Mock<?>) delegate).verify();
@@ -140,8 +149,12 @@ public class Mocksy {
         return EmptyMockFactory.create(classToMock);
     }
 
-    public static <T> Spy.Infiltrator set(T value) throws DelegationException {
-        return Spy.set(value);
+    public static <T> Spy.Infiltrator set(T value) {
+    	try {
+    		return Spy.set(value);
+    	} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
     }
 
     public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {

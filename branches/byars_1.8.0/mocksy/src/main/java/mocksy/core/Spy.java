@@ -26,7 +26,7 @@ public class Spy<T> {
         Infiltrator(Object value) {
             this.value = value;
         }
-        public void on(Object target) throws DelegationException {
+        public void on(Object target) {
             Object real = Mocksy.real(target);
             for (Field field : real.getClass().getDeclaredFields()) {
                 if (field.getType().isAssignableFrom(value.getClass())) {
@@ -49,7 +49,7 @@ public class Spy<T> {
             this.type = type;
         }
         @SuppressWarnings("unchecked")
-		public T from(Object target) throws DelegationException {
+		public T from(Object target) {
             Object real = Mocksy.real(target);
             for (Field field : real.getClass().getDeclaredFields()) {
                 if (field.getType().equals(type)) {

@@ -39,6 +39,7 @@ public abstract class Mock<T> {
 
     public void verify() {
         for (Method method : this.getClass().getDeclaredMethods()) {
+        	
             Verify verify = method.getAnnotation(Verify.class);
             if (verify != null) {
 
@@ -52,22 +53,33 @@ public abstract class Mock<T> {
                 int min = verify.minCalls();
 
                 if (max != -1) {
-                    assert count <= max : "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected only " + max + ".";
+                	assertTrue( count <= max, "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected only " + max + "." );
                 }
 
                 if (min != -1) {
-                    assert count >= min : "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected at least " + min + ".";
+                	assertTrue( count >= min, "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected at least " + min + ".");
                 }
 
                 if (calls != -1) {
-                    assert count == calls : "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected exactly " + calls + ".";
+                	assertTrue( count == calls, "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected exactly " + calls + ".");
                 } else if (calls + max + min == -3) {
                     //if no values set, default to requiring exactly one invocation
-                    assert count == 1 : "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected exactly " + 1 + ".";
+                	assertTrue( count == 1, "The method " + method.getName() + " of " + realObject.getClass() + " was invoked " + count + " times.  Expected exactly " + 1 + ".");
                 }
 
             }
         }
+    }
+    
+    private static void assertTrue(boolean expression, String message) {
+    	if (!expression) throw new RuntimeException(new VerificationException(message));
+    }
+    
+    public static class VerificationException extends Exception {
+		private static final long serialVersionUID = 2039031849374188573L;
+		private VerificationException(String message) {
+			super(message);
+		}
     }
 
 }

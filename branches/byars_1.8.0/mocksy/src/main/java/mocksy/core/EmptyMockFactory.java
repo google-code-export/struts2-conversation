@@ -19,31 +19,27 @@ public class EmptyMockFactory {
 
     @SuppressWarnings("unchecked")
     public static <T> T create(Class<T> classToMock) {
-        try {
-            return Mocksy.mockify((T) Enhancer.create(classToMock, new MethodInterceptor() {
-                @Override
-                public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        return Mocksy.mockify((T) Enhancer.create(classToMock, new MethodInterceptor() {
+            @Override
+            public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
-                    Class<?> declaringClass = method.getDeclaringClass();
-                    String methodName = method.getName();
+                Class<?> declaringClass = method.getDeclaringClass();
+                String methodName = method.getName();
 
-                    if (declaringClass == Object.class) {
-                        if ("equals".equals(methodName)) {
-                            return o == objects[0];
-                        }
-                        else if ("hashCode".equals(methodName)) {
-                            return System.identityHashCode(o);
-                        }
-                        else if ("toString".equals(methodName)) {
-                            return o.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(o));
-                        }
+                if (declaringClass == Object.class) {
+                    if ("equals".equals(methodName)) {
+                        return o == objects[0];
                     }
-                    return getMockValue(method.getReturnType());
+                    else if ("hashCode".equals(methodName)) {
+                        return System.identityHashCode(o);
+                    }
+                    else if ("toString".equals(methodName)) {
+                        return o.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(o));
+                    }
                 }
-            }), classToMock);
-        } catch (DelegationException e) {
-            throw new RuntimeException("Could not create empty mock:  ", e);
-        }
+                return getMockValue(method.getReturnType());
+            }
+        }), classToMock);
     }
 
     private static Object getMockValue(Class<?> type) {
