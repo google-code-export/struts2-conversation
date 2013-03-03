@@ -52,7 +52,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	public static final long MONITORING_DELAY = 1000L;
 	
 	protected Map<String, TimeoutRunner<T>> timeoutRunners = new HashMap<String, TimeoutRunner<T>>();
-	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
+	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = new HashMap<String, ScheduledFuture<?>>();
 	protected transient ScheduledExecutorService scheduler = null;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
 	
@@ -82,9 +82,6 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	@Override
 	public void init() {
 		synchronized(this.timeoutRunners) {
-			if (this.scheduledFutures == null) {
-				this.scheduledFutures = new HashMap<String, ScheduledFuture<?>>();
-			}
 			for (Entry<String, TimeoutRunner<T>> entry : this.timeoutRunners.entrySet()) {
 				String targetId = entry.getKey();
 				ScheduledFuture<?> future = this.scheduledFutures.get(targetId);
