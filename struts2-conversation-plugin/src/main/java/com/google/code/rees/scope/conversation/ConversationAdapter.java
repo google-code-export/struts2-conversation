@@ -174,7 +174,9 @@ public abstract class ConversationAdapter implements Serializable {
 	public static void cleanup() {
 		ConversationAdapter adapter = conversationAdapter.get();
 		conversationAdapter.remove();
-		adapter.doCleanup();
+		if (adapter != null) {
+			adapter.doCleanup();
+		}
 	}
 	
 	/**
