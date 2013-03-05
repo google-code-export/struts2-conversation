@@ -24,6 +24,10 @@
  **********************************************************************************************************************/
 package com.google.code.rees.scope.util.monitor;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -116,11 +120,47 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addTimeoutable(T timeoutable) {
+	public void addTimeoutable(final T timeoutable) {
 		synchronized (this.timeoutRunners) {
-			String targetId = timeoutable.getId();
+			final String targetId = timeoutable.getId();
 			if (!this.timeoutRunners.containsKey(targetId)) {
-				TimeoutRunner<T> timeoutRunner = BladeRunner.create(timeoutable);
+				@SuppressWarnings("serial")
+				TimeoutRunner<T> timeoutRunner = new TimeoutRunner<T>() {
+					
+					private transient WeakReference<T> timeoutableReference = new WeakReference<T>(timeoutable);
+					private T serializableRef = null;
+
+					@Override
+					public void run() {
+						T t = this.getTimeoutable();
+						if (t == null) {
+							ScheduledFuture<?> future = scheduledFutures.remove(targetId);
+							if (future != null) {
+								future.cancel(true);
+							}
+							timeoutRunners.remove(targetId);
+						} else if (t.getRemainingTime() <= 0) {
+							t.timeout();
+						}
+					}
+
+					@Override
+					public T getTimeoutable() {
+						return this.timeoutableReference.get();
+					}
+					
+					private void writeObject(ObjectOutputStream out) throws IOException {
+						this.serializableRef = this.timeoutableReference.get();
+						out.defaultWriteObject();
+					}
+					
+					private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+						in.defaultReadObject();
+						timeoutableReference = new WeakReference<T>(this.serializableRef);
+						this.serializableRef = null;
+					}
+					
+				};
 				this.timeoutRunners.put(targetId, timeoutRunner);
 				ScheduledFuture<?> future = this.scheduler.scheduleAtFixedRate(timeoutRunner, MONITORING_DELAY, this.monitoringFrequency, TimeUnit.MILLISECONDS);
 				this.scheduledFutures.put(targetId, future);

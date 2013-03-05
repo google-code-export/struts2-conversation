@@ -25,6 +25,8 @@ package com.google.code.rees.scope.conversation.context;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +60,19 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     
     @PostConstruct
     public void init() {
-    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize);
+    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
+    		
+    		AtomicInteger id = new AtomicInteger(0);
+
+			@Override
+			public Thread newThread(Runnable runnable) {
+				Thread thread = new Thread(runnable);
+				thread.setDaemon(true);
+				thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
+				return thread;
+			}
+    		
+    	});
     }
     
     /**
