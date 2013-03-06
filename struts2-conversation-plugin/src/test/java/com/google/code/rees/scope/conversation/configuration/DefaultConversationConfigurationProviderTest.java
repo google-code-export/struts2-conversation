@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import com.google.code.rees.scope.mocks.actions.conversation.MockConversationController;
 import com.google.code.rees.scope.testutil.SerializableObjectTest;
-import com.google.code.rees.scope.util.thread.BasicTaskThread;
-import com.google.code.rees.scope.util.thread.ThreadTask;
+import com.google.code.rees.scope.testutil.thread.BasicTaskThread;
+import com.google.code.rees.scope.testutil.thread.ThreadTask;
 import com.opensymphony.xwork2.Action;
 
 public class DefaultConversationConfigurationProviderTest extends

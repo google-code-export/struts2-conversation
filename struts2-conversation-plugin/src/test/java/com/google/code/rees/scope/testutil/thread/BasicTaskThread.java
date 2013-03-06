@@ -19,62 +19,89 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutTask.java Apr 17, 2012 2:27:43 PM reesbyars $
+ * $Id: BasicTaskThread.java Apr 15, 2012 9:09:45 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.testutil.thread;
 
-import java.io.Serializable;
-
-import com.google.code.rees.scope.util.thread.ThreadTask;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * This task observes the remaining time of a single {@link Timeoutable} and times it out when its remaining time is zero or less.
+ * A basic TaskThread implementation that uses a {@link CopyOnWriteArraySet} to manage concurrent read/write/removal
+ * of {@link ThreadTask ThreadTasks}.
  * 
  * @author rees.byars
- * 
  */
-public class TimeoutTask implements ThreadTask, Serializable {
+public class BasicTaskThread extends AbstractEasyThread implements
+		TaskThread {
 
-	private static final long serialVersionUID = 8002426005125447219L;
+	protected Set<ThreadTask> tasks;
 
-	protected Timeoutable<?> timeoutable;
-	protected boolean active;
-
-	protected TimeoutTask(Timeoutable<?> timeoutable) {
-		this.timeoutable = timeoutable;
-		this.active = true;
+	protected BasicTaskThread() {
+		tasks = new CopyOnWriteArraySet<ThreadTask>();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized boolean isActive() {
-		return this.active;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized void cancel() {
-		this.active = false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doTask() {
-		if (this.timeoutable.getRemainingTime() <= 0) {
-			this.timeoutable.timeout();
-			this.cancel();
+	public void addTask(ThreadTask task) {
+		synchronized (this.tasks) {
+			this.tasks.add(task);
 		}
 	}
 
-	public static TimeoutTask create(Timeoutable<?> timeoutable) {
-		return new TimeoutTask(timeoutable);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeTask(ThreadTask task) {
+		synchronized (this.tasks) {
+			this.tasks.remove(task);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void destroy() {
+		super.destroy();
+		synchronized (this.tasks) {
+			for (ThreadTask task : this.tasks) {
+				task.cancel();
+			}
+			this.tasks.clear();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void doWhileRunning() {
+		Iterator<ThreadTask> taskIterator = this.tasks.iterator();
+		Set<ThreadTask> deadTasks = new HashSet<ThreadTask>();
+		while (taskIterator.hasNext()) {
+			ThreadTask task = taskIterator.next();
+			if (task.isActive()) {
+				task.doTask();
+			} else {
+				deadTasks.add(task);
+			}
+		}
+		if (deadTasks.size() > 0) {
+			this.tasks.removeAll(deadTasks);
+		}
+	}
+
+	public static BasicTaskThread spawnInstance() {
+		BasicTaskThread basicTaskThread = new BasicTaskThread();
+		basicTaskThread.start();
+		return basicTaskThread;
 	}
 
 }

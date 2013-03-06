@@ -19,56 +19,29 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: WaitTask.java Apr 17, 2012 3:12:04 PM reesbyars $
+ * $Id: TaskThread.java Apr 15, 2012 9:15:21 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.testutil.thread;
 
-import java.io.Serializable;
-
-import com.google.code.rees.scope.util.thread.ThreadTask;
 
 /**
- * @author rees.byars
+ * An extension of the {@link EasyThread} interface that has methods for adding and removing {@link ThreadTask ThreadTasks}
  * 
+ * @author rees.byars
  */
-public class WaitTask implements ThreadTask, Serializable {
+public interface TaskThread extends EasyThread {
 
-	private static final long serialVersionUID = 3539233042598738551L;
-	
-	private long wait;
+	/**
+	 * Adds a {@link ThreadTask} to this thread.
+	 * @param task
+	 */
+	public void addTask(ThreadTask task);
 
-	protected WaitTask(long wait) {
-		this.wait = wait;
-	}
-
-	@Override
-	public void doTask() {
-		synchronized (this) {
-			try {
-				this.wait(this.wait);
-			} catch (InterruptedException e) {
-				// no worries
-			}
-		}
-	}
-
-	@Override
-	public boolean isActive() {
-		return true;
-	}
-
-	@Override
-	public void cancel() {
-		// never!!!
-	}
-	
-	public void setWait(long waitMillis) {
-		this.wait = waitMillis;
-	}
-
-	public static WaitTask create(long wait) {
-		return new WaitTask(wait);
-	}
+	/**
+	 * Removes a {@link ThreadTask} from this thread.
+	 * @param task
+	 */
+	public void removeTask(ThreadTask task);
 
 }

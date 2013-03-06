@@ -59,6 +59,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
 	protected transient ScheduledExecutorService scheduler = null;
 	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
+	protected SchedulerProvider schedulerProvider;
 	
 	protected ScheduledExecutorTimeoutMonitor(){}
 
@@ -73,11 +74,9 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	/**
 	 * sets the scheduler to be used
 	 */
-	public void setScheduler(ScheduledExecutorService scheduler) {
-		if (this.scheduler == null) {
-			this.scheduler = scheduler;
-			this.init();
-		}
+	public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
+		this.schedulerProvider = schedulerProvider;
+		this.init();
 	}
 	
 	/**
@@ -85,6 +84,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	@Override
 	public void init() {
+		this.scheduler = this.schedulerProvider.getScheduler();
 		synchronized(this.timeoutRunners) {
 			if (scheduledFutures == null) {
 				scheduledFutures = new HashMap<String, ScheduledFuture<?>>();
@@ -192,6 +192,11 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 		this.removeTimeoutable(timeoutable);
 	}
 	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		this.init();
+	}
+	
 	/**
 	 * used to create an instance
 	 * 
@@ -200,10 +205,10 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 * @param monitoringFrequency
 	 * @return
 	 */
-	public static <TT extends Timeoutable<TT>> ScheduledExecutorTimeoutMonitor<TT> spawnInstance(ScheduledExecutorService scheduler, long monitoringFrequency) {
+	public static <TT extends Timeoutable<TT>> ScheduledExecutorTimeoutMonitor<TT> spawnInstance(SchedulerProvider scheduler, long monitoringFrequency) {
 		ScheduledExecutorTimeoutMonitor<TT> monitor = new ScheduledExecutorTimeoutMonitor<TT>();
 		monitor.setMonitoringFrequency(monitoringFrequency);
-		monitor.setScheduler(scheduler);
+		monitor.setSchedulerProvider(scheduler);
 		return monitor;
 	}
 
