@@ -19,27 +19,36 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutMonitorFactory.java Apr 16, 2012 2:54:09 PM reesbyars $
+ * $Id: ThreadTask.java Apr 15, 2012 8:31:49 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.testutil.thread;
 
 /**
- * A factory interface for producing {@link TimeoutMonitor TimeoutMonitors}
+ * This interface provides a simple mechanism that can be implemented for adding tasks to a {@link TaskThread}
  * 
  * @author rees.byars
  */
-public interface TimeoutMonitorFactory<T extends Timeoutable<T>> {
+public interface ThreadTask {
 
 	/**
-	 * Sets the monitoring frequency of the monitors produced by this factory
-	 * @param frequencyMillis
+	 * indicates whether or not this tasks {@link #doTask()} method should continue to be called
+	 * by its {@link TaskThread}
+	 * @return
 	 */
-	public void setMonitoringFrequency(long frequencyMillis);
+	public boolean isActive();
 
 	/**
-	 * returns a TimeoutMonitor with its thread running (already initialized)
+	 * Cancels this task, after which calls to {@link #isActive()} return false
 	 */
-	public TimeoutMonitor<T> spawnMonitor();
+	public void cancel();
+
+	/**
+	 * The basic task to be performed by this task.  Will continue being called until
+	 * {@link #isActive()} returns false or the task is removed from its {@link TaskThread} using
+	 * {@link TaskThread#removeTask(ThreadTask)}.  The frequency with which this
+	 * task will be executed will be dependent upon the other tasks that are added to the TaskThread.
+	 */
+	public void doTask();
 
 }
