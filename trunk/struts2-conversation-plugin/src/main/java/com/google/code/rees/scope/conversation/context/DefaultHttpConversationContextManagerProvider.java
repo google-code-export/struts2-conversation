@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
@@ -59,7 +60,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
     protected ConversationContextFactory conversationContextFactory;
     protected transient ScheduledExecutorService scheduler;
-    protected ReentrantLock schedulerGuard = new ReentrantLock();
+    protected Lock schedulerGuard = new ReentrantLock();
     
     @PostConstruct
     public void init() {
