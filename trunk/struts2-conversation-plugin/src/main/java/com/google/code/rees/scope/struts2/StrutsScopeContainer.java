@@ -3,6 +3,9 @@ package com.google.code.rees.scope.struts2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.ScopeContainer;
 import com.google.code.rees.scope.conversation.ConversationProperties;
@@ -20,7 +23,9 @@ import com.opensymphony.xwork2.inject.Inject;
 public class StrutsScopeContainer implements ScopeContainer {
 
 	private static final long serialVersionUID = -6820777796732236492L;
+	private static final Logger LOG = LoggerFactory.getLogger(StrutsScopeContainer.class);
 	
+	private Boolean javaConfigCompleted = false;
 	private Map<Class<?>, String> typeKeys  = new HashMap<Class<?>, String>();
 	private Container container;
 	
@@ -76,7 +81,71 @@ public class StrutsScopeContainer implements ScopeContainer {
 
 	@Override
 	public <T> T getComponent(Class<T> clazz) {
+		if (!javaConfigCompleted) {
+			this.executeJavaConfiguration();
+		}
 		return container.getInstance(clazz, typeKeys.get(clazz));
+	}
+	
+	/**
+	 * 
+	 * In the absence of a more robust container than xwork's, we use this class to do configuration via code
+	 *
+	 */
+	protected void executeJavaConfiguration() {
+		
+		synchronized(javaConfigCompleted) {
+			
+			if (!javaConfigCompleted) {
+				
+				javaConfigCompleted = true;
+				
+				/*
+				 * conversation config:
+				 */
+				ConversationProperties properties = this.getComponent(ConversationProperties.class);
+				
+				ConversationArbitrator arbitrator = this.getComponent(ConversationArbitrator.class);
+		        arbitrator.setActionSuffix(properties.getActionSuffix());
+		        
+		        ConversationConfigurationProvider configurationProvider = this.getComponent(ConversationConfigurationProvider.class);
+		        configurationProvider.setArbitrator(arbitrator);
+		        configurationProvider.setDefaultMaxIdleTime(properties.getMaxIdleTime());
+		        
+		        ActionProvider actionProvider = this.getComponent(ActionProvider.class);
+		        try {
+					configurationProvider.init(actionProvider.getActionClasses());
+				} catch (Exception e) {
+					LOG.warn(e.getMessage());
+				}
+		        
+		        ConversationProcessor processor = this.getComponent(ConversationProcessor.class);
+		        processor.setConfigurationProvider(configurationProvider);
+		        
+		        HttpConversationContextManagerProvider contextManagerProvider = this.getComponent(HttpConversationContextManagerProvider.class);
+		        ConversationContextFactory contextFactory = this.getComponent(ConversationContextFactory.class);
+		        contextManagerProvider.setConversationContextFactory(contextFactory);
+		        contextManagerProvider.setMaxInstances(properties.getMaxInstances());
+		        contextManagerProvider.setMonitoringFrequency(properties.getMonitoringFrequency());
+		        contextManagerProvider.setMonitoringThreadPoolSize(properties.getMonitoringThreadPoolSize());
+		        contextManagerProvider.init();
+		        
+		        /*
+		         * session config:
+		         */
+		        SessionConfigurationProvider sessionConfigurationProvider = this.getComponent(SessionConfigurationProvider.class);
+		    	ActionProvider finder = this.getComponent(ActionProvider.class);
+		    	SessionManager sessionManager = this.getComponent(SessionManager.class);
+
+		        try {
+					sessionConfigurationProvider.init(finder.getActionClasses());
+				} catch (Exception e) {
+					LOG.warn(e.getMessage());
+				}
+		        
+		        sessionManager.setConfigurationProvider(sessionConfigurationProvider);
+			}
+		}
 	}
 
 }
