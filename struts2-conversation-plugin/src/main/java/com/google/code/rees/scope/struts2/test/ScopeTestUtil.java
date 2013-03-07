@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.code.rees.scope.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;
@@ -58,11 +59,10 @@ public class ScopeTestUtil {
 
     public static ConversationConfigurationProvider getConfigurationProvider() {
         if (configurationProvider == null) {
-        	configurationProvider = (ConversationConfigurationProvider) Dispatcher
+        	configurationProvider = Dispatcher
                     .getInstance()
                     .getContainer()
-                    .getInstance(ConversationConfigurationProvider.class,
-                            StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY);
+                    .getInstance(ScopeContainerProvider.class).getScopeContainer().getComponent(ConversationConfigurationProvider.class);
         }
         return configurationProvider;
     }

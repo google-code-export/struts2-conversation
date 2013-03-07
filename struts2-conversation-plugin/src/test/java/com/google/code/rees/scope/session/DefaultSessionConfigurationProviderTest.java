@@ -22,7 +22,7 @@ import com.opensymphony.xwork2.inject.Inject;
 public class DefaultSessionConfigurationProviderTest extends
         StrutsScopeTestCase<Object> {
 
-    @Inject(value = StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
+    @Inject("defaultSessionConfigurationProvider")
     SessionConfigurationProvider provider;
 
     @Test

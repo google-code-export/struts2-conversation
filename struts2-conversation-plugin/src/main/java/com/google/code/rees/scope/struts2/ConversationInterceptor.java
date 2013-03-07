@@ -32,11 +32,9 @@ import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.ScopeContainer;
+import com.google.code.rees.scope.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
@@ -92,71 +90,13 @@ public class ConversationInterceptor implements Interceptor {
      */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
-    protected ActionProvider finder;
-    protected String actionSuffix;
-	protected long maxIdleTime;
-    protected ConversationArbitrator arbitrator;
-    protected ConversationConfigurationProvider conversationConfigurationProvider;
-    protected ConversationProcessor conversationProcessor;
-    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
-    protected int monitoringThreadPoolSize;
-    protected long monitoringFrequency;
-    protected int maxInstances;
-    protected ConversationContextFactory conversationContextFactory;
-
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-    public void setActionClassFinder(ActionProvider finder) {
-        this.finder = finder;
-    }
-
-    @Inject(ConventionConstants.ACTION_SUFFIX)
-    public void setActionSuffix(String suffix) {
-        this.actionSuffix = suffix;
-    }
+    protected HttpConversationContextManagerProvider contextManagerProvider;
+    protected ConversationProcessor processor;
+    protected ScopeContainer scopeContainer;
     
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setDefaultMaxIdleTime(String defaultMaxIdleTimeString) {
-        this.maxIdleTime = Long.parseLong(defaultMaxIdleTimeString);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_ARBITRATOR_KEY)
-    public void setArbitrator(ConversationArbitrator arbitrator) {
-        this.arbitrator = arbitrator;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
-    public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
-        this.conversationConfigurationProvider = conversationConfigurationProvider;
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
-    public void setConversationManager(ConversationProcessor manager) {
-        this.conversationProcessor = manager;
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
-    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
-        this.conversationContextManagerProvider = conversationContextManagerProvider;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
-    public void setMonitoringThreadPoolSize(String monitoringThreadPoolSizeString) {
-    	this.monitoringThreadPoolSize = Integer.parseInt(monitoringThreadPoolSizeString);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_MONITORING_FREQUENCY)
-    public void setMonitoringFrequency(String monitoringFrequencyString) {
-    	this.monitoringFrequency = Long.parseLong(monitoringFrequencyString);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
-    public void setMaxInstances(String maxInstancesString) {
-    	this.maxInstances = Integer.parseInt(maxInstancesString);
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_FACTORY)
-    public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
-        this.conversationContextFactory = conversationContextFactory;
+    @Inject
+    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
+    	scopeContainer = scopeContainerProvider.getScopeContainer();
     }
 
     /**
@@ -174,22 +114,12 @@ public class ConversationInterceptor implements Interceptor {
     public void init() {
 
         LOG.info("Initializing the Conversation Interceptor...");
-
-        this.arbitrator.setActionSuffix(this.actionSuffix);
-        this.conversationConfigurationProvider.setArbitrator(this.arbitrator);
-        this.conversationConfigurationProvider.setDefaultMaxIdleTime(this.maxIdleTime);
-        try {
-			this.conversationConfigurationProvider.init(this.finder.getActionClasses());
-		} catch (Exception e) {
-			LOG.warn(e.getMessage());
-		}
-        this.conversationProcessor.setConfigurationProvider(this.conversationConfigurationProvider);
         
-        this.conversationContextManagerProvider.setConversationContextFactory(this.conversationContextFactory);
-        this.conversationContextManagerProvider.setMaxInstances(this.maxInstances);
-        this.conversationContextManagerProvider.setMonitoringFrequency(this.monitoringFrequency);
-        this.conversationContextManagerProvider.setMonitoringThreadPoolSize(this.monitoringThreadPoolSize);
-        this.conversationContextManagerProvider.init();
+        ConfigurationUtil.doConversationConfiguration(scopeContainer);
+        
+        contextManagerProvider = scopeContainer.getComponent(HttpConversationContextManagerProvider.class);
+        
+        processor = scopeContainer.getComponent(ConversationProcessor.class);
         
         LOG.info("...Conversation Interceptor successfully initialized.");
 
@@ -204,10 +134,10 @@ public class ConversationInterceptor implements Interceptor {
     	try {
     		
     		HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
-        	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+        	ConversationContextManager contextManager = contextManagerProvider.getManager(request);
         	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
     		
-    		this.conversationProcessor.processConversations(adapter);
+    		processor.processConversations(adapter);
     		
     		invocation.addPreResultListener(new PreResultListener() {
     			@Override

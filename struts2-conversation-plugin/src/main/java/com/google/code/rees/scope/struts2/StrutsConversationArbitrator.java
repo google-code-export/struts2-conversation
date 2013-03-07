@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
@@ -64,10 +65,14 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     public void setUsePackageNesting(String usePackageNesting) {
         this.usePackageNesting = "true".equals(usePackageNesting);
     }
-
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
+    
     public void setActionProvider(ActionProvider actionProvider) {
-        this.actionProvider = actionProvider;
+    	this.actionProvider = actionProvider;
+    }
+
+    @Inject
+    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
+        this.actionProvider = scopeContainerProvider.getScopeContainer().getComponent(ActionProvider.class);
     }
     
     @Override
