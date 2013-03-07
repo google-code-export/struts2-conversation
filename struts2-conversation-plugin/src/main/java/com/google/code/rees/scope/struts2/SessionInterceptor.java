@@ -26,10 +26,8 @@ package com.google.code.rees.scope.struts2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.ActionProvider;
 import com.google.code.rees.scope.ScopeContainer;
 import com.google.code.rees.scope.ScopeContainerProvider;
-import com.google.code.rees.scope.session.SessionConfigurationProvider;
 import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
@@ -69,17 +67,7 @@ public class SessionInterceptor implements Interceptor {
 
     	LOG.info("Initializing the Session Interceptor...");
     	
-    	SessionConfigurationProvider sessionConfigurationProvider = scopeContainer.getComponent(SessionConfigurationProvider.class);
-    	ActionProvider finder = scopeContainer.getComponent(ActionProvider.class);
     	sessionManager = scopeContainer.getComponent(SessionManager.class);
-
-        try {
-			sessionConfigurationProvider.init(finder.getActionClasses());
-		} catch (Exception e) {
-			LOG.warn(e.getMessage());
-		}
-        
-        this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
         
         LOG.info("...Session Interceptor successfully initialized.");
 

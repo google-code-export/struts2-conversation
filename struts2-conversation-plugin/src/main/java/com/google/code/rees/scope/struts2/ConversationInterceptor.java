@@ -115,8 +115,6 @@ public class ConversationInterceptor implements Interceptor {
 
         LOG.info("Initializing the Conversation Interceptor...");
         
-        ConfigurationUtil.doConversationConfiguration(scopeContainer);
-        
         contextManagerProvider = scopeContainer.getComponent(HttpConversationContextManagerProvider.class);
         
         processor = scopeContainer.getComponent(ConversationProcessor.class);
