@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.ScopeContainer;
+import com.google.code.rees.scope.ScopeContainerProvider;
 import com.google.code.rees.scope.session.SessionConfigurationProvider;
 import com.google.code.rees.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
@@ -44,22 +46,11 @@ public class SessionInterceptor implements Interceptor {
     private static final Logger LOG = LoggerFactory.getLogger(SessionInterceptor.class);
 
     protected SessionManager sessionManager;
-    protected SessionConfigurationProvider sessionConfigurationProvider;
-    protected ActionProvider finder;
-
-    @Inject(StrutsScopeConstants.ACTION_FINDER_KEY)
-    public void setActionClassFinder(ActionProvider finder) {
-        this.finder = finder;
-    }
-
-    @Inject(StrutsScopeConstants.SESSION_MANAGER_KEY)
-    public void setSessionManager(SessionManager manager) {
-        this.sessionManager = manager;
-    }
-
-    @Inject(StrutsScopeConstants.SESSION_CONFIG_PROVIDER_KEY)
-    public void setSessionConfigurationProvider(SessionConfigurationProvider sessionConfigurationProvider) {
-        this.sessionConfigurationProvider = sessionConfigurationProvider;
+    protected ScopeContainer scopeContainer;
+    
+    @Inject
+    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
+    	scopeContainer = scopeContainerProvider.getScopeContainer();
     }
 
     /**
@@ -77,12 +68,17 @@ public class SessionInterceptor implements Interceptor {
     public void init() {
 
     	LOG.info("Initializing the Session Interceptor...");
+    	
+    	SessionConfigurationProvider sessionConfigurationProvider = scopeContainer.getComponent(SessionConfigurationProvider.class);
+    	ActionProvider finder = scopeContainer.getComponent(ActionProvider.class);
+    	sessionManager = scopeContainer.getComponent(SessionManager.class);
 
         try {
-			this.sessionConfigurationProvider.init(finder.getActionClasses());
+			sessionConfigurationProvider.init(finder.getActionClasses());
 		} catch (Exception e) {
 			LOG.warn(e.getMessage());
 		}
+        
         this.sessionManager.setConfigurationProvider(sessionConfigurationProvider);
         
         LOG.info("...Session Interceptor successfully initialized.");
