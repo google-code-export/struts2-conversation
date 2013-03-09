@@ -9,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.google.code.rees.scope.testutil.StrutsSpringScopeTestCase;
 import com.google.code.rees.scope.testutil.TestConstants;
 import com.google.code.struts2.test.junit.StrutsConfiguration;
@@ -19,7 +18,7 @@ import com.opensymphony.xwork2.inject.Inject;
 @ContextConfiguration(locations = "classpath*:*applicationContext.xml")
 public class StrutsActionProviderTest extends StrutsSpringScopeTestCase<Object> {
 	
-	@Inject(value=StrutsScopeConstants.ACTION_FINDER_KEY)
+	@Inject("strutsActionProvider")
 	ActionProvider finder;
 
 	/**

@@ -31,7 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.StrutsStatics;
 
+import com.google.code.rees.scope.ScopeContainer;
+import com.google.code.rees.scope.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationProperties;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
@@ -63,29 +66,11 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     private static final long serialVersionUID = -3567083451289146237L;
 
     private T model;
-    protected long maxIdleTime;
-    protected int maxInstances;
-	private ConversationProcessor conversationProcessor;
-	private HttpConversationContextManagerProvider conversationContextManagerProvider;
+	protected ScopeContainer scopeContainer;
     
-    @Inject(StrutsScopeConstants.CONVERSATION_IDLE_TIMEOUT)
-    public void setMaxIdleTime(long maxIdleTime) {
-    	this.maxIdleTime = maxIdleTime;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_MAX_INSTANCES)
-    public void setMaxInstances(int maxInstances) {
-    	this.maxInstances = maxInstances;
-    }
-    
-    @Inject(StrutsScopeConstants.CONVERSATION_PROCESSOR_KEY)
-    public void setConversationManager(ConversationProcessor manager) {
-        this.conversationProcessor = manager;
-    }
-
-    @Inject(StrutsScopeConstants.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
-    public void setHttpConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
-        this.conversationContextManagerProvider = conversationContextManagerProvider;
+    @Inject
+    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
+    	scopeContainer = scopeContainerProvider.getScopeContainer();
     }
 
     /**
@@ -134,9 +119,9 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     public void prepare() {
     	ActionContext actionContext = ActionContext.getContext();
     	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = this.conversationContextManagerProvider.getManager(request);
+    	ConversationContextManager contextManager = scopeContainer.getComponent(HttpConversationContextManagerProvider.class).getManager(request);
         try {
-			this.conversationProcessor.processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
+			scopeContainer.getComponent(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
 			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
 	        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
 	        actionContext.getValueStack().push(stackItem);
@@ -149,7 +134,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, this.maxIdleTime, this.maxInstances);
+        ProgrammaticModelDrivenConversationUtil.begin(this, scopeContainer.getComponent(ConversationProperties.class).getMaxIdleTime(), scopeContainer.getComponent(ConversationProperties.class).getMaxInstances());
     }
 
     /**

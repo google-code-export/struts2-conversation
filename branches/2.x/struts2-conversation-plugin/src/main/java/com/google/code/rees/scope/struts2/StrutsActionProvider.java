@@ -25,6 +25,8 @@ package com.google.code.rees.scope.struts2;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +63,7 @@ public class StrutsActionProvider implements ActionProvider {
     private static final long serialVersionUID = 6728107973559862449L;
 
     private static final Logger LOG = LoggerFactory.getLogger(StrutsActionProvider.class);
+    private static final boolean EXTRACT_BASE_INTERFACES = true;
 
     private Set<Class<?>> actionClasses;
     private String[] actionPackages;
@@ -339,22 +342,20 @@ public class StrutsActionProvider implements ActionProvider {
     protected Set<Class<?>> findActions() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         try {
-            if (actionPackages != null
-                    || (packageLocators != null && !disablePackageLocatorsScanning)) {
-
+            if (actionPackages != null || (packageLocators != null && !disablePackageLocatorsScanning)) {
+                
                 // By default, ClassFinder scans EVERY class in the specified
                 // url set, which can produce spurious warnings for non-action
                 // classes that can't be loaded. We pass a package filter that
                 // only considers classes that match the action packages
                 // specified by the user
                 Test<String> classPackageTest = getClassPackageTest();
-                ClassFinder finder = new ClassFinder(getClassLoaderInterface(),
-                        buildUrlSet().getUrls(), true, this.fileProtocols,
-                        classPackageTest);
+                List<URL> urls = readUrls();
+                ClassFinder finder = new ClassFinder(getClassLoaderInterface(), urls, EXTRACT_BASE_INTERFACES, fileProtocols, classPackageTest);
 
                 Test<ClassFinder.ClassInfo> test = getActionClassTest();
                 for (Class<?> clazz : finder.findClasses(test)) {
-                    classes.add(clazz);
+                	classes.add(clazz);
                 }
             }
         } catch (Exception ex) {
@@ -363,6 +364,16 @@ public class StrutsActionProvider implements ActionProvider {
         }
 
         return classes;
+    }
+    
+    private List<URL> readUrls() throws IOException {
+        List<URL> resourceUrls = new ArrayList<URL>();
+        // Usually the "classes" dir.
+        ArrayList<URL> classesList = Collections.list(getClassLoaderInterface().getResources(""));
+        for (URL url : classesList) {
+            resourceUrls.addAll(fileManager.getAllPhysicalUrls(url));
+        }
+        return buildUrlSet(resourceUrls).getUrls();
     }
 
     protected boolean isReloadEnabled() {
@@ -404,9 +415,10 @@ public class StrutsActionProvider implements ActionProvider {
         return Thread.currentThread().getContextClassLoader();
     }
 
-    private UrlSet buildUrlSet() throws IOException {
+    private UrlSet buildUrlSet(List<URL> resourceUrls) throws IOException {
         ClassLoaderInterface classLoaderInterface = getClassLoaderInterface();
-        UrlSet urlSet = new UrlSet(fileManager, classLoaderInterface, this.fileProtocols);
+        UrlSet urlSet = new UrlSet(resourceUrls);
+        urlSet.include(new UrlSet(classLoaderInterface, this.fileProtocols));
 
         //excluding the urls found by the parent class loader is desired, but fails in JBoss (all urls are removed)
         if (excludeParentClassLoader) {
@@ -432,7 +444,11 @@ public class StrutsActionProvider implements ActionProvider {
         }
 
         //try to find classes dirs inside war files
-        urlSet = urlSet.includeClassesUrl(classLoaderInterface);
+        urlSet = urlSet.includeClassesUrl(classLoaderInterface, new UrlSet.FileProtocolNormalizer() {
+            public URL normalizeToFileProtocol(URL url) {
+                return fileManager.normalizeToFileProtocol(url);
+            }
+        });
 
 
         urlSet = urlSet.excludeJavaExtDirs();
@@ -479,7 +495,7 @@ public class StrutsActionProvider implements ActionProvider {
                     }
                 }
             }
-            return new UrlSet(fileManager, includeUrls);
+            return new UrlSet(includeUrls);
         }
 
         return urlSet;

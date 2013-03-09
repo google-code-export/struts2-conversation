@@ -19,56 +19,36 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: WaitTask.java Apr 17, 2012 3:12:04 PM reesbyars $
+ * $Id: ThreadTask.java Apr 15, 2012 8:31:49 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
-
-import java.io.Serializable;
-
-import com.google.code.rees.scope.util.thread.ThreadTask;
+package com.google.code.rees.scope.testutil.thread;
 
 /**
- * @author rees.byars
+ * This interface provides a simple mechanism that can be implemented for adding tasks to a {@link TaskThread}
  * 
+ * @author rees.byars
  */
-public class WaitTask implements ThreadTask, Serializable {
+public interface ThreadTask {
 
-	private static final long serialVersionUID = 3539233042598738551L;
-	
-	private long wait;
+	/**
+	 * indicates whether or not this tasks {@link #doTask()} method should continue to be called
+	 * by its {@link TaskThread}
+	 * @return
+	 */
+	public boolean isActive();
 
-	protected WaitTask(long wait) {
-		this.wait = wait;
-	}
+	/**
+	 * Cancels this task, after which calls to {@link #isActive()} return false
+	 */
+	public void cancel();
 
-	@Override
-	public void doTask() {
-		synchronized (this) {
-			try {
-				this.wait(this.wait);
-			} catch (InterruptedException e) {
-				// no worries
-			}
-		}
-	}
-
-	@Override
-	public boolean isActive() {
-		return true;
-	}
-
-	@Override
-	public void cancel() {
-		// never!!!
-	}
-	
-	public void setWait(long waitMillis) {
-		this.wait = waitMillis;
-	}
-
-	public static WaitTask create(long wait) {
-		return new WaitTask(wait);
-	}
+	/**
+	 * The basic task to be performed by this task.  Will continue being called until
+	 * {@link #isActive()} returns false or the task is removed from its {@link TaskThread} using
+	 * {@link TaskThread#removeTask(ThreadTask)}.  The frequency with which this
+	 * task will be executed will be dependent upon the other tasks that are added to the TaskThread.
+	 */
+	public void doTask();
 
 }

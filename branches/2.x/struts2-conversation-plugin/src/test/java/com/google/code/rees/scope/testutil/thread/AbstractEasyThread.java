@@ -19,33 +19,75 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: EasyThread.java reesbyars $
+ *  $Id: AbstractEasyThread.java reesbyars $
  ******************************************************************************/
-package com.google.code.rees.scope.util.thread;
+package com.google.code.rees.scope.testutil.thread;
 
 /**
- * 
- * This interface provides a simple mechanism for interacting with {@link Thread Threads}.
+ * A simple abstract implementation of the {@link EasyThread} interface.
  * 
  * @author rees.byars
  */
-public interface EasyThread {
+public abstract class AbstractEasyThread implements EasyThread {
+
+	protected volatile Thread thread;
+	protected boolean isRunning;
+
+	protected AbstractEasyThread() {
+		this.isRunning = false;
+		this.thread = new Thread(new Runner(this));
+	}
 
 	/**
-	 * Begins this thread.  If an underlying {@link Thread} does not already exist, it is created and started.  If it does already
-	 * exist, its state is returned to running.
+	 * {@inheritDoc}
 	 */
-	public void start();
+	@Override
+	public synchronized void start() {
+		if (!this.isRunning) {
+			this.isRunning = true;
+			this.thread.start();
+		}
+	}
 
 	/**
-	 * Stops this thread.  The underlying {@link Thread} will still exist, but in effect it will cease to execute until it is started again.
+	 * {@inheritDoc}
 	 */
-	public void stop();
+	@Override
+	public synchronized void stop() {
+		this.isRunning = false;
+	}
 
 	/**
-	 * Safely stops and destroys the underlying thread.  For the purposes of safety, the underlying thread cannot be guaranteed
-	 * to completely, immediately cease, but it will be stopped as soon as possible in a safe manner.
+	 * {@inheritDoc}
 	 */
-	public void destroy();
+	@Override
+	public synchronized void destroy() {
+		this.stop();
+		Thread dieingThread = this.thread;
+		this.thread = null;
+		if (dieingThread != null) {
+			dieingThread.interrupt();
+		}
+	}
+
+	protected abstract void doWhileRunning();
+
+	class Runner implements Runnable {
+
+		private AbstractEasyThread owner;
+
+		protected Runner(AbstractEasyThread owner) {
+			this.owner = owner;
+		}
+
+		@Override
+		public void run() {
+			while (this.owner.isRunning) {
+				this.owner.doWhileRunning();
+				Thread.yield();
+			}
+		}
+
+	}
 
 }

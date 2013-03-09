@@ -25,6 +25,10 @@ package com.google.code.rees.scope.conversation.context;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.util.monitor.ScheduledExecutorTimeoutMonitor;
+import com.google.code.rees.scope.util.monitor.SchedulerProvider;
 import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
 
 /**
@@ -44,7 +49,7 @@ import com.google.code.rees.scope.util.monitor.TimeoutMonitor;
  * @author rees.byars
  * 
  */
-public class DefaultHttpConversationContextManagerProvider implements HttpConversationContextManagerProvider {
+public class DefaultHttpConversationContextManagerProvider implements HttpConversationContextManagerProvider, SchedulerProvider {
 
     private static final long serialVersionUID = 1500381458203865515L;
 
@@ -54,10 +59,23 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     protected int monitoringThreadPoolSize = ConversationConstants.DEFAULT_MONITORING_THREAD_POOL_SIZE;
     protected ConversationContextFactory conversationContextFactory;
     protected transient ScheduledExecutorService scheduler;
+    protected Lock schedulerGuard = new ReentrantLock();
     
     @PostConstruct
     public void init() {
-    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize);
+    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
+    		
+    		AtomicInteger id = new AtomicInteger(0);
+
+			@Override
+			public Thread newThread(Runnable runnable) {
+				Thread thread = new Thread(runnable);
+				thread.setDaemon(true);
+				thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
+				return thread;
+			}
+    		
+    	});
     }
     
     /**
@@ -99,10 +117,31 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
         	contextManager = this.createContextManager(session);
         } else {
         	ScheduledExecutorTimeoutMonitor<ConversationContext> monitor = (ScheduledExecutorTimeoutMonitor<ConversationContext>) HttpConversationUtil.getTimeoutMonitor(session);
-        	monitor.setScheduler(this.scheduler);
+        	monitor.setSchedulerProvider(this);
         }
         return contextManager;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public ScheduledExecutorService getScheduler() {
+		if (scheduler != null) {
+			return scheduler;
+		}
+		schedulerGuard.lock();
+		try {
+			if (scheduler !=null) {
+				return scheduler;
+			}
+			this.init();
+			return scheduler;
+		} finally {
+			schedulerGuard.unlock();
+		}
+		
+	}
     
     protected ConversationContextManager createContextManager(HttpSession session) {
     	if (LOG.isDebugEnabled()) {
@@ -110,7 +149,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     	}
     	TimeoutConversationContextManager contextManager = new TimeoutConversationContextManager();
     	contextManager.setContextFactory(this.conversationContextFactory);
-        TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this.scheduler, this.monitoringFrequency);
+        TimeoutMonitor<ConversationContext> timeoutMonitor = ScheduledExecutorTimeoutMonitor.spawnInstance(this, this.monitoringFrequency);
         contextManager.setTimeoutMonitor(timeoutMonitor);
         HttpConversationUtil.setContextManager(session, contextManager);
         HttpConversationUtil.setTimeoutMonitor(session, timeoutMonitor);
