@@ -59,52 +59,52 @@
 	<constant name="conversation.expression.eval.provider" value="ognl"/>
 	
 	<bean name="default" 
-		type="com.google.code.rees.scope.ScopeContainerProvider"
-		class="com.google.code.rees.scope.struts2.StrutsScopeContainerProvider" />
+		type="com.github.overengineer.scope.ScopeContainerProvider"
+		class="com.github.overengineer.scope.struts2.StrutsScopeContainerProvider" />
 	
 	<bean name="defaultScopeContainer" 
-		type="com.google.code.rees.scope.ScopeContainer"
-		class="com.google.code.rees.scope.struts2.StrutsScopeContainer" />
+		type="com.github.overengineer.scope.ScopeContainer"
+		class="com.github.overengineer.scope.struts2.StrutsScopeContainer" />
 	
 	<bean name="strutsActionProvider" 
-		type="com.google.code.rees.scope.ActionProvider"
-		class="com.google.code.rees.scope.struts2.StrutsActionProvider" />
+		type="com.github.overengineer.scope.ActionProvider"
+		class="com.github.overengineer.scope.struts2.StrutsActionProvider" />
 		
 	<bean name="strutsConversationArbitrator" 
-		type="com.google.code.rees.scope.conversation.configuration.ConversationArbitrator"
-		class="com.google.code.rees.scope.struts2.StrutsConversationArbitrator"/>
+		type="com.github.overengineer.scope.conversation.configuration.ConversationArbitrator"
+		class="com.github.overengineer.scope.struts2.StrutsConversationArbitrator"/>
 		
 	<bean name="defaultConversationConfigurationProvider"
-		type="com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider"
-		class="com.google.code.rees.scope.conversation.configuration.DefaultConversationConfigurationProvider" />
+		type="com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider"
+		class="com.github.overengineer.scope.conversation.configuration.DefaultConversationConfigurationProvider" />
 		
 	<bean name="defaultConversationProcessor"
-		type="com.google.code.rees.scope.conversation.processing.ConversationProcessor"
-		class="com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor" />
+		type="com.github.overengineer.scope.conversation.processing.ConversationProcessor"
+		class="com.github.overengineer.scope.conversation.processing.InjectionConversationProcessor" />
 		
 	<bean name="defaultConversationContextManagerProvider" 
-		type="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider" 
-		class="com.google.code.rees.scope.conversation.context.DefaultHttpConversationContextManagerProvider"/>
+		type="com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider" 
+		class="com.github.overengineer.scope.conversation.context.DefaultHttpConversationContextManagerProvider"/>
 		
 	<bean name="defaultConversationContextFactory" 
-		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
-		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
+		type="com.github.overengineer.scope.conversation.context.ConversationContextFactory" 
+		class="com.github.overengineer.scope.conversation.context.DefaultConversationContextFactory"/>
 		
 	<bean name="strutsConversationProperties" 
-		type="com.google.code.rees.scope.conversation.ConversationProperties"
-		class="com.google.code.rees.scope.struts2.StrutsConversationProperties"/>
+		type="com.github.overengineer.scope.conversation.ConversationProperties"
+		class="com.github.overengineer.scope.struts2.StrutsConversationProperties"/>
 		
 	<bean name="defaultSessionConfigurationProvider"
-		type="com.google.code.rees.scope.session.SessionConfigurationProvider"
-		class="com.google.code.rees.scope.session.DefaultSessionConfigurationProvider" />
+		type="com.github.overengineer.scope.session.SessionConfigurationProvider"
+		class="com.github.overengineer.scope.session.DefaultSessionConfigurationProvider" />
 
 	<bean name="defaultSessionManager"
-		type="com.google.code.rees.scope.session.SessionManager"
-		class="com.google.code.rees.scope.session.DefaultSessionManager" />
+		type="com.github.overengineer.scope.session.SessionManager"
+		class="com.github.overengineer.scope.session.DefaultSessionManager" />
 		
 	<bean name="ognl" 
-		type="com.google.code.rees.scope.expression.Eval" 
-		class="com.google.code.rees.scope.expression.Ognl"/>
+		type="com.github.overengineer.scope.expression.Eval" 
+		class="com.github.overengineer.scope.expression.Ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	
@@ -112,21 +112,21 @@
 		
 			<result-type 
 				name="conversationRedirectAction" 
-				class="com.google.code.rees.scope.struts2.ConversationActionRedirectResult"/>
+				class="com.github.overengineer.scope.struts2.ConversationActionRedirectResult"/>
 			
 			<result-type 
 				name="conversationRedirect" 
-				class="com.google.code.rees.scope.struts2.ConversationRedirectResult"/>
+				class="com.github.overengineer.scope.struts2.ConversationRedirectResult"/>
 				
 		</result-types>
 	
 		<interceptors>
 		
 			<interceptor name="sessionField"
-				class="com.google.code.rees.scope.struts2.SessionInterceptor" />
+				class="com.github.overengineer.scope.struts2.SessionInterceptor" />
 				
 			<interceptor name="conversation"
-				class="com.google.code.rees.scope.struts2.ConversationInterceptor">
+				class="com.github.overengineer.scope.struts2.ConversationInterceptor">
 				<param name="shortCircuitResults">input,login,error</param>	
 			</interceptor>
 			

@@ -11,7 +11,7 @@ jsptaglibrary_2_0.xsd"
   <tag>
     <description><![CDATA[Includes the Conversation IDs as hidden fields]]></description>
     <name>conversations</name>
-    <tag-class>com.google.code.rees.scope.struts2.ui.ConversationsTag</tag-class>
+    <tag-class>com.github.overengineer.scope.struts2.ui.ConversationsTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
@@ -258,7 +258,7 @@ jsptaglibrary_2_0.xsd"
   <tag>
     <description><![CDATA[Renders an input form with the Conversation IDs included]]></description>
     <name>form</name>
-    <tag-class>com.google.code.rees.scope.struts2.ui.ConversationFormTag</tag-class>
+    <tag-class>com.github.overengineer.scope.struts2.ui.ConversationFormTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <description><![CDATA[The accepted charsets for this form. The values may be comma or blank delimited.]]></description>
@@ -589,7 +589,7 @@ jsptaglibrary_2_0.xsd"
   <tag>
     <description><![CDATA[This tag is used to create a URL with the Conversation IDs as parameters on the request]]></description>
     <name>url</name>
-    <tag-class>com.google.code.rees.scope.struts2.ui.ConversationUrlTag</tag-class>
+    <tag-class>com.github.overengineer.scope.struts2.ui.ConversationUrlTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <description><![CDATA[The action to generate the URL for, if not using value]]></description>
