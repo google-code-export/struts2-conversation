@@ -3,7 +3,7 @@ package com.google.code.rees.scope.struts2.config_browser;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.google.code.rees.scope.struts2.ActionUtil;
+import com.github.overengineer.scope.struts2.ActionUtil;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 
 public class ActionNamesAction extends org.apache.struts2.config_browser.ActionNamesAction {

@@ -7,11 +7,11 @@
     
     <package name="conversation-config-browser" extends="config-browser" namespace="/conversation-config-browser">
     
-    	<action name="actionNames" class="com.google.code.rees.scope.struts2.config_browser.ActionNamesAction">
+    	<action name="actionNames" class="com.github.overengineer.scope.struts2.config_browser.ActionNamesAction">
             <result type="freemarker" name="success">/config-browser/actionNames.ftl</result>
         </action>
 
-        <action name="showConfig" class="com.google.code.rees.scope.struts2.config_browser.ShowConfigAction">
+        <action name="showConfig" class="com.github.overengineer.scope.struts2.config_browser.ShowConfigAction">
             <result type="freemarker" name="success">/conversation-config-browser/showConfig.ftl</result>
         </action>
         
