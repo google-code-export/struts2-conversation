@@ -26,7 +26,7 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     private static final Logger LOG = LoggerFactory.getLogger(ShowConfigAction.class);
     private ConversationConfigurationProvider conversationConfigurationProvider;
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
+    @Inject(StrutsScopeConstants.TypeKeys.CONVERSATION_CONFIG_PROVIDER)
     public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
         this.conversationConfigurationProvider = conversationConfigurationProvider;
     }

@@ -235,17 +235,15 @@ public abstract class ConversationAdapter implements Serializable {
 	public static void cleanup() {
 		ConversationAdapter adapter = conversationAdapter.get();
 		conversationAdapter.remove();
-		adapter.doCleanup();
+		if (adapter != null) {
+			adapter.doCleanup();
+		}
 	}
 	
 	/**
 	 * called by {@link #cleanup()}, can be overridden to tweak
 	 */
 	protected void doCleanup() {
-		this.preActionProcessors.clear();
-		this.postActionProcessors.clear();
-		this.postViewProcessors.clear();
-		this.viewContext.clear();
 	}
 	
 }

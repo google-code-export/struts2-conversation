@@ -22,7 +22,7 @@
  * $Id: BasicTaskThread.java Apr 15, 2012 9:09:45 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.thread;
+package com.google.code.rees.scope.testutil.thread;
 
 import java.util.HashSet;
 import java.util.Iterator;

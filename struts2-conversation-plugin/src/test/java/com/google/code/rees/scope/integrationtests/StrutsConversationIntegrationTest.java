@@ -27,7 +27,7 @@ import com.opensymphony.xwork2.util.TextParseUtil;
 public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
-    static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+	static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     static final String CONVERSATION_FIELD = "conversationString";
 
     @ConversationField(conversations = "oopy")

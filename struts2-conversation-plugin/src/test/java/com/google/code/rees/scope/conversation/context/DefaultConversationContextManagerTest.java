@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
-import com.google.code.rees.scope.util.thread.BasicTaskThread;
-import com.google.code.rees.scope.util.thread.TaskThread;
-import com.google.code.rees.scope.util.thread.ThreadTask;
+import com.google.code.rees.scope.testutil.thread.BasicTaskThread;
+import com.google.code.rees.scope.testutil.thread.TaskThread;
+import com.google.code.rees.scope.testutil.thread.ThreadTask;
 
 
 public class DefaultConversationContextManagerTest {

@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * A utility for obtaining inherited fields, methods, and annotations, and
  * making
@@ -47,8 +45,7 @@ public class ReflectionUtil {
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
-            if (!superClass.equals(Object.class)
-                    && !superClass.equals(ActionSupport.class)) {
+            if (!superClass.equals(Object.class)) {
                 fields.addAll(getFields(superClass));
             }
         }
@@ -60,8 +57,7 @@ public class ReflectionUtil {
         methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
-            if (!superClass.equals(Object.class)
-                    && !superClass.equals(ActionSupport.class)) {
+            if (!superClass.equals(Object.class)) {
                 methods.addAll(getMethods(superClass));
             }
         }

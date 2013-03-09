@@ -19,63 +19,29 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutTask.java Apr 17, 2012 2:27:43 PM reesbyars $
+ * $Id: TaskThread.java Apr 15, 2012 9:15:21 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.google.code.rees.scope.util.monitor;
+package com.google.code.rees.scope.testutil.thread;
 
-import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.google.code.rees.scope.util.thread.ThreadTask;
 
 /**
- * This task observes the remaining time of a single {@link Timeoutable} and times it out when its remaining time is zero or less.
+ * An extension of the {@link EasyThread} interface that has methods for adding and removing {@link ThreadTask ThreadTasks}
  * 
  * @author rees.byars
- * 
  */
-public class TimeoutTask implements ThreadTask, Serializable {
-
-	private static final long serialVersionUID = 8002426005125447219L;
-
-	protected Timeoutable<?> timeoutable;
-	protected AtomicBoolean active;
-
-	protected TimeoutTask(Timeoutable<?> timeoutable) {
-		this.timeoutable = timeoutable;
-		this.active = new AtomicBoolean(true);
-	}
+public interface TaskThread extends EasyThread {
 
 	/**
-	 * {@inheritDoc}
+	 * Adds a {@link ThreadTask} to this thread.
+	 * @param task
 	 */
-	@Override
-	public boolean isActive() {
-		return this.active.get();
-	}
+	public void addTask(ThreadTask task);
 
 	/**
-	 * {@inheritDoc}
+	 * Removes a {@link ThreadTask} from this thread.
+	 * @param task
 	 */
-	@Override
-	public void cancel() {
-		this.active.set(false);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doTask() {
-		if (this.timeoutable.getRemainingTime() <= 0) {
-			this.timeoutable.timeout();
-			this.cancel();
-		}
-	}
-
-	public static TimeoutTask create(Timeoutable<?> timeoutable) {
-		return new TimeoutTask(timeoutable);
-	}
+	public void removeTask(ThreadTask task);
 
 }

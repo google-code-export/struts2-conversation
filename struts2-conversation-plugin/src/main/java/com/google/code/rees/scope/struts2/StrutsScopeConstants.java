@@ -28,23 +28,32 @@ package com.google.code.rees.scope.struts2;
  * 
  * @author rees.byars
  */
-public class StrutsScopeConstants {
-    public static final String ACTION_FINDER_KEY = "struts.scope.actionFinder";
-    public static final String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";
-    public static final String CONVERSATION_ARBITRATOR_KEY = "struts.conversation.arbitrator";
-    public static final String CONVERSATION_CONFIG_PROVIDER_KEY = "struts.conversation.configurationProvider";
-    public static final String CONVERSATION_PROCESSOR_KEY = "struts.conversation.conversationProcessor";
-    public static final String SESSION_MANAGER_KEY = "struts.session.sessionManager";
-    public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
-    public static final String SESSION_CONFIG_PROVIDER_KEY = "struts.session.configurationProvider";
-    public static final String SESSION_FIELD_MAP_KEY = "session.field.map";
-    public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
-    public static final String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
+public interface StrutsScopeConstants {
+	
+	//Configuration properties
+	public static final String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";
+	public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
+	public static final String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
     public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
     public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
-    public static final String CONVERSATION_CONTEXT_FACTORY = "conversation.context.factory";
-    public static final String CONVERSATION_CONTEXT_MANAGER_PROVIDER = "conversation.context.manager.provider";
-    public static final String SIMPLE_CONVERSATION_PROCESSOR_KEY = "conversation.simple.processor";
     public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
-    public final static String EXPRESSION_EVAL = "conversation.expression.eval.provider";
+	
+    //Map keys
+	public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
+	public static final String SESSION_FIELD_MAP_KEY = "session.field.map";
+	
+	interface TypeKeys {
+		public static final String SCOPE_CONTAINER = "struts.scope.container";
+		public static final String ACTION_PROVIDER = "struts.scope.actionProvider";
+	    public static final String CONVERSATION_ARBITRATOR = "struts.conversation.arbitrator";
+	    public static final String CONVERSATION_CONFIG_PROVIDER= "struts.conversation.configurationProvider";
+	    public static final String CONVERSATION_PROCESSOR = "struts.conversation.processor";
+	    public static final String CONVERSATION_PROPERTIES = "struts.conversation.properties";
+	    public static final String CONVERSATION_CONTEXT_FACTORY = "struts.conversation.contextFactory";
+	    public static final String CONVERSATION_CONTEXT_MANAGER_PROVIDER = "struts.conversation.contextManagerProvider";
+	    public static final String SESSION_MANAGER = "struts.session.sessionManager";
+	    public static final String SESSION_CONFIG_PROVIDER = "struts.session.configurationProvider";
+	    public final static String EXPRESSION_EVAL = "conversation.expression.eval.provider";
+	}
+    
 }
