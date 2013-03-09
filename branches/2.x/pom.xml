@@ -65,8 +65,8 @@
 		<module>spring</module>
 		<module>struts2</module>
 		<module>eval</module>
-		<module>guice</module>
 		<module>session</module>
+		<module>common</module>
 	</modules>
 
 	<properties>
