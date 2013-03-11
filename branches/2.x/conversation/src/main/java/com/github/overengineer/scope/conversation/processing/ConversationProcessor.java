@@ -28,7 +28,7 @@ import java.io.Serializable;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
-import com.github.overengineer.scope.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.Eval;
 
 /**
  * The primary conversation processing and management component.

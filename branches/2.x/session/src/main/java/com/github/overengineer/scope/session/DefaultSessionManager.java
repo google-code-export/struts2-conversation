@@ -29,7 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.util.InjectionUtil;
+import com.github.overengineer.scope.util.InjectionUtil;
 
 /**
  * The default implementation of the {@link SessionManager}. Also

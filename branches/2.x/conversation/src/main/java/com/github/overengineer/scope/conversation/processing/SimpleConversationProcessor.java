@@ -37,7 +37,7 @@ import com.github.overengineer.scope.conversation.configuration.ExpressionConfig
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.exceptions.ConversationIdException;
-import com.github.overengineer.scope.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.Eval;
 
 /**
  * A simple yet effective implementation of {@link ConversationProcessor} that

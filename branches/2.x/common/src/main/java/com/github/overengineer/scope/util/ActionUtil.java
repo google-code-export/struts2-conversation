@@ -22,14 +22,13 @@
  * $Id: ActionUtil.java Apr 27, 2012 11:17:43 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.struts2;
+package com.github.overengineer.scope.util;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
  * @author rees.byars

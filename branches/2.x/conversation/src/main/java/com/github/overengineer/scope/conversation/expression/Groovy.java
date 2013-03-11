@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.expression;
+package com.github.overengineer.scope.conversation.expression;
 
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
