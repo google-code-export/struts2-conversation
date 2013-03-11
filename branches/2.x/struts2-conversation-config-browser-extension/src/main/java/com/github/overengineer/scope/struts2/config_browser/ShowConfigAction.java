@@ -1,4 +1,4 @@
-package com.google.code.rees.scope.struts2.config_browser;
+package com.github.overengineer.scope.struts2.config_browser;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.github.overengineer.scope.struts2.ActionUtil;
+import com.github.overengineer.scope.util.ActionUtil;
 import com.github.overengineer.scope.struts2.ConversationInterceptor;
 import com.github.overengineer.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.config.entities.ActionConfig;

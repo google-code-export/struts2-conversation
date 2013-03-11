@@ -86,15 +86,23 @@
 				<groupId>com.github.overengineer.scope</groupId>
 				<artifactId>conversation</artifactId>
 				<version>${project.version}</version>
-				<scope>provided</scope>
-				<optional>true</optional>
 			</dependency>
 			<dependency>
 				<groupId>com.github.overengineer.scope</groupId>
 				<artifactId>session</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.overengineer.scope</groupId>
+				<artifactId>spring</artifactId>
+				<version>${project.version}</version>
 				<scope>provided</scope>
 				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>com.github.overengineer.scope</groupId>
+				<artifactId>struts2</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 			
 			<dependency>

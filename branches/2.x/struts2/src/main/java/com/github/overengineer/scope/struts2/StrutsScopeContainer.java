@@ -14,7 +14,7 @@ import com.github.overengineer.scope.conversation.configuration.ConversationConf
 import com.github.overengineer.scope.conversation.context.ConversationContextFactory;
 import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
-import com.github.overengineer.scope.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.Eval;
 import com.github.overengineer.scope.session.SessionConfigurationProvider;
 import com.github.overengineer.scope.session.SessionManager;
 import com.github.overengineer.scope.struts2.StrutsScopeConstants.TypeKeys;
