@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
-import com.github.overengineer.scope.expression.Eval;
-import com.github.overengineer.scope.expression.ExpressionEvaluationException;
+import com.github.overengineer.scope.conversation.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.ExpressionEvaluationException;
 
 public class ExpressionProcessor implements PreActionProcessor, PostActionProcessor, PostViewProcessor {
 

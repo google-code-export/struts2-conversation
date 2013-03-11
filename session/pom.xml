@@ -14,4 +14,23 @@
 	<name>Conversation Session Module</name>
 	<description>an extension to the conversation plugin for session variable management</description>
 	
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.github.overengineer.scope</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+	
+		<!-- Optional, Provided Scope Dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+		</dependency>
+		
+	</dependencies>
+	
 </project>

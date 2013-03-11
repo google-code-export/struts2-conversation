@@ -26,9 +26,6 @@ package com.github.overengineer.scope;
 import java.io.Serializable;
 import java.util.Set;
 
-import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.github.overengineer.scope.session.SessionConfigurationProvider;
-
 /**
  * Provides a Set of action classes for initializing configurations. In
  * the future, will be employed by the {@link ConversationConfigurationProvider}

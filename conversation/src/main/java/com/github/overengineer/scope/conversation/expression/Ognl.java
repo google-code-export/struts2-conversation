@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.expression;
+package com.github.overengineer.scope.conversation.expression;
 
 import java.util.List;
 import java.util.Map;

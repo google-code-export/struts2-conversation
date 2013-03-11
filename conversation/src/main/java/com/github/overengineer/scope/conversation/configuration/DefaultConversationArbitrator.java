@@ -38,7 +38,7 @@ import com.github.overengineer.scope.conversation.annotations.ConversationAction
 import com.github.overengineer.scope.conversation.annotations.ConversationController;
 import com.github.overengineer.scope.conversation.annotations.ConversationField;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
-import com.github.overengineer.scope.struts2.ActionUtil;
+import com.github.overengineer.scope.util.ActionUtil;
 import com.github.overengineer.scope.util.NamingUtil;
 import com.github.overengineer.scope.util.ReflectionUtil;
 

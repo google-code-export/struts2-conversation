@@ -26,6 +26,11 @@
 			<version>[3.1,)</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-core</artifactId>
+		</dependency>
 	
 		<!-- spring -->
 		<dependency>
