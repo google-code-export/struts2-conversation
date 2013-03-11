@@ -16,6 +16,11 @@
 	<dependencies>
 	
 		<dependency>
+			<groupId>com.github.overengineer.scope</groupId>
+			<artifactId>struts2</artifactId>
+		</dependency>
+	
+		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-config-browser-plugin</artifactId>
 			<version>${struts2.version}</version>
@@ -27,12 +32,6 @@
 			<artifactId>struts2-rest-plugin</artifactId>
 			<version>${struts2.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.googlecode.struts2-conversation</groupId>
-			<artifactId>struts2-conversation-scope-plugin</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		
 	</dependencies>

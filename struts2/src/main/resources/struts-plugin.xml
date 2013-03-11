@@ -103,8 +103,8 @@
 		class="com.github.overengineer.scope.session.DefaultSessionManager" />
 		
 	<bean name="ognl" 
-		type="com.github.overengineer.scope.expression.Eval" 
-		class="com.github.overengineer.scope.expression.Ognl"/>
+		type="com.github.overengineer.scope.conversation.expression.Eval" 
+		class="com.github.overengineer.scope.conversation.expression.Ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	
