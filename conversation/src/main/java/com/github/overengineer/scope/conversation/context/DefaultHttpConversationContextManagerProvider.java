@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
@@ -63,19 +64,25 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     protected Lock schedulerGuard = new ReentrantLock();
     
     public void init() {
-    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
-    		
-    		AtomicInteger id = new AtomicInteger(0);
+    	synchronized (SchedulerShutdownListener.class) {
+    		scheduler = SchedulerShutdownListener.getScheduler();
+    		if (scheduler == null) {
+    			scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
+		    		
+		    		AtomicInteger id = new AtomicInteger(0);
 
-			@Override
-			public Thread newThread(Runnable runnable) {
-				Thread thread = new Thread(runnable);
-				thread.setDaemon(true);
-				thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
-				return thread;
-			}
-    		
-    	});
+					@Override
+					public Thread newThread(Runnable runnable) {
+						Thread thread = new Thread(runnable);
+						thread.setDaemon(true);
+						thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
+						return thread;
+					}
+		    		
+		    	});
+    			SchedulerShutdownListener.setScheduler(scheduler);
+    		}
+    	}
     }
     
     /**
@@ -104,6 +111,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
     }

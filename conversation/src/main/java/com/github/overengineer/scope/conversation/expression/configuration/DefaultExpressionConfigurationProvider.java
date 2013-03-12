@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.expression.annotations.Eval;
 
@@ -31,6 +32,7 @@ public class DefaultExpressionConfigurationProvider implements ExpressionConfigu
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
@@ -39,6 +41,7 @@ public class DefaultExpressionConfigurationProvider implements ExpressionConfigu
      * {@inheritDoc}
      */
     @Override
+    @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;
 	}

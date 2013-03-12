@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.util.InjectionUtil;
 
 /**
@@ -48,6 +49,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setConfigurationProvider(SessionConfigurationProvider configurationProvider) {
         this.configurationProvider = configurationProvider;
     }

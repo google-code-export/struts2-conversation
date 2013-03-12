@@ -41,18 +41,17 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 	}
 	
 	protected void inject(Object component) {
+		LOG.debug("Injecting dependencies into component of type [{}]", component.getClass().getName());
 		for (Method method : component.getClass().getMethods()) {
 			if(ReflectionUtil.isPublicSetter(method)) {
 				Class<?> type = method.getParameterTypes()[0];
 				try {
-					if (ReflectionUtil.isPropertyType(type)) {
+					if (ReflectionUtil.isPropertyType(type) && method.isAnnotationPresent(Property.class)) {
 						Property property = method.getAnnotation(Property.class);
-						if (property != null) {
-							Object value = getPropertyFromPrimaryContainer(type, property.value());
-							LOG.info("Setting property [{}] on component of type [{}] with value [{}]", property.value(), component.getClass().getName(), value);
-							method.invoke(component, new Object[]{value});
-						}
-					} else {
+						Object value = getPropertyFromPrimaryContainer(type, property.value());
+						LOG.info("Setting property [{}] on component of type [{}] with value [{}]", property.value(), component.getClass().getName(), value);
+						method.invoke(component, new Object[]{value});
+					} else if (method.isAnnotationPresent(Component.class)) {
 						method.invoke(component, new Object[]{this.getComponent(type)});
 					}
 				} catch (Exception e) {
