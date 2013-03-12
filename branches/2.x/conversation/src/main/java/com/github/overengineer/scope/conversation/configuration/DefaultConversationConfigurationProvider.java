@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
@@ -87,6 +88,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
@@ -95,6 +97,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
      * {@inheritDoc}
      */
     @Override
+    @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;
 	}

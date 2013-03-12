@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
@@ -52,6 +53,7 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
      * {@inheritDoc}
      */
     @Override
+    @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;
 	}

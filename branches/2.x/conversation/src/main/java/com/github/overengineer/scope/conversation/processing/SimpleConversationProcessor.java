@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.annotations.ConversationField;
@@ -56,6 +57,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Component
 	public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider) {
 		this.configurationProvider = configurationProvider;
 	}

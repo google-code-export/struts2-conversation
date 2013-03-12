@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.conversation.expression.processing;
 
+import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.expression.configuration.ExpressionConfiguration;
@@ -14,10 +15,12 @@ public class ExpressionConversationProcessor extends InjectionConversationProces
 	protected Eval eval;
 	protected ExpressionConfigurationProvider expressionConfigurationProvider;
 	
+	@Component
 	public void setEval(Eval eval) {
 		this.eval = eval;
 	}
 	
+	@Component
 	public void setExpressionConfigurationProvider(ExpressionConfigurationProvider expressionConfigurationProvider) {
 		this.expressionConfigurationProvider = expressionConfigurationProvider;
 	}
