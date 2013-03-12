@@ -34,8 +34,8 @@ import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.ScopeContainer;
-import com.github.overengineer.scope.ScopeContainerProvider;
+import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
 import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;

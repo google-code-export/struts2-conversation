@@ -31,6 +31,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
@@ -45,13 +46,22 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionConfigurationProvider.class);
     protected transient SessionConfiguration configuration = new SessionConfiguration();
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+    protected ActionProvider actionProvider;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public void setActionProvider(ActionProvider actionProvider) {
+    	this.actionProvider = actionProvider;
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(Set<Class<?>> classes) {
-        this.processClasses(classes);
+    public void init() {
+        this.processClasses(actionProvider.getActionClasses());
     }
 
     /**

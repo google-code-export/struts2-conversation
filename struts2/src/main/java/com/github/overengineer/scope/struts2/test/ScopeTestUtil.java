@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.github.overengineer.scope.ScopeContainerProvider;
+import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationUtil;

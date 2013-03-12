@@ -30,14 +30,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants;
+import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.util.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.util.monitor.SchedulerProvider;
 import com.github.overengineer.scope.util.monitor.TimeoutMonitor;
@@ -61,7 +62,6 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     protected transient ScheduledExecutorService scheduler;
     protected Lock schedulerGuard = new ReentrantLock();
     
-    @PostConstruct
     public void init() {
     	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
     		
@@ -82,6 +82,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Property(Properties.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
     public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
     	LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
     	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
@@ -91,6 +92,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Property(Properties.CONVERSATION_MONITORING_FREQUENCY)
     public void setMonitoringFrequency(long monitoringFrequency) {
     	double monitoringFrequencyMinutes = monitoringFrequency / (1000.0 * 60);
     	LOG.info("Setting conversation timeout monitoring frequency:  " + monitoringFrequency + " milliseconds.");

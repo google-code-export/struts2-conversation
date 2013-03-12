@@ -25,8 +25,9 @@ package com.github.overengineer.scope.conversation.configuration;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
 
+import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
 
@@ -38,7 +39,7 @@ import com.github.overengineer.scope.conversation.processing.ConversationProcess
  * @author rees.byars
  * 
  */
-public interface ConversationConfigurationProvider extends Serializable {
+public interface ConversationConfigurationProvider extends Serializable, PostConstructable {
 	
 	/**
 	 * Set the max number of cached {@link ConversationContext
@@ -62,13 +63,13 @@ public interface ConversationConfigurationProvider extends Serializable {
      * @param arbitrator
      */
     public void setArbitrator(ConversationArbitrator arbitrator);
-
+    
     /**
-     * Initialize the configuration caches for a given set of classes
+     * Set the {@link ActionProvider} for building action configurations on startup
      * 
-     * @param actionClasses
+     * @param actionProvider
      */
-    public void init(Set<Class<?>> actionClasses);
+    public void setActionProvider(ActionProvider actionProvider);
 
     /**
      * Get the {@link ConversationClassConfiguration ConversationConfigurations} for

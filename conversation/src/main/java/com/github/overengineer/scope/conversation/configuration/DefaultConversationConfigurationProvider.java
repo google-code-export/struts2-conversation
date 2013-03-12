@@ -29,14 +29,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants;
+import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
 import com.github.overengineer.scope.util.ReflectionUtil;
@@ -54,6 +56,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationConfigurationProvider.class);
 
     protected ConversationArbitrator arbitrator;
+    protected ActionProvider actionProvider;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
     protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
 	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
@@ -62,6 +65,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Property(Properties.CONVERSATION_IDLE_TIMEOUT)
 	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
 		double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
     	LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
@@ -73,6 +77,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Property(Properties.CONVERSATION_MAX_INSTANCES)
 	public void setDefaultMaxInstances(int maxInstances) {
 		LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
 		this.maxInstances = maxInstances;
@@ -85,23 +90,31 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(Set<Class<?>> actionClasses) {
-    	if (this.classConfigurations.size() != actionClasses.size()) { //in case it's already been called
+	public void setActionProvider(ActionProvider actionProvider) {
+    	this.actionProvider = actionProvider;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void init() {
+		if (this.classConfigurations.size() != actionProvider.getActionClasses().size()) { //in case it's already been called
     		LOG.info("Building Conversation Configurations...");
         	if (this.arbitrator == null) {
         		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
         	}
-            for (Class<?> clazz : actionClasses) {
+            for (Class<?> clazz : actionProvider.getActionClasses()) {
                 processClass(clazz, classConfigurations);
             }
             LOG.info("...building of Conversation Configurations successfully completed.");
     	}
-    }
+	}
 
     /**
      * {@inheritDoc}

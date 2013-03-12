@@ -37,7 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.ScopeContainerProvider;
+import com.github.overengineer.scope.container.ScopeContainerProvider;
+import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.ConversationController;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.configuration.DefaultConversationArbitrator;
@@ -61,7 +62,7 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
 
-    @Inject(StrutsScopeConstants.CONVERSATION_PACKAGE_NESTING_KEY)
+    @Inject(Properties.CONVERSATION_PACKAGE_NESTING_KEY)
     public void setUsePackageNesting(String usePackageNesting) {
         this.usePackageNesting = "true".equals(usePackageNesting);
     }

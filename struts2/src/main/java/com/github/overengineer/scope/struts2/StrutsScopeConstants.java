@@ -32,13 +32,8 @@ public interface StrutsScopeConstants {
 	
 	//Configuration properties
 	public static final String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";
-	public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
-	public static final String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
-    public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
-    public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
-    public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
 	
-    //Map keys
+	//Map keys
 	public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
 	public static final String SESSION_FIELD_MAP_KEY = "session.field.map";
 	
