@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.configuration;
+package com.github.overengineer.scope.conversation.expression.configuration;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.overengineer.scope.conversation.expression.ExpressionEvaluationException;
-import com.github.overengineer.scope.conversation.expression.Mvel;
+import com.github.overengineer.scope.conversation.expression.eval.Mvel;
+import com.github.overengineer.scope.conversation.expression.exceptions.ExpressionEvaluationException;
 
 public class MvelTest extends EvalTest {
 	

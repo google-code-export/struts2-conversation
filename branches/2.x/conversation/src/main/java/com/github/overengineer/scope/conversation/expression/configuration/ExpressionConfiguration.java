@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.configuration;
+package com.github.overengineer.scope.conversation.expression.configuration;
 
 public interface ExpressionConfiguration {
 	

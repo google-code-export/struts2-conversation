@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import com.github.overengineer.scope.conversation.context.ConversationContextMan
 import com.github.overengineer.scope.conversation.context.DefaultConversationContextFactory;
 import com.github.overengineer.scope.conversation.context.DefaultConversationContextManager;
 import com.github.overengineer.scope.conversation.context.DefaultHttpConversationContextManagerProvider;
-import com.github.overengineer.scope.conversation.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.eval.Eval;
 import com.github.overengineer.scope.mocks.MockConversationAdapter;
 
 //TODO:  implement conversation end processor shit - force after view?  allow option?

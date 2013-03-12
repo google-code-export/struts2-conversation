@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
-import com.github.overengineer.scope.conversation.annotations.Eval;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
@@ -56,8 +55,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 
     protected ConversationArbitrator arbitrator;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
-    protected ConcurrentMap<Class<?>, ExpressionConfiguration> expressionConfigurations = new ConcurrentHashMap<Class<?>, ExpressionConfiguration>();
-	protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
+    protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
 	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
 	
 	/**
@@ -135,7 +133,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
             }
             configurations = new HashSet<ConversationClassConfiguration>();
             Map<String, ConversationClassConfiguration> temporaryConversationMap = new HashMap<String, ConversationClassConfiguration>();
-            ExpressionConfiguration expressionConfiguration = new ExpressionConfigurationImpl();
             
             for (Field field : this.arbitrator.getCandidateConversationFields(clazz)) {
                 Collection<String> fieldConversations = this.arbitrator.getConversations(clazz, field);
@@ -160,9 +157,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
             for (Method method : this.arbitrator.getCandidateConversationMethods(clazz)) {
             	
             	String methodName = this.arbitrator.getName(method);
-            	
-            	this.resolveExpressionConfig(clazz, method, methodName, expressionConfiguration);
-            	expressionConfigurations.put(clazz, expressionConfiguration);
             	
             	//intermediate action methods
                 Collection<String> methodConversations = this.arbitrator.getConversations(clazz, method);
@@ -239,25 +233,5 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
         
         return configurations;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-	@Override
-	public ExpressionConfiguration getExpressionConfiguration(Class<?> actionClass) {
-		return this.expressionConfigurations.get(actionClass);
-	}
-	
-	protected void resolveExpressionConfig(Class<?> clazz, Method method, String methodName, ExpressionConfiguration expressionConfiguration) {
-		if (method.isAnnotationPresent(Eval.class)) {
-			Eval eval = method.getAnnotation(Eval.class);
-			expressionConfiguration.addExpressions(methodName, eval.preAction(), eval.postAction(), eval.postView());
-		} else if (clazz.isAnnotationPresent(Eval.class)) {
-			Eval eval = clazz.getAnnotation(Eval.class);
-			expressionConfiguration.addExpressions(methodName, eval.preAction(), eval.postAction(), eval.postView());
-		} else {
-			expressionConfiguration.addExpressions(methodName, "", "", "");
-		}
-	}
 
 }

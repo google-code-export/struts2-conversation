@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import java.util.ArrayList;
 import java.util.List;

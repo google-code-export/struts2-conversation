@@ -33,11 +33,9 @@ import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.annotations.ConversationField;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.github.overengineer.scope.conversation.configuration.ExpressionConfiguration;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.exceptions.ConversationIdException;
-import com.github.overengineer.scope.conversation.expression.Eval;
 
 /**
  * A simple yet effective implementation of {@link ConversationProcessor} that
@@ -53,15 +51,6 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleConversationProcessor.class);
 	
 	protected ConversationConfigurationProvider configurationProvider;
-	protected Eval eval;
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setEval(Eval eval) {
-		this.eval = eval;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -95,25 +84,6 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 					processConversation(conversationConfig, conversationAdapter, action);
 				}
 			}
-			
-			//TODO this has design issues written all over it
-			ExpressionConfiguration expressionConfiguration = this.configurationProvider.getExpressionConfiguration(actionClass);
-			if (expressionConfiguration != null) {
-				String actionId = conversationAdapter.getActionId();
-				String pre = expressionConfiguration.getPreActionExpression(actionId);
-				if (pre != null && !"".equals(pre)) {
-					conversationAdapter.addPreActionProcessor(new ExpressionProcessor(eval, pre), null, null);
-				}
-				String postA = expressionConfiguration.getPostActionExpression(actionId);
-				if (postA != null && !"".equals(postA)) {
-					conversationAdapter.addPostActionProcessor(new ExpressionProcessor(eval, postA), null, null);
-				}
-				String postV = expressionConfiguration.getPostViewExpression(actionId);
-				if (postV != null && !"".equals(postV)) {
-					conversationAdapter.addPostViewProcessor(new ExpressionProcessor(eval, postV), null, null);
-				}
-			}
-			
 			
 		} catch (ConversationException ce) {
 			

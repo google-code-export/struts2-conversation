@@ -28,7 +28,6 @@ import java.io.Serializable;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
-import com.github.overengineer.scope.conversation.expression.Eval;
 
 /**
  * The primary conversation processing and management component.
@@ -37,13 +36,6 @@ import com.github.overengineer.scope.conversation.expression.Eval;
  * 
  */
 public interface ConversationProcessor extends Serializable {
-	
-	/**
-	 * Set the {@link Eval} instance for this processor
-	 * @param eval
-	 */
-	public void setEval(Eval eval);
-	
 
     /**
      * Set the configuration provider for this manager

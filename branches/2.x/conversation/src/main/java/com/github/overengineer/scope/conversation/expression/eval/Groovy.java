@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
+import com.github.overengineer.scope.conversation.expression.exceptions.ExpressionEvaluationException;
 
 /**
  * 
