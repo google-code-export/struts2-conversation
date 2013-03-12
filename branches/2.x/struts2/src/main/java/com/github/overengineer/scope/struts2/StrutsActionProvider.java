@@ -82,7 +82,7 @@ public class StrutsActionProvider implements ActionProvider {
     private FileManager fileManager;
     private Container container;
 
-    public Set<Class<?>> getActionClasses() throws Exception {
+    public Set<Class<?>> getActionClasses() {
     	try {
     		if (this.fileManager == null) {
     			//retrieve this way instead of by injection in order to catch an handle errors/exceptions with older versions of struts2
@@ -92,11 +92,12 @@ public class StrutsActionProvider implements ActionProvider {
                 initReloadClassLoader();
                 actionClasses = this.findActions();
             }
-            return this.actionClasses;
             //This is a hack to make sure that changes to Struts2 classes used below don't blow up the whole plugin
     	} catch (Throwable t) {
-    		throw new Exception("Could not load action classes on startup.  Configuration caches will be built on-demand.");
+    		LOG.warn("Could not load action classes on startup.  Configuration caches will be built on-demand.");
     	}
+    	//TODO this ok?
+    	return this.actionClasses;
         
     }
     

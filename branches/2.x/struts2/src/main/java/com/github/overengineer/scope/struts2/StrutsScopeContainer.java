@@ -3,30 +3,25 @@ package com.github.overengineer.scope.struts2;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.ScopeContainer;
-import com.github.overengineer.scope.conversation.ConversationProperties;
+import com.github.overengineer.scope.container.AbstractScopeContainer;
+import com.github.overengineer.scope.container.ScopeContainer;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.conversation.context.ConversationContextFactory;
 import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
-import com.github.overengineer.scope.conversation.expression.Eval;
+import com.github.overengineer.scope.conversation.expression.eval.Eval;
 import com.github.overengineer.scope.session.SessionConfigurationProvider;
 import com.github.overengineer.scope.session.SessionManager;
 import com.github.overengineer.scope.struts2.StrutsScopeConstants.TypeKeys;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsScopeContainer implements ScopeContainer {
+public class StrutsScopeContainer extends AbstractScopeContainer {
 
 	private static final long serialVersionUID = -6820777796732236492L;
-	private static final Logger LOG = LoggerFactory.getLogger(StrutsScopeContainer.class);
 	
-	private Boolean javaConfigCompleted = false;
 	private Map<Class<?>, String> typeKeys  = new HashMap<Class<?>, String>();
 	private Container container;
 	
@@ -60,11 +55,6 @@ public class StrutsScopeContainer implements ScopeContainer {
 		typeKeys.put(ConversationProcessor.class, key);
 	}
 	
-	@Inject(TypeKeys.CONVERSATION_PROPERTIES)
-	public void setConversationPropertiesKey(String key) {
-		typeKeys.put(ConversationProperties.class, key);
-	}
-	
 	@Inject(TypeKeys.SESSION_CONFIG_PROVIDER)
 	public void setSessionConfigurationProviderKey(String key) {
 		typeKeys.put(SessionConfigurationProvider.class, key);
@@ -85,75 +75,29 @@ public class StrutsScopeContainer implements ScopeContainer {
 		this.container = container;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getComponent(Class<T> clazz) {
-		if (!javaConfigCompleted) {
-			this.executeJavaConfiguration();
+	protected <T> T getPropertyFromPrimaryContainer(Class<T> clazz, String name) {
+		String string = container.getInstance(String.class, name);
+		if (clazz == long.class) {
+			return (T) Long.valueOf(string);
+		} else if (clazz == int.class) {
+			return (T) Integer.valueOf(string);
 		}
-		return container.getInstance(clazz, typeKeys.get(clazz));
+		return (T) string;
 	}
-	
-	/**
-	 * 
-	 * In the absence of a more robust container than xwork's, we use this class to do configuration via code
-	 *
-	 */
-	protected void executeJavaConfiguration() {
-		
-		synchronized(javaConfigCompleted) {
-			
-			if (!javaConfigCompleted) {
-				
-				javaConfigCompleted = true;
-				
-				/*
-				 * conversation config:
-				 */
-				ConversationProperties properties = this.getComponent(ConversationProperties.class);
-				
-				ConversationArbitrator arbitrator = this.getComponent(ConversationArbitrator.class);
-		        arbitrator.setActionSuffix(properties.getActionSuffix());
-		        
-		        ConversationConfigurationProvider configurationProvider = this.getComponent(ConversationConfigurationProvider.class);
-		        configurationProvider.setArbitrator(arbitrator);
-		        configurationProvider.setDefaultMaxIdleTime(properties.getMaxIdleTime());
-		        configurationProvider.setDefaultMaxInstances(properties.getMaxInstances());
-		        
-		        ActionProvider actionProvider = this.getComponent(ActionProvider.class);
-		        try {
-					configurationProvider.init(actionProvider.getActionClasses());
-				} catch (Exception e) {
-					LOG.warn(e.getMessage());
-				}
-		        
-		        Eval eval = this.getComponent(Eval.class);
-		        
-		        ConversationProcessor processor = this.getComponent(ConversationProcessor.class);
-		        processor.setConfigurationProvider(configurationProvider);
-		        processor.setEval(eval);
-		        
-		        HttpConversationContextManagerProvider contextManagerProvider = this.getComponent(HttpConversationContextManagerProvider.class);
-		        ConversationContextFactory contextFactory = this.getComponent(ConversationContextFactory.class);
-		        contextManagerProvider.setConversationContextFactory(contextFactory);
-		        contextManagerProvider.setMonitoringFrequency(properties.getMonitoringFrequency());
-		        contextManagerProvider.setMonitoringThreadPoolSize(properties.getMonitoringThreadPoolSize());
-		        contextManagerProvider.init();
-		        
-		        /*
-		         * session config:
-		         */
-		        SessionConfigurationProvider sessionConfigurationProvider = this.getComponent(SessionConfigurationProvider.class);
-		    	ActionProvider finder = this.getComponent(ActionProvider.class);
-		    	SessionManager sessionManager = this.getComponent(SessionManager.class);
 
-		        try {
-					sessionConfigurationProvider.init(finder.getActionClasses());
-				} catch (Exception e) {
-					LOG.warn(e.getMessage());
-				}
-		        
-		        sessionManager.setConfigurationProvider(sessionConfigurationProvider);
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> T getComponentFromPrimaryContainer(Class<T> clazz) {
+		if (ScopeContainer.class.isAssignableFrom(clazz)) {
+			return (T) this;
+		} else {
+			String typeKey = typeKeys.get(clazz);
+			if (typeKey == null) {
+				return container.getInstance(clazz);
 			}
+			return container.getInstance(clazz, typeKey);
 		}
 	}
 

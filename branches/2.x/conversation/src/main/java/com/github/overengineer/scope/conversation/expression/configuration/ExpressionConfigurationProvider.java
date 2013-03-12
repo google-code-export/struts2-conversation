@@ -1,10 +1,12 @@
 package com.github.overengineer.scope.conversation.expression.configuration;
 
-import java.util.Set;
+import java.io.Serializable;
 
+import com.github.overengineer.scope.ActionProvider;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 
-public interface ExpressionConfigurationProvider {
+public interface ExpressionConfigurationProvider extends Serializable, PostConstructable {
 	
 	/**
      * Get the {@link ExpressionConfiguration} for
@@ -24,10 +26,10 @@ public interface ExpressionConfigurationProvider {
     public void setArbitrator(ConversationArbitrator arbitrator);
     
     /**
-     * Initialize the configuration caches for a given set of classes
+     * Set the {@link ActionProvider} for building action configurations on startup
      * 
-     * @param actionClasses
+     * @param actionProvider
      */
-    public void init(Set<Class<?>> actionClasses);
+    public void setActionProvider(ActionProvider actionProvider);
 
 }

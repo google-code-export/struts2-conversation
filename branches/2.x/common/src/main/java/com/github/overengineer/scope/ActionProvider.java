@@ -41,6 +41,6 @@ public interface ActionProvider extends Serializable {
      * @return
      * @throws Exception 
      */
-    public Set<Class<?>> getActionClasses() throws Exception;
+    public Set<Class<?>> getActionClasses();
 
 }

@@ -17,16 +17,16 @@
 	<constant name="struts.convention.package.locators" value="actions" />
 	
 	<bean name="mvel" 
-		type="com.github.overengineer.scope.conversation.expression.Eval" 
-		class="com.github.overengineer.scope.conversation.expression.Mvel"/>
+		type="com.github.overengineer.scope.conversation.expression.eval.Eval" 
+		class="com.github.overengineer.scope.conversation.expression.eval.Mvel"/>
 		
 	<bean name="spel" 
-		type="com.github.overengineer.scope.conversation.expression.Eval" 
-		class="com.github.overengineer.scope.conversation.expression.Spel"/>
+		type="com.github.overengineer.scope.conversation.expression.eval.Eval" 
+		class="com.github.overengineer.scope.conversation.expression.eval.Spel"/>
 		
 	<bean name="groovy" 
-		type="com.github.overengineer.scope.conversation.expression.Eval" 
-		class="com.github.overengineer.scope.conversation.expression.Groovy"/>
+		type="com.github.overengineer.scope.conversation.expression.eval.Eval" 
+		class="com.github.overengineer.scope.conversation.expression.eval.Groovy"/>
 	
 	
 	<package name="session-field-test-default" extends="struts-conversation-default">

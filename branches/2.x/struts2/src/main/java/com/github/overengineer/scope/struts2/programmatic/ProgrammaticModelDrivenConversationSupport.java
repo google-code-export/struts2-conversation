@@ -31,10 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.StrutsStatics;
 
-import com.github.overengineer.scope.ScopeContainer;
-import com.github.overengineer.scope.ScopeContainerProvider;
+import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
-import com.github.overengineer.scope.conversation.ConversationProperties;
+import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
 import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
@@ -134,7 +134,9 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, scopeContainer.getComponent(ConversationProperties.class).getMaxIdleTime(), scopeContainer.getComponent(ConversationProperties.class).getMaxInstances());
+        ProgrammaticModelDrivenConversationUtil.begin(this, 
+        		scopeContainer.getProperty(long.class, ConversationConstants.Properties.CONVERSATION_IDLE_TIMEOUT), 
+        		scopeContainer.getProperty(int.class, ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES));
     }
 
     /**

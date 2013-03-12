@@ -51,7 +51,6 @@
 	<constant name="struts.conversation.processor" value="defaultConversationProcessor"/>
 	<constant name="struts.conversation.contextManagerProvider" value="defaultConversationContextManagerProvider"/>
 	<constant name="struts.conversation.contextFactory" value="defaultConversationContextFactory"/>
-	<constant name="struts.conversation.properties" value="strutsConversationProperties"/>
 	
 	<constant name="struts.session.configurationProvider" value="defaultSessionConfigurationProvider"/>
 	<constant name="struts.session.sessionManager" value="defaultSessionManager"/>
@@ -59,11 +58,11 @@
 	<constant name="conversation.expression.eval.provider" value="ognl"/>
 	
 	<bean name="default" 
-		type="com.github.overengineer.scope.ScopeContainerProvider"
+		type="com.github.overengineer.scope.container.ScopeContainerProvider"
 		class="com.github.overengineer.scope.struts2.StrutsScopeContainerProvider" />
 	
 	<bean name="defaultScopeContainer" 
-		type="com.github.overengineer.scope.ScopeContainer"
+		type="com.github.overengineer.scope.container.ScopeContainer"
 		class="com.github.overengineer.scope.struts2.StrutsScopeContainer" />
 	
 	<bean name="strutsActionProvider" 
@@ -90,10 +89,6 @@
 		type="com.github.overengineer.scope.conversation.context.ConversationContextFactory" 
 		class="com.github.overengineer.scope.conversation.context.DefaultConversationContextFactory"/>
 		
-	<bean name="strutsConversationProperties" 
-		type="com.github.overengineer.scope.conversation.ConversationProperties"
-		class="com.github.overengineer.scope.struts2.StrutsConversationProperties"/>
-		
 	<bean name="defaultSessionConfigurationProvider"
 		type="com.github.overengineer.scope.session.SessionConfigurationProvider"
 		class="com.github.overengineer.scope.session.DefaultSessionConfigurationProvider" />
@@ -103,8 +98,8 @@
 		class="com.github.overengineer.scope.session.DefaultSessionManager" />
 		
 	<bean name="ognl" 
-		type="com.github.overengineer.scope.conversation.expression.Eval" 
-		class="com.github.overengineer.scope.conversation.expression.Ognl"/>
+		type="com.github.overengineer.scope.conversation.expression.eval.Eval" 
+		class="com.github.overengineer.scope.conversation.expression.eval.Ognl"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	

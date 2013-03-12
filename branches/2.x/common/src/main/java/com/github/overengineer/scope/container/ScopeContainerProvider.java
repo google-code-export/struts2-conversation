@@ -1,4 +1,4 @@
-package com.github.overengineer.scope;
+package com.github.overengineer.scope.container;
 
 import java.io.Serializable;
 

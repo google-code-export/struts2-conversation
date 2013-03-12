@@ -28,7 +28,7 @@ package com.github.overengineer.scope.conversation;
  * 
  * @author rees.byars
  */
-public class ConversationConstants {
+public interface ConversationConstants {
 	
 	/**
 	 * 20
@@ -59,5 +59,15 @@ public class ConversationConstants {
     
     public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
     public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+    
+    interface Properties {
+
+		public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
+		public static final String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
+		public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
+		public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
+		public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
+    	
+    }
     
 }
