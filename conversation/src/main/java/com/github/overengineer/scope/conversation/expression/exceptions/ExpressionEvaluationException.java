@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.exceptions;
 
 public class ExpressionEvaluationException extends Exception {
 

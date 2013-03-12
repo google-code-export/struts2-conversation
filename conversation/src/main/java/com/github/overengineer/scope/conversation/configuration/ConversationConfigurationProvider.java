@@ -78,14 +78,5 @@ public interface ConversationConfigurationProvider extends Serializable {
      * @return
      */
     public Collection<ConversationClassConfiguration> getConfigurations(Class<?> actionClass);
-    
-    /**
-     * Get the {@link ExpressionConfiguration} for
-     * a given class
-     * 
-     * @param actionClass
-     * @return
-     */
-    public ExpressionConfiguration getExpressionConfiguration(Class<?> actionClass);
 
 }

@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
+import com.github.overengineer.scope.conversation.expression.exceptions.ExpressionEvaluationException;
 
 import ognl.OgnlException;
 

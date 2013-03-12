@@ -1,6 +1,8 @@
-package com.github.overengineer.scope.conversation.expression;
+package com.github.overengineer.scope.conversation.expression.eval;
 
 import java.util.Map;
+
+import com.github.overengineer.scope.conversation.expression.exceptions.ExpressionEvaluationException;
 
 /**
  * 

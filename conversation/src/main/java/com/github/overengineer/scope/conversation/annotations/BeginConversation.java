@@ -68,7 +68,7 @@ public @interface BeginConversation {
      * An expression that returns the idle time after which this conversation will be timed out and cleaned up.
      * <p>
      * Two types of expressions are supported:  a simple, static expression indicating days, hours, etc. and a dynamic
-     * expression that will be evaluated using the configured {@link com.github.overengineer.scope.expression.Eval Eval}.
+     * expression that will be evaluated using the configured {@link com.com.github.overengineer.scope.conversation.expression.annotations.expression.Eval Eval}.
      * <p>
      * The following valid examples indicate the simple syntax that can be used:
      * <ul>
