@@ -64,19 +64,25 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     
     @PostConstruct
     public void init() {
-    	this.scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
-    		
-    		AtomicInteger id = new AtomicInteger(0);
+    	synchronized (SchedulerShutdownListener.class) {
+    		scheduler = SchedulerShutdownListener.getScheduler();
+    		if (scheduler == null) {
+    			scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
+		    		
+		    		AtomicInteger id = new AtomicInteger(0);
 
-			@Override
-			public Thread newThread(Runnable runnable) {
-				Thread thread = new Thread(runnable);
-				thread.setDaemon(true);
-				thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
-				return thread;
-			}
-    		
-    	});
+					@Override
+					public Thread newThread(Runnable runnable) {
+						Thread thread = new Thread(runnable);
+						thread.setDaemon(true);
+						thread.setName("ConversationTimeoutMonitoringThread-" + id.getAndIncrement());
+						return thread;
+					}
+		    		
+		    	});
+    			SchedulerShutdownListener.setScheduler(scheduler);
+    		}
+    	}
     }
     
     /**
