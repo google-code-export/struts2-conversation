@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.configuration.ConversationClassConfiguration;
 import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.google.code.rees.scope.struts2.ActionUtil;
 import com.google.code.rees.scope.struts2.ConversationInterceptor;
-import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 import com.opensymphony.xwork2.config.entities.InterceptorMapping;
 import com.opensymphony.xwork2.inject.Inject;
@@ -26,9 +26,9 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     private static final Logger LOG = LoggerFactory.getLogger(ShowConfigAction.class);
     private ConversationConfigurationProvider conversationConfigurationProvider;
 
-    @Inject(StrutsScopeConstants.CONVERSATION_CONFIG_PROVIDER_KEY)
-    public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
-        this.conversationConfigurationProvider = conversationConfigurationProvider;
+    @Inject
+    public void setConversationConfigurationProvider(ScopeContainerProvider scopeContainerProvider) {
+        this.conversationConfigurationProvider = scopeContainerProvider.getScopeContainer().getComponent(ConversationConfigurationProvider.class);
     }
 
     @Override

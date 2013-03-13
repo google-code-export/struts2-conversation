@@ -37,12 +37,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.ScopeContainerProvider;
+import com.google.code.rees.scope.container.Component;
+import com.google.code.rees.scope.container.Property;
+import com.google.code.rees.scope.conversation.ConversationConstants.Properties;
 import com.google.code.rees.scope.conversation.annotations.ConversationController;
 import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
 import com.google.code.rees.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.google.code.rees.scope.util.NamingUtil;
-import com.opensymphony.xwork2.inject.Inject;
 
 /**
  * The {@link ConversationArbitrator} for use with Struts2.
@@ -60,19 +61,21 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
+    
+    @Override
+    @Property(ConventionConstants.ACTION_SUFFIX)
+    public void setActionSuffix(String suffix) {
+        this.actionSuffix = suffix;
+    }
 
-    @Inject(StrutsScopeConstants.CONVERSATION_PACKAGE_NESTING_KEY)
+    @Property(Properties.CONVERSATION_PACKAGE_NESTING_KEY)
     public void setUsePackageNesting(String usePackageNesting) {
         this.usePackageNesting = "true".equals(usePackageNesting);
     }
     
+    @Component
     public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;
-    }
-
-    @Inject
-    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-        this.actionProvider = scopeContainerProvider.getScopeContainer().getComponent(ActionProvider.class);
     }
     
     @Override

@@ -65,7 +65,7 @@ public class StrutsActionProvider implements ActionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(StrutsActionProvider.class);
     private static final boolean EXTRACT_BASE_INTERFACES = true;
 
-    private Set<Class<?>> actionClasses;
+    private transient Set<Class<?>> actionClasses;
     private String[] actionPackages;
     private String[] packageLocators;
     private String[] includeJars;
@@ -79,8 +79,8 @@ public class StrutsActionProvider implements ActionProvider {
     private boolean reload;
     private boolean excludeParentClassLoader;
     private boolean requireFollowsConvention;
-    private FileManager fileManager;
-    private Container container;
+    private transient FileManager fileManager;
+    private transient Container container;
 
     public Set<Class<?>> getActionClasses() throws Exception {
     	try {

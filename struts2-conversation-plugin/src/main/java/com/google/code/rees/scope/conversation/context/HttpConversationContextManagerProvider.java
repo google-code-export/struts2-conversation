@@ -27,6 +27,8 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.code.rees.scope.container.PostConstructable;
+
 /**
  * Used for creating {@link ConversationContextManager
  * ConversationContextManagers} that are tied to the given request (or more
@@ -35,12 +37,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author rees.byars
  * 
  */
-public interface HttpConversationContextManagerProvider extends Serializable {
-	
-	/**
-	 * initialize this factory.  
-	 */
-	public void init();
+public interface HttpConversationContextManagerProvider extends Serializable, PostConstructable {
 	
 	/**
 	 * The number of threads that will be used to monitor conversation timeouts

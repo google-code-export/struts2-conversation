@@ -25,8 +25,9 @@ package com.google.code.rees.scope.conversation.configuration;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
 
+import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.container.PostConstructable;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 
 /**
@@ -37,7 +38,7 @@ import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
  * @author rees.byars
  * 
  */
-public interface ConversationConfigurationProvider extends Serializable {
+public interface ConversationConfigurationProvider extends Serializable, PostConstructable {
 	
 	/**
 	 * Set the default max idle time for conversations
@@ -53,13 +54,13 @@ public interface ConversationConfigurationProvider extends Serializable {
      * @param arbitrator
      */
     public void setArbitrator(ConversationArbitrator arbitrator);
-
+    
     /**
-     * Initialize the configuration caches for a given set of classes
+     * Set the {@link ActionProvider} for building action configurations on startup
      * 
-     * @param actionClasses
+     * @param actionProvider
      */
-    public void init(Set<Class<?>> actionClasses);
+    public void setActionProvider(ActionProvider actionProvider);
 
     /**
      * Get the {@link ConversationClassConfiguration ConversationConfigurations} for

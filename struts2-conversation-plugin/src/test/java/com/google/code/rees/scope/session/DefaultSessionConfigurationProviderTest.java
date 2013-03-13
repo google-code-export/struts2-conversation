@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.mocks.actions.MockPojoController;
 import com.google.code.rees.scope.struts2.StrutsScopeConstants;
 import com.google.code.rees.scope.testutil.SerializationTestingUtil;
@@ -22,12 +24,18 @@ import com.opensymphony.xwork2.inject.Inject;
 public class DefaultSessionConfigurationProviderTest extends
         StrutsScopeTestCase<Object> {
 
-    @Inject("defaultSessionConfigurationProvider")
+    
+	@Inject
+	ScopeContainerProvider containerProvider;
+	
     SessionConfigurationProvider provider;
 
     @Test
     @SuppressWarnings("rawtypes")
     public void testGetSessionFieldConfig() {
+    	
+    	provider = containerProvider.getScopeContainer().getComponent(SessionConfigurationProvider.class);
+    	
         SessionConfiguration config = provider
                 .getSessionConfiguration(MockPojoController.class);
         assertNotNull(config);
@@ -46,6 +54,8 @@ public class DefaultSessionConfigurationProviderTest extends
 
     @Test
     public void testSessionFieldNaming() throws Exception {
+    	
+    	provider = containerProvider.getScopeContainer().getComponent(SessionConfigurationProvider.class);
 
         SessionConfiguration config = provider
                 .getSessionConfiguration(MockPojoController.class);
@@ -69,8 +79,10 @@ public class DefaultSessionConfigurationProviderTest extends
 
     @Test
     public void testSerialization() throws Exception {
-        provider.getSessionConfiguration(MockPojoController.class).getFields(
-                MockPojoController.class);
+    	
+    	provider = containerProvider.getScopeContainer().getComponent(SessionConfigurationProvider.class);
+    	
+        provider.getSessionConfiguration(MockPojoController.class).getFields(MockPojoController.class);
         provider = SerializationTestingUtil.getSerializedCopy(provider);
         provider.getSessionConfiguration(MockPojoController.class).getFields(
                 MockPojoController.class);

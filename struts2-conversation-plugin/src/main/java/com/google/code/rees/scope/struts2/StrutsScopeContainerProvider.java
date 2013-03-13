@@ -1,8 +1,7 @@
 package com.google.code.rees.scope.struts2;
 
-import com.google.code.rees.scope.ScopeContainer;
-import com.google.code.rees.scope.ScopeContainerProvider;
-import com.google.code.rees.scope.struts2.StrutsScopeConstants.TypeKeys;
+import com.google.code.rees.scope.container.ScopeContainer;
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
@@ -13,7 +12,7 @@ public class StrutsScopeContainerProvider implements ScopeContainerProvider {
 	private Container container;
 	private String scopeContainerKey;
 	
-	@Inject(TypeKeys.SCOPE_CONTAINER)
+	@Inject(StrutsScopeConstants.SCOPE_CONTAINER_KEY)
 	public void setScopeContainerKey(String key) {
 		scopeContainerKey = key;
 	}

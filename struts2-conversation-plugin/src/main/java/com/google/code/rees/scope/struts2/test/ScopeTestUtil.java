@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.google.code.rees.scope.ScopeContainerProvider;
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.ConversationUtil;

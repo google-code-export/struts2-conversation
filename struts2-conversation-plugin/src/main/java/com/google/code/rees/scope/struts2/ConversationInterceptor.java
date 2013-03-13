@@ -32,8 +32,8 @@ import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rees.scope.ScopeContainer;
-import com.google.code.rees.scope.ScopeContainerProvider;
+import com.google.code.rees.scope.container.ScopeContainer;
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
