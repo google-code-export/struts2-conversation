@@ -2,7 +2,6 @@ package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.scope.container.ScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainerProvider;
-import com.github.overengineer.scope.struts2.StrutsScopeConstants.TypeKeys;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
@@ -13,7 +12,7 @@ public class StrutsScopeContainerProvider implements ScopeContainerProvider {
 	private Container container;
 	private String scopeContainerKey;
 	
-	@Inject(TypeKeys.SCOPE_CONTAINER)
+	@Inject(StrutsScopeConstants.SCOPE_CONTAINER_KEY)
 	public void setScopeContainerKey(String key) {
 		scopeContainerKey = key;
 	}

@@ -6,6 +6,8 @@
 
 <struts>
 	
+	<constant name="struts.conversation.processor" value="expressionConversationProcessor"/>
+	
 	<constant name="struts.scope.followsConvention" value="true" />
 	
 	<constant name="struts.convention.default.parent.package" value="session-field-convention-test-default" />
