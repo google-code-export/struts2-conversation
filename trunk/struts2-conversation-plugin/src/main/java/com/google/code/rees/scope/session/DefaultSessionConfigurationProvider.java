@@ -31,6 +31,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.container.Component;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
 /**
@@ -45,13 +47,27 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionConfigurationProvider.class);
     protected transient SessionConfiguration configuration = new SessionConfiguration();
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+    protected ActionProvider actionProvider;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Component
+	public void setActionProvider(ActionProvider actionProvider) {
+    	this.actionProvider = actionProvider;
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(Set<Class<?>> classes) {
-        this.processClasses(classes);
+    public void init() {
+        try {
+			this.processClasses(actionProvider.getActionClasses());
+		} catch (Exception e) {
+			LOG.warn("The was an error attempting to retrieve the action classes.  This could be due to an older version of Struts2. Configurations will be built on the fly");
+		}
     }
 
     /**

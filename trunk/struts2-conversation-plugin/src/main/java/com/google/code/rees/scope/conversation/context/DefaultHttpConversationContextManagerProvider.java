@@ -30,13 +30,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.container.Component;
+import com.google.code.rees.scope.container.Property;
 import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.util.monitor.ScheduledExecutorTimeoutMonitor;
 import com.google.code.rees.scope.util.monitor.SchedulerProvider;
@@ -62,7 +63,6 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
     protected transient ScheduledExecutorService scheduler;
     protected Lock schedulerGuard = new ReentrantLock();
     
-    @PostConstruct
     public void init() {
     	synchronized (SchedulerShutdownListener.class) {
     		scheduler = SchedulerShutdownListener.getScheduler();
@@ -89,6 +89,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Property(ConversationConstants.Properties.CONVERSATION_MONITORING_THREAD_POOL_SIZE)
     public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
     	LOG.info("Setting conversation monitoring thread-pool size:  " + monitoringThreadPoolSize + " threads.");
     	this.monitoringThreadPoolSize = monitoringThreadPoolSize;
@@ -98,6 +99,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Property(ConversationConstants.Properties.CONVERSATION_MONITORING_FREQUENCY)
     public void setMonitoringFrequency(long monitoringFrequency) {
     	double monitoringFrequencyMinutes = monitoringFrequency / (1000.0 * 60);
     	LOG.info("Setting conversation timeout monitoring frequency:  " + monitoringFrequency + " milliseconds.");
@@ -109,6 +111,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Property(ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES)
     public void setMaxInstances(int maxInstances) {
     	LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
         this.maxInstances = maxInstances;
@@ -118,6 +121,7 @@ public class DefaultHttpConversationContextManagerProvider implements HttpConver
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setConversationContextFactory(ConversationContextFactory conversationContextFactory) {
         this.conversationContextFactory = conversationContextFactory;
     }

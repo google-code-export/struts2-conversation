@@ -24,7 +24,9 @@
 package com.google.code.rees.scope.session;
 
 import java.io.Serializable;
-import java.util.Set;
+
+import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.container.PostConstructable;
 
 /**
  * This class is used by {@link SessionManager SessionManagers} to
@@ -32,14 +34,14 @@ import java.util.Set;
  * 
  * @author rees.byars
  */
-public interface SessionConfigurationProvider extends Serializable {
-
-    /**
-     * Initialize the configuration for a given set of classes
+public interface SessionConfigurationProvider extends Serializable, PostConstructable {
+	
+	/**
+     * Set the {@link ActionProvider} for building action configurations on startup
      * 
-     * @param actionClasses
+     * @param actionProvider
      */
-    public void init(Set<Class<?>> classes);
+    public void setActionProvider(ActionProvider actionProvider);
 
     /**
      * Get the current configuration, adding the given class to

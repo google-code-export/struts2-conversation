@@ -31,10 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.StrutsStatics;
 
-import com.google.code.rees.scope.ScopeContainer;
-import com.google.code.rees.scope.ScopeContainerProvider;
+import com.google.code.rees.scope.container.ScopeContainer;
+import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
-import com.google.code.rees.scope.conversation.ConversationProperties;
+import com.google.code.rees.scope.conversation.ConversationConstants.Properties;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
@@ -134,7 +134,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, scopeContainer.getComponent(ConversationProperties.class).getMaxInstances());
+        ProgrammaticModelDrivenConversationUtil.begin(this, scopeContainer.getProperty(int.class, Properties.CONVERSATION_MAX_INSTANCES));
     }
 
     /**

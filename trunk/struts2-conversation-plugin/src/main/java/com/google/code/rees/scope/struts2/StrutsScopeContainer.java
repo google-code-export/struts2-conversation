@@ -1,150 +1,44 @@
 package com.google.code.rees.scope.struts2;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.code.rees.scope.ActionProvider;
-import com.google.code.rees.scope.ScopeContainer;
-import com.google.code.rees.scope.conversation.ConversationProperties;
-import com.google.code.rees.scope.conversation.configuration.ConversationArbitrator;
-import com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider;
-import com.google.code.rees.scope.conversation.context.ConversationContextFactory;
-import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
-import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
-import com.google.code.rees.scope.session.SessionConfigurationProvider;
-import com.google.code.rees.scope.session.SessionManager;
-import com.google.code.rees.scope.struts2.StrutsScopeConstants.TypeKeys;
+import com.google.code.rees.scope.container.AbstractScopeContainer;
+import com.google.code.rees.scope.container.ScopeContainer;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsScopeContainer implements ScopeContainer {
+public class StrutsScopeContainer extends AbstractScopeContainer {
 
-	private static final long serialVersionUID = -6820777796732236492L;
-	private static final Logger LOG = LoggerFactory.getLogger(StrutsScopeContainer.class);
+private static final long serialVersionUID = -6820777796732236492L;
 	
-	private Boolean javaConfigCompleted = false;
-	private Map<Class<?>, String> typeKeys  = new HashMap<Class<?>, String>();
 	private Container container;
-	
-	@Inject(TypeKeys.ACTION_PROVIDER)
-	public void setActionProviderKey(String key) {
-		typeKeys.put(ActionProvider.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_ARBITRATOR)
-	public void setConversationArbitratorKey(String key) {
-		typeKeys.put(ConversationArbitrator.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_CONFIG_PROVIDER)
-	public void setConversationConfigurationProviderKey(String key) {
-		typeKeys.put(ConversationConfigurationProvider.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_CONTEXT_FACTORY)
-	public void setConversationContextFactoryKey(String key) {
-		typeKeys.put(ConversationContextFactory.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_CONTEXT_MANAGER_PROVIDER)
-	public void setConversationContextManagerProviderKey(String key) {
-		typeKeys.put(HttpConversationContextManagerProvider.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_PROCESSOR)
-	public void setConversationProcessorKey(String key) {
-		typeKeys.put(ConversationProcessor.class, key);
-	}
-	
-	@Inject(TypeKeys.CONVERSATION_PROPERTIES)
-	public void setConversationPropertiesKey(String key) {
-		typeKeys.put(ConversationProperties.class, key);
-	}
-	
-	@Inject(TypeKeys.SESSION_CONFIG_PROVIDER)
-	public void setSessionConfigurationProviderKey(String key) {
-		typeKeys.put(SessionConfigurationProvider.class, key);
-	}
-	
-	@Inject(TypeKeys.SESSION_MANAGER)
-	public void setSessionManagerKey(String key) {
-		typeKeys.put(SessionManager.class, key);
-	}
 	
 	@Inject
 	public void setContainer(Container container) {
 		this.container = container;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getComponent(Class<T> clazz) {
-		if (!javaConfigCompleted) {
-			this.executeJavaConfiguration();
+	protected <T> T getPropertyFromPrimaryContainer(Class<T> clazz, String name) {
+		String string = container.getInstance(String.class, name);
+		if (clazz == long.class) {
+			return (T) Long.valueOf(string);
+		} else if (clazz == int.class) {
+			return (T) Integer.valueOf(string);
 		}
-		return container.getInstance(clazz, typeKeys.get(clazz));
+		return (T) string;
 	}
-	
-	/**
-	 * 
-	 * In the absence of a more robust container than xwork's, we use this class to do configuration via code
-	 *
-	 */
-	protected void executeJavaConfiguration() {
-		
-		synchronized(javaConfigCompleted) {
-			
-			if (!javaConfigCompleted) {
-				
-				javaConfigCompleted = true;
-				
-				/*
-				 * conversation config:
-				 */
-				ConversationProperties properties = this.getComponent(ConversationProperties.class);
-				
-				ConversationArbitrator arbitrator = this.getComponent(ConversationArbitrator.class);
-		        arbitrator.setActionSuffix(properties.getActionSuffix());
-		        
-		        ConversationConfigurationProvider configurationProvider = this.getComponent(ConversationConfigurationProvider.class);
-		        configurationProvider.setArbitrator(arbitrator);
-		        configurationProvider.setDefaultMaxIdleTime(properties.getMaxIdleTime());
-		        
-		        ActionProvider actionProvider = this.getComponent(ActionProvider.class);
-		        try {
-					configurationProvider.init(actionProvider.getActionClasses());
-				} catch (Exception e) {
-					LOG.warn(e.getMessage());
-				}
-		        
-		        ConversationProcessor processor = this.getComponent(ConversationProcessor.class);
-		        processor.setConfigurationProvider(configurationProvider);
-		        
-		        HttpConversationContextManagerProvider contextManagerProvider = this.getComponent(HttpConversationContextManagerProvider.class);
-		        ConversationContextFactory contextFactory = this.getComponent(ConversationContextFactory.class);
-		        contextManagerProvider.setConversationContextFactory(contextFactory);
-		        contextManagerProvider.setMaxInstances(properties.getMaxInstances());
-		        contextManagerProvider.setMonitoringFrequency(properties.getMonitoringFrequency());
-		        contextManagerProvider.setMonitoringThreadPoolSize(properties.getMonitoringThreadPoolSize());
-		        contextManagerProvider.init();
-		        
-		        /*
-		         * session config:
-		         */
-		        SessionConfigurationProvider sessionConfigurationProvider = this.getComponent(SessionConfigurationProvider.class);
-		    	ActionProvider finder = this.getComponent(ActionProvider.class);
-		    	SessionManager sessionManager = this.getComponent(SessionManager.class);
 
-		        try {
-					sessionConfigurationProvider.init(finder.getActionClasses());
-				} catch (Exception e) {
-					LOG.warn(e.getMessage());
-				}
-		        
-		        sessionManager.setConfigurationProvider(sessionConfigurationProvider);
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> T getComponentFromPrimaryContainer(Class<T> clazz) {
+		if (ScopeContainer.class.isAssignableFrom(clazz)) {
+			return (T) this;
+		} else {
+			String typeKey = container.getInstance(String.class, clazz.getName());
+			if (typeKey == null) {
+				return container.getInstance(clazz);
 			}
+			return container.getInstance(clazz, typeKey);
 		}
 	}
 

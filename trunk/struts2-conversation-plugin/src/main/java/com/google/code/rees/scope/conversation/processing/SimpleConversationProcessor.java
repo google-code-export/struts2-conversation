@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.container.Component;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
 import com.google.code.rees.scope.conversation.ConversationUtil;
 import com.google.code.rees.scope.conversation.annotations.ConversationField;
@@ -55,6 +56,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Component
 	public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider) {
 		this.configurationProvider = configurationProvider;
 	}

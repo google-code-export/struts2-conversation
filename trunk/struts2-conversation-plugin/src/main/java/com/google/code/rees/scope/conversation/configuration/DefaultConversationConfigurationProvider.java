@@ -29,14 +29,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rees.scope.ActionProvider;
+import com.google.code.rees.scope.container.Component;
+import com.google.code.rees.scope.container.Property;
 import com.google.code.rees.scope.conversation.ConversationConstants;
+import com.google.code.rees.scope.conversation.ConversationConstants.Properties;
 import com.google.code.rees.scope.conversation.annotations.BeginConversation;
 import com.google.code.rees.scope.util.ReflectionUtil;
 
@@ -51,6 +54,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationConfigurationProvider.class);
 
     protected ConversationArbitrator arbitrator;
+    protected ActionProvider actionProvider;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
 	protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
 	
@@ -58,6 +62,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Property(Properties.CONVERSATION_IDLE_TIMEOUT)
 	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
 		double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
     	LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
@@ -69,6 +74,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
      * {@inheritDoc}
      */
     @Override
+    @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
@@ -77,17 +83,30 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
      * {@inheritDoc}
      */
     @Override
-    public void init(Set<Class<?>> actionClasses) {
-    	if (this.classConfigurations.size() != actionClasses.size()) { //in case it's already been called
-    		LOG.info("Building Conversation Configurations...");
-        	if (this.arbitrator == null) {
-        		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
-        	}
-            for (Class<?> clazz : actionClasses) {
-                processClass(clazz, classConfigurations);
-            }
-            LOG.info("...building of Conversation Configurations successfully completed.");
-    	}
+    @Component
+	public void setActionProvider(ActionProvider actionProvider) {
+    	this.actionProvider = actionProvider;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void init() {
+		try {
+			if (this.classConfigurations.size() != actionProvider.getActionClasses().size()) { //in case it's already been called
+				LOG.info("Building Conversation Configurations...");
+				if (this.arbitrator == null) {
+					LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
+				}
+			    for (Class<?> clazz : actionProvider.getActionClasses()) {
+			        processClass(clazz, classConfigurations);
+			    }
+			    LOG.info("...building of Conversation Configurations successfully completed.");
+			}
+		} catch (Exception e) {
+			LOG.warn("The was an error attempting to retrieve the action classes.  This could be due to an older version of Struts2. Configurations will be built on the fly");
+		}
     }
 
     /**

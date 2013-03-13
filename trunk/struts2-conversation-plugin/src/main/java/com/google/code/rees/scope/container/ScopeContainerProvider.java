@@ -1,4 +1,4 @@
-package com.google.code.rees.scope;
+package com.google.code.rees.scope.container;
 
 import java.io.Serializable;
 

@@ -43,25 +43,24 @@
 	<constant name="conversation.max.instances" value="20"/>
 	<constant name="conversation.monitoring.thread.pool.size" value="20"/>
 	
-	<constant name="struts.scope.container" value="defaultScopeContainer"/>
-	<constant name="struts.scope.actionProvider" value="strutsActionProvider"/>
+	<constant name="com.google.code.rees.scope.container.ScopeContainer" value="defaultScopeContainer"/>
+	<constant name="com.google.code.rees.scope.ActionProvider" value="strutsActionProvider"/>
 	
-	<constant name="struts.conversation.configurationProvider" value="defaultConversationConfigurationProvider"/>
-	<constant name="struts.conversation.arbitrator" value="strutsConversationArbitrator"/>
-	<constant name="struts.conversation.processor" value="defaultConversationProcessor"/>
-	<constant name="struts.conversation.contextManagerProvider" value="defaultConversationContextManagerProvider"/>
-	<constant name="struts.conversation.contextFactory" value="defaultConversationContextFactory"/>
-	<constant name="struts.conversation.properties" value="strutsConversationProperties"/>
+	<constant name="com.google.code.rees.scope.conversation.configuration.ConversationConfigurationProvider" value="defaultConversationConfigurationProvider"/>
+	<constant name="com.google.code.rees.scope.conversation.configuration.ConversationArbitrator" value="strutsConversationArbitrator"/>
+	<constant name="com.google.code.rees.scope.conversation.processing.ConversationProcessor" value="defaultConversationProcessor"/>
+	<constant name="com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider" value="defaultConversationContextManagerProvider"/>
+	<constant name="com.google.code.rees.scope.conversation.context.ConversationContextFactory" value="defaultConversationContextFactory"/>
 	
-	<constant name="struts.session.configurationProvider" value="defaultSessionConfigurationProvider"/>
-	<constant name="struts.session.sessionManager" value="defaultSessionManager"/>
+	<constant name="com.google.code.rees.scope.session.SessionConfigurationProvider" value="defaultSessionConfigurationProvider"/>
+	<constant name="com.google.code.rees.scope.session.SessionManager" value="defaultSessionManager"/>
 	
 	<bean name="default" 
-		type="com.google.code.rees.scope.ScopeContainerProvider"
+		type="com.google.code.rees.scope.container.ScopeContainerProvider"
 		class="com.google.code.rees.scope.struts2.StrutsScopeContainerProvider" />
 	
 	<bean name="defaultScopeContainer" 
-		type="com.google.code.rees.scope.ScopeContainer"
+		type="com.google.code.rees.scope.container.ScopeContainer"
 		class="com.google.code.rees.scope.struts2.StrutsScopeContainer" />
 	
 	<bean name="strutsActionProvider" 
@@ -87,10 +86,6 @@
 	<bean name="defaultConversationContextFactory" 
 		type="com.google.code.rees.scope.conversation.context.ConversationContextFactory" 
 		class="com.google.code.rees.scope.conversation.context.DefaultConversationContextFactory"/>
-		
-	<bean name="strutsConversationProperties" 
-		type="com.google.code.rees.scope.conversation.ConversationProperties"
-		class="com.google.code.rees.scope.struts2.StrutsConversationProperties"/>
 		
 	<bean name="defaultSessionConfigurationProvider"
 		type="com.google.code.rees.scope.session.SessionConfigurationProvider"
