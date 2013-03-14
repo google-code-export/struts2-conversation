@@ -66,6 +66,7 @@
  
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<slf4j.version>[1.6.4,)</slf4j.version>
 		<struts2.version>2.3.12</struts2.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
 	</properties>
@@ -81,7 +82,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>[1.6.4,)</version>
+			<version>${slf4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
