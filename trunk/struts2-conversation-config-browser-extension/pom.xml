@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>com.googlecode.struts2-conversation</groupId>
 		<artifactId>struts2-conversation</artifactId>
-		<version>1.7.3-SNAPSHOT</version>
+		<version>1.7.3</version>
 	</parent>
 
 	<dependencies>
