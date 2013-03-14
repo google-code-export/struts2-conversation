@@ -17,6 +17,12 @@
 	
 		<dependency>
 			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-config-browser-plugin</artifactId>
 			<version>${struts2.version}</version>
 			<scope>provided</scope>
@@ -26,6 +32,13 @@
 			<groupId>com.googlecode.struts2-conversation</groupId>
 			<artifactId>struts2-conversation-scope-plugin</artifactId>
 			<version>${project.parent.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		
 	</dependencies>

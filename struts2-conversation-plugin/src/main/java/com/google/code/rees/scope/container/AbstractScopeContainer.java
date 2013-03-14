@@ -49,16 +49,16 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 					if (ReflectionUtil.isPropertyType(type) && method.isAnnotationPresent(Property.class)) {
 						Property property = method.getAnnotation(Property.class);
 						Object value = getPropertyFromPrimaryContainer(type, property.value());
-						LOG.info("Setting property [{}] on component of type [{}] with value [{}]", property.value(), component.getClass().getName(), value);
+						LOG.info("Setting property [{}] on component of type [{}] with value [{}]", new Object[]{property.value(), component.getClass().getName(), value});
 						method.invoke(component, new Object[]{value});
 					} else if (method.isAnnotationPresent(Component.class)) {
 						method.invoke(component, new Object[]{this.getComponent(type)});
 					}
 				} catch (Exception e) {
 					if (type.getName().startsWith("com.github.overengineer")) {
-						LOG.warn("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass(), method.getName(), e);
+						LOG.warn("Could not set component of type [{}] on component of type [{}] using setter [{}]", new Object[]{type.getName(), component.getClass(), method.getName(), e});
 					} else {
-						LOG.debug("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass(), method.getName());
+						LOG.debug("Could not set component of type [{}] on component of type [{}] using setter [{}]", new Object[]{type.getName(), component.getClass(), method.getName()});
 					}
 				}
 			}
