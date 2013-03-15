@@ -27,6 +27,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.overengineer.scope</groupId>
+			<artifactId>conversation-expression</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.overengineer.scope</groupId>
 			<artifactId>session</artifactId>
 		</dependency>
 		<dependency>
