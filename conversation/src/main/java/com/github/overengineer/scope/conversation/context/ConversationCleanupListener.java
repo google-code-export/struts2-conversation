@@ -55,7 +55,7 @@ public class ConversationCleanupListener implements HttpSessionListener {
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		ConversationContextManager contextManager = HttpConversationUtil.getContextManager(se.getSession());
+		ConversationContextManager contextManager = JeeConversationUtil.getContextManager(se.getSession());
 		if (contextManager != null) {
 			if (LOG.isDebugEnabled()) {
 	    		LOG.debug("Cleaning up conversation resources for session with ID:  " + se.getSession().getId());

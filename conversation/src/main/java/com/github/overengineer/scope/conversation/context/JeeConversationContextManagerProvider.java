@@ -19,15 +19,13 @@
  * 
  * **********************************************************************************************************************
  * 
- *  $Id: HttpConversationContextManagerProvider.java reesbyars $
+ *  $Id: JeeConversationContextManagerProvider.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.context;
 
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.github.overengineer.scope.container.PostConstructable;
 
 /**
  * Used for creating {@link ConversationContextManager
@@ -37,27 +35,7 @@ import com.github.overengineer.scope.container.PostConstructable;
  * @author rees.byars
  * 
  */
-public interface HttpConversationContextManagerProvider extends Serializable, PostConstructable {
-	
-	/**
-	 * The number of threads that will be used to monitor conversation timeouts
-	 * 
-	 * @param monitoringThreadPoolSize
-	 */
-	public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize);
-	
-	/**
-	 * set the frequency in milliseconds for monitoring timeouts
-	 * 
-	 * @param monitoringFrequency
-	 */
-	public void setMonitoringFrequency(long monitoringFrequency);
-	
-	/**
-	 * set the {@link ConversationContextFactory}
-	 * @param conversationContextFactory
-	 */
-	public void setConversationContextFactory(ConversationContextFactory conversationContextFactory);
+public interface JeeConversationContextManagerProvider extends Serializable {
 
     /**
      * Return the {@link ConversationContextManager} for this request

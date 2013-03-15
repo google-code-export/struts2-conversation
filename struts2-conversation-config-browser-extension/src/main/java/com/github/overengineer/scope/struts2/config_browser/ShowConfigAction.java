@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.util.ActionUtil;
 import com.github.overengineer.scope.struts2.ConversationInterceptor;
-import com.github.overengineer.scope.struts2.StrutsScopeConstants;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 import com.opensymphony.xwork2.config.entities.InterceptorMapping;
 import com.opensymphony.xwork2.inject.Inject;
@@ -26,10 +26,9 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     private static final Logger LOG = LoggerFactory.getLogger(ShowConfigAction.class);
     private ConversationConfigurationProvider conversationConfigurationProvider;
 
-    //TODO change this shit in both streams to inject scope container
-    @Inject(StrutsScopeConstants.TypeKeys.CONVERSATION_CONFIG_PROVIDER)
-    public void setConversationConfigurationProvider(ConversationConfigurationProvider conversationConfigurationProvider) {
-        this.conversationConfigurationProvider = conversationConfigurationProvider;
+    @Inject
+    public void setConversationConfigurationProvider(ScopeContainerProvider scopeContainerProvider) {
+        this.conversationConfigurationProvider = scopeContainerProvider.getScopeContainer().getComponent(ConversationConfigurationProvider.class);
     }
 
     @Override

@@ -38,10 +38,10 @@
 	<!-- SCOPE -->
 	<constant name="conversation.package.nesting" value="false" />
 	<constant name="struts.scope.followsConvention" value="true" />
-	<constant name="conversation.monitoring.frequency" value="300000"/>
+	<constant name="overengineer.monitoring.frequency" value="300000"/>
 	<constant name="conversation.idle.timeout" value="28800000"/>
 	<constant name="conversation.max.instances" value="20"/>
-	<constant name="conversation.monitoring.thread.pool.size" value="20"/>
+	<constant name="overengineer.monitoring.thread.pool.size" value="20"/>
 	
 	<constant name="com.github.overengineer.scope.container.ScopeContainer" value="defaultScopeContainer"/>
 	<constant name="com.github.overengineer.scope.ActionProvider" value="strutsActionProvider"/>
@@ -49,7 +49,7 @@
 	<constant name="com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider" value="defaultConversationConfigurationProvider"/>
 	<constant name="com.github.overengineer.scope.conversation.configuration.ConversationArbitrator" value="strutsConversationArbitrator"/>
 	<constant name="com.github.overengineer.scope.conversation.processing.ConversationProcessor" value="defaultConversationProcessor"/>
-	<constant name="com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider" value="defaultConversationContextManagerProvider"/>
+	<constant name="com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider" value="defaultConversationContextManagerProvider"/>
 	<constant name="com.github.overengineer.scope.conversation.context.ConversationContextFactory" value="defaultConversationContextFactory"/>
 	
 	<constant name="com.github.overengineer.scope.session.SessionConfigurationProvider" value="defaultSessionConfigurationProvider"/>
@@ -57,6 +57,10 @@
 	
 	<constant name="com.github.overengineer.scope.conversation.expression.eval.Eval" value="ognl"/>
 	<constant name="com.github.overengineer.scope.conversation.expression.configuration.ExpressionConfigurationProvider" value="defaultExpressionConfigurationProvider"/>
+	
+	<constant name="com.github.overengineer.scope.monitor.SchedulerProvider" value="defaultSchedulerProvider"/>
+	<constant name="com.github.overengineer.scope.monitor.TimeoutMonitor" value="scheduledExecutorTimeoutMonitor"/>
+	<constant name="com.github.overengineer.scope.conversation.context.ConversationContextManager" value="timeoutConversationContextManager"/>
 	
 	<bean name="default" 
 		type="com.github.overengineer.scope.container.ScopeContainerProvider"
@@ -83,8 +87,8 @@
 		class="com.github.overengineer.scope.conversation.processing.InjectionConversationProcessor" />
 		
 	<bean name="defaultConversationContextManagerProvider" 
-		type="com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider" 
-		class="com.github.overengineer.scope.conversation.context.DefaultHttpConversationContextManagerProvider"/>
+		type="com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider" 
+		class="com.github.overengineer.scope.conversation.context.DefaultJeeConversationContextManagerProvider"/>
 		
 	<bean name="defaultConversationContextFactory" 
 		type="com.github.overengineer.scope.conversation.context.ConversationContextFactory" 
@@ -109,6 +113,19 @@
 	<bean name="defaultExpressionConfigurationProvider" 
 		type="com.github.overengineer.scope.conversation.expression.configuration.ExpressionConfigurationProvider" 
 		class="com.github.overengineer.scope.conversation.expression.configuration.DefaultExpressionConfigurationProvider"/>
+	
+	<bean name="defaultSchedulerProvider" 
+		type="com.github.overengineer.scope.monitor.SchedulerProvider" 
+		class="com.github.overengineer.scope.monitor.DefaultSchedulerProvider"/>	
+		
+	<!-- prototypes -->
+	<bean name="timeoutConversationContextManager" scope="prototype"
+		type="com.github.overengineer.scope.conversation.context.ConversationContextManager" 
+		class="com.github.overengineer.scope.conversation.context.TimeoutConversationContextManager"/>
+		
+	<bean name="scheduledExecutorTimeoutMonitor" scope="prototype"
+		type="com.github.overengineer.scope.monitor.TimeoutMonitor" 
+		class="com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor"/>
 
 	<package name="struts-conversation-default" extends="struts-default">
 	

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
+import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.util.RequestContextUtil;
 
 /**
@@ -49,7 +49,7 @@ public class MockConversationAdapter extends ConversationAdapter {
 	Map<String, String> requestContext;
 	ConversationContextManager contextManager;
 	
-	public MockConversationAdapter(HttpServletRequest request, HttpConversationContextManagerProvider contextManagerProvider) {
+	public MockConversationAdapter(HttpServletRequest request, JeeConversationContextManagerProvider contextManagerProvider) {
 		this.requestContext = RequestContextUtil.getRequestContext(request);
 		this.contextManager = contextManagerProvider.getManager(request);
 	}
@@ -101,7 +101,7 @@ public class MockConversationAdapter extends ConversationAdapter {
 		return this.contextManager.remove(conversationName, conversationId);
 	}
 	
-	public static MockConversationAdapter init(HttpServletRequest request, HttpConversationContextManagerProvider contextManagerProvider) {
+	public static MockConversationAdapter init(HttpServletRequest request, JeeConversationContextManagerProvider contextManagerProvider) {
 		return new MockConversationAdapter(request, contextManagerProvider);
 	}
 

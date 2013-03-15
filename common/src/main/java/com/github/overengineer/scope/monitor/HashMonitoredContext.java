@@ -21,7 +21,7 @@
  * 
  *  $Id: HashMonitoredContext.java reesbyars $
  ******************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.monitor;
 
 import java.util.Collection;
 import java.util.Hashtable;

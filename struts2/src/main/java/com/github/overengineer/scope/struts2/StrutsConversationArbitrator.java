@@ -63,7 +63,7 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
 
-    @Inject(Properties.CONVERSATION_PACKAGE_NESTING_KEY)
+    @Inject(Properties.CONVERSATION_PACKAGE_NESTING)
     public void setUsePackageNesting(String usePackageNesting) {
         this.usePackageNesting = "true".equals(usePackageNesting);
     }

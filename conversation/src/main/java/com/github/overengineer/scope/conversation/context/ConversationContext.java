@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.context;
 
-import com.github.overengineer.scope.util.monitor.MonitoredContext;
+import com.github.overengineer.scope.monitor.MonitoredContext;
 
 /**
  * The context in which the conversation-scoped beans are placed. There is a

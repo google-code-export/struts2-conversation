@@ -22,7 +22,7 @@
  * $Id: ScheduledExecutorTimeoutMonitor.java Apr 24, 2012 9:24:23 AM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.monitor;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -35,7 +35,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
+import com.github.overengineer.scope.CommonConstants.Properties;
+import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.Property;
 
 /**
  * An implementation of the {@link TimeoutMonitor} that makes use of a {@link ScheduledExecutorService}.
@@ -61,17 +63,16 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	public static final long MONITORING_DELAY = 1000L;
 	
 	protected Map<String, TimeoutRunner<T>> timeoutRunners = new Hashtable<String, TimeoutRunner<T>>(INITIAL_CAPACITY, LOAD_FACTOR);
-	protected transient Map<String, ScheduledFuture<?>> scheduledFutures = null;
-	protected transient ScheduledExecutorService scheduler = null;
-	protected long monitoringFrequency = DEFAULT_MONITOR_FREQUENCY;
+	protected transient Map<String, ScheduledFuture<?>> scheduledFutures;
+	protected transient ScheduledExecutorService scheduler;
+	protected long monitoringFrequency;
 	protected SchedulerProvider schedulerProvider;
-	
-	protected ScheduledExecutorTimeoutMonitor(){}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Property(Properties.MONITORING_FREQUENCY)
 	public void setMonitoringFrequency(long frequencyMillis) {
 		this.monitoringFrequency = frequencyMillis;
 	}
@@ -79,15 +80,14 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	/**
 	 * sets the scheduler to be used
 	 */
+	@Component
 	public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
 		this.schedulerProvider = schedulerProvider;
-		this.init();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	@PostConstruct
 	@Override
 	public void init() {
 		this.scheduler = this.schedulerProvider.getScheduler();
@@ -195,21 +195,6 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		this.init();
-	}
-	
-	/**
-	 * used to create an instance
-	 * 
-	 * @param <TT>
-	 * @param scheduler
-	 * @param monitoringFrequency
-	 * @return
-	 */
-	public static <TT extends Timeoutable<TT>> ScheduledExecutorTimeoutMonitor<TT> spawnInstance(SchedulerProvider scheduler, long monitoringFrequency) {
-		ScheduledExecutorTimeoutMonitor<TT> monitor = new ScheduledExecutorTimeoutMonitor<TT>();
-		monitor.setMonitoringFrequency(monitoringFrequency);
-		monitor.setSchedulerProvider(scheduler);
-		return monitor;
 	}
 
 }

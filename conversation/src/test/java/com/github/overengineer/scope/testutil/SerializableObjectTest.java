@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
+
 public abstract class SerializableObjectTest<T> {
 
     @Test

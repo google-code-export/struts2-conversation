@@ -19,26 +19,54 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutListener.java Apr 17, 2012 3:17:39 PM reesbyars $
+ * $Id: Timeoutable.java Apr 16, 2012 9:37:19 AM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.monitor;
 
 import java.io.Serializable;
 
 /**
- * This interface provides a simple mechanism for allowing other objects to be notified of a {@link Timeoutable Timeoutable's}
- * timeout.
+ * This interface can be used in conjunction with a {@link TimeoutMonitor} to provide a simple timeout mechanism
  * 
  * @author rees.byars
  */
-public interface TimeoutListener<T> extends Serializable {
+public interface Timeoutable<T extends Timeoutable<T>> extends Serializable {
 
 	/**
-	 * Called when the given {@link Timeoutable Timeoutable's} timeout method is called.
-	 * 
-	 * @param timeoutable
+	 * Sets the time after which this Timeoutable's {@link #timeout()} method will be called
+	 * @param maxIdleTime
 	 */
-	public void onTimeout(T timeoutable);
+	public void setMaxIdleTime(long maxIdleTime);
+
+	/**
+	 * A unique ID used to identify this Timeoutable
+	 * @return
+	 */
+	public String getId();
+
+	/**
+	 * The time remaining until this Timeoutable's {@link #timeout()} method will be called
+	 * @return
+	 */
+	public long getRemainingTime();
+
+	/**
+	 * Called when this Timeoutable's {@link #getRemainingTime()} is equal to or less than zero (i.e. the max idle time has been exceeded).
+	 */
+	public void timeout();
+
+	/**
+	 * Resets this Timeoutable's remaining time to the max idle time
+	 */
+	public void reset();
+
+	/**
+	 * Add a listener whose {@link TimeoutListener#onTimeout(Object)} method will be called when this Timeoutable's
+	 * {@link #timeout()} method is called.  
+	 * 
+	 * @param timeoutListener
+	 */
+	public void addTimeoutListener(TimeoutListener<T> timeoutListener);
 
 }

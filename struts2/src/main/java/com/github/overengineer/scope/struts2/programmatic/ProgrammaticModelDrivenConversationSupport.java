@@ -36,7 +36,7 @@ import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
+import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
 import com.github.overengineer.scope.struts2.StrutsConversationAdapter;
@@ -119,7 +119,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     public void prepare() {
     	ActionContext actionContext = ActionContext.getContext();
     	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = scopeContainer.getComponent(HttpConversationContextManagerProvider.class).getManager(request);
+    	ConversationContextManager contextManager = scopeContainer.getComponent(JeeConversationContextManagerProvider.class).getManager(request);
         try {
 			scopeContainer.getComponent(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
 			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
