@@ -66,6 +66,7 @@
 		<module>struts2</module>
 		<module>struts2-conversation-config-browser-extension</module>
 		<module>struts2-junit4-plugin</module>
+		<module>conversation-expression</module>
 	</modules>
 
 	<properties>
@@ -85,6 +86,11 @@
 			<dependency>
 				<groupId>com.github.overengineer.scope</groupId>
 				<artifactId>conversation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.overengineer.scope</groupId>
+				<artifactId>conversation-expression</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

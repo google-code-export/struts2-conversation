@@ -32,7 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
+import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
 
 /**
@@ -44,7 +44,7 @@ import com.github.overengineer.scope.conversation.processing.ConversationProcess
 public class ConversationInterceptor implements HandlerInterceptor {
 
     protected ConversationProcessor conversationProcessor;
-    protected HttpConversationContextManagerProvider conversationContextManagerProvider;
+    protected JeeConversationContextManagerProvider conversationContextManagerProvider;
 
     /**
      * Set the {@link ConversationProcessor}
@@ -56,11 +56,11 @@ public class ConversationInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Set the {@link HttpConversationContextManagerProvider}
+     * Set the {@link JeeConversationContextManagerProvider}
      * 
      * @param conversationContextManagerProvider
      */
-    public void setConversationContextManagerProvider(HttpConversationContextManagerProvider conversationContextManagerProvider) {
+    public void setConversationContextManagerProvider(JeeConversationContextManagerProvider conversationContextManagerProvider) {
         this.conversationContextManagerProvider = conversationContextManagerProvider;
     }
 

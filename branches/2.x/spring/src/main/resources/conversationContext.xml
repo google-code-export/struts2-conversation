@@ -24,7 +24,7 @@
 		<property name="configurationProvider" ref="conversationConfigurationProvider" />
 	</bean>
 	
-	<bean id="conversationContextManagerProvider" class="com.github.overengineer.scope.conversation.context.DefaultHttpConversationContextManagerProvider" />
+	<bean id="conversationContextManagerProvider" class="com.github.overengineer.scope.conversation.context.DefaultJeeConversationContextManagerProvider" />
 
 	<bean id="requestDataValueProcessor" class="com.github.overengineer.scope.spring.ConversationRequestDataValueProcessor" />
 
