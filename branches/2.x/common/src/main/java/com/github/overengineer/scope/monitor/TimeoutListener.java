@@ -19,55 +19,26 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutMonitor.java Apr 16, 2012 9:33:57 AM reesbyars $
+ * $Id: TimeoutListener.java Apr 17, 2012 3:17:39 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.monitor;
 
 import java.io.Serializable;
 
 /**
- * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple timeout mechanism
+ * This interface provides a simple mechanism for allowing other objects to be notified of a {@link Timeoutable Timeoutable's}
+ * timeout.
  * 
  * @author rees.byars
  */
-public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable {
+public interface TimeoutListener<T> extends Serializable {
 
 	/**
-	 * 5 minutes
-	 */
-	public static final long DEFAULT_MONITOR_FREQUENCY = 300000;
-
-	/**
-	 * The frequency, in milliseconds, that this monitor will check its {@link Timeoutable Timeoutables} for their remaining times.
-	 * It should be noted that the frequency is guaranteed to not be less the the given time, but it
-	 * may incrementally exceed the given time as more {@link Timeoutable Timeoutables} are added.  This is due
-	 * to the time required to check each of the Timeoutables.  
+	 * Called when the given {@link Timeoutable Timeoutable's} timeout method is called.
 	 * 
-	 * @param frequencyMillis
-	 */
-	public void setMonitoringFrequency(long frequencyMillis);
-
-	/**
-	 * Adds the {@link Timeoutable} to this monitor
 	 * @param timeoutable
 	 */
-	public void addTimeoutable(T timeoutable);
-
-	/**
-	 * Removes this {@link Timeoutable} from this monitor
-	 * @param timeoutable
-	 */
-	public void removeTimeoutable(T timeoutable);
-
-	/**
-	 * Initializes this monitor, beginning a background thread for monitoring its {@link Timeoutable Timeoutables}.
-	 */
-	public void init();
-
-	/**
-	 * Destroys this monitor, stopping its background thread and clearing its {@link Timeoutable} cache.
-	 */
-	public void destroy();
+	public void onTimeout(T timeoutable);
 
 }

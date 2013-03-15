@@ -40,7 +40,7 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 		return getPropertyFromPrimaryContainer(clazz, name);
 	}
 	
-	protected void inject(Object component) {
+	public void inject(Object component) {
 		LOG.debug("Injecting dependencies into component of type [{}]", component.getClass().getName());
 		for (Method method : component.getClass().getMethods()) {
 			if(ReflectionUtil.isPublicSetter(method)) {

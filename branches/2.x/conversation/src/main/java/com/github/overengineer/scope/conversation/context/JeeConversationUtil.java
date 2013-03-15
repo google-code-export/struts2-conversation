@@ -19,26 +19,27 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: TimeoutRunner.java Apr 25, 2012 4:26:55 PM reesbyars $
+ * $Id: JeeConversationUtil.java Apr 20, 2012 11:48:45 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.conversation.context;
 
-import java.io.Serializable;
+import javax.servlet.http.HttpSession;
+
+import com.github.overengineer.scope.conversation.ConversationConstants;
 
 /**
- * A handy runnable interface whose implementations should have a {@link #run()} method
- * that will be executed periodically to perform monitoring of its {@link Timeoutable}.
- * 
- * 
  * @author rees.byars
+ *
  */
-public interface TimeoutRunner<T extends Timeoutable<T>> extends Runnable, Serializable {
+public class JeeConversationUtil {
 	
-	/**
-	 * acquire the Timeoutable that this runner is monitoring
-	 * @return
-	 */
-	public T getTimeoutable();
+	public static ConversationContextManager getContextManager(HttpSession session) {
+		return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
+	}
+	
+	public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
+		session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
+	}
 
 }

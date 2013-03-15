@@ -19,19 +19,26 @@
  *
  ***********************************************************************************************************************
  *
- * $Id: MonitoredContext.java Apr 17, 2012 6:41:43 PM reesbyars $
+ * $Id: TimeoutRunner.java Apr 25, 2012 4:26:55 PM reesbyars $
  *
  **********************************************************************************************************************/
-package com.github.overengineer.scope.util.monitor;
+package com.github.overengineer.scope.monitor;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
- * @author rees.byars
+ * A handy runnable interface whose implementations should have a {@link #run()} method
+ * that will be executed periodically to perform monitoring of its {@link Timeoutable}.
  * 
+ * 
+ * @author rees.byars
  */
-public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>>
-		extends Map<K, V>, Timeoutable<T>, Serializable {
+public interface TimeoutRunner<T extends Timeoutable<T>> extends Runnable, Serializable {
+	
+	/**
+	 * acquire the Timeoutable that this runner is monitoring
+	 * @return
+	 */
+	public T getTimeoutable();
 
 }

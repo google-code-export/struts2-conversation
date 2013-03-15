@@ -27,8 +27,9 @@ package com.github.overengineer.scope.conversation.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.util.monitor.TimeoutListener;
-import com.github.overengineer.scope.util.monitor.TimeoutMonitor;
+import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.monitor.TimeoutListener;
+import com.github.overengineer.scope.monitor.TimeoutMonitor;
 
 /**
  * This class extends the {@link DefaultConversationContextManager} and uses a {@link TimeoutMonitor} to
@@ -46,6 +47,7 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
 	
 	protected TimeoutMonitor<ConversationContext> conversationTimeoutMonitor;
 	
+	@Component
 	public void setTimeoutMonitor(TimeoutMonitor<ConversationContext> conversationTimeoutMonitor) {
 		this.conversationTimeoutMonitor = conversationTimeoutMonitor;
 	}

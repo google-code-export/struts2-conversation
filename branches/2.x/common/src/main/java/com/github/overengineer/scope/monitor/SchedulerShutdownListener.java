@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.conversation.context;
+package com.github.overengineer.scope.monitor;
 
 import java.util.concurrent.ScheduledExecutorService;
 

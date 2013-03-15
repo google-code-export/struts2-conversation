@@ -75,9 +75,9 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> 
 		<dependency>
-			<groupId>com.googlecode.struts2-conversation</groupId>
+			<groupId>com.github.overengineer.scope</groupId>
 			<artifactId>struts2-junit4-plugin</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>

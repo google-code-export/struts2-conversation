@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.context;
 
-import com.github.overengineer.scope.util.monitor.HashMonitoredContext;
+import com.github.overengineer.scope.monitor.HashMonitoredContext;
 
 /**
  * The default implementation of the {@link ConversationContext}

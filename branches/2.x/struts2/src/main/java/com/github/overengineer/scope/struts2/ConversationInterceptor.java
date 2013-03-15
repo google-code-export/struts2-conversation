@@ -38,7 +38,7 @@ import com.github.overengineer.scope.container.ScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.HttpConversationContextManagerProvider;
+import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.exceptions.ConversationIdException;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
@@ -97,7 +97,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
 
 
-    protected HttpConversationContextManagerProvider contextManagerProvider;
+    protected JeeConversationContextManagerProvider contextManagerProvider;
     protected ConversationProcessor processor;
     protected ScopeContainer scopeContainer;
     protected Set<String> shortCircuitResults = Collections.emptySet();
@@ -127,7 +127,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 
         LOG.info("Initializing the Conversation Interceptor");
 
-        contextManagerProvider = scopeContainer.getComponent(HttpConversationContextManagerProvider.class);
+        contextManagerProvider = scopeContainer.getComponent(JeeConversationContextManagerProvider.class);
         
         processor = scopeContainer.getComponent(ConversationProcessor.class);
         
