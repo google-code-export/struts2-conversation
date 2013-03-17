@@ -53,7 +53,7 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 			try {
 				return implementationType.newInstance();
 			} catch (Exception e) {
-				throw new RuntimeException("Could not create new instance of component");
+				throw new RuntimeException("Could not create new instance of component", e);
 			}
 		}
 

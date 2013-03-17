@@ -70,10 +70,6 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	protected long monitoringFrequency;
 	protected SchedulerProvider schedulerProvider;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Property(Properties.MONITORING_FREQUENCY)
 	public void setMonitoringFrequency(long frequencyMillis) {
 		this.monitoringFrequency = frequencyMillis;

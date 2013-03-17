@@ -31,29 +31,33 @@ package com.github.overengineer.scope.conversation;
 public interface ConversationConstants {
 	
 	/**
-	 * 20
-	 */
-	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
-	
-	/**
-	 * 8 hours
-	 */
-	public static final long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
-	
-	/**
 	 * used as a key to identify the {@link com.github.overengineer.scope.conversation.context.ConversationContextManager ConversationContextManager} 
 	 * within the session context
 	 */
-    public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
+    String CONVERSATION_CONTEXT_MANAGER_KEY = "conversation.context.manager.key";
     
-    public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
-    public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+    String CONVERSATION_NAME_SUFFIX = "_conversation";
+    String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+    
+    interface Defaults {
+
+		/**
+		 * 20
+		 */
+		int CONVERSATION_MAX_INSTANCES = 20;
+		
+		/**
+		 * 8 hours
+		 */
+		long CONVERSATION_IDLE_TIMEOUT = 28800000;
+    	
+    }
     
     interface Properties {
 
-		public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
-		public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
-		public static final String CONVERSATION_PACKAGE_NESTING = "conversation.package.nesting";
+		String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
+		String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
+		String CONVERSATION_PACKAGE_NESTING = "conversation.package.nesting";
     	
     }
     
