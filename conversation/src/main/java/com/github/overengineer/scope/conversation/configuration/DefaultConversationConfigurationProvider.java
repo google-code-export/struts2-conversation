@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.container.Property;
-import com.github.overengineer.scope.conversation.ConversationConstants;
+import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
@@ -59,8 +59,8 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     protected ConversationArbitrator arbitrator;
     protected ActionProvider actionProvider;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
-    protected long maxIdleTimeMillis = ConversationConstants.DEFAULT_CONVERSATION_MAX_IDLE_TIME;
-	protected int maxInstances = ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+    protected long maxIdleTimeMillis = Defaults.CONVERSATION_IDLE_TIMEOUT;
+	protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
 	
 	/**
 	 * {@inheritDoc}

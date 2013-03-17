@@ -29,7 +29,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
-import com.github.overengineer.scope.conversation.ConversationConstants;
+import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 
 /**
  * Denotes a method as a conversation-initiating method. Depending on
@@ -87,7 +87,7 @@ public @interface BeginConversation {
     /**
      * The max number of instances allowed for this conversation.
      */
-    public abstract int maxInstances() default ConversationConstants.DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION;
+    public abstract int maxInstances() default Defaults.CONVERSATION_MAX_INSTANCES;
     
     /**
      * if set to <code>true</code>, the framework will manage opening and closing a JPA transaction when the conversation begin and end/expires, respectively.
