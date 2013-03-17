@@ -94,7 +94,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 			
 		} catch (Exception e) {
 			
-			LOG.error("An exception occurred while processing the conversations:  " + e.getMessage());
+			LOG.error("An exception occurred while processing the conversations", e);
 			throw new ConversationException(e.getMessage());
 		}
 		

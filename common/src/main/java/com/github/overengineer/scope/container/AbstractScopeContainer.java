@@ -1,72 +1,76 @@
 package com.github.overengineer.scope.container;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.util.ReflectionUtil;
-
 public abstract class AbstractScopeContainer implements ScopeContainer {
 	
 	private static final long serialVersionUID = -6820777796732236492L;
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractScopeContainer.class);
 	
-	private Map<Class<?>, Object> components = new HashMap<Class<?>, Object>();
+	private Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
 
 	@Override
 	public <T> T getComponent(Class<T> clazz) {
 		@SuppressWarnings("unchecked")
-		T component = (T) components.get(clazz);
-		if (component == null) {
-			component = getComponentFromPrimaryContainer(clazz);
-			synchronized(components) {
-				if (components.get(clazz) == null) {
-					inject(component);
-					if (component instanceof PostConstructable) {
-						((PostConstructable) component).init();
-					}
-					components.put(clazz, component);
+		InjectionStrategy<T> strategy = (InjectionStrategy<T>) strategies.get(clazz);
+		if (strategy == null) {
+			strategy = InjectionStrategy.Factory.create(getInjectionContext(clazz));
+			synchronized(strategies) {
+				LOG.debug("Adding InjectionStrategy of type [{}] for singletonComponent of type [{}]", strategy.getClass().getName(), clazz.getName());
+				if (strategies.get(clazz) == null) {
+					strategies.put(clazz, strategy);
 				}
 			}
 		}
-		return component;
+		return strategy.getComponent();
 	}
 	
-	@Override
-	public <T> T getProperty(Class<T> clazz, String name) {
-		return getPropertyFromPrimaryContainer(clazz, name);
+	protected <T> InjectionContextImpl<T> getInjectionContext(Class<T> componentClass) {
+		return new InjectionContextImpl<T>(componentClass);
 	}
 	
-	public void inject(Object component) {
-		LOG.debug("Injecting dependencies into component of type [{}]", component.getClass().getName());
-		for (Method method : component.getClass().getMethods()) {
-			if(ReflectionUtil.isPublicSetter(method)) {
-				Class<?> type = method.getParameterTypes()[0];
-				try {
-					if (ReflectionUtil.isPropertyType(type) && method.isAnnotationPresent(Property.class)) {
-						Property property = method.getAnnotation(Property.class);
-						Object value = getPropertyFromPrimaryContainer(type, property.value());
-						LOG.info("Setting property [{}] on component of type [{}] with value [{}]", property.value(), component.getClass().getName(), value);
-						method.invoke(component, new Object[]{value});
-					} else if (method.isAnnotationPresent(Component.class)) {
-						method.invoke(component, new Object[]{this.getComponent(type)});
-					}
-				} catch (Exception e) {
-					if (type.getName().startsWith("com.github.overengineer")) {
-						LOG.warn("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass(), method.getName(), e);
-					} else {
-						LOG.debug("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass(), method.getName());
-					}
-				}
+	class InjectionContextImpl<T> implements InjectionContext<T> {
+		
+		Class<? extends T> implementationType;
+		T singletonComponent;
+		
+		InjectionContextImpl(Class<T> componentType) {
+			this.implementationType = AbstractScopeContainer.this.getImplementationType(componentType);
+			this.singletonComponent = AbstractScopeContainer.this.getComponentFromPrimaryContainer(componentType);
+		}
+
+		@Override
+		public T getSingletonComponent() {
+			return singletonComponent;
+		}
+		
+		@Override
+		public T getPrototypeComponent() {
+			try {
+				return implementationType.newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException("Could not create new instance of component");
 			}
 		}
+
+		@Override
+		public Class<? extends T> getImplementationType() {
+			return implementationType;
+		}
+
+		@Override
+		public ScopeContainer getContainer() {
+			return AbstractScopeContainer.this;
+		}
+		
 	}
-	
-	protected abstract <T> T getPropertyFromPrimaryContainer(Class<T> clazz, String name);
 	
 	protected abstract <T> T getComponentFromPrimaryContainer(Class<T> clazz);
+	
+	protected abstract <T> Class<? extends T> getImplementationType(Class<T> clazz);
 
 }
