@@ -39,12 +39,6 @@ public class DefaultHttpConversationContextManagerProviderTest extends
 				// TODO Auto-generated method stub
 				return null;
 			}
-
-			@Override
-			public void inject(Object component) {
-				// TODO Auto-generated method stub
-				
-			}
         	
         });
 

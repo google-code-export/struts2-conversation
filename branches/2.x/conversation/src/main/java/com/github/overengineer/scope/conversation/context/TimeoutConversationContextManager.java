@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.Prototype;
 import com.github.overengineer.scope.monitor.TimeoutListener;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
 
@@ -39,6 +40,7 @@ import com.github.overengineer.scope.monitor.TimeoutMonitor;
  * @author rees.byars
  *
  */
+@Prototype
 public class TimeoutConversationContextManager extends DefaultConversationContextManager implements TimeoutListener<ConversationContext> {
 
 	private static final long serialVersionUID = -4431057690602876686L;

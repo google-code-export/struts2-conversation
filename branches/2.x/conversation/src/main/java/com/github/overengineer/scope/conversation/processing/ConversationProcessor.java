@@ -30,7 +30,7 @@ import com.github.overengineer.scope.conversation.configuration.ConversationConf
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 
 /**
- * The primary conversation processing and management component.
+ * The primary conversation processing and management singletonComponent.
  * 
  * @author rees.byars
  * 

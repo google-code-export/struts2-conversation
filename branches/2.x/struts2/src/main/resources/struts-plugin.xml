@@ -119,11 +119,11 @@
 		class="com.github.overengineer.scope.monitor.DefaultSchedulerProvider"/>	
 		
 	<!-- prototypes -->
-	<bean name="timeoutConversationContextManager" scope="prototype"
+	<bean name="timeoutConversationContextManager"
 		type="com.github.overengineer.scope.conversation.context.ConversationContextManager" 
 		class="com.github.overengineer.scope.conversation.context.TimeoutConversationContextManager"/>
 		
-	<bean name="scheduledExecutorTimeoutMonitor" scope="prototype"
+	<bean name="scheduledExecutorTimeoutMonitor"
 		type="com.github.overengineer.scope.monitor.TimeoutMonitor" 
 		class="com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor"/>
 

@@ -18,7 +18,7 @@ public class StrutsScopeContainer extends AbstractScopeContainer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T getPropertyFromPrimaryContainer(Class<T> clazz, String name) {
+	public <T> T getProperty(Class<T> clazz, String name) {
 		String string = container.getInstance(String.class, name);
 		if (clazz == long.class) {
 			return (T) Long.valueOf(string);
@@ -40,6 +40,12 @@ public class StrutsScopeContainer extends AbstractScopeContainer {
 			}
 			return container.getInstance(clazz, typeKey);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
+		return (Class<? extends T>) getComponentFromPrimaryContainer(clazz).getClass();
 	}
 
 }

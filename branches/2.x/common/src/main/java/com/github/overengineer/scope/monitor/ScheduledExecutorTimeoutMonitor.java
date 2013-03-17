@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.overengineer.scope.CommonConstants.Properties;
 import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.container.Property;
+import com.github.overengineer.scope.container.Prototype;
 
 /**
  * An implementation of the {@link TimeoutMonitor} that makes use of a {@link ScheduledExecutorService}.
@@ -50,6 +51,7 @@ import com.github.overengineer.scope.container.Property;
  * 
  * @author rees.byars
  */
+@Prototype
 public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMonitor<T>, TimeoutListener<T> {
 
 	private static final long serialVersionUID = -1502605748762224777L;
