@@ -25,23 +25,13 @@ package com.github.overengineer.scope.session;
 
 import java.io.Serializable;
 
-import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.container.PostConstructable;
-
 /**
  * This class is used by {@link SessionManager SessionManagers} to
  * obtain the {@link SessionConfiguration}
  * 
  * @author rees.byars
  */
-public interface SessionConfigurationProvider extends Serializable, PostConstructable {
-
-	/**
-     * Set the {@link ActionProvider} for building action configurations on startup
-     * 
-     * @param actionProvider
-     */
-    public void setActionProvider(ActionProvider actionProvider);
+public interface SessionConfigurationProvider extends Serializable {
 
     /**
      * Get the current configuration, adding the given class to

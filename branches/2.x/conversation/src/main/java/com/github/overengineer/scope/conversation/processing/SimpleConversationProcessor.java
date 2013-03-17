@@ -53,10 +53,6 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 	
 	protected ConversationConfigurationProvider configurationProvider;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Component
 	public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider) {
 		this.configurationProvider = configurationProvider;

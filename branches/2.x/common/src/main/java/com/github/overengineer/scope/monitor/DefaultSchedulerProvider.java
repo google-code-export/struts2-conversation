@@ -8,9 +8,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.overengineer.scope.CommonConstants.Properties;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.container.Property;
 
-public class DefaultSchedulerProvider implements SchedulerProvider {
+public class DefaultSchedulerProvider implements SchedulerProvider, PostConstructable {
 	
 	private static final long serialVersionUID = -6832427883773358141L;
 	
@@ -28,7 +29,7 @@ public class DefaultSchedulerProvider implements SchedulerProvider {
 		synchronized (SchedulerShutdownListener.class) {
     		scheduler = SchedulerShutdownListener.getScheduler();
     		if (scheduler == null) {
-    			scheduler = Executors.newScheduledThreadPool(this.monitoringThreadPoolSize, new ThreadFactory() {
+    			scheduler = Executors.newScheduledThreadPool(monitoringThreadPoolSize, new ThreadFactory() {
 		    		
 		    		AtomicInteger id = new AtomicInteger(0);
 
@@ -56,7 +57,7 @@ public class DefaultSchedulerProvider implements SchedulerProvider {
 			if (scheduler !=null) {
 				return scheduler;
 			}
-			this.init();
+			init();
 			return scheduler;
 		} finally {
 			schedulerGuard.unlock();

@@ -52,7 +52,7 @@ public class DefaultConversationContextManagerTest {
     @Test
     public void testConcurrentModification() throws InterruptedException {
     	
-    	ConversationContextManager manager = new DefaultConversationContextManager();
+    	DefaultConversationContextManager manager = new DefaultConversationContextManager();
     	manager.setContextFactory(new DefaultConversationContextFactory());
     	
     	TaskThread contractionThread = BasicTaskThread.spawnInstance();

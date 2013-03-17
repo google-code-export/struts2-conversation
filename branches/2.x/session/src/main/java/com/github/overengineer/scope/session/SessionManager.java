@@ -34,13 +34,6 @@ import java.io.Serializable;
 public interface SessionManager extends Serializable {
 
     /**
-     * Set the {@link SessionConfigurationProvider}
-     * 
-     * @param configurationProvider
-     */
-    public void setConfigurationProvider(SessionConfigurationProvider configurationProvider);
-
-    /**
      * Process, manage, and inject the {@link SessionField SessionFields}
      * 
      * @param sessionAdapter

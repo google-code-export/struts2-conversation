@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
@@ -41,7 +42,7 @@ import com.github.overengineer.scope.util.ReflectionUtil;
  * 
  * @author rees.byars
  */
-public class DefaultSessionConfigurationProvider implements SessionConfigurationProvider {
+public class DefaultSessionConfigurationProvider implements SessionConfigurationProvider, PostConstructable {
 
     private static final long serialVersionUID = 3703684121698557461L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionConfigurationProvider.class);
@@ -49,10 +50,6 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
     protected ActionProvider actionProvider;
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;

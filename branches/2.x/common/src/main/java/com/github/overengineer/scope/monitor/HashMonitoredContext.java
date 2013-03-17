@@ -53,7 +53,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	public HashMonitoredContext(long maxIdleTime) {
 		super(INITIAL_CAPACITY, LOAD_FACTOR);
 		this.maxIdleTime = maxIdleTime;
-		this.ping();
+		ping();
 	}
 
 	/**
@@ -61,7 +61,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public V get(Object key) {
-		this.ping();
+		ping();
 		return super.get(key);
 	}
 
@@ -71,7 +71,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@Override
 	public V put(K key, V value) {
 		
-		this.ping();
+		ping();
 		
 		//null keys not allowed in hashtable
 		if (key == null) {
@@ -92,7 +92,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
-		this.ping();
+		ping();
 		super.putAll(m);
 	}
 
@@ -101,7 +101,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public Collection<V> values() {
-		this.ping();
+		ping();
 		return super.values();
 	}
 
@@ -110,7 +110,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public V remove(Object key) {
-		this.ping();
+		ping();
 		return super.remove(key);
 	}
 
@@ -119,7 +119,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
-		this.ping();
+		ping();
 		return super.entrySet();
 	}
 
@@ -128,7 +128,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public Set<K> keySet() {
-		this.ping();
+		ping();
 		return super.keySet();
 	}
 
@@ -146,7 +146,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public void reset() {
-		this.ping();
+		ping();
 	}
 
 	/**
@@ -162,7 +162,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public void addTimeoutListener(TimeoutListener<T> timeoutListener) {
-		this.timeoutListeners.add(timeoutListener);
+		timeoutListeners.add(timeoutListener);
 	}
 
 	/**
@@ -171,15 +171,15 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	@SuppressWarnings("unchecked")
 	@Override
 	public void timeout() {
-		for (TimeoutListener<T> timeoutListener : this.timeoutListeners) {
+		for (TimeoutListener<T> timeoutListener : timeoutListeners) {
 			timeoutListener.onTimeout((T) this);
 		}
-		this.timeoutListeners.clear();
-		this.clear();
+		timeoutListeners.clear();
+		clear();
 	}
 
 	protected void ping() {
-		this.timeOfMostRecentAccess = System.currentTimeMillis();
+		timeOfMostRecentAccess = System.currentTimeMillis();
 	}
 
 }

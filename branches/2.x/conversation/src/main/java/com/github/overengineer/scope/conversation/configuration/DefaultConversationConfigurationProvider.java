@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
@@ -51,7 +52,7 @@ import com.github.overengineer.scope.util.ReflectionUtil;
  * 
  * @author rees.byars
  */
-public class DefaultConversationConfigurationProvider implements ConversationConfigurationProvider {
+public class DefaultConversationConfigurationProvider implements ConversationConfigurationProvider, PostConstructable {
 
     private static final long serialVersionUID = -1227350994518195549L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationConfigurationProvider.class);
@@ -62,10 +63,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     protected long maxIdleTimeMillis = Defaults.CONVERSATION_IDLE_TIMEOUT;
 	protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Property(Properties.CONVERSATION_IDLE_TIMEOUT)
 	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
 		double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
@@ -74,29 +71,17 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 		this.maxIdleTimeMillis = maxIdleTimeMillis;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Property(Properties.CONVERSATION_MAX_INSTANCES)
 	public void setDefaultMaxInstances(int maxInstances) {
 		LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
 		this.maxInstances = maxInstances;
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;
