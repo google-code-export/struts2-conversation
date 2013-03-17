@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.overengineer.scope.CommonConstants.Properties;
 import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.container.Prototype;
 
@@ -52,7 +53,7 @@ import com.github.overengineer.scope.container.Prototype;
  * @author rees.byars
  */
 @Prototype
-public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMonitor<T>, TimeoutListener<T> {
+public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implements TimeoutMonitor<T>, TimeoutListener<T>, PostConstructable {
 
 	private static final long serialVersionUID = -1502605748762224777L;
 	
@@ -71,8 +72,8 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	protected SchedulerProvider schedulerProvider;
 
 	@Property(Properties.MONITORING_FREQUENCY)
-	public void setMonitoringFrequency(long frequencyMillis) {
-		this.monitoringFrequency = frequencyMillis;
+	public void setMonitoringFrequency(long monitoringFrequency) {
+		this.monitoringFrequency = monitoringFrequency;
 	}
 	
 	/**

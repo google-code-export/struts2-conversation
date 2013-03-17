@@ -45,10 +45,6 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionManager.class);
     protected SessionConfigurationProvider configurationProvider;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
     public void setConfigurationProvider(SessionConfigurationProvider configurationProvider) {
         this.configurationProvider = configurationProvider;

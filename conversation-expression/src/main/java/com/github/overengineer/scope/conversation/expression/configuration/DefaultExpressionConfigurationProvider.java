@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.expression.annotations.Eval;
 
@@ -18,7 +19,7 @@ import com.github.overengineer.scope.conversation.expression.annotations.Eval;
  * @author reesbyars
  *
  */
-public class DefaultExpressionConfigurationProvider implements ExpressionConfigurationProvider {
+public class DefaultExpressionConfigurationProvider implements ExpressionConfigurationProvider, PostConstructable {
 	
 	private static final long serialVersionUID = 8919085473390332248L;
 
@@ -28,19 +29,11 @@ public class DefaultExpressionConfigurationProvider implements ExpressionConfigu
 	protected ActionProvider actionProvider;
 	protected ConcurrentMap<Class<?>, ExpressionConfiguration> expressionConfigurations = new ConcurrentHashMap<Class<?>, ExpressionConfiguration>();
 	
-	/**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Component
 	public void setActionProvider(ActionProvider actionProvider) {
     	this.actionProvider = actionProvider;

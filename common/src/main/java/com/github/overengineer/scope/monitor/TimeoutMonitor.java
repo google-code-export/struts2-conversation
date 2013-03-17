@@ -26,14 +26,12 @@ package com.github.overengineer.scope.monitor;
 
 import java.io.Serializable;
 
-import com.github.overengineer.scope.container.PostConstructable;
-
 /**
  * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple timeout mechanism
  * 
  * @author rees.byars
  */
-public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable, PostConstructable {
+public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable {
 
 	/**
 	 * Adds the {@link Timeoutable} to this monitor

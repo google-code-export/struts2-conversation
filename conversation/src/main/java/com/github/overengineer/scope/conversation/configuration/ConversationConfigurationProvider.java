@@ -26,9 +26,6 @@ package com.github.overengineer.scope.conversation.configuration;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.container.PostConstructable;
-import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
 
 /**
@@ -39,37 +36,7 @@ import com.github.overengineer.scope.conversation.processing.ConversationProcess
  * @author rees.byars
  * 
  */
-public interface ConversationConfigurationProvider extends Serializable, PostConstructable {
-	
-	/**
-	 * Set the max number of cached {@link ConversationContext
-	 * ConversationContexts}.
-	 * 
-	 * @param maxInstances
-	 */
-	public void setDefaultMaxInstances(int maxInstances);
-	
-	/**
-	 * Set the default max idle time for conversations
-	 * 
-	 * @param maxIdleTime
-	 */
-	public void setDefaultMaxIdleTime(long maxIdleTimeMillis);
-
-    /**
-     * Set the {@link ConversationArbitrator} to be used for building the
-     * configurations
-     * 
-     * @param arbitrator
-     */
-    public void setArbitrator(ConversationArbitrator arbitrator);
-    
-    /**
-     * Set the {@link ActionProvider} for building action configurations on startup
-     * 
-     * @param actionProvider
-     */
-    public void setActionProvider(ActionProvider actionProvider);
+public interface ConversationConfigurationProvider extends Serializable {
 
     /**
      * Get the {@link ConversationClassConfiguration ConversationConfigurations} for

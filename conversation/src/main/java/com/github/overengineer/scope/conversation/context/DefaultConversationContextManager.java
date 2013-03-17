@@ -49,10 +49,6 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	protected Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
 	protected AtomicLong nextId = new AtomicLong();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@Component
 	public void setContextFactory(ConversationContextFactory contextFactory) {
 		this.contextFactory = contextFactory;

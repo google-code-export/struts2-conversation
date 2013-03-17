@@ -26,7 +26,6 @@ package com.github.overengineer.scope.conversation.processing;
 import java.io.Serializable;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
-import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 
 /**
@@ -36,13 +35,6 @@ import com.github.overengineer.scope.conversation.exceptions.ConversationExcepti
  * 
  */
 public interface ConversationProcessor extends Serializable {
-
-    /**
-     * Set the configuration provider for this manager
-     * 
-     * @param configurationProvider
-     */
-    public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider);
 
     /**
      * Process the conversations for the current request using the given adapter

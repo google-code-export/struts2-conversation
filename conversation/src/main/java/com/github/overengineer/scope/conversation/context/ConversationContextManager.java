@@ -33,13 +33,6 @@ import java.io.Serializable;
  * 
  */
 public interface ConversationContextManager extends Serializable {
-
-	/**
-	 * Set the {@link ConversationContextFactory} to be used by this manager
-	 * 
-	 * @param contextFactory
-	 */
-	public void setContextFactory(ConversationContextFactory contextFactory);
 	
 	/**
 	 * Creates a new context for the given conversation name, using the given idle time
