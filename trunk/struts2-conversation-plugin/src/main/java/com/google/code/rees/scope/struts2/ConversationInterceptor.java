@@ -23,8 +23,11 @@
  ******************************************************************************/
 package com.google.code.rees.scope.struts2;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,12 +38,14 @@ import org.slf4j.LoggerFactory;
 import com.google.code.rees.scope.container.ScopeContainer;
 import com.google.code.rees.scope.container.ScopeContainerProvider;
 import com.google.code.rees.scope.conversation.ConversationAdapter;
+import com.google.code.rees.scope.conversation.ConversationConstants;
 import com.google.code.rees.scope.conversation.context.ConversationContextManager;
 import com.google.code.rees.scope.conversation.context.HttpConversationContextManagerProvider;
 import com.google.code.rees.scope.conversation.exceptions.ConversationException;
 import com.google.code.rees.scope.conversation.exceptions.ConversationIdException;
 import com.google.code.rees.scope.conversation.processing.ConversationProcessor;
 import com.google.code.rees.scope.conversation.processing.InjectionConversationProcessor;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.inject.Inject;
@@ -89,6 +94,9 @@ public class ConversationInterceptor implements Interceptor {
      * This value can then be referenced in a message with the expression ${conversation.id}
      */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
+    
+    protected static final String ID_PARAM_REGEX = ".*" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+    protected static final Pattern ID_PARAM_PATTERN = Pattern.compile(ID_PARAM_REGEX);
 
     protected HttpConversationContextManagerProvider contextManagerProvider;
     protected ConversationProcessor processor;
@@ -131,7 +139,8 @@ public class ConversationInterceptor implements Interceptor {
     	
     	try {
     		
-    		HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+    		ActionContext actionContext = invocation.getInvocationContext();
+    		HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
         	ConversationContextManager contextManager = contextManagerProvider.getManager(request);
         	final ConversationAdapter adapter = new StrutsConversationAdapter(invocation, contextManager);
     		
@@ -144,6 +153,8 @@ public class ConversationInterceptor implements Interceptor {
     				invocation.getStack().getContext().put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, adapter.getViewContext());
     			}
             });
+    		
+    		this.cleanupParamIds(actionContext.getParameters());
             
             return invocation.invoke();
     		
@@ -161,6 +172,19 @@ public class ConversationInterceptor implements Interceptor {
     		
     	}
         
+    }
+    
+    /**
+     * removes the conversation ids from the parameter map so that they are excluded from further parameter processing
+     * 
+     * @param parameters a map of the request parameters
+     */
+    protected void cleanupParamIds(Map<String, Object> parameters) {
+    	for (Iterator<Entry<String, Object>> i = parameters.entrySet().iterator(); i.hasNext();) {
+			if (ID_PARAM_PATTERN.matcher(i.next().getKey()).matches()) {
+				i.remove();
+			}
+		}
     }
     
     /**
