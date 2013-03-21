@@ -14,7 +14,7 @@ import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
 
-public class SimpleScopeContainer extends AbstractScopeContainer {
+public class SimpleScopeContainer extends AbstractScopeContainer implements StandaloneContainer {
 	
 	private static final long serialVersionUID = -3502345525425524764L;
 	
@@ -79,7 +79,7 @@ public class SimpleScopeContainer extends AbstractScopeContainer {
 		}
 	}
 	
-	public <T> void setProperty(String name, Object value) {
+	public void setProperty(String name, Object value) {
 		properties.put(name, value);
 	}
 	

@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.conversation;
 
-import com.github.overengineer.scope.container.AbstractModule;
+import com.github.overengineer.scope.container.BaseModule;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -16,20 +16,20 @@ import com.github.overengineer.scope.conversation.context.TimeoutConversationCon
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
 import com.github.overengineer.scope.conversation.processing.InjectionConversationProcessor;
 
-public class ConversationModule extends AbstractModule {
+public class ConversationModule extends BaseModule {
 	
 	public ConversationModule() {
 		
-		setComponent(ConversationConfigurationProvider.class, DefaultConversationConfigurationProvider.class);
-		setComponent(ConversationArbitrator.class, DefaultConversationArbitrator.class);
-		setComponent(ConversationProcessor.class, InjectionConversationProcessor.class);
-		setComponent(JeeConversationContextManagerProvider.class, DefaultJeeConversationContextManagerProvider.class);
-		setComponent(ConversationContextFactory.class, DefaultConversationContextFactory.class);
-		setComponent(ConversationContextManager.class, TimeoutConversationContextManager.class);
+		resolve(ConversationConfigurationProvider.class).to(DefaultConversationConfigurationProvider.class);
+		resolve(ConversationArbitrator.class).to(DefaultConversationArbitrator.class);
+		resolve(ConversationProcessor.class).to(InjectionConversationProcessor.class);
+		resolve(JeeConversationContextManagerProvider.class).to(DefaultJeeConversationContextManagerProvider.class);
+		resolve(ConversationContextFactory.class).to(DefaultConversationContextFactory.class);
+		resolve(ConversationContextManager.class).to(TimeoutConversationContextManager.class);
 		
-		setProperty(Properties.CONVERSATION_IDLE_TIMEOUT, Defaults.CONVERSATION_IDLE_TIMEOUT);
-		setProperty(Properties.CONVERSATION_MAX_INSTANCES, Defaults.CONVERSATION_MAX_INSTANCES);
-		setProperty(Properties.CONVERSATION_PACKAGE_NESTING, true);
+		resolve(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
+		resolve(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
+		resolve(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
 		
 	}
 

@@ -1,12 +1,14 @@
 package com.github.overengineer.scope.session;
 
-import com.github.overengineer.scope.container.AbstractModule;
+import com.github.overengineer.scope.container.BaseModule;
 
-public class SessionModule extends AbstractModule {
+public class SessionModule extends BaseModule {
 	
 	public SessionModule() {
-		setComponent(SessionConfigurationProvider.class, DefaultSessionConfigurationProvider.class);
-		setComponent(SessionManager.class, DefaultSessionManager.class);
+		
+		resolve(SessionConfigurationProvider.class).to(DefaultSessionConfigurationProvider.class);
+		resolve(SessionManager.class).to(DefaultSessionManager.class);
+		
 	}
 
 }
