@@ -20,7 +20,7 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 		if (strategy == null) {
 			strategy = InjectionStrategy.Factory.create(getInjectionContext(clazz));
 			synchronized(strategies) {
-				LOG.debug("Adding InjectionStrategy of type [{}] for singletonComponent of type [{}]", strategy.getClass().getName(), clazz.getName());
+				LOG.debug("Adding InjectionStrategy of type [{}] for component of type [{}]", strategy.getClass().getName(), clazz.getName());
 				if (strategies.get(clazz) == null) {
 					strategies.put(clazz, strategy);
 				}

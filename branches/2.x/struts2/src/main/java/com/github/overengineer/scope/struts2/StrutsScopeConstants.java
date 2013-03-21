@@ -31,12 +31,12 @@ package com.github.overengineer.scope.struts2;
 public interface StrutsScopeConstants {
 	
 	//Configuration properties
-	public static final String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";
+	String REQUIRE_FOLLOWS_CONVENTION = "struts.scope.followsConvention";
 	
 	//Map keys
-	public static final String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
-	public static final String SESSION_FIELD_MAP_KEY = "session.field.map";
+	String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
+	String SESSION_FIELD_MAP_KEY = "session.field.map";
 	
-	public static final String SCOPE_CONTAINER_KEY = "com.github.overengineer.scope.container.ScopeContainer";
+	String SCOPE_CONTAINER_KEY = "com.github.overengineer.scope.container.ScopeContainer";
     
 }

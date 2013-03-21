@@ -22,10 +22,10 @@ public class PropertyInjector<T> implements Injector<T> {
 	public void inject(T component, ScopeContainer container) {
 		try {
 			Object value = container.getProperty(type, name);
-			LOG.info("Setting property [{}] on singletonComponent of type [{}] with value [{}]", name, component.getClass().getName(), value);
+			LOG.debug("Setting property [{}] on component of type [{}] with value [{}]", name, component.getClass().getName(), value);
 			setter.invoke(component, value);
 		} catch (Exception e) {
-			LOG.info("Could not set property [{}] of type [{}] on singletonComponent of type [{}] using setter [{}]", name, type.getName(), component.getClass().getName(), setter.getName());
+			LOG.error("Could not set property [{}] of type [{}] on component of type [{}] using setter [{}]", name, type.getName(), component.getClass().getName(), setter.getName(), e);
 		}
 	}
 

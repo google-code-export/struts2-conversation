@@ -18,6 +18,8 @@
 	
 	<constant name="struts.ognl.allowStaticMethodAccess" value="true"/>
 	
+	<constant name="struts.devMode" value="true" />
+	
 	<package name="session-field-convention-test-default" extends="struts-conversation-default">
 		
 		<action name="configuration-action"

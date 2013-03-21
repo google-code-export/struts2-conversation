@@ -21,7 +21,7 @@ public class ComponentInjector<T> implements Injector<T> {
 		try {
 			setter.invoke(component, container.getComponent(type));
 		} catch (Exception e) {
-			LOG.info("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass().getName(), setter.getName(), e);
+			LOG.error("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass().getName(), setter.getName(), e);
 		}
 	}
 

@@ -24,7 +24,7 @@ public interface Injector<T> {
 				throw new RuntimeException("Type [{}] is an interface.  Cannot build injector cache for an interface.");
 			}
 			
-			LOG.trace("Building injectors for singletonComponent of type [{}]", implementationType.getName());
+			LOG.trace("Building injectors for component of type [{}]", implementationType.getName());
 			
 			Set<Injector<T>> injectors = new HashSet<Injector<T>>();
 			for (Method method : implementationType.getMethods()) {
