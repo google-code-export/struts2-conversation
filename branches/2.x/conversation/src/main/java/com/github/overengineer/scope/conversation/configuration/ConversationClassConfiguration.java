@@ -60,7 +60,6 @@ public interface ConversationClassConfiguration {
      * Add an actionId for an intermediate action
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      */
     public void addAction(String actionId);
 
@@ -68,7 +67,6 @@ public interface ConversationClassConfiguration {
      * Add an actionId for a begin action
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      */
     public void addBeginAction(String actionId, long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional);
 
@@ -76,7 +74,6 @@ public interface ConversationClassConfiguration {
      * Add an actionId for an end action
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      */
     public void addEndAction(String actionId, boolean endAfterView);
 
@@ -85,7 +82,6 @@ public interface ConversationClassConfiguration {
      * member for this conversation
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      * @param actionId
      * @return
      */
@@ -96,7 +92,6 @@ public interface ConversationClassConfiguration {
      * member for this conversation
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      * @param actionId
      * @return
      */
@@ -107,7 +102,6 @@ public interface ConversationClassConfiguration {
      * member for this conversation
      * 
      * @see {@link ConversationAdapter#getActionId()}
-     * @see {@link ConversationArbitrator#getName(Method)}
      * @param actionId
      * @return
      */

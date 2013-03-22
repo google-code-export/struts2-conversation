@@ -46,7 +46,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConversationContextManager.class);
 
     protected ConversationContextFactory contextFactory;
-	protected Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
+	protected final Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
 	protected AtomicLong nextId = new AtomicLong();
 
 	@Component
@@ -185,8 +185,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
 	}
 
 	/**
-	 * Recursively removes the least-recently accessed conversations until the
-	 * number of remaining conversations equals {@link #maxInstances}
+	 * Recursively removes the least-recently accessed conversations
 	 */
 	protected void removeMostStaleConversation(Map<String, ConversationContext> conversationContexts, int maxInstances, String conversationName, long defaultDuration) {
 

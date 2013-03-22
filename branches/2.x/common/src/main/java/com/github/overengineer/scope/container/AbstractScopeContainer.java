@@ -11,7 +11,7 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 	private static final long serialVersionUID = -6820777796732236492L;
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractScopeContainer.class);
 	
-	private Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
+	private final Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
 
 	@Override
 	public <T> T getComponent(Class<T> clazz) {

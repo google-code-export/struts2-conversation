@@ -26,11 +26,11 @@ public class BaseModule implements Module {
 		return new PropertyMapper(name, properties);
 	}
 	
-	public interface Mapper<K, T> {
+	public interface Mapper<T> {
 		public void to(T value);
 	}
 	
-	public static class ClassMapper<K> implements Mapper<K, Class<? extends K>> {
+	public static class ClassMapper<K> implements Mapper<Class<? extends K>> {
 		private Class<K> key;
 		private Map<Class<?>, Class<?>> map;
 		public ClassMapper(Class<K> key, Map<Class<?>, Class<?>> map) {
@@ -43,7 +43,7 @@ public class BaseModule implements Module {
 		}
 	}
 	
-	public static class PropertyMapper implements Mapper<String, Object> {
+	public static class PropertyMapper implements Mapper<Object> {
 		private String key;
 		private Map<String, Object> map;
 		public PropertyMapper(String key, Map<String, Object> map) {

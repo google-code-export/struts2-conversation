@@ -137,8 +137,7 @@ public abstract class HashMonitoredContext<K, V, T extends MonitoredContext<K, V
 	 */
 	@Override
 	public long getRemainingTime() {
-		long remainingTime = (this.timeOfMostRecentAccess + this.maxIdleTime) - System.currentTimeMillis();
-		return remainingTime;
+        return (this.timeOfMostRecentAccess + this.maxIdleTime) - System.currentTimeMillis();
 	}
 
 	/**

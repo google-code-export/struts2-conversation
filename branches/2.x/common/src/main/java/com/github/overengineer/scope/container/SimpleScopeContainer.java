@@ -73,7 +73,7 @@ public class SimpleScopeContainer extends AbstractScopeContainer implements Stan
 		}
 	}
 	
-	public <T> void setProperties(Map<String, Object> properties) {
+	public void setProperties(Map<String, Object> properties) {
 		for (Entry<String, Object> propertyEntry : properties.entrySet()) {
 			setProperty(propertyEntry.getKey(), propertyEntry.getValue());
 		}

@@ -65,7 +65,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
 	 */
 	public static final long MONITORING_DELAY = 1000L;
 	
-	protected Map<String, TimeoutRunner<T>> timeoutRunners = new Hashtable<String, TimeoutRunner<T>>(INITIAL_CAPACITY, LOAD_FACTOR);
+	protected final Map<String, TimeoutRunner<T>> timeoutRunners = new Hashtable<String, TimeoutRunner<T>>(INITIAL_CAPACITY, LOAD_FACTOR);
 	protected transient Map<String, ScheduledFuture<?>> scheduledFutures;
 	protected transient ScheduledExecutorService scheduler;
 	protected long monitoringFrequency;
