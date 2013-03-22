@@ -27,9 +27,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Provides a Set of action classes for initializing configurations. In
- * the future, will be employed by the {@link ConversationConfigurationProvider}
- * and the {@link SessionConfigurationProvider}.
+ * Provides a Set of action classes for initializing configurations.
  * 
  * @author rees.byars
  */
@@ -39,7 +37,6 @@ public interface ActionProvider extends Serializable {
      * Returns the set of action classes
      * 
      * @return
-     * @throws Exception 
      */
     public Set<Class<?>> getActionClasses();
 
