@@ -6,8 +6,8 @@ public class SessionModule extends BaseModule {
 
     public SessionModule() {
 
-        resolve(SessionConfigurationProvider.class).to(DefaultSessionConfigurationProvider.class);
-        resolve(SessionManager.class).to(DefaultSessionManager.class);
+        use(DefaultSessionConfigurationProvider.class).forType(SessionConfigurationProvider.class);
+        use(DefaultSessionManager.class).forType(SessionManager.class);
 
     }
 

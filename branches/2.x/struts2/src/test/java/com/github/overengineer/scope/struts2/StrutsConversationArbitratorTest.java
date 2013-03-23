@@ -32,7 +32,7 @@ public class StrutsConversationArbitratorTest {
             }
 
         };
-        arbitrator.setUsePackageNesting("true");
+        arbitrator.setUsePackageNesting(true);
         arbitrator.setActionProvider(actionProvider);
         assertTrue(arbitrator.getPackageBasedConversations(
                 MockConversationControllerInterface.class, "Controller")

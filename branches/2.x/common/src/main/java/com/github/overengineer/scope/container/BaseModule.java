@@ -5,12 +5,18 @@ import java.util.Map;
 
 public class BaseModule implements Module {
 
-    private Map<Class<?>, Class<?>> components = new HashMap<Class<?>, Class<?>>();
+    private Map<Class<?>, Class<?>> typeMappings = new HashMap<Class<?>, Class<?>>();
+    private Map<Class<?>, Object> instanceMappings = new HashMap<Class<?>, Object>();
     private Map<String, Object> properties = new HashMap<String, Object>();
 
     @Override
-    public final Map<Class<?>, Class<?>> getComponentMappings() {
-        return components;
+    public final Map<Class<?>, Class<?>> getTypeMappings() {
+        return typeMappings;
+    }
+
+    @Override
+    public Map<Class<?>, Object> getInstanceMappings() {
+        return instanceMappings;
     }
 
     @Override
@@ -18,43 +24,52 @@ public class BaseModule implements Module {
         return properties;
     }
 
-    public <K> ClassMapper<K> resolve(Class<K> componentClass) {
-        return new ClassMapper<K>(componentClass, components);
+    public <V> TypeMapper<V> use(Class<V> implementationClass) {
+        return new TypeMapper<V>(implementationClass, typeMappings);
     }
 
-    public PropertyMapper resolve(String name) {
+    public <V> InstanceMapper<V> useInstance(V instance) {
+        return new InstanceMapper<V>(instance, instanceMappings);
+    }
+
+    public PropertyMapper set(String name) {
         return new PropertyMapper(name, properties);
     }
 
-    public interface Mapper<T> {
-        public void to(T value);
-    }
-
-    public static class ClassMapper<K> implements Mapper<Class<? extends K>> {
-        private Class<K> key;
+    public static class TypeMapper<V> {
+        private Class<V> value;
         private Map<Class<?>, Class<?>> map;
-
-        public ClassMapper(Class<K> key, Map<Class<?>, Class<?>> map) {
-            this.key = key;
+        public TypeMapper(Class<V> value, Map<Class<?>, Class<?>> map) {
+            this.value = value;
             this.map = map;
         }
-
-        @Override
-        public void to(Class<? extends K> value) {
+        public TypeMapper<V> forType(Class<? super V> key) {
             map.put(key, value);
+            return this;
+        }
+
+    }
+
+    public static class InstanceMapper<V> {
+        private V value;
+        private Map<Class<?>, Object> map;
+        public InstanceMapper(V value, Map<Class<?>, Object> map) {
+            this.value = value;
+            this.map = map;
+        }
+        public InstanceMapper<V> forType(Class<? super V> key) {
+            map.put(key, value);
+            return this;
         }
     }
 
-    public static class PropertyMapper implements Mapper<Object> {
+    public static class PropertyMapper {
         private String key;
         private Map<String, Object> map;
-
         public PropertyMapper(String key, Map<String, Object> map) {
             this.key = key;
             this.map = map;
         }
-
-        @Override
         public void to(Object value) {
             map.put(key, value);
         }

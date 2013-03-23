@@ -1,7 +1,5 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.container.BaseModule;
 import com.github.overengineer.scope.container.SimpleScopeContainer;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -14,14 +12,7 @@ public class StrutsModuleContainer extends SimpleScopeContainer {
     public StrutsModuleContainer() {
         loadModule(new SessionModule());
         loadModule(new ConversationModule());
-        loadModule(new StrutsModule());
-    }
-
-    static class StrutsModule extends BaseModule {
-        StrutsModule() {
-            resolve(ConversationArbitrator.class).to(StrutsConversationArbitrator.class);
-            resolve(ActionProvider.class).to(StrutsActionProvider.class);
-        }
+        add(ConversationArbitrator.class, StrutsConversationArbitrator.class);
     }
 
 }
