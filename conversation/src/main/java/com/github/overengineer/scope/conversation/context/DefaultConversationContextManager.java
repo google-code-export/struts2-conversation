@@ -159,22 +159,6 @@ public class DefaultConversationContextManager implements ConversationContextMan
 
         synchronized (this.conversations) {
 
-            for (Entry<String, Map<String, ConversationContext>> conversationEntry : this.conversations.entrySet()) {
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Clearing contexts for " + conversationEntry.getKey() + ".");
-                }
-
-                Map<String, ConversationContext> conversationContexts = conversationEntry.getValue();
-
-                for (ConversationContext context : conversationContexts.values()) {
-                    context.clear();
-                }
-
-                conversationContexts.clear();
-
-            }
-
             this.conversations.clear();
 
         }

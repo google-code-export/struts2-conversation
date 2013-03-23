@@ -55,6 +55,9 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
      */
     @Override
     public void processSessionFields(SessionAdapter sessionAdapter) {
+
+        LOG.debug("Injecting session fields");
+
         Object action = sessionAdapter.getAction();
         Class<?> actionClass = action.getClass();
         SessionConfiguration configuration = this.configurationProvider.getSessionConfiguration(actionClass);
@@ -77,6 +80,8 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
      */
     @Override
     public void postProcessSession(SessionAdapter sessionAdapter) {
+
+        LOG.debug("Extracting session fields");
 
         Object action = sessionAdapter.getAction();
         Class<?> actionClass = action.getClass();

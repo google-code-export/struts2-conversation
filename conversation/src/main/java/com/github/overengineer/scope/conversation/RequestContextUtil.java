@@ -21,11 +21,12 @@
  *
  *  $Id: RequestContextUtil.java reesbyars $
  ******************************************************************************/
-package com.github.overengineer.scope.util;
+package com.github.overengineer.scope.conversation;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RequestContextUtil {
 
+    protected static final String ID_PARAM_REGEX = ".*" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+    protected static final Pattern ID_PARAM_PATTERN = Pattern.compile(ID_PARAM_REGEX);
+
     public static Map<String, String> getRequestContext(HttpServletRequest request) {
 
         Map<String, String> requestContext = new HashMap<String, String>();
@@ -43,8 +47,10 @@ public class RequestContextUtil {
             Map<String, String[]> params = request.getParameterMap();
             for (Entry<String, String[]> param : params.entrySet()) {
                 String candidateConversationName = param.getKey();
-                String candidateConversationId = param.getValue()[0];
-                requestContext.put(candidateConversationName, candidateConversationId);
+                if (ID_PARAM_PATTERN.matcher(candidateConversationName).matches()) {
+                    String candidateConversationId = param.getValue()[0];
+                    requestContext.put(candidateConversationName, candidateConversationId);
+                }
             }
         }
 

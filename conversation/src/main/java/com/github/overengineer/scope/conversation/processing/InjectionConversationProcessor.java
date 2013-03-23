@@ -51,8 +51,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
     @Override
     protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
 
+        Object action = conversationAdapter.getAction();
         for (Bijector bijector : conversationConfig.getBijectors()) {
-            bijector.injectFromContext(conversationAdapter.getAction(), conversationContext);
+            bijector.injectFromContext(action, conversationContext);
         }
 
         conversationAdapter.addPostActionProcessor(this, conversationConfig, conversationContext.getId());
@@ -65,8 +66,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
     @Override
     protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
 
+        Object action = conversationAdapter.getAction();
         for (Bijector bijector : conversationConfig.getBijectors()) {
-            bijector.injectFromContext(conversationAdapter.getAction(), conversationContext);
+            bijector.injectFromContext(action, conversationContext);
         }
 
         conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
@@ -114,7 +116,7 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
 
             if (conversationContext != null) {
                 for (Bijector bijector : bijectors) {
-                    bijector.extractIntoContext(conversationAdapter.getAction(), conversationContext);
+                    bijector.extractIntoContext(action, conversationContext);
                 }
             }
 
