@@ -12,7 +12,7 @@ import com.github.overengineer.scope.conversation.configuration.ConversationClas
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.util.ActionUtil;
 import com.github.overengineer.scope.struts2.ConversationInterceptor;
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 import com.opensymphony.xwork2.config.entities.InterceptorMapping;
 import com.opensymphony.xwork2.inject.Inject;

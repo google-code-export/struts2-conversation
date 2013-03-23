@@ -23,13 +23,12 @@
  ******************************************************************************/
 package com.github.overengineer.scope.struts2.test;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -45,7 +44,6 @@ import com.github.overengineer.scope.session.SessionField;
 import com.github.overengineer.scope.session.SessionUtil;
 import com.github.overengineer.scope.struts2.ConventionConstants;
 import com.github.overengineer.scope.struts2.StrutsScopeConstants;
-import com.github.overengineer.scope.util.InjectionUtil;
 import com.opensymphony.xwork2.ActionContext;
 
 /**
@@ -61,7 +59,7 @@ public class ScopeTestUtil {
 
     public static ConversationConfigurationProvider getConfigurationProvider() {
         if (configurationProvider == null) {
-            configurationProvider = (ConversationConfigurationProvider) Dispatcher
+            configurationProvider = Dispatcher
                     .getInstance()
                     .getContainer()
                     .getInstance(ScopeContainerProvider.class).getScopeContainer().getComponent(ConversationConfigurationProvider.class);

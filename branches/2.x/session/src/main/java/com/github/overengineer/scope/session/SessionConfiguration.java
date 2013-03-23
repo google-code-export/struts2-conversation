@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.github.overengineer.scope.session;
 
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 
 import java.util.HashMap;
 import java.util.HashSet;

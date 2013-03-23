@@ -23,13 +23,11 @@
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.configuration;
 
-import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.Set;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 
 /**
  * This class is used to cache the fields and action IDs for a single

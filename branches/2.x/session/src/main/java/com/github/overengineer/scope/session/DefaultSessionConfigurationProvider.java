@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.github.overengineer.scope.util.BijectorFactory;
+import com.github.overengineer.scope.bijection.BijectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

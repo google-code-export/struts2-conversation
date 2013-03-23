@@ -5,7 +5,7 @@ import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
-import com.github.overengineer.scope.util.BijectorFactory;
+import com.github.overengineer.scope.bijection.BijectorFactory;
 
 import java.util.Collections;
 import java.util.Set;
