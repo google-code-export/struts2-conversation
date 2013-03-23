@@ -68,7 +68,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
             if (conversationContexts == null) {
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Creating new context cache for " + conversationName);
+                    LOG.debug("Creating new context cache for [{}]", conversationName);
                 }
 
                 conversationContexts = Collections.synchronizedMap(new HashMap<String, ConversationContext>());
@@ -77,7 +77,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating new ConversationContext for " + conversationName);
+                LOG.debug("Creating new ConversationContext for [{}]", conversationName);
             }
 
             String conversationId = this.getNextId();
@@ -87,7 +87,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
             if (conversationContexts.size() > maxInstances) {
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Cached instances of conversation " + conversationName + " exceeds limit.  Removing stale conversations.");
+                    LOG.debug("Cached instances of conversation [{}] exceeds limit.  Removing stale conversations.", conversationName);
                 }
 
                 this.removeMostStaleConversation(conversationContexts, maxInstances, conversationName, context.getRemainingTime());
@@ -112,7 +112,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
             Map<String, ConversationContext> conversationContexts = this.conversations.get(conversationName);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Retrieving cached instance for conversation " + conversationName);
+                LOG.debug("Retrieving cached instance for conversation [{}]", conversationName);
             }
 
             if (conversationContexts != null) {
@@ -134,7 +134,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
     public ConversationContext remove(String conversationName, String conversationId) {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Discarding " + conversationName + " with ID of " + conversationId);
+            LOG.debug("Discarding [{}] with ID [{}]", conversationName, conversationId);
         }
 
         ConversationContext context = null;

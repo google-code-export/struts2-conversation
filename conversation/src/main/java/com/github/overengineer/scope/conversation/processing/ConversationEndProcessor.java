@@ -33,7 +33,7 @@ import com.github.overengineer.scope.conversation.configuration.ConversationClas
 
 /**
  * A {@link PostProcessor} used to remove a conversation context either after an action has been executed or after the view has been rendered.  Is registered
- * for execution via {@link ConversationAdapter#addPostProcessor(PostActionProcessor, ConversationClassConfiguration, String)}
+ * for execution via {@link ConversationAdapter#addPostActionProcessor(PostActionProcessor, com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration, String)}
  * or {@link ConversationAdapter#addPostViewProcessor(PostViewProcessor, ConversationClassConfiguration, String)}.
  *
  * @author rees.byars
@@ -49,7 +49,7 @@ public class ConversationEndProcessor implements PostActionProcessor, PostViewPr
     @Override
     public void postProcessConversation(ConversationAdapter conversationAdapter, ConversationClassConfiguration conversationConfig, String conversationId) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("In Conversation " + conversationConfig.getConversationName() + ", removing conversation context following conversation end.");
+            LOG.debug("In conversation [{}], removing conversation context following conversation end.", conversationConfig.getConversationName());
         }
         String conversationName = null;
         if (conversationConfig == null) {

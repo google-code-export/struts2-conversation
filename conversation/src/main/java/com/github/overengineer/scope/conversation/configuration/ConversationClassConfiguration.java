@@ -23,6 +23,7 @@
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.configuration;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
@@ -37,7 +38,7 @@ import com.github.overengineer.scope.bijection.Bijector;
  * @see {@link ConversationConfigurationProvider}
  * @see {@link ConversationProcessor}
  */
-public interface ConversationClassConfiguration {
+public interface ConversationClassConfiguration extends Serializable {
 
     /**
      *

@@ -52,10 +52,6 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     private static final long serialVersionUID = -1577464106543589370L;
     protected String actionSuffix = ConversationConstants.DEFAULT_CONTROLLER_SUFFIX;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setActionSuffix(String suffix) {
         this.actionSuffix = suffix;
     }

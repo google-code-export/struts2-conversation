@@ -1,11 +1,12 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.AbstractScopeContainer;
+import com.github.overengineer.scope.container.BaseScopeContainer;
+import com.github.overengineer.scope.container.BaseScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainer;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsScopeContainer extends AbstractScopeContainer {
+public class StrutsScopeContainer extends BaseScopeContainer {
 
     private static final long serialVersionUID = -6820777796732236492L;
 

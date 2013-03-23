@@ -68,7 +68,6 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Beginning processing of conversations...");
-            LOG.debug("Conversation Request Context:  " + conversationAdapter.getRequestContext());
         }
 
         try {
@@ -106,17 +105,10 @@ public class SimpleConversationProcessor implements ConversationProcessor {
         String conversationName = conversationConfig.getConversationName();
         String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing request for " + conversationName + " and action " + actionId + " of class " + action.getClass());
-        }
-
         if (conversationId != null) {
             ConversationContext conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
             if (conversationContext != null) {
                 if (conversationConfig.containsAction(actionId)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("The action is a conversation member.  Processing with context:  " + conversationContext);
-                    }
                     if (conversationConfig.isEndAction(actionId)) {
                         this.handleEnding(conversationConfig, conversationAdapter, conversationContext);
                     } else {
@@ -132,10 +124,20 @@ public class SimpleConversationProcessor implements ConversationProcessor {
     }
 
     protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Continuing conversation [{}] with ID [{}]", conversationConfig.getConversationName(), conversationContext.getId());
+        }
+
         conversationAdapter.getViewContext().put(conversationContext.getConversationName(), conversationContext.getId());
     }
 
     protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Ending conversation [{}] with ID [{}]", conversationConfig.getConversationName(), conversationContext.getId());
+        }
+
         conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
     }
 
@@ -143,7 +145,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
         long maxIdleTime = conversationConfig.getMaxIdleTime(actionId);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
+            LOG.debug("Beginning new [{}] with max idle time of [{}] seconds for action [{}]", conversationConfig.getConversationName(), maxIdleTime / 1000, conversationAdapter.getActionId());
         }
 
         ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime, conversationConfig.getMaxInstances(actionId));
