@@ -36,35 +36,35 @@ import org.slf4j.LoggerFactory;
  * This class listens for the destruction of sessions and cleans up that sessions conversation resources.
  * With Servlet API 3.0+, this class is auto-discovered using the {@link WebListener} annotation. In earlier
  * API versions, it must be configured in the web.xml (or not at all if cleanup is not a concern).
- * 
+ *
  * @author rees.byars
  */
 @WebListener
 public class ConversationCleanupListener implements HttpSessionListener {
-	
-	private static Logger LOG = LoggerFactory.getLogger(ConversationCleanupListener.class);
-	
-	public ConversationCleanupListener() {
-		LOG.info("Conversation Cleanup Listener created.");
-	}
-    
-	@Override
-	public void sessionCreated(HttpSessionEvent se) {
-		//do nothing - do not create the manager here as it may not be needed
-	}
 
-	@Override
-	public void sessionDestroyed(HttpSessionEvent se) {
-		ConversationContextManager contextManager = JeeConversationUtil.getContextManager(se.getSession());
-		if (contextManager != null) {
-			if (LOG.isDebugEnabled()) {
-	    		LOG.debug("Cleaning up conversation resources for session with ID:  " + se.getSession().getId());
-	    	}
-			contextManager.destroy();
-			if (LOG.isDebugEnabled()) {
-	    		LOG.debug("Cleanup of conversation resources completed for session with ID:  " + se.getSession().getId());
-	    	}
-		}
-	}
+    private static Logger LOG = LoggerFactory.getLogger(ConversationCleanupListener.class);
+
+    public ConversationCleanupListener() {
+        LOG.info("Conversation Cleanup Listener created.");
+    }
+
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        //do nothing - do not create the manager here as it may not be needed
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        ConversationContextManager contextManager = JeeConversationUtil.getContextManager(se.getSession());
+        if (contextManager != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cleaning up conversation resources for session with ID:  " + se.getSession().getId());
+            }
+            contextManager.destroy();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cleanup of conversation resources completed for session with ID:  " + se.getSession().getId());
+            }
+        }
+    }
 
 }

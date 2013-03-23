@@ -4,5 +4,5 @@ import com.github.overengineer.scope.conversation.annotations.ConversationContro
 
 @ConversationController(conversations = "shoobie")
 public interface MockConversationControllerInterface {
-	
+
 }

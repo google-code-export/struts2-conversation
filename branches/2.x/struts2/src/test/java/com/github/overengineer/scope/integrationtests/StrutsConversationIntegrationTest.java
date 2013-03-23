@@ -27,7 +27,7 @@ import com.opensymphony.xwork2.util.TextParseUtil;
 public class StrutsConversationIntegrationTest extends
         StrutsSpringScopeTestCase<MockConversationController> {
 
-	static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
+    static final String CONVERSATION_NAME = "oopy" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     static final String CONVERSATION_FIELD = "conversationString";
 
     @ConversationField(conversations = "oopy")
@@ -46,8 +46,7 @@ public class StrutsConversationIntegrationTest extends
 
         this.getActionProxy("/conversation/begin").execute();
         System.out.println("1" + this.getAction().getBean().getEcho());
-        
-        
+
 
         ScopeTestUtil.setConversationIdsOnRequest(request, MockConversationController.class);
         this.getActionProxy("/conversation/do1").execute();
@@ -68,16 +67,16 @@ public class StrutsConversationIntegrationTest extends
         request.addParameter("oopy_conversation", id);
         this.getActionProxy("/conversation/do1").execute();
         System.out.println(this.getAction().getBean().getEcho());
-        
+
         bean = null;
         conversationString = null;
         request.addParameter("oopy_conversation", id);
         this.getActionProxy("/conversation/do2").execute();
-        
+
         System.out.println(this.getAction().getConversationString());
         System.out.println(conversationString);
         System.out.println(bean.getEcho());
-        
+
         System.out.println(TextParseUtil.translateVariables('$', "total = ${77 * 99}", ActionContext.getContext().getValueStack()));
     }
 

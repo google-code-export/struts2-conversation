@@ -30,16 +30,15 @@ import com.github.overengineer.scope.conversation.ConversationConstants;
 
 /**
  * @author rees.byars
- *
  */
 public class JeeConversationUtil {
-	
-	public static ConversationContextManager getContextManager(HttpSession session) {
-		return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
-	}
-	
-	public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
-		session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
-	}
+
+    public static ConversationContextManager getContextManager(HttpSession session) {
+        return (ConversationContextManager) session.getAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY);
+    }
+
+    public static void setContextManager(HttpSession session, ConversationContextManager contextManager) {
+        session.setAttribute(ConversationConstants.CONVERSATION_CONTEXT_MANAGER_KEY, contextManager);
+    }
 
 }

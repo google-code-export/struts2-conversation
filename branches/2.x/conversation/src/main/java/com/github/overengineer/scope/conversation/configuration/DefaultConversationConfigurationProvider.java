@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: DefaultConversationConfigurationProvider.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.configuration;
@@ -47,9 +47,9 @@ import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
  * The default implementation of {@link ConversationConfigurationProvider}
- * 
+ * <p/>
  * TODO add default transacitonal and accessibleFromView settings, add new config settings to the log messages, add to config browser
- * 
+ *
  * @author rees.byars
  */
 public class DefaultConversationConfigurationProvider implements ConversationConfigurationProvider, PostConstructable {
@@ -61,48 +61,48 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     protected ActionProvider actionProvider;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
     protected long maxIdleTimeMillis = Defaults.CONVERSATION_IDLE_TIMEOUT;
-	protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
-	
-	@Property(Properties.CONVERSATION_IDLE_TIMEOUT)
-	public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
-		double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
-    	LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
-    	LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
-		this.maxIdleTimeMillis = maxIdleTimeMillis;
-	}
-	
-	@Property(Properties.CONVERSATION_MAX_INSTANCES)
-	public void setDefaultMaxInstances(int maxInstances) {
-		LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
-		this.maxInstances = maxInstances;
-	}
+    protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
+
+    @Property(Properties.CONVERSATION_IDLE_TIMEOUT)
+    public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
+        double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
+        LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
+        LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
+        this.maxIdleTimeMillis = maxIdleTimeMillis;
+    }
+
+    @Property(Properties.CONVERSATION_MAX_INSTANCES)
+    public void setDefaultMaxInstances(int maxInstances) {
+        LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
+        this.maxInstances = maxInstances;
+    }
 
     @Component
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
-    
+
     @Component
-	public void setActionProvider(ActionProvider actionProvider) {
-    	this.actionProvider = actionProvider;
-	}
+    public void setActionProvider(ActionProvider actionProvider) {
+        this.actionProvider = actionProvider;
+    }
 
     /**
      * {@inheritDoc}
      */
-	@Override
-	public void init() {
-		if (this.classConfigurations.size() != actionProvider.getActionClasses().size()) { //in case it's already been called
-    		LOG.info("Building Conversation Configurations...");
-        	if (this.arbitrator == null) {
-        		LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
-        	}
+    @Override
+    public void init() {
+        if (this.classConfigurations.size() != actionProvider.getActionClasses().size()) { //in case it's already been called
+            LOG.info("Building Conversation Configurations...");
+            if (this.arbitrator == null) {
+                LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
+            }
             for (Class<?> clazz : actionProvider.getActionClasses()) {
                 processClass(clazz, classConfigurations);
             }
             LOG.info("...building of Conversation Configurations successfully completed.");
-    	}
-	}
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -121,7 +121,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 
     /**
      * good candidate for refactoring... but it works!
-     * 
+     *
      * @param clazz
      * @param classConfigurations
      * @return
@@ -134,7 +134,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
             }
             configurations = new HashSet<ConversationClassConfiguration>();
             Map<String, ConversationClassConfiguration> temporaryConversationMap = new HashMap<String, ConversationClassConfiguration>();
-            
+
             for (Field field : this.arbitrator.getCandidateConversationFields(clazz)) {
                 Collection<String> fieldConversations = this.arbitrator.getConversations(clazz, field);
                 if (fieldConversations != null) {
@@ -153,13 +153,13 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                     }
                 }
             }
-            
+
             // TODO refactor into multiple methods to make more beautimous instead of atrocious
             for (Method method : this.arbitrator.getCandidateConversationMethods(clazz)) {
-            	
-            	String methodName = this.arbitrator.getName(method);
-            	
-            	//intermediate action methods
+
+                String methodName = this.arbitrator.getName(method);
+
+                //intermediate action methods
                 Collection<String> methodConversations = this.arbitrator.getConversations(clazz, method);
                 if (methodConversations != null) {
                     for (String conversation : methodConversations) {
@@ -174,7 +174,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         configuration.addAction(methodName);
                     }
                 }
-                
+
                 //begin action methods
                 Collection<String> methodBeginConversations = this.arbitrator.getBeginConversations(clazz, method);
                 if (methodBeginConversations != null) {
@@ -184,28 +184,28 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             configuration = new ConversationClassConfigurationImpl(conversation);
                             temporaryConversationMap.put(conversation, configuration);
                         }
-                		
-                		if (LOG.isDebugEnabled()) {
+
+                        if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationClassConfiguration for Conversation");
                         }
                         if (method.isAnnotationPresent(BeginConversation.class)) {
-                        	BeginConversation config = method.getAnnotation(BeginConversation.class);
-                        	long maxIdle = config.maxIdleTimeMillis();
-                        	if (maxIdle == -1L) {
-                        		maxIdle = this.maxIdleTimeMillis;
-                        	}
-                        	int maxInstance = config.maxInstances();
-                        	if (maxInstance == 0) {
-                        		maxInstance = this.maxInstances;
-                        	}
-                        	configuration.addBeginAction(methodName, maxIdle, config.maxIdleTime(), maxInstance, config.transactional());
+                            BeginConversation config = method.getAnnotation(BeginConversation.class);
+                            long maxIdle = config.maxIdleTimeMillis();
+                            if (maxIdle == -1L) {
+                                maxIdle = this.maxIdleTimeMillis;
+                            }
+                            int maxInstance = config.maxInstances();
+                            if (maxInstance == 0) {
+                                maxInstance = this.maxInstances;
+                            }
+                            configuration.addBeginAction(methodName, maxIdle, config.maxIdleTime(), maxInstance, config.transactional());
                         } else {
-                        	configuration.addBeginAction(methodName, this.maxIdleTimeMillis, "", this.maxInstances, false);
+                            configuration.addBeginAction(methodName, this.maxIdleTimeMillis, "", this.maxInstances, false);
                         }
-                		
+
                     }
                 }
-                
+
                 //end action methods
                 Collection<String> methodEndConversations = this.arbitrator.getEndConversations(clazz, method);
                 if (methodEndConversations != null) {
@@ -219,19 +219,19 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             LOG.debug("Adding method " + methodName + " as an End Action to ConversationClassConfiguration for Conversation " + conversation);
                         }
                         if (method.isAnnotationPresent(EndConversation.class)) {
-                        	EndConversation config = method.getAnnotation(EndConversation.class);
-                        	configuration.addEndAction(methodName, config.accessibleFromView());
+                            EndConversation config = method.getAnnotation(EndConversation.class);
+                            configuration.addEndAction(methodName, config.accessibleFromView());
                         } else {
-                        	configuration.addEndAction(methodName, false);
+                            configuration.addEndAction(methodName, false);
                         }
                     }
                 }
             }
-            
+
             configurations.addAll(temporaryConversationMap.values());
             classConfigurations.putIfAbsent(clazz, configurations);
         }
-        
+
         return configurations;
     }
 

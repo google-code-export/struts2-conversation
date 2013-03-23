@@ -7,15 +7,14 @@ import com.github.overengineer.scope.conversation.configuration.ConversationClas
 
 /**
  * processor to be executed after main conversation processing
- * 
- * @author reesbyars
  *
+ * @author reesbyars
  */
 public interface PostProcessor extends Serializable {
 
     /**
      * Perform the post-processing using the given parameters
-     * 
+     *
      * @param conversationAdapter
      * @param conversationConfig
      * @param conversationId

@@ -18,9 +18,8 @@ import java.util.jar.JarInputStream;
 /**
  * A convenience/utility class that aids in locating resources such as .txt,
  * .xml, .properties files, etc.
- * 
+ *
  * @author rees.byars
- * 
  */
 public class TestFileUtil {
 
@@ -31,34 +30,34 @@ public class TestFileUtil {
      * package (including sub-packages of the given root package) in which the
      * file paths also include the given inner package name and end with the
      * given filename suffix.
-     * <p>
+     * <p/>
      * For instance, given the following:
-     * <p>
+     * <p/>
      * <code>
      * &nbsp; rootPackageName = "org.endogamous.oligarchy"<br>
      * &nbsp; innerPackageName = "chill.pill"<br>
      * &nbsp; fileNameSuffix = "context.xml"<br>
      * </code>
-     * <p>
+     * <p/>
      * and a jar or class folder containing files with the paths:
-     * <p>
+     * <p/>
      * &nbsp;&nbsp;
      * <tt>org/endogamous/oligarchy/laughers/chill/pill/heavens-context.xml</tt>
-     * <p>
+     * <p/>
      * &nbsp; and
-     * <p>
+     * <p/>
      * &nbsp;&nbsp;
      * <tt>org/endogamous/oligarchy/whiners/raw/deal/hells-context.xml</tt>
-     * <p>
+     * <p/>
      * the returned <code>Set</code> will include the former as it begins with
      * the appropriate root package, contains the inner package, and has the
      * correct suffix. The latter is excluded as it does not contain the
      * required inner package, "chill.pill".
-     * <p>
+     * <p/>
      * Null parameters may result cause a <code>NullPointerException</code>.
-     * <p>
+     * <p/>
      * Tips and tricks:
-     * <p>
+     * <p/>
      * <ul>
      * <li>
      * a <code>rootPackageName</code> of "" behaves differently in different
@@ -82,7 +81,7 @@ public class TestFileUtil {
      * or whatever, an instance of a <code>class</code> can be obtained by
      * <code>Class.forName(filePath.replace('/', '.'))</code></li>
      * </ul>
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -107,9 +106,8 @@ public class TestFileUtil {
     }
 
     /**
-     * 
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -135,7 +133,7 @@ public class TestFileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -161,7 +159,7 @@ public class TestFileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param packageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -188,7 +186,7 @@ public class TestFileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -228,9 +226,9 @@ public class TestFileUtil {
     /**
      * Given a file path and encoding, returns the resource as a
      * <code>String</code>.
-     * <p>
+     * <p/>
      * if <code>encoding</code> is <code>null</code>, UTF-8 is used.
-     * 
+     *
      * @param filePath
      * @param encoding
      * @param callingClass

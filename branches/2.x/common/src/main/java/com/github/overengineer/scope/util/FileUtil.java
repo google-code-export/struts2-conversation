@@ -18,9 +18,8 @@ import java.util.jar.JarInputStream;
 /**
  * A convenience/utility class that aids in locating resources such as .class, .txt,
  * .xml, .properties files, etc.
- * 
+ *
  * @author rees.byars
- * 
  */
 public class FileUtil {
 
@@ -31,34 +30,34 @@ public class FileUtil {
      * package (including sub-packages of the given root package) in which the
      * file paths also include the given inner package name and end with the
      * given filename suffix.
-     * <p>
+     * <p/>
      * For instance, given the following:
-     * <p>
+     * <p/>
      * <code>
      * &nbsp; rootPackageName = "org.endogamous.oligarchy"<br>
      * &nbsp; innerPackageName = "chill.pill"<br>
      * &nbsp; fileNameSuffix = "context.xml"<br>
      * </code>
-     * <p>
+     * <p/>
      * and a jar or class folder containing files with the paths:
-     * <p>
+     * <p/>
      * &nbsp;&nbsp;
      * <tt>org/endogamous/oligarchy/laughers/chill/pill/heavens-context.xml</tt>
-     * <p>
+     * <p/>
      * &nbsp; and
-     * <p>
+     * <p/>
      * &nbsp;&nbsp;
      * <tt>org/endogamous/oligarchy/whiners/raw/deal/hells-context.xml</tt>
-     * <p>
+     * <p/>
      * the returned <code>Set</code> will include the former as it begins with
      * the appropriate root package, contains the inner package, and has the
      * correct suffix. The latter is excluded as it does not contain the
      * required inner package, "chill.pill".
-     * <p>
+     * <p/>
      * Null parameters may result cause a <code>NullPointerException</code>.
-     * <p>
+     * <p/>
      * Tips and tricks:
-     * <p>
+     * <p/>
      * <ul>
      * <li>
      * a <code>rootPackageName</code> of "" behaves differently in different
@@ -82,7 +81,7 @@ public class FileUtil {
      * or whatever, an instance of a <code>class</code> can be obtained by
      * <code>Class.forName(filePath.replace('/', '.'))</code></li>
      * </ul>
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -105,26 +104,25 @@ public class FileUtil {
         }
         return filePaths;
     }
-    
+
     public static Set<Class<?>> getClasses(String rootPackageName, String innerPackageName, Class<?> callingClass) throws IOException {
-    	Set<String> classNames = getFilePaths(rootPackageName, innerPackageName, ".class", callingClass);
-    	Set<Class<?>> classes = new HashSet<Class<?>>();
-    	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    	for (String name : classNames) {
-    		try {
-				Class<?> cls = loader.loadClass(name);
-				classes.add(cls);
-			} catch (ClassNotFoundException e) {
-				//nevermind that one ;D
-			}
-    	}
-    	return classes;
+        Set<String> classNames = getFilePaths(rootPackageName, innerPackageName, ".class", callingClass);
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        for (String name : classNames) {
+            try {
+                Class<?> cls = loader.loadClass(name);
+                classes.add(cls);
+            } catch (ClassNotFoundException e) {
+                //nevermind that one ;D
+            }
+        }
+        return classes;
     }
 
     /**
-     * 
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -150,7 +148,7 @@ public class FileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -176,7 +174,7 @@ public class FileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param packageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -203,7 +201,7 @@ public class FileUtil {
 
     /**
      * See {@link #getFilePaths(String, String, String, Class)}
-     * 
+     *
      * @param rootPackageName
      * @param innerPackageName
      * @param fileNameSuffix
@@ -243,9 +241,9 @@ public class FileUtil {
     /**
      * Given a file path and encoding, returns the resource as a
      * <code>String</code>.
-     * <p>
+     * <p/>
      * if <code>encoding</code> is <code>null</code>, UTF-8 is used.
-     * 
+     *
      * @param filePath
      * @param encoding
      * @param callingClass

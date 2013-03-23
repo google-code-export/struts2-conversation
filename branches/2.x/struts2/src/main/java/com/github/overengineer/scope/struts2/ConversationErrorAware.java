@@ -27,21 +27,19 @@ package com.github.overengineer.scope.struts2;
 /**
  * Action classes implementing this will have conversation error messages set on them
  * that can then be easily accessed from the UI.
- * 
+ *
  * @author rees.byars
  */
 public interface ConversationErrorAware {
-	
-	/**
-	 * 
-	 * @param conversationError
-	 */
-	public void setConversationError(String conversationError);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getConversationError();
+
+    /**
+     * @param conversationError
+     */
+    public void setConversationError(String conversationError);
+
+    /**
+     * @return
+     */
+    public String getConversationError();
 
 }

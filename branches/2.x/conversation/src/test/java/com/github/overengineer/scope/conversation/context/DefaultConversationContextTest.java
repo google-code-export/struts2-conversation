@@ -17,8 +17,8 @@ public class DefaultConversationContextTest extends SerializableObjectTest<Defau
 
     @Test
     public void testDefaultConversationContext() throws IOException, ClassNotFoundException {
-        
-    	ConversationContext context = new DefaultConversationContext("testName", "testId", 5L);
+
+        ConversationContext context = new DefaultConversationContext("testName", "testId", 5L);
         assertTrue(5L == context.getRemainingTime() || 4L == context.getRemainingTime());
         assertEquals("testName", context.getConversationName());
         assertEquals("testId", context.getId());
@@ -29,7 +29,7 @@ public class DefaultConversationContextTest extends SerializableObjectTest<Defau
         assertEquals("testId", context.getId());
         assertEquals("beanValue", context.get("bean"));
         assertEquals(5L, context.getRemainingTime());
-        
+
         context.put("bean", null);
         assertNull(context.get("bean"));
     }

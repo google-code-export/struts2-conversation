@@ -28,26 +28,28 @@ import java.io.Serializable;
 
 /**
  * This interface works in conjunction with the {@link Timeoutable} interface to provide a simple timeout mechanism
- * 
+ *
  * @author rees.byars
  */
 public interface TimeoutMonitor<T extends Timeoutable<T>> extends Serializable {
 
-	/**
-	 * Adds the {@link Timeoutable} to this monitor
-	 * @param timeoutable
-	 */
-	public void addTimeoutable(T timeoutable);
+    /**
+     * Adds the {@link Timeoutable} to this monitor
+     *
+     * @param timeoutable
+     */
+    public void addTimeoutable(T timeoutable);
 
-	/**
-	 * Removes this {@link Timeoutable} from this monitor
-	 * @param timeoutable
-	 */
-	public void removeTimeoutable(T timeoutable);
+    /**
+     * Removes this {@link Timeoutable} from this monitor
+     *
+     * @param timeoutable
+     */
+    public void removeTimeoutable(T timeoutable);
 
-	/**
-	 * Destroys this monitor, stopping its background thread and clearing its {@link Timeoutable} cache.
-	 */
-	public void destroy();
+    /**
+     * Destroys this monitor, stopping its background thread and clearing its {@link Timeoutable} cache.
+     */
+    public void destroy();
 
 }

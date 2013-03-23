@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: ModelDrivenConversationSupport.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
@@ -34,16 +34,14 @@ import com.opensymphony.xwork2.ModelDriven;
  * life-cycles. It can be used in place of the
  * {@link com.github.overengineer.scope.conversation.annotations.ConversationController
  * ConversationController} annotation for people who hate annotations/meta-data.
- * 
+ * <p/>
  * All access to the model is through the {@link #getModel()} and
  * {@link #setModel(Serializable)} methods so that retrieval and insertion of
  * the model from and into conversation instances
  * can be managed on behalf of inheriting classes.
- * 
- * 
- * @author rees.byars
- * 
+ *
  * @param <T>
+ * @author rees.byars
  */
 public abstract class ModelDrivenConversationSupport<T extends Serializable>
         extends ActionSupport implements ModelDriven<T> {
@@ -53,7 +51,7 @@ public abstract class ModelDrivenConversationSupport<T extends Serializable>
 
     /**
      * {@inheritDoc}
-     * 
+     * <p/>
      * The model is scoped to the conversations associated with the current
      * request and action.
      */
@@ -69,7 +67,7 @@ public abstract class ModelDrivenConversationSupport<T extends Serializable>
     /**
      * Set the model. The model is scoped to the conversations associated with
      * the current request and action.
-     * 
+     *
      * @param model
      */
     public void setModel(T model) {
@@ -81,10 +79,10 @@ public abstract class ModelDrivenConversationSupport<T extends Serializable>
      * The name of the model used to identify it in the
      * {@link com.github.overengineer.scope.conversation.context.ConversationContext
      * ConversationContext}.
-     * 
+     * <p/>
      * This can be overridden to provide the name of choice. The default is
      * <code>this.getClass().getName()</code>.
-     * 
+     *
      * @return
      */
     protected String getModelName() {

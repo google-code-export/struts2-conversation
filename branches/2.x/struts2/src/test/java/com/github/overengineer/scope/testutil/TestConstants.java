@@ -14,45 +14,45 @@ import com.github.overengineer.scope.mocks.actions.conversation.MockConversation
 import com.github.overengineer.scope.mocks.actions.conversation.MockConversationControllerInterface;
 
 public class TestConstants {
-	
-	public static final Set<Class<?>> ALL_ACTION_CLASSES = initAllActionClasses();
-	public static final Set<Class<?>> ALL_CONVENTION_ACTION_CLASSES = initConventionActionClasses();
-	public static final Set<Class<?>> SESSION_FIELD_ACTION_CLASSES = initSessionFieldActionClasses();
-	public static final Set<Class<?>> NO_SESSION_FIELD_ACTION_CLASSES = initNoSessionFieldActionClasses();
-	
-	private static Set<Class<?>> initAllActionClasses() {
-		Set<Class<?>> actionClasses = new HashSet<Class<?>>();
-		actionClasses.add(MockConversationControllerInterface.class);
-		actionClasses.add(MockActionByConfiguration.class);
-		actionClasses.addAll(initConventionActionClasses());
-		return actionClasses;
-	}
-	
-	private static Set<Class<?>> initSessionFieldActionClasses() {
-		Set<Class<?>> actionClasses = new HashSet<Class<?>>();
-		actionClasses.add(MockActionByConfiguration.class);
-		actionClasses.add(MockActionInterfaceImpl.class);
-		actionClasses.add(MockConventionController.class);
-		actionClasses.add(MockPojoController.class);
-		return actionClasses;
-	}
-	
-	private static Set<Class<?>> initNoSessionFieldActionClasses() {
-		Set<Class<?>> actionClasses = new HashSet<Class<?>>();
-		actionClasses.add(MockNoSessionFieldController.class);
-		return actionClasses;
-	}
-	
-	private static Set<Class<?>> initConventionActionClasses() {
-		Set<Class<?>> actionClasses = new HashSet<Class<?>>();
-		actionClasses.add(InterfaceController.class);
-		actionClasses.add(AbstractController.class);
-		actionClasses.add(MockActionInterfaceImpl.class);
-		actionClasses.add(MockConventionController.class);
-		actionClasses.add(MockPojoController.class);
-		actionClasses.add(MockNoSessionFieldController.class);
-		actionClasses.add(MockConversationController.class);
-		return actionClasses;
-	}
+
+    public static final Set<Class<?>> ALL_ACTION_CLASSES = initAllActionClasses();
+    public static final Set<Class<?>> ALL_CONVENTION_ACTION_CLASSES = initConventionActionClasses();
+    public static final Set<Class<?>> SESSION_FIELD_ACTION_CLASSES = initSessionFieldActionClasses();
+    public static final Set<Class<?>> NO_SESSION_FIELD_ACTION_CLASSES = initNoSessionFieldActionClasses();
+
+    private static Set<Class<?>> initAllActionClasses() {
+        Set<Class<?>> actionClasses = new HashSet<Class<?>>();
+        actionClasses.add(MockConversationControllerInterface.class);
+        actionClasses.add(MockActionByConfiguration.class);
+        actionClasses.addAll(initConventionActionClasses());
+        return actionClasses;
+    }
+
+    private static Set<Class<?>> initSessionFieldActionClasses() {
+        Set<Class<?>> actionClasses = new HashSet<Class<?>>();
+        actionClasses.add(MockActionByConfiguration.class);
+        actionClasses.add(MockActionInterfaceImpl.class);
+        actionClasses.add(MockConventionController.class);
+        actionClasses.add(MockPojoController.class);
+        return actionClasses;
+    }
+
+    private static Set<Class<?>> initNoSessionFieldActionClasses() {
+        Set<Class<?>> actionClasses = new HashSet<Class<?>>();
+        actionClasses.add(MockNoSessionFieldController.class);
+        return actionClasses;
+    }
+
+    private static Set<Class<?>> initConventionActionClasses() {
+        Set<Class<?>> actionClasses = new HashSet<Class<?>>();
+        actionClasses.add(InterfaceController.class);
+        actionClasses.add(AbstractController.class);
+        actionClasses.add(MockActionInterfaceImpl.class);
+        actionClasses.add(MockConventionController.class);
+        actionClasses.add(MockPojoController.class);
+        actionClasses.add(MockNoSessionFieldController.class);
+        actionClasses.add(MockConversationController.class);
+        return actionClasses;
+    }
 
 }

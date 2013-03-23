@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.METHOD })
+@Target(value = {ElementType.TYPE, ElementType.METHOD})
 public @interface StrutsConfiguration {
-	public String[] locations() default {};
+    public String[] locations() default {};
 }

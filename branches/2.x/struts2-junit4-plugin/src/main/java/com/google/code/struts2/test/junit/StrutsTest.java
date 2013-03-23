@@ -85,7 +85,6 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
     }
 
     /**
-     * 
      * @return The action object associated with the proxy
      */
     protected T getAction() {
@@ -185,7 +184,7 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
         ServletActionContext.setServletContext(servletContext);
         ServletActionContext.setRequest(request);
         ServletActionContext.setResponse(response);
-        
+
         proxy.getInvocation().addPreResultListener(this);
 
         return testProxy;
@@ -200,9 +199,8 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
      * TokenSessionStoreInterceptor}. <br>
      * <br>
      * <b>Note:</b> Sets token and token name params on request.
-     * 
-     * @param actionPath
-     *        The path to the action
+     *
+     * @param actionPath The path to the action
      * @return An ActionProxy with valid tokens in its session map
      */
     protected ActionProxy getTokenReadyActionProxy(String uri) {
@@ -306,14 +304,14 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
     /**
      * Called during dispatcher initialization to obtain a comma-separated list
      * of struts config files to load.
-     * <p>
+     * <p/>
      * If the {@link @StrutsConfiguration} annotation is not used, then this
      * method returns <code>"struts-plugin.xml,struts.xml"</code> by default.
-     * <p>
+     * <p/>
      * If the {@link @StrutsConfiguration} annotation <i>is</i> used, then this
-     * method will return a String in the format <code>("struts-plugin.xml," + 
+     * method will return a String in the format <code>("struts-plugin.xml," +
      * class-level {@link @StrutsConfiguration} + method-level {@link @StrutsConfiguration})</code>.
-     * 
+     *
      * @return a comma separated list of config locations
      */
     protected String getConfigPath() {
@@ -342,7 +340,7 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
     /**
      * this can be overridden to change the default of the action proxy
      * returned by getActionProxy
-     * 
+     *
      * @return
      */
     protected boolean isExecuteResult() {
@@ -371,13 +369,13 @@ public abstract class StrutsTest<T> implements ProxyExecutionListener, PreResult
         request = new MockHttpServletRequest(servletContext);
         request.setSession(httpSession);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-	public void beforeResult(ActionInvocation invocation, String resultCode) {
-    	
+    public void beforeResult(ActionInvocation invocation, String resultCode) {
+
     }
 
 }

@@ -10,16 +10,16 @@ import com.github.overengineer.scope.conversation.expression.eval.Mvel;
 import com.github.overengineer.scope.conversation.expression.exceptions.ExpressionEvaluationException;
 
 public class MvelTest extends EvalTest {
-	
-	@Before
-	public void setUp() {
-		super.setUp();
-		this.eval = new Mvel();
-	}
-	
-	@Test
-	public void testEvaluateWithConvenienceFunctions() throws ExpressionEvaluationException {
-		eval.evaluate("begin('oopy', 789, 3)");
+
+    @Before
+    public void setUp() {
+        super.setUp();
+        this.eval = new Mvel();
+    }
+
+    @Test
+    public void testEvaluateWithConvenienceFunctions() throws ExpressionEvaluationException {
+        eval.evaluate("begin('oopy', 789, 3)");
         eval.evaluate("get('oopy').sookie = bean2.value");
         eval.evaluate("get('oopy').sookie = bean2.value");
         eval.evaluate("get('oopy').sookie = bean2.value");
@@ -29,7 +29,7 @@ public class MvelTest extends EvalTest {
         assertEquals(this.adapter.getViewContext().get("oopy_conversation"), "1");
         eval.evaluate("end('oopy').sookie");
         assertNull(this.contextManager.getContext("oopy_conversation", "1"));
-        
+
         eval.evaluate("begin('oopy', 789, 3)");
         eval.evaluate("get('oopy').sookie = bean2.value;");
         assertEquals(this.contextManager.getContext("oopy_conversation", "2").get("sookie"), this.bean2.getValue());
@@ -37,6 +37,6 @@ public class MvelTest extends EvalTest {
         assertEquals(this.adapter.getViewContext().get("oopy_conversation"), "2");
         eval.evaluate("end('oopy').sookie");
         assertNull(this.contextManager.getContext("oopy_conversation", "2"));
-	}
+    }
 
 }

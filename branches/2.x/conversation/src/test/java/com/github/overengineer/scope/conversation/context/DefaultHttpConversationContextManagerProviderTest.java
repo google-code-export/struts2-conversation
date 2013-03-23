@@ -24,22 +24,22 @@ public class DefaultHttpConversationContextManagerProviderTest extends
     @Test
     public void testGetManager() throws IOException, ClassNotFoundException {
 
-    	DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider();
-        
+        DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider();
+
         managerProvider.setScopeContainer(new ScopeContainer() {
 
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> T getComponent(Class<T> clazz) {
-				return (T) new DefaultConversationContextManager();
-			}
+            @SuppressWarnings("unchecked")
+            @Override
+            public <T> T getComponent(Class<T> clazz) {
+                return (T) new DefaultConversationContextManager();
+            }
 
-			@Override
-			public <T> T getProperty(Class<T> clazz, String name) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-        	
+            @Override
+            public <T> T getProperty(Class<T> clazz, String name) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
         });
 
         MockHttpServletRequest request1 = new MockHttpServletRequest();

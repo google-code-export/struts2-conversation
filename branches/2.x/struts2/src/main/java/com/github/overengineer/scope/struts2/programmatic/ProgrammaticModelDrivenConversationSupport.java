@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: ProgrammaticModelDrivenConversationSupport.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.struts2.programmatic;
@@ -49,33 +49,32 @@ import com.opensymphony.xwork2.inject.Inject;
 /**
  * This class makes it simple to manage models with conversation-scoped
  * life-cycles programmatically.
- * 
+ * <p/>
  * All access to the model is through the {@link #getModel()} and
  * {@link #setModel(Serializable)} methods so that retrieval and insertion of
  * the model from and into conversation instances
  * can be managed on behalf of inheriting classes.
- * 
+ * <p/>
  * Use of this class requires zero configuration (no interceptors, etc.).
- * 
- * @author rees.byars
- * 
+ *
  * @param <T>
+ * @author rees.byars
  */
 public abstract class ProgrammaticModelDrivenConversationSupport<T extends Serializable> extends ActionSupport implements ProgrammaticModelDrivenConversation<T>, Preparable {
 
     private static final long serialVersionUID = -3567083451289146237L;
 
     private T model;
-	protected ScopeContainer scopeContainer;
-    
+    protected ScopeContainer scopeContainer;
+
     @Inject
     public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-    	scopeContainer = scopeContainerProvider.getScopeContainer();
+        scopeContainer = scopeContainerProvider.getScopeContainer();
     }
 
     /**
      * {@inheritDoc}
-     * 
+     * <p/>
      * The model is scoped to the conversations indicated by
      * {@link #getConversations()}
      */
@@ -89,7 +88,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
 
     /**
      * {@inheritDoc}
-     * 
+     * <p/>
      * The model is scoped to the conversations indicated by
      * {@link #getConversations()}
      */
@@ -103,10 +102,10 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * The name of the model used to identify it in the
      * {@link com.github.overengineer.scope.conversation.context.ConversationContext
      * ConversationContext}.
-     * 
+     * <p/>
      * This can be overridden to provide the name of choice. The default is
      * <code>this.getClass().getName()</code>.
-     * 
+     *
      * @return
      */
     protected String getModelName() {
@@ -117,26 +116,26 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      * {@inheritDoc}
      */
     public void prepare() {
-    	ActionContext actionContext = ActionContext.getContext();
-    	HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-    	ConversationContextManager contextManager = scopeContainer.getComponent(JeeConversationContextManagerProvider.class).getManager(request);
+        ActionContext actionContext = ActionContext.getContext();
+        HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
+        ConversationContextManager contextManager = scopeContainer.getComponent(JeeConversationContextManagerProvider.class).getManager(request);
         try {
-			scopeContainer.getComponent(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
-			Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
-	        stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
-	        actionContext.getValueStack().push(stackItem);
+            scopeContainer.getComponent(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
+            Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
+            stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
+            actionContext.getValueStack().push(stackItem);
         } catch (ConversationException e) {
-			LOG.error("Programmatic Conversation error in Prepare method", e);
-		}
+            LOG.error("Programmatic Conversation error in Prepare method", e);
+        }
     }
 
     /**
      * Begins new instances of this class's conversations
      */
     protected void beginConversations() {
-        ProgrammaticModelDrivenConversationUtil.begin(this, 
-        		scopeContainer.getProperty(long.class, ConversationConstants.Properties.CONVERSATION_IDLE_TIMEOUT), 
-        		scopeContainer.getProperty(int.class, ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES));
+        ProgrammaticModelDrivenConversationUtil.begin(this,
+                scopeContainer.getProperty(long.class, ConversationConstants.Properties.CONVERSATION_IDLE_TIMEOUT),
+                scopeContainer.getProperty(int.class, ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES));
     }
 
     /**

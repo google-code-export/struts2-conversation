@@ -28,30 +28,30 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * An extension of the {@link ActionSupport} that also implements {@link ConversationErrorAware}.
- * 
+ *
  * @author rees.byars
  */
 public class ConversationSupport extends ActionSupport implements ConversationErrorAware {
 
-	private static final long serialVersionUID = -7232415823361670467L;
-	
-	protected String conversationError;
+    private static final long serialVersionUID = -7232415823361670467L;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setConversationError(String conversationError) {
-		this.conversationError = conversationError;
-	}
+    protected String conversationError;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getConversationError() {
-		return this.conversationError;
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConversationError(String conversationError) {
+        this.conversationError = conversationError;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getConversationError() {
+        return this.conversationError;
+    }
+
 
 }

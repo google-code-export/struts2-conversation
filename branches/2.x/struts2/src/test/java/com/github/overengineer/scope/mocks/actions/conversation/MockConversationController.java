@@ -11,49 +11,51 @@ import com.opensymphony.xwork2.ActionSupport;
 
 @ConversationController("oopy")
 public class MockConversationController extends ActionSupport {
-	
-	private static final long serialVersionUID = 1L;
-	@ConversationField private String conversationString = "initialState";
-	@SessionField public String chubby;
-	
-	@Autowired
-	private TestBean bean;
 
-	@Action("begin")
-	public String begin() {
-		chubby = "chubbs";
-		return SUCCESS;
-	}
-	
-	@Action("do1")
-	public String doThing1() {
-		bean.setEcho("hello spring");
-		return SUCCESS;
-	}
+    private static final long serialVersionUID = 1L;
+    @ConversationField
+    private String conversationString = "initialState";
+    @SessionField
+    public String chubby;
 
-	@Action("do2")
-	public String doThing2() {
-		return SUCCESS;
-	}
-	
-	@Action("end")
-	public String end() {
-		return SUCCESS;
-	}
+    @Autowired
+    private TestBean bean;
 
-	public void setConversationString(String conversationString) {
-		this.conversationString = conversationString;
-	}
+    @Action("begin")
+    public String begin() {
+        chubby = "chubbs";
+        return SUCCESS;
+    }
 
-	public String getConversationString() {
-		return conversationString;
-	}
+    @Action("do1")
+    public String doThing1() {
+        bean.setEcho("hello spring");
+        return SUCCESS;
+    }
 
-	public void setBean(TestBean bean) {
-		this.bean = bean;
-	}
+    @Action("do2")
+    public String doThing2() {
+        return SUCCESS;
+    }
 
-	public TestBean getBean() {
-		return bean;
-	}
+    @Action("end")
+    public String end() {
+        return SUCCESS;
+    }
+
+    public void setConversationString(String conversationString) {
+        this.conversationString = conversationString;
+    }
+
+    public String getConversationString() {
+        return conversationString;
+    }
+
+    public void setBean(TestBean bean) {
+        this.bean = bean;
+    }
+
+    public TestBean getBean() {
+        return bean;
+    }
 }

@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: StrutsConversationArbitrator.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
@@ -48,9 +48,8 @@ import com.opensymphony.xwork2.inject.Inject;
 
 /**
  * The {@link ConversationArbitrator} for use with Struts2.
- * 
+ *
  * @author rees.byars
- * 
  */
 public class StrutsConversationArbitrator extends DefaultConversationArbitrator {
 
@@ -67,27 +66,27 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     public void setUsePackageNesting(String usePackageNesting) {
         this.usePackageNesting = "true".equals(usePackageNesting);
     }
-    
+
     @Component
     public void setActionProvider(ActionProvider actionProvider) {
-    	this.actionProvider = actionProvider;
+        this.actionProvider = actionProvider;
     }
 
     @Inject
     public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
         this.actionProvider = scopeContainerProvider.getScopeContainer().getComponent(ActionProvider.class);
     }
-    
+
     @Override
     protected Set<Class<?>> getConversationControllers(Class<?> clazz) {
-    	if (this.isModelDrivenConversation(clazz)) {
-    		Set<Class<?>> controllers = super.getConversationControllers(clazz);
-    		controllers.add(clazz);
-    		return controllers;
-    	} else {
-    		return super.getConversationControllers(clazz);
-    	}
-    	
+        if (this.isModelDrivenConversation(clazz)) {
+            Set<Class<?>> controllers = super.getConversationControllers(clazz);
+            controllers.add(clazz);
+            return controllers;
+        } else {
+            return super.getConversationControllers(clazz);
+        }
+
     }
 
     /**
@@ -107,7 +106,7 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
                 conversations.addAll(packageConversations);
             }
         }
-        return conversations.toArray(new String[] {});
+        return conversations.toArray(new String[]{});
     }
 
     /**
@@ -119,7 +118,7 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
         if (this.isModelDrivenConversation(clazz) && !clazz.isAnnotationPresent(ConversationController.class)) {
             conversations.add(NamingUtil.getConventionName(clazz, actionSuffix));
         }
-        return conversations.toArray(new String[] {});
+        return conversations.toArray(new String[]{});
     }
 
     /**
@@ -145,12 +144,12 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
         Collection<String> packageBasedConversations = new HashSet<String>();
 
         try {
-        	for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
+            for (Class<?> superCandidate : this.actionProvider.getActionClasses()) {
                 String superCandidateClassName = superCandidate.getName();
                 String superCandidateClassPackageString = superCandidateClassName.substring(0, superCandidateClassName.lastIndexOf("."));
                 if (classPackageString.contains(superCandidateClassPackageString) && !classPackageString.equals(superCandidateClassPackageString)) {
-                    
-                	LOG.debug("Adding conversations from " + superCandidateClassName);
+
+                    LOG.debug("Adding conversations from " + superCandidateClassName);
 
                     String[] superCandidateConversations = this.getConversationsWithoutInheritance(superCandidate, actionSuffix);
                     packageBasedConversations.addAll(Arrays.asList(superCandidateConversations));
@@ -159,7 +158,7 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
             LOG.debug("Package-based conversations found for " + className + ":  " + packageBasedConversations.toString());
         } catch (Exception e) {
-        	LOG.warn("Cannot resolve package-based conversation nesting due to Struts2 version incompatibility for this feature.  Update to latest Struts2 version to enable.");
+            LOG.warn("Cannot resolve package-based conversation nesting due to Struts2 version incompatibility for this feature.  Update to latest Struts2 version to enable.");
         }
 
         return packageBasedConversations;

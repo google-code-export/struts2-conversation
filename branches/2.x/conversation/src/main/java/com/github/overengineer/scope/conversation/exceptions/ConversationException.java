@@ -25,19 +25,18 @@
 package com.github.overengineer.scope.conversation.exceptions;
 
 /**
- * An exception thrown when exceptions occur in conversation processing.  {@link com.github.overengineer.scope.conversation.processing.ConversationProcessor 
+ * An exception thrown when exceptions occur in conversation processing.  {@link com.github.overengineer.scope.conversation.processing.ConversationProcessor
  * ConversationProcessor's} should catch any other exceptions and wrap them with this class to allow for simple
- * exception mapping for any conversation-related exceptions.  
- * 
- * @author rees.byars
+ * exception mapping for any conversation-related exceptions.
  *
+ * @author rees.byars
  */
 public class ConversationException extends Exception {
 
-	private static final long serialVersionUID = 9175214621610696767L;
-	
-	public ConversationException(String message) {
-		super(message);
-	}
+    private static final long serialVersionUID = 9175214621610696767L;
+
+    public ConversationException(String message) {
+        super(message);
+    }
 
 }

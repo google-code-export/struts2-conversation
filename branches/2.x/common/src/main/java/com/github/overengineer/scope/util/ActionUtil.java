@@ -32,16 +32,14 @@ import java.util.TreeSet;
 
 /**
  * @author rees.byars
- *
  */
 public class ActionUtil {
 
-	/**
-	 * 
-	 * @param method
-	 * @return true if the method signature matches appears to be a Struts2 action method signature
-	 */
-	public static boolean isAction(Method method) {
+    /**
+     * @param method
+     * @return true if the method signature matches appears to be a Struts2 action method signature
+     */
+    public static boolean isAction(Method method) {
         String methodName = method.getName();
         return (!(methodName.startsWith("get") || methodName.startsWith("set") || methodName
                 .startsWith("is"))
@@ -50,23 +48,23 @@ public class ActionUtil {
                 && method.getReturnType().equals(String.class) && method
                 .getParameterTypes().length == 0);
     }
-	
-	/**
-	 * makes a best effort using {@link #isAction(Method)} to return all the action methods
-	 * from the given class - if the class does not follow conventions, then this may not
-	 * be an accurate set!  Follow conventions!
-	 * 
-	 * @param actionClass
-	 * @return
-	 */
-	public static Set<String> getActions(Class<?> actionClass) {
-		Set<String> actionNames = new TreeSet<String>();
+
+    /**
+     * makes a best effort using {@link #isAction(Method)} to return all the action methods
+     * from the given class - if the class does not follow conventions, then this may not
+     * be an accurate set!  Follow conventions!
+     *
+     * @param actionClass
+     * @return
+     */
+    public static Set<String> getActions(Class<?> actionClass) {
+        Set<String> actionNames = new TreeSet<String>();
         for (Method method : ReflectionUtil.getMethods(actionClass)) {
             if (ActionUtil.isAction(method)) {
                 actionNames.add(method.getName());
             }
         }
         return actionNames;
-	}
-	
+    }
+
 }
