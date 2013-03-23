@@ -1,10 +1,8 @@
 package com.github.overengineer.scope.struts2.config_browser;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,6 +12,7 @@ import com.github.overengineer.scope.conversation.configuration.ConversationClas
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
 import com.github.overengineer.scope.util.ActionUtil;
 import com.github.overengineer.scope.struts2.ConversationInterceptor;
+import com.github.overengineer.scope.util.Bijector;
 import com.opensymphony.xwork2.config.entities.ActionConfig;
 import com.opensymphony.xwork2.config.entities.InterceptorMapping;
 import com.opensymphony.xwork2.inject.Inject;
@@ -93,11 +92,11 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
             String methodName = this.getMethodName(actionConfig);
             for (ConversationClassConfiguration realConfig : realConfigs) {
                 if (realConfig.containsAction(methodName)) {
-                    Map<String, Field> fields = realConfig.getFields();
-                    if (fields.size() > 0) {
+                    Set<Bijector> bijectors = realConfig.getBijectors();
+                    if (bijectors.size() > 0) {
                         StringBuilder fieldDisplayBuilder = new StringBuilder();
-                        for (Entry<String, Field> fieldEntry : fields.entrySet()) {
-                            fieldDisplayBuilder.append(fieldEntry.getKey()).append(" (").append(fieldEntry.getValue().getType().getSimpleName()).append("), ");
+                        for (Bijector bijector : bijectors) {
+                            fieldDisplayBuilder.append(bijector.getContextKey()).append(" (").append(bijector.getFieldType().getSimpleName()).append("), ");
                         }
                         String displayString = fieldDisplayBuilder.substring(0, fieldDisplayBuilder.length() - 2);
                         conversationFields.put(realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, ""), displayString);

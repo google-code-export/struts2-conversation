@@ -44,7 +44,6 @@ import com.github.overengineer.scope.conversation.ConversationConstants.Defaults
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
-import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
  * The default implementation of {@link ConversationConfigurationProvider}
@@ -146,7 +145,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                 Collection<String> fieldConversations = this.arbitrator.getConversations(clazz, field);
                 if (fieldConversations != null) {
                     String fieldName = this.arbitrator.getName(field);
-                    ReflectionUtil.makeAccessible(field);
                     for (String conversation : fieldConversations) {
                         ConversationClassConfiguration configuration = temporaryConversationMap.get(conversation);
                         if (configuration == null) {
