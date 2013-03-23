@@ -72,6 +72,9 @@ public class BijectorImpl implements Bijector {
                 field = declaringClass.getField(fieldName);
             }
             Object value = field.get(target);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Extracting field [{}] with value [{}] and placing in context [{}] using key [{}]", field.getName(), value, context.toString(), contextKey);
+            }
             context.put(contextKey, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);

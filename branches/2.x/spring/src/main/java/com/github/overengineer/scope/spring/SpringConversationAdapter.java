@@ -35,7 +35,7 @@ import org.springframework.web.method.HandlerMethod;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.util.RequestContextUtil;
+import com.github.overengineer.scope.conversation.RequestContextUtil;
 import com.github.overengineer.scope.util.SessionContextUtil;
 
 /**

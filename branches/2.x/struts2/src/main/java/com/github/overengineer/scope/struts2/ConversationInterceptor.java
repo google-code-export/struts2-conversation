@@ -24,12 +24,9 @@
 package com.github.overengineer.scope.struts2;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import com.github.overengineer.scope.container.ScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
-import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
 import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
@@ -98,9 +94,6 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
      * This value can then be referenced in a message with the expression ${conversation.id}
      */
     public static final String CONVERSATION_EXCEPTION_ID_STACK_KEY = "conversation.id";
-
-    protected static final String ID_PARAM_REGEX = ".*" + ConversationConstants.CONVERSATION_NAME_SUFFIX;
-    protected static final Pattern ID_PARAM_PATTERN = Pattern.compile(ID_PARAM_REGEX);
 
     protected JeeConversationContextManagerProvider contextManagerProvider;
     protected ConversationProcessor processor;
@@ -167,7 +160,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 
             adapter.executePreActionProcessors();
 
-            this.cleanupParamIds(actionContext.getParameters());
+            this.cleanContext(adapter, actionContext);
 
             String result = invocation.invoke();
 
@@ -196,15 +189,14 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     }
 
     /**
-     * removes the conversation ids from the parameter map so that they are excluded from further parameter processing
      *
-     * @param parameters a map of the request parameters
+     * @param adapter
+     * @param actionContext
      */
-    protected void cleanupParamIds(Map<String, Object> parameters) {
-        for (Iterator<Entry<String, Object>> i = parameters.entrySet().iterator(); i.hasNext(); ) {
-            if (ID_PARAM_PATTERN.matcher(i.next().getKey()).matches()) {
-                i.remove();
-            }
+    protected void cleanContext(ConversationAdapter adapter, ActionContext actionContext) {
+        Map<String, Object> params = actionContext.getParameters();
+        for (String paramName : adapter.getRequestContext().keySet()) {
+            params.remove(paramName);
         }
     }
 

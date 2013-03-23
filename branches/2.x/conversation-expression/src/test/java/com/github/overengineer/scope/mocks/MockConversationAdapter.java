@@ -33,7 +33,7 @@ import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
 import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
-import com.github.overengineer.scope.util.RequestContextUtil;
+import com.github.overengineer.scope.conversation.RequestContextUtil;
 
 /**
  * @author rees.byars
