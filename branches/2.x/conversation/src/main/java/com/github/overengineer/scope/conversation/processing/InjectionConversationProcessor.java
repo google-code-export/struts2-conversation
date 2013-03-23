@@ -23,9 +23,10 @@
  ******************************************************************************/
 package com.github.overengineer.scope.conversation.processing;
 
-import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 
+import com.github.overengineer.scope.util.Bijector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,6 @@ import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
 import com.github.overengineer.scope.conversation.context.ConversationContext;
-import com.github.overengineer.scope.util.InjectionUtil;
 
 /**
  * The default implementation of the {@link InjectionConversationProcessor}
@@ -50,10 +50,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
      */
     @Override
     protected void handleContinuing(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
-        Map<String, Field> actionConversationFields = conversationConfig.getFields();
 
-        if (actionConversationFields != null) {
-            InjectionUtil.setFieldValues(conversationAdapter.getAction(), actionConversationFields, conversationContext);
+        for (Bijector bijector : conversationConfig.getBijectors()) {
+            bijector.injectFromContext(conversationAdapter.getAction(), conversationContext);
         }
 
         conversationAdapter.addPostActionProcessor(this, conversationConfig, conversationContext.getId());
@@ -65,10 +64,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
      */
     @Override
     protected void handleEnding(ConversationClassConfiguration conversationConfig, ConversationAdapter conversationAdapter, ConversationContext conversationContext) {
-        Map<String, Field> actionConversationFields = conversationConfig.getFields();
 
-        if (actionConversationFields != null) {
-            InjectionUtil.setFieldValues(conversationAdapter.getAction(), actionConversationFields, conversationContext);
+        for (Bijector bijector : conversationConfig.getBijectors()) {
+            bijector.injectFromContext(conversationAdapter.getAction(), conversationContext);
         }
 
         conversationAdapter.addPostActionProcessor(new ConversationEndProcessor(), conversationConfig, conversationContext.getId());
@@ -104,9 +102,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
 
         Object action = conversationAdapter.getAction();
 
-        Map<String, Field> actionConversationFields = conversationConfig.getFields();
+        Set<Bijector> bijectors = conversationConfig.getBijectors();
 
-        if (actionConversationFields != null) {
+        if (bijectors.size() > 0) {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Getting conversation fields for " + conversationName + " following execution of action " + conversationAdapter.getActionId());
@@ -115,7 +113,9 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
             Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
 
             if (conversationContext != null) {
-                conversationContext.putAll(InjectionUtil.getFieldValues(action, actionConversationFields));
+                for (Bijector bijector : bijectors) {
+                    bijector.extractIntoContext(conversationAdapter.getAction(), conversationContext);
+                }
             }
 
         }

@@ -24,6 +24,8 @@ public class StrutsScopeContainer extends AbstractScopeContainer {
             return (T) Long.valueOf(string);
         } else if (clazz == int.class) {
             return (T) Integer.valueOf(string);
+        } else if (clazz == boolean.class) {
+            return (T) (Boolean) "true".equals(string);
         }
         return (T) string;
     }

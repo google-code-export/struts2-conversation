@@ -25,9 +25,11 @@ package com.github.overengineer.scope.conversation.configuration;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.processing.ConversationProcessor;
+import com.github.overengineer.scope.util.Bijector;
 
 /**
  * This class is used to cache the fields and action IDs for a single
@@ -40,19 +42,17 @@ import com.github.overengineer.scope.conversation.processing.ConversationProcess
 public interface ConversationClassConfiguration {
 
     /**
-     * Add a field to the configuration
      *
-     * @param name
-     * @param field
+     * @param bijector
      */
-    public void addField(String name, Field field);
+    public void addBijector(Bijector bijector);
 
     /**
      * Get the cached fields for conversation
      *
      * @return
      */
-    public Map<String, Field> getFields();
+    public Set<Bijector> getBijectors();
 
     /**
      * Add an actionId for an intermediate action

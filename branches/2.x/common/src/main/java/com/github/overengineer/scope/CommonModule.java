@@ -5,8 +5,7 @@ import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
-import com.github.overengineer.scope.util.Bijector;
-import com.github.overengineer.scope.util.BijectorImpl;
+import com.github.overengineer.scope.util.BijectorFactory;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +23,7 @@ public class CommonModule extends BaseModule {
 
         use(DefaultSchedulerProvider.class).forType(SchedulerProvider.class);
 
-        use(BijectorImpl.Factory.class).forType(Bijector.Factory.class);
+        use(BijectorFactory.class).forType(BijectorFactory.class);
 
         set(CommonConstants.Properties.MONITORING_FREQUENCY)
                 .to(CommonConstants.Defaults.MONITORING_FREQUENCY);
