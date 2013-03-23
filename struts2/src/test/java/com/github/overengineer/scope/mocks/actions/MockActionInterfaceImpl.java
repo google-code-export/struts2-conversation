@@ -5,31 +5,31 @@ import com.github.overengineer.scope.session.SessionField;
 import com.opensymphony.xwork2.Action;
 
 public class MockActionInterfaceImpl implements Action {
-	
-	@SessionField
-	private String sessionString;
-	
-	private String workflowString;
 
-	@Override
-	public String execute() throws Exception {
-		return SUCCESS;
-	}
+    @SessionField
+    private String sessionString;
 
-	public void setSessionString(String sessionString) {
-		this.sessionString = sessionString;
-	}
+    private String workflowString;
 
-	public String getSessionString() {
-		return sessionString;
-	}
+    @Override
+    public String execute() throws Exception {
+        return SUCCESS;
+    }
 
-	public void setWorkflowString(String workflowField) {
-		this.workflowString = workflowField;
-	}
+    public void setSessionString(String sessionString) {
+        this.sessionString = sessionString;
+    }
 
-	public String getWorkflowString() {
-		return workflowString;
-	}
+    public String getSessionString() {
+        return sessionString;
+    }
+
+    public void setWorkflowString(String workflowField) {
+        this.workflowString = workflowField;
+    }
+
+    public String getWorkflowString() {
+        return workflowString;
+    }
 
 }

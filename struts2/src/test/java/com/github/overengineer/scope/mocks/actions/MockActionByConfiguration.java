@@ -3,23 +3,23 @@ package com.github.overengineer.scope.mocks.actions;
 import com.github.overengineer.scope.session.SessionField;
 
 public class MockActionByConfiguration {
-	
-	private static final String SUCCESS = "success";
-	
-	@SessionField
-	private String sessionField;
 
-	public String execute() {
-		return SUCCESS;
-	}
+    private static final String SUCCESS = "success";
 
-	public void setSessionField(String sessionField) {
-		System.out.println("****************************************" + sessionField);
-		this.sessionField = sessionField;
-	}
+    @SessionField
+    private String sessionField;
 
-	public String getSessionField() {
-		return sessionField;
-	}
+    public String execute() {
+        return SUCCESS;
+    }
+
+    public void setSessionField(String sessionField) {
+        System.out.println("****************************************" + sessionField);
+        this.sessionField = sessionField;
+    }
+
+    public String getSessionField() {
+        return sessionField;
+    }
 
 }

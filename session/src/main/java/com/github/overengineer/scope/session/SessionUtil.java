@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: SessionUtil.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.session;
@@ -32,13 +32,11 @@ import org.slf4j.LoggerFactory;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
- * 
  * A utility class that provides static methods that are used internally and
  * for unit testing. Use outside of these contexts should come only as
  * a last resort.
- * 
+ *
  * @author rees.byars
- * 
  */
 public class SessionUtil {
 
@@ -48,7 +46,7 @@ public class SessionUtil {
      * Given the name of a session-scoped field and its class, this method
      * returns the appropriate key that is used to identify instances of the
      * field in the session-field map.
-     * 
+     *
      * @param name
      * @param clazz
      * @return
@@ -60,7 +58,7 @@ public class SessionUtil {
     /**
      * Given a session field's name and class, the value of the field is
      * returned from the session.
-     * 
+     *
      * @param <T>
      * @param name
      * @param clazz
@@ -79,7 +77,7 @@ public class SessionUtil {
     /**
      * Given a session field's name and an instance, the value is set
      * for the field in the session.
-     * 
+     *
      * @param fieldName
      * @param fieldValue
      */
@@ -97,7 +95,7 @@ public class SessionUtil {
      * are extracted from the target object and placed into the session. No
      * caching
      * is performed, for use only in unit testing.
-     * 
+     *
      * @param target
      */
     public static void extractFields(Object target) {
@@ -124,7 +122,7 @@ public class SessionUtil {
      * The target object's session fields that are annotated with
      * {@link SessionField} are injected from the session. No caching
      * is performed, for use only in unit testing.
-     * 
+     *
      * @param target
      */
     public static void injectFields(Object target) {
@@ -145,7 +143,7 @@ public class SessionUtil {
 
     /**
      * Returns the name of the given field's SessionField
-     * 
+     *
      * @param field
      * @return
      */

@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
 public abstract class StrutsSpringTest<T> extends StrutsTest<T> implements ApplicationContextAware {
-    
+
     protected ApplicationContext applicationContext;
 
     @Override

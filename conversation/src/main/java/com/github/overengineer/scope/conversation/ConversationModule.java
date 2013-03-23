@@ -17,20 +17,20 @@ import com.github.overengineer.scope.conversation.processing.ConversationProcess
 import com.github.overengineer.scope.conversation.processing.InjectionConversationProcessor;
 
 public class ConversationModule extends BaseModule {
-	
-	public ConversationModule() {
-		
-		resolve(ConversationConfigurationProvider.class).to(DefaultConversationConfigurationProvider.class);
-		resolve(ConversationArbitrator.class).to(DefaultConversationArbitrator.class);
-		resolve(ConversationProcessor.class).to(InjectionConversationProcessor.class);
-		resolve(JeeConversationContextManagerProvider.class).to(DefaultJeeConversationContextManagerProvider.class);
-		resolve(ConversationContextFactory.class).to(DefaultConversationContextFactory.class);
-		resolve(ConversationContextManager.class).to(TimeoutConversationContextManager.class);
-		
-		resolve(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
-		resolve(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
-		resolve(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
-		
-	}
+
+    public ConversationModule() {
+
+        resolve(ConversationConfigurationProvider.class).to(DefaultConversationConfigurationProvider.class);
+        resolve(ConversationArbitrator.class).to(DefaultConversationArbitrator.class);
+        resolve(ConversationProcessor.class).to(InjectionConversationProcessor.class);
+        resolve(JeeConversationContextManagerProvider.class).to(DefaultJeeConversationContextManagerProvider.class);
+        resolve(ConversationContextFactory.class).to(DefaultConversationContextFactory.class);
+        resolve(ConversationContextManager.class).to(TimeoutConversationContextManager.class);
+
+        resolve(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
+        resolve(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
+        resolve(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
+
+    }
 
 }

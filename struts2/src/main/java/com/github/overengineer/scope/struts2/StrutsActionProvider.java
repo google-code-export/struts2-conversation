@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: StrutsActionProvider.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
@@ -55,7 +55,7 @@ import com.opensymphony.xwork2.util.finder.UrlSet;
 
 /**
  * Struts2 implementation of the {@link ActionProvider}.
- * 
+ *
  * @author rees.byars with code from the struts2 convention package
  */
 public class StrutsActionProvider implements ActionProvider {
@@ -83,24 +83,24 @@ public class StrutsActionProvider implements ActionProvider {
     private Container container;
 
     public Set<Class<?>> getActionClasses() {
-    	try {
-    		if (this.fileManager == null) {
-    			//retrieve this way instead of by injection in order to catch an handle errors/exceptions with older versions of struts2
-    			this.fileManager = this.container.getInstance(FileManagerFactory.class).getFileManager();
-    		}
-    		if (actionClasses == null) {
+        try {
+            if (this.fileManager == null) {
+                //retrieve this way instead of by injection in order to catch an handle errors/exceptions with older versions of struts2
+                this.fileManager = this.container.getInstance(FileManagerFactory.class).getFileManager();
+            }
+            if (actionClasses == null) {
                 initReloadClassLoader();
                 actionClasses = this.findActions();
             }
             //This is a hack to make sure that changes to Struts2 classes used below don't blow up the whole plugin
-    	} catch (Throwable t) {
-    		LOG.warn("Could not load action classes on startup.  Configuration caches will be built on-demand.");
-    	}
-    	//TODO this ok?
-    	return this.actionClasses;
-        
+        } catch (Throwable t) {
+            LOG.warn("Could not load action classes on startup.  Configuration caches will be built on-demand.");
+        }
+        //TODO this ok?
+        return this.actionClasses;
+
     }
-    
+
     @Inject
     public void setContainer(Container container) {
         this.container = container;
@@ -132,10 +132,9 @@ public class StrutsActionProvider implements ActionProvider {
     /**
      * File URLs whose protocol are in these list will be processed as jars
      * containing classes
-     * 
-     * @param fileProtocols
-     *        Comma separated list of file protocols that will be considered
-     *        as jar files and scanned
+     *
+     * @param fileProtocols Comma separated list of file protocols that will be considered
+     *                      as jar files and scanned
      */
     @Inject(ConventionConstants.FILE_PROTOCOLS)
     public void setFileProtocols(String fileProtocols) {
@@ -146,9 +145,8 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param includeJars
-     *        Comma separated list of regular expressions of jars to be
-     *        included.
+     * @param includeJars Comma separated list of regular expressions of jars to be
+     *                    included.
      */
     @Inject(value = ConventionConstants.INCLUDE_JARS, required = false)
     public void setIncludeJars(String includeJars) {
@@ -157,8 +155,7 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param disablePackageLocatorsScanning
-     *        If set to true, only the named packages will be scanned
+     * @param disablePackageLocatorsScanning If set to true, only the named packages will be scanned
      */
     @Inject(
             value = ConventionConstants.PACKAGE_LOCATORS_DISABLE,
@@ -170,9 +167,8 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param actionPackages
-     *        (Optional) An optional list of action packages that this
-     *        should create configuration for.
+     * @param actionPackages (Optional) An optional list of action packages that this
+     *                       should create configuration for.
      */
     @Inject(value = ConventionConstants.ACTION_PACKAGES, required = false)
     public void setActionPackages(String actionPackages) {
@@ -182,9 +178,8 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param checkImplementsAction
-     *        (Optional) Map classes that implement
-     *        com.opensymphony.xwork2.Action as actions
+     * @param checkImplementsAction (Optional) Map classes that implement
+     *                              com.opensymphony.xwork2.Action as actions
      */
     @Inject(
             value = ConventionConstants.CHECK_IMPLEMENTS_ACTION,
@@ -194,9 +189,8 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param actionSuffix
-     *        (Optional) Classes that end with these value will be mapped as
-     *        actions (defaults to "Action")
+     * @param actionSuffix (Optional) Classes that end with these value will be mapped as
+     *                     actions (defaults to "Action")
      */
     @Inject(value = ConventionConstants.ACTION_SUFFIX, required = false)
     public void setActionSuffix(String actionSuffix) {
@@ -206,8 +200,7 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param packageLocators
-     *        (Optional) A list of names used to find action packages.
+     * @param packageLocators (Optional) A list of names used to find action packages.
      */
     @Inject(value = ConventionConstants.PACKAGE_LOCATORS, required = false)
     public void setPackageLocators(String packageLocators) {
@@ -215,9 +208,8 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param packageLocatorsBasePackage
-     *        (Optional) If set, only packages that start with this name
-     *        will be scanned for actions.
+     * @param packageLocatorsBasePackage (Optional) If set, only packages that start with this name
+     *                                   will be scanned for actions.
      */
     @Inject(
             value = ConventionConstants.PACKAGE_LOCATORS_BASE_PACKAGE,
@@ -227,10 +219,9 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     /**
-     * @param requireFollowsConvention
-     *        If true, only classes that follow the convention for action
-     *        classes will
-     *        be scanned for the scope annotations.
+     * @param requireFollowsConvention If true, only classes that follow the convention for action
+     *                                 classes will
+     *                                 be scanned for the scope annotations.
      */
     @Inject(value = StrutsScopeConstants.REQUIRE_FOLLOWS_CONVENTION)
     public void setRequireFollowsConvention(String requireFollowsConvention) {
@@ -245,9 +236,8 @@ public class StrutsActionProvider implements ActionProvider {
      * || implements Action) test will have to remain until later. See
      * {@link #getActionClassTest()} for the test performed on the loaded
      * {@link ClassInfo} structure.
-     * 
-     * @param className
-     *        the name of the class to test
+     *
+     * @param className the name of the class to test
      * @return true if the specified class should be included in the
      *         package-based action scan
      */
@@ -269,7 +259,7 @@ public class StrutsActionProvider implements ActionProvider {
             for (String packageLocator : packageLocators) {
                 if (classPackageName.length() > 0
                         && (packageLocatorsBasePackage == null || classPackageName
-                                .startsWith(packageLocatorsBasePackage))) {
+                        .startsWith(packageLocatorsBasePackage))) {
                     String[] splitted = classPackageName.split("\\.");
 
                     if (contains(splitted, packageLocator, false))
@@ -287,7 +277,7 @@ public class StrutsActionProvider implements ActionProvider {
      * Note that the goal is to avoid loading the class, so the test should only
      * rely on information in the class name itself. The default implementation
      * is to return the result of {@link #includeClassNameInActionScan(String)}.
-     * 
+     *
      * @return a {@link Test} object that returns true if the specified class
      *         name should be included in the package scan
      */
@@ -305,7 +295,7 @@ public class StrutsActionProvider implements ActionProvider {
      * {@link ClassInfo} of the class. At this point, the class has been loaded,
      * so it's ok to perform tests such as checking annotations or looking at
      * interfaces or super-classes of the specified class.
-     * 
+     *
      * @return a {@link Test} object that returns true if the specified class
      *         should be included in the package scan
      */
@@ -329,7 +319,7 @@ public class StrutsActionProvider implements ActionProvider {
                 try {
                     return inPackage
                             && (nameMatches || (checkImplementsAction && com.opensymphony.xwork2.Action.class
-                                    .isAssignableFrom(classInfo.get())));
+                            .isAssignableFrom(classInfo.get())));
                 } catch (ClassNotFoundException ex) {
                     if (LOG.isErrorEnabled())
                         LOG.error("Unable to load class [#0]", ex,
@@ -344,7 +334,7 @@ public class StrutsActionProvider implements ActionProvider {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         try {
             if (actionPackages != null || (packageLocators != null && !disablePackageLocatorsScanning)) {
-                
+
                 // By default, ClassFinder scans EVERY class in the specified
                 // url set, which can produce spurious warnings for non-action
                 // classes that can't be loaded. We pass a package filter that
@@ -356,7 +346,7 @@ public class StrutsActionProvider implements ActionProvider {
 
                 Test<ClassFinder.ClassInfo> test = getActionClassTest();
                 for (Class<?> clazz : finder.findClasses(test)) {
-                	classes.add(clazz);
+                    classes.add(clazz);
                 }
             }
         } catch (Exception ex) {
@@ -366,7 +356,7 @@ public class StrutsActionProvider implements ActionProvider {
 
         return classes;
     }
-    
+
     private List<URL> readUrls() throws IOException {
         List<URL> resourceUrls = new ArrayList<URL>();
         // Usually the "classes" dir.
@@ -408,7 +398,7 @@ public class StrutsActionProvider implements ActionProvider {
 
             return (ClassLoaderInterface) ObjectUtils.defaultIfNull(
                     classLoaderInterface, new ClassLoaderInterfaceDelegate(
-                            getClassLoader()));
+                    getClassLoader()));
         }
     }
 
@@ -455,11 +445,11 @@ public class StrutsActionProvider implements ActionProvider {
         urlSet = urlSet.excludeJavaExtDirs();
         urlSet = urlSet.excludeJavaEndorsedDirs();
         try {
-        	urlSet = urlSet.excludeJavaHome();
+            urlSet = urlSet.excludeJavaHome();
         } catch (NullPointerException e) {
-        	// This happens in GAE since the sandbox contains no java.home directory
+            // This happens in GAE since the sandbox contains no java.home directory
             if (LOG.isWarnEnabled())
-        	    LOG.warn("Could not exclude JAVA_HOME, is this a sandbox jvm?");
+                LOG.warn("Could not exclude JAVA_HOME, is this a sandbox jvm?");
         }
         urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
         urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
@@ -503,7 +493,7 @@ public class StrutsActionProvider implements ActionProvider {
     }
 
     public static boolean contains(String[] strings, String value,
-            boolean ignoreCase) {
+                                   boolean ignoreCase) {
         if (strings != null) {
             for (String string : strings) {
                 if ((string.equals(value))

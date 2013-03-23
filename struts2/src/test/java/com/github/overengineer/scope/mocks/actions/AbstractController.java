@@ -4,25 +4,25 @@ import com.github.overengineer.scope.session.SessionField;
 
 public abstract class AbstractController {
 
-	@SessionField
-	private String abstractField = "hola";
-	
-	private String workflowString = "oopy doopy";
+    @SessionField
+    private String abstractField = "hola";
 
-	public void setAbstractField(String abstractField) {
-		this.abstractField = abstractField;
-	}
+    private String workflowString = "oopy doopy";
 
-	public String getAbstractField() {
-		return abstractField;
-	}
+    public void setAbstractField(String abstractField) {
+        this.abstractField = abstractField;
+    }
 
-	public void setWorkflowString(String workflowString) {
-		this.workflowString = workflowString;
-	}
+    public String getAbstractField() {
+        return abstractField;
+    }
 
-	public String getWorkflowString() {
-		return workflowString;
-	}
+    public void setWorkflowString(String workflowString) {
+        this.workflowString = workflowString;
+    }
+
+    public String getWorkflowString() {
+        return workflowString;
+    }
 
 }

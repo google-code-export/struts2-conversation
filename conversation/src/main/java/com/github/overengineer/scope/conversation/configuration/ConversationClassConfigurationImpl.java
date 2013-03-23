@@ -11,19 +11,18 @@ import com.github.overengineer.scope.conversation.ConversationUtil;
 
 /**
  * the  classic java map-wrapping bean with verbose data-struct-oriented internal classes.
- * 
- * @author reesbyars
  *
+ * @author reesbyars
  */
 public class ConversationClassConfigurationImpl implements ConversationClassConfiguration {
-	
-	private final Map<String, Field> fields = new HashMap<String, Field>();
+
+    private final Map<String, Field> fields = new HashMap<String, Field>();
     private final Set<String> actions = new HashSet<String>();
     private final Map<String, BeginConfig> beginActions = new HashMap<String, BeginConfig>();
-    private final Map<String, Boolean> endActions  = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> endActions = new HashMap<String, Boolean>();
     private final String conversationName;
 
-    protected ConversationClassConfigurationImpl(String conversationName) { 
+    protected ConversationClassConfigurationImpl(String conversationName) {
         this.conversationName = ConversationUtil.sanitizeName(conversationName) + ConversationConstants.CONVERSATION_NAME_SUFFIX;
     }
 
@@ -91,46 +90,46 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     public boolean isEndAction(String actionId) {
         return endActions.containsKey(actionId);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-	public boolean endAfterView(String actionId) {
-		return endActions.get(actionId);
-	}
-    
+    public boolean endAfterView(String actionId) {
+        return endActions.get(actionId);
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public long getMaxIdleTime(String beginActionId) {
-    	return beginActions.get(beginActionId).maxIdleTimeMillis;
+        return beginActions.get(beginActionId).maxIdleTimeMillis;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-	public String getMaxIdleTimeExpression(String beginActionId) {
-		return beginActions.get(beginActionId).maxIdleTime;
-	}
-    
+    public String getMaxIdleTimeExpression(String beginActionId) {
+        return beginActions.get(beginActionId).maxIdleTime;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int getMaxInstances(String beginActionId) {
-    	return beginActions.get(beginActionId).maxInstances;
+        return beginActions.get(beginActionId).maxInstances;
     }
 
-	/**
+    /**
      * {@inheritDoc}
      */
-	@Override
-	public boolean isTransactional(String beginActionId) {
-		return beginActions.get(beginActionId).transactional;
-	}
+    @Override
+    public boolean isTransactional(String beginActionId) {
+        return beginActions.get(beginActionId).transactional;
+    }
 
     /**
      * {@inheritDoc}
@@ -139,23 +138,22 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     public String getConversationName() {
         return conversationName;
     }
-    
+
     /**
-     * 
      * yuck....  TODO
-     *
      */
     class BeginConfig {
-    	long maxIdleTimeMillis;
-    	String maxIdleTime;
-    	int maxInstances;
-    	boolean transactional;
-    	BeginConfig(long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional) {
-    		this.maxIdleTimeMillis = maxIdleTimeMillis;
-    		this.maxIdleTime = maxIdleTime;
-    		this.maxInstances = maxInstances;
-    		this.transactional = transactional;
-    	}
+        long maxIdleTimeMillis;
+        String maxIdleTime;
+        int maxInstances;
+        boolean transactional;
+
+        BeginConfig(long maxIdleTimeMillis, String maxIdleTime, int maxInstances, boolean transactional) {
+            this.maxIdleTimeMillis = maxIdleTimeMillis;
+            this.maxIdleTime = maxIdleTime;
+            this.maxInstances = maxInstances;
+            this.transactional = transactional;
+        }
     }
 
 }

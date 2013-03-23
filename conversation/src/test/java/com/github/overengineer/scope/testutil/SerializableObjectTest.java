@@ -45,7 +45,7 @@ public abstract class SerializableObjectTest<T> {
             }
         }
         TT instance = null;
-        
+
         try {
             instance = (TT) constructor.newInstance(constructorArgs);
         } catch (InstantiationException ie) {

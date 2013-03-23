@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * ***Note:  This class taken from struts ASF repo where it is in package org.apache.struts***
- * <p>
+ * <p/>
  * User: mcucchiara
  * Date: 04/08/11
  * Time: 16.50

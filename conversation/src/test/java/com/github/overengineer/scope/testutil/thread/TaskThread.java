@@ -27,21 +27,23 @@ package com.github.overengineer.scope.testutil.thread;
 
 /**
  * An extension of the {@link EasyThread} interface that has methods for adding and removing {@link ThreadTask ThreadTasks}
- * 
+ *
  * @author rees.byars
  */
 public interface TaskThread extends EasyThread {
 
-	/**
-	 * Adds a {@link ThreadTask} to this thread.
-	 * @param task
-	 */
-	public void addTask(ThreadTask task);
+    /**
+     * Adds a {@link ThreadTask} to this thread.
+     *
+     * @param task
+     */
+    public void addTask(ThreadTask task);
 
-	/**
-	 * Removes a {@link ThreadTask} from this thread.
-	 * @param task
-	 */
-	public void removeTask(ThreadTask task);
+    /**
+     * Removes a {@link ThreadTask} from this thread.
+     *
+     * @param task
+     */
+    public void removeTask(ThreadTask task);
 
 }

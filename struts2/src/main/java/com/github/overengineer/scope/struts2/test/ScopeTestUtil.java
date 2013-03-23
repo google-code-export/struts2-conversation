@@ -1,24 +1,24 @@
 /*******************************************************************************
- * 
+ *
  *  Struts2-Conversation-Plugin - An Open Source Conversation- and Flow-Scope Solution for Struts2-based Applications
  *  =================================================================================================================
- * 
+ *
  *  Copyright (C) 2012 by Rees Byars
  *  http://code.google.com/p/struts2-conversation/
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  *  the License. You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  *  specific language governing permissions and limitations under the License.
- * 
+ *
  * **********************************************************************************************************************
- * 
+ *
  *  $Id: ScopeTestUtil.java reesbyars $
  ******************************************************************************/
 package com.github.overengineer.scope.struts2.test;
@@ -48,7 +48,7 @@ import com.opensymphony.xwork2.ActionContext;
 
 /**
  * A utility for simplifying Struts2 unit testing against the interceptor stack
- * 
+ *
  * @author rees.byars
  */
 public class ScopeTestUtil {
@@ -59,7 +59,7 @@ public class ScopeTestUtil {
 
     public static ConversationConfigurationProvider getConfigurationProvider() {
         if (configurationProvider == null) {
-        	configurationProvider = (ConversationConfigurationProvider) Dispatcher
+            configurationProvider = (ConversationConfigurationProvider) Dispatcher
                     .getInstance()
                     .getContainer()
                     .getInstance(ScopeContainerProvider.class).getScopeContainer().getComponent(ConversationConfigurationProvider.class);
@@ -82,7 +82,7 @@ public class ScopeTestUtil {
      * For unit testing, sets the conversation IDs of the conversations in the
      * current thread
      * onto a given mock request.
-     * 
+     *
      * @param request
      */
     public static void setConversationIdsOnRequest(
@@ -95,7 +95,7 @@ public class ScopeTestUtil {
         if (convoIdMap != null) {
             for (Entry<String, String> entry : convoIdMap.entrySet()) {
                 request.addParameter(entry.getKey(),
-                        new String[] { entry.getValue() });
+                        new String[]{entry.getValue()});
             }
         } else {
             for (String conversationName : arbitrator.getConversations(
@@ -113,7 +113,7 @@ public class ScopeTestUtil {
      * with {@link SessionField} and {@link ConversationField} are extracted
      * from the target object and placed into the session
      * and the active conversations available in the current thread.
-     * 
+     *
      * @param target
      */
     public static void extractScopeFields(Object target) {
@@ -126,15 +126,15 @@ public class ScopeTestUtil {
      * with {@link SessionField} and {@link ConversationField} are injected from
      * the session
      * and the active conversations available in the current thread.
-     * 
+     *
      * @param target
      */
     public static void injectScopeFields(Object target) {
         SessionUtil.injectFields(target);
         injectConversationFields(target, ConversationAdapter.getAdapter());
     }
-    
-    
+
+
     private static void injectConversationFields(Object target, ConversationAdapter conversationAdapter) {
         Collection<ConversationClassConfiguration> actionConversationConfigs = getConfigurationProvider().getConfigurations(target.getClass());
         if (actionConversationConfigs != null) {
@@ -165,14 +165,14 @@ public class ScopeTestUtil {
 
                 if (conversationId != null) {
 
-	                if (actionConversationFields != null) {
-	
-	                    Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-	                    conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
-	                }
-	
-	                conversationAdapter.getViewContext().put(conversationName, conversationId);
-                
+                    if (actionConversationFields != null) {
+
+                        Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
+                        conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
+                    }
+
+                    conversationAdapter.getViewContext().put(conversationName, conversationId);
+
                 }
             }
         }

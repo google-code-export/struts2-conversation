@@ -8,7 +8,8 @@ import com.github.overengineer.scope.conversation.configuration.ConversationClas
  * <p/>
  * This interface allows for pre-action-processing of a conversation.  Registered via
  * {@link ConversationAdapter#addPreActionProcessor(PreActionProcessor, ConversationClassConfiguration, String)}
+ *
  * @author rees.byars
  */
-public interface PreActionProcessor extends PostProcessor{
+public interface PreActionProcessor extends PostProcessor {
 }

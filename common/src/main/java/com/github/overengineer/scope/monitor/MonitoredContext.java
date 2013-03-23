@@ -29,9 +29,8 @@ import java.util.Map;
 
 /**
  * @author rees.byars
- * 
  */
 public interface MonitoredContext<K, V, T extends MonitoredContext<K, V, T>>
-		extends Map<K, V>, Timeoutable<T>, Serializable {
+        extends Map<K, V>, Timeoutable<T>, Serializable {
 
 }

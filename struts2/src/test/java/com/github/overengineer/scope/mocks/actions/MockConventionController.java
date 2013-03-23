@@ -28,12 +28,12 @@ public class MockConventionController extends AbstractController {
         setWorkflowString("hungee");
         return SUCCESS;
     }
-    
+
     @Action(value = "continue1")
     public String continue1() {
-    	System.out.println("***********************");
-    	System.out.println("***********************");
-    	System.out.println("***********************");
+        System.out.println("***********************");
+        System.out.println("***********************");
+        System.out.println("***********************");
         return SUCCESS;
     }
 

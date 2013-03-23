@@ -28,5 +28,5 @@ public class ActionNamesAction extends org.apache.struts2.config_browser.ActionN
         }
         return actionNames;
     }
-    
+
 }

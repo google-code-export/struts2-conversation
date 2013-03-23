@@ -61,13 +61,13 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     }
 
     public Map<String, String> getConversations() throws ClassNotFoundException {
-        
+
         ActionConfig actionConfig = this.getConfig();
         Map<String, String> conversations = new HashMap<String, String>();
-        
+
         if (this.isConversationInterceptorApplied(actionConfig)) {
             Collection<ConversationClassConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
-            String methodName = this.getMethodName(actionConfig); 
+            String methodName = this.getMethodName(actionConfig);
             for (ConversationClassConfiguration realConfig : realConfigs) {
                 String name = realConfig.getConversationName().replaceFirst(ConversationConstants.CONVERSATION_NAME_SUFFIX, "");
                 if (realConfig.isBeginAction(methodName)) {
@@ -79,15 +79,15 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
                 }
             }
         }
-        
+
         return conversations;
     }
-    
+
     public Map<String, String> getConversationFields() throws ClassNotFoundException {
-        
+
         ActionConfig actionConfig = this.getConfig();
         Map<String, String> conversationFields = new HashMap<String, String>();
-        
+
         if (this.isConversationInterceptorApplied(actionConfig)) {
             Collection<ConversationClassConfiguration> realConfigs = this.getConversationConfigurations(actionConfig);
             String methodName = this.getMethodName(actionConfig);
@@ -105,14 +105,14 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
                 }
             }
         }
-        
+
         return conversationFields;
     }
-    
+
     protected Collection<ConversationClassConfiguration> getConversationConfigurations(ActionConfig actionConfig) throws ClassNotFoundException {
         return this.conversationConfigurationProvider.getConfigurations(Class.forName(actionConfig.getClassName()));
     }
-    
+
     protected boolean isConversationInterceptorApplied(ActionConfig actionConfig) {
         boolean hasConvoInterceptor = false;
         for (InterceptorMapping interceptorMapping : actionConfig.getInterceptors()) {
@@ -123,7 +123,7 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
         }
         return hasConvoInterceptor;
     }
-    
+
     protected String getMethodName(ActionConfig actionConfig) {
         String methodName = actionConfig.getMethodName();
         if (this.getActionNames().contains(ActionConfig.WILDCARD)) {

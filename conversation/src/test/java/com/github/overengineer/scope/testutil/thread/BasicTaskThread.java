@@ -32,76 +32,76 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * A basic TaskThread implementation that uses a {@link CopyOnWriteArraySet} to manage concurrent read/write/removal
  * of {@link ThreadTask ThreadTasks}.
- * 
+ *
  * @author rees.byars
  */
 public class BasicTaskThread extends AbstractEasyThread implements
-		TaskThread {
+        TaskThread {
 
-	protected Set<ThreadTask> tasks;
+    protected Set<ThreadTask> tasks;
 
-	protected BasicTaskThread() {
-		tasks = new CopyOnWriteArraySet<ThreadTask>();
-	}
+    protected BasicTaskThread() {
+        tasks = new CopyOnWriteArraySet<ThreadTask>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addTask(ThreadTask task) {
-		synchronized (this.tasks) {
-			this.tasks.add(task);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addTask(ThreadTask task) {
+        synchronized (this.tasks) {
+            this.tasks.add(task);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void removeTask(ThreadTask task) {
-		synchronized (this.tasks) {
-			this.tasks.remove(task);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeTask(ThreadTask task) {
+        synchronized (this.tasks) {
+            this.tasks.remove(task);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void destroy() {
-		super.destroy();
-		synchronized (this.tasks) {
-			for (ThreadTask task : this.tasks) {
-				task.cancel();
-			}
-			this.tasks.clear();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        super.destroy();
+        synchronized (this.tasks) {
+            for (ThreadTask task : this.tasks) {
+                task.cancel();
+            }
+            this.tasks.clear();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doWhileRunning() {
-		Iterator<ThreadTask> taskIterator = this.tasks.iterator();
-		Set<ThreadTask> deadTasks = new HashSet<ThreadTask>();
-		while (taskIterator.hasNext()) {
-			ThreadTask task = taskIterator.next();
-			if (task.isActive()) {
-				task.doTask();
-			} else {
-				deadTasks.add(task);
-			}
-		}
-		if (deadTasks.size() > 0) {
-			this.tasks.removeAll(deadTasks);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doWhileRunning() {
+        Iterator<ThreadTask> taskIterator = this.tasks.iterator();
+        Set<ThreadTask> deadTasks = new HashSet<ThreadTask>();
+        while (taskIterator.hasNext()) {
+            ThreadTask task = taskIterator.next();
+            if (task.isActive()) {
+                task.doTask();
+            } else {
+                deadTasks.add(task);
+            }
+        }
+        if (deadTasks.size() > 0) {
+            this.tasks.removeAll(deadTasks);
+        }
+    }
 
-	public static BasicTaskThread spawnInstance() {
-		BasicTaskThread basicTaskThread = new BasicTaskThread();
-		basicTaskThread.start();
-		return basicTaskThread;
-	}
+    public static BasicTaskThread spawnInstance() {
+        BasicTaskThread basicTaskThread = new BasicTaskThread();
+        basicTaskThread.start();
+        return basicTaskThread;
+    }
 
 }

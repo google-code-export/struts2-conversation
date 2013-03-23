@@ -17,7 +17,7 @@ public class DefaultConversationContextFactoryTest extends
 
     @Test
     public void testCreate() throws IOException, ClassNotFoundException {
-    	final long duration = 500000L;
+        final long duration = 500000L;
         final long elapsedTimeWindow = 1000L;
         ConversationContextFactory contextFactory = new DefaultConversationContextFactory();
         ConversationContext context = contextFactory.create("testName",

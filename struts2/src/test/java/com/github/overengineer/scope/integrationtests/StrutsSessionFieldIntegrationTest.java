@@ -17,7 +17,7 @@ public class StrutsSessionFieldIntegrationTest extends
 
         request.setParameter("abstractField", "hello");
         ActionProxy proxy = this.getActionProxy("begin");
-        
+
         assertEquals("hola", this.getAction().getAbstractField());
         assertEquals(2, this.getAction().getDumb());
         assertEquals(2, this.getAction().getSmart());
