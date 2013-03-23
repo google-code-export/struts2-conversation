@@ -66,7 +66,7 @@ public class DefaultJeeConversationContextManagerProvider implements JeeConversa
 
     protected ConversationContextManager createContextManager(HttpSession session) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating new ConversationContextManager for session with ID:  " + session.getId());
+            LOG.debug("Creating new ConversationContextManager for session with ID [{}]  ", session.getId());
         }
         ConversationContextManager contextManager = scopeContainer.getComponent(ConversationContextManager.class);
         JeeConversationUtil.setContextManager(session, contextManager);

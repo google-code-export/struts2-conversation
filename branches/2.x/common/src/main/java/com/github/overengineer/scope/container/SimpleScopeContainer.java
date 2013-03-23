@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class SimpleScopeContainer extends AbstractScopeContainer implements StandaloneContainer {
+public class SimpleScopeContainer extends BaseScopeContainer implements StandaloneContainer {
 
     private static final long serialVersionUID = -3502345525425524764L;
 

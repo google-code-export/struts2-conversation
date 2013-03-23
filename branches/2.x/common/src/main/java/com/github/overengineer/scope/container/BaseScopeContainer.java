@@ -6,10 +6,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractScopeContainer implements ScopeContainer {
+public abstract class BaseScopeContainer implements ScopeContainer {
 
     private static final long serialVersionUID = -6820777796732236492L;
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractScopeContainer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseScopeContainer.class);
 
     private final Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
 
@@ -18,10 +18,11 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
         @SuppressWarnings("unchecked")
         InjectionStrategy<T> strategy = (InjectionStrategy<T>) strategies.get(clazz);
         if (strategy == null) {
-            strategy = InjectionStrategy.Factory.create(getInjectionContext(clazz));
             synchronized (strategies) {
-                LOG.debug("Adding InjectionStrategy of type [{}] for component of type [{}]", strategy.getClass().getName(), clazz.getName());
+                strategy = (InjectionStrategy<T>) strategies.get(clazz);
                 if (strategies.get(clazz) == null) {
+                    strategy = InjectionStrategy.Factory.create(getInjectionContext(clazz));
+                    LOG.debug("Adding InjectionStrategy of type [{}] for component of type [{}]", strategy.getClass().getSimpleName(), clazz.getName());
                     strategies.put(clazz, strategy);
                 }
             }
@@ -39,8 +40,8 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
         T singletonComponent;
 
         InjectionContextImpl(Class<T> componentType) {
-            this.implementationType = AbstractScopeContainer.this.getImplementationType(componentType);
-            this.singletonComponent = AbstractScopeContainer.this.getComponentFromPrimaryContainer(componentType);
+            this.implementationType = BaseScopeContainer.this.getImplementationType(componentType);
+            this.singletonComponent = BaseScopeContainer.this.getComponentFromPrimaryContainer(componentType);
         }
 
         @Override
@@ -64,7 +65,7 @@ public abstract class AbstractScopeContainer implements ScopeContainer {
 
         @Override
         public ScopeContainer getContainer() {
-            return AbstractScopeContainer.this;
+            return BaseScopeContainer.this;
         }
 
     }

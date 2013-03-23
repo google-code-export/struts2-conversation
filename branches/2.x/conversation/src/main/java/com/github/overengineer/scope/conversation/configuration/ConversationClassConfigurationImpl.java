@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.conversation.configuration;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -142,7 +143,8 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
     /**
      * yuck....  TODO
      */
-    class BeginConfig {
+    static class BeginConfig implements Serializable {
+
         long maxIdleTimeMillis;
         String maxIdleTime;
         int maxInstances;

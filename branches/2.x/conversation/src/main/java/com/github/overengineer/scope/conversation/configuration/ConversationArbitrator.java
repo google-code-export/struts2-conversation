@@ -40,15 +40,6 @@ import com.github.overengineer.scope.conversation.ConversationAdapter;
 public interface ConversationArbitrator extends Serializable {
 
     /**
-     * The default suffix is "Controller". So the conversation for a class
-     * named <code>MyExampleFlowController</code> would be
-     * <code>my-example-flow</code>. Use this setter to use a different suffix.
-     *
-     * @param suffix
-     */
-    public void setActionSuffix(String suffix);
-
-    /**
      * Returns a collection of candidate conversation fields from a class.
      * Subsequent
      * calls are made to the {@link #getConversations(Class, Field)} to

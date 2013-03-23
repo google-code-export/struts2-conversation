@@ -83,7 +83,7 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
         long maxIdleTime = conversationConfig.getMaxIdleTime(conversationAdapter.getActionId());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning new " + conversationConfig.getConversationName() + " with max idle time of " + maxIdleTime / 1000 + " seconds for action " + conversationAdapter.getActionId());
+            LOG.debug("Beginning new [{}] with max idle time of [{}] seconds for action [{}]", conversationConfig.getConversationName(), maxIdleTime / 1000, conversationAdapter.getActionId());
         }
 
         ConversationContext newConversationContext = ConversationUtil.begin(conversationConfig.getConversationName(), conversationAdapter, maxIdleTime, conversationConfig.getMaxInstances(actionId));
@@ -99,7 +99,7 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
         String conversationName = conversationConfig.getConversationName();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Performing post-processing of  " + conversationName + " with ID of " + conversationId + "...");
+            LOG.debug("Performing post-processing of [{}] with ID [{}]", conversationName, conversationId);
         }
 
         Object action = conversationAdapter.getAction();
@@ -107,10 +107,6 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
         Set<Bijector> bijectors = conversationConfig.getBijectors();
 
         if (bijectors.size() > 0) {
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting conversation fields for " + conversationName + " following execution of action " + conversationAdapter.getActionId());
-            }
 
             Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
 
@@ -123,7 +119,7 @@ public class InjectionConversationProcessor extends SimpleConversationProcessor 
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("...completed post-processing of  " + conversationName + " with ID of " + conversationId + ".");
+            LOG.debug("completed post-processing of [{}] with ID [{}]", conversationName, conversationId);
         }
 
     }

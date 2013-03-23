@@ -72,7 +72,7 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
         ConversationContext context = super.remove(conversationName, conversationId);
         if (context != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Conversation has ended, removing from TimeoutMonitor:  " + conversationName + " with ID " + conversationId);
+                LOG.debug("Conversation [{}] with ID [{}] has ended, removing from TimeoutMonitor", conversationName, conversationId);
             }
             this.conversationTimeoutMonitor.removeTimeoutable(context);
         }
@@ -85,7 +85,7 @@ public class TimeoutConversationContextManager extends DefaultConversationContex
     @Override
     public void onTimeout(ConversationContext expiredConversation) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Conversation has timed out:  " + expiredConversation.getConversationName() + " with ID " + expiredConversation.getId());
+            LOG.debug("Conversation [{}] with ID [{}] has timed out", expiredConversation.getConversationName(), expiredConversation.getId());
         }
         super.remove(expiredConversation.getConversationName(), expiredConversation.getId());
     }

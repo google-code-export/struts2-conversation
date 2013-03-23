@@ -40,7 +40,6 @@ import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
 import com.github.overengineer.scope.container.PostConstructable;
 import com.github.overengineer.scope.container.Property;
-import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
@@ -61,20 +60,16 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     protected ActionProvider actionProvider;
     protected BijectorFactory bijectorFactory;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
-    protected long maxIdleTimeMillis = Defaults.CONVERSATION_IDLE_TIMEOUT;
-    protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
+    protected long maxIdleTimeMillis;
+    protected int maxInstances;
 
     @Property(Properties.CONVERSATION_IDLE_TIMEOUT)
     public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
-        double idleTimeHours = maxIdleTimeMillis / (1000.0 * 60 * 60);
-        LOG.info("Setting default conversation timeout:  " + maxIdleTimeMillis + " milliseconds.");
-        LOG.info("Converted default conversation timeout:  " + String.format("%.2f", idleTimeHours) + " hours.");
         this.maxIdleTimeMillis = maxIdleTimeMillis;
     }
 
     @Property(Properties.CONVERSATION_MAX_INSTANCES)
     public void setDefaultMaxInstances(int maxInstances) {
-        LOG.info("Setting max number of conversation instances per conversation:  " + maxInstances + ".");
         this.maxInstances = maxInstances;
     }
 
@@ -100,9 +95,6 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     public void init() {
         if (this.classConfigurations.size() != actionProvider.getActionClasses().size()) { //in case it's already been called
             LOG.info("Building Conversation Configurations...");
-            if (this.arbitrator == null) {
-                LOG.error("No ConversationArbitrator set for the ConversationConfigurationProvider, review configuration files to make sure an arbitrator is declared.");
-            }
             for (Class<?> clazz : actionProvider.getActionClasses()) {
                 processClass(clazz, classConfigurations);
             }
@@ -118,7 +110,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
         Collection<ConversationClassConfiguration> configurations = classConfigurations.get(clazz);
         if (configurations == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("No cached ConversationClassConfiguration found for class " + clazz.getName());
+                LOG.debug("No cached ConversationClassConfiguration found for class [{}] ", clazz.getName());
             }
             configurations = this.processClass(clazz, classConfigurations);
         }
@@ -136,7 +128,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
         Collection<ConversationClassConfiguration> configurations = classConfigurations.get(clazz);
         if (configurations == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Building ConversationClassConfiguration for class " + clazz.getName());
+                LOG.debug("Building ConversationClassConfiguration for class [{}]", clazz.getName());
             }
             configurations = new HashSet<ConversationClassConfiguration>();
             Map<String, ConversationClassConfiguration> temporaryConversationMap = new HashMap<String, ConversationClassConfiguration>();
@@ -152,7 +144,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding field " + fieldName + " to ConversationClassConfiguration for Conversation " + conversation);
+                            LOG.debug("Adding field [{}] as member of conversation [{}]", fieldName, conversation);
                         }
                         configuration.addBijector(bijectorFactory.create(fieldName, field));
                     }
@@ -174,7 +166,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method " + methodName + " as an Action to ConversationClassConfiguration for Conversation " + conversation);
+                            LOG.debug("Adding method [{}] as an Action for conversation [{}]", methodName, conversation);
                         }
                         configuration.addAction(methodName);
                     }
@@ -191,7 +183,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         }
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method " + methodName + " as a Begin Action to ConversationClassConfiguration for Conversation");
+                            LOG.debug("Adding method [{}] as a Begin Action for conversation [{}]", methodName, conversation);
                         }
                         if (method.isAnnotationPresent(BeginConversation.class)) {
                             BeginConversation config = method.getAnnotation(BeginConversation.class);
@@ -221,7 +213,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                             temporaryConversationMap.put(conversation, configuration);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Adding method " + methodName + " as an End Action to ConversationClassConfiguration for Conversation " + conversation);
+                            LOG.debug("Adding method [{}] as an End Action for Conversation [{}]", methodName, conversation);
                         }
                         if (method.isAnnotationPresent(EndConversation.class)) {
                             EndConversation config = method.getAnnotation(EndConversation.class);
