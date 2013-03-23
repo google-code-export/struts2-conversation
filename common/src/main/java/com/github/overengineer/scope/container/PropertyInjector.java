@@ -5,21 +5,21 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyInjector<T> implements Injector<T> {
+public final class PropertyInjector<T> implements Injector<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyInjector.class);
 
-    private Method setter;
-    private String name;
-    private Class<?> type;
+    private final Method setter;
+    private final String name;
+    private final Class<?> type;
 
-    public PropertyInjector(Method setter, String name, Class<?> type) {
+    public PropertyInjector(final Method setter, final String name, final Class<?> type) {
         this.setter = setter;
         this.name = name;
         this.type = type;
     }
 
-    public void inject(T component, ScopeContainer container) {
+    public void inject(final T component, final ScopeContainer container) {
         try {
             Object value = container.getProperty(type, name);
             if (LOG.isDebugEnabled()) {

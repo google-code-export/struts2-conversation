@@ -33,18 +33,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.overengineer.scope.container.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.container.Component;
-import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.ConversationController;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.configuration.DefaultConversationArbitrator;
 import com.github.overengineer.scope.util.NamingUtil;
-import com.opensymphony.xwork2.inject.Inject;
 
 /**
  * The {@link ConversationArbitrator} for use with Struts2.
@@ -57,24 +56,19 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
 
     private static final Logger LOG = LoggerFactory.getLogger(StrutsConversationArbitrator.class);
 
-    private Map<Class<?>, Collection<String>> packageBasedConversations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<String>>());
+    private final Map<Class<?>, Collection<String>> packageBasedConversations = Collections.synchronizedMap(new HashMap<Class<?>, Collection<String>>());
 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
 
-    @Inject(Properties.CONVERSATION_PACKAGE_NESTING)
-    public void setUsePackageNesting(String usePackageNesting) {
-        this.usePackageNesting = "true".equals(usePackageNesting);
+    @Property(Properties.CONVERSATION_PACKAGE_NESTING)
+    public void setUsePackageNesting(boolean usePackageNesting) {
+        this.usePackageNesting = usePackageNesting;
     }
 
     @Component
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
-    }
-
-    @Inject
-    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-        this.actionProvider = scopeContainerProvider.getScopeContainer().getComponent(ActionProvider.class);
     }
 
     @Override

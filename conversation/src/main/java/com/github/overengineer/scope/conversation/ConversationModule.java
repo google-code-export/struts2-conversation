@@ -20,16 +20,16 @@ public class ConversationModule extends BaseModule {
 
     public ConversationModule() {
 
-        resolve(ConversationConfigurationProvider.class).to(DefaultConversationConfigurationProvider.class);
-        resolve(ConversationArbitrator.class).to(DefaultConversationArbitrator.class);
-        resolve(ConversationProcessor.class).to(InjectionConversationProcessor.class);
-        resolve(JeeConversationContextManagerProvider.class).to(DefaultJeeConversationContextManagerProvider.class);
-        resolve(ConversationContextFactory.class).to(DefaultConversationContextFactory.class);
-        resolve(ConversationContextManager.class).to(TimeoutConversationContextManager.class);
+        use(DefaultConversationConfigurationProvider.class).forType(ConversationConfigurationProvider.class);
+        use(DefaultConversationArbitrator.class).forType(ConversationArbitrator.class);
+        use(InjectionConversationProcessor.class).forType(ConversationProcessor.class);
+        use(DefaultJeeConversationContextManagerProvider.class).forType(JeeConversationContextManagerProvider.class);
+        use(DefaultConversationContextFactory.class).forType(ConversationContextFactory.class);
+        use(TimeoutConversationContextManager.class).forType(ConversationContextManager.class);
 
-        resolve(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
-        resolve(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
-        resolve(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
+        set(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
+        set(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
+        set(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
 
     }
 
