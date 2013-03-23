@@ -1,8 +1,11 @@
-package com.github.overengineer.scope.util;
+package com.github.overengineer.scope.bijection;
 
+import com.github.overengineer.scope.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -48,9 +51,6 @@ public class BijectorImpl implements Bijector {
     @Override
     public void injectFromContext(Object target, Map<String, Object> context) {
         try {
-            if (field == null) {
-                field = declaringClass.getField(fieldName);
-            }
             Object value = context.get(contextKey);
             if (!(primitive && value == null)) {
                 if (LOG.isDebugEnabled()) {
@@ -60,17 +60,12 @@ public class BijectorImpl implements Bijector {
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void extractIntoContext(Object target, Map<String, Object> context) {
         try {
-            if (field == null) {
-                field = declaringClass.getField(fieldName);
-            }
             Object value = field.get(target);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Extracting field [{}] with value [{}] and placing in context [{}] using key [{}]", field.getName(), value, context.toString(), contextKey);
@@ -78,6 +73,13 @@ public class BijectorImpl implements Bijector {
             context.put(contextKey, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        try {
+            field = declaringClass.getField(fieldName);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

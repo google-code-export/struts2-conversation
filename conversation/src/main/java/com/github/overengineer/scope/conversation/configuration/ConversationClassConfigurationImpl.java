@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationUtil;
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 
 /**
  * the  classic java map-wrapping bean with verbose data-struct-oriented internal classes.

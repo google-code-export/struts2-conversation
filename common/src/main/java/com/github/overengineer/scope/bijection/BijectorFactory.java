@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.util;
+package com.github.overengineer.scope.bijection;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

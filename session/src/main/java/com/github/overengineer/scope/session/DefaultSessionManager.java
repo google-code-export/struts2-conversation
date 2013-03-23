@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.overengineer.scope.container.Component;
-import com.github.overengineer.scope.util.Bijector;
+import com.github.overengineer.scope.bijection.Bijector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
