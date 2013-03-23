@@ -72,7 +72,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <struts2.version>2.3.8</struts2.version>
+        <slf4j.version>1.7.0</slf4j.version>
+        <struts2.version>2.3.12</struts2.version>
         <spring.version>3.1.1.RELEASE</spring.version>
     </properties>
 
@@ -133,6 +134,23 @@
                 <version>${struts2.version}</version>
                 <scope>provided</scope>
                 <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.struts</groupId>
+                <artifactId>struts2-core</artifactId>
+                <version>${struts2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
         </dependencies>

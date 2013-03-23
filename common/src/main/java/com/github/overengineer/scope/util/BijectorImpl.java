@@ -1,5 +1,8 @@
 package com.github.overengineer.scope.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -8,16 +11,21 @@ import java.util.Map;
  */
 public class BijectorImpl implements Bijector {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BijectorImpl.class);
+
     private String fieldName;
     private String contextKey;
     private Class<?> declaringClass;
     private transient Field field;
+    private boolean primitive;
 
     public BijectorImpl(String contextKey, Field field) {
         fieldName = field.getName();
         this.contextKey = contextKey;
         declaringClass = field.getDeclaringClass();
         this.field = field;
+        field.setAccessible(true);
+        primitive = field.getType().isPrimitive();
     }
 
     @Override
@@ -27,7 +35,12 @@ public class BijectorImpl implements Bijector {
                 field = declaringClass.getField(fieldName);
             }
             Object value = context.get(contextKey);
-            field.set(target, value);
+            if (!(primitive && value == null)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Injecting field [{}] with value [{}] using key [{}] from context [{}]", field.getName(), value, contextKey, context.toString());
+                }
+                field.set(target, value);
+            }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (NoSuchFieldException e) {
@@ -47,13 +60,6 @@ public class BijectorImpl implements Bijector {
             throw new RuntimeException(e);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static class Factory implements Bijector.Factory {
-        @Override
-        public Bijector create(String contextKey, Field field) {
-            return new BijectorImpl(contextKey, field);
         }
     }
 

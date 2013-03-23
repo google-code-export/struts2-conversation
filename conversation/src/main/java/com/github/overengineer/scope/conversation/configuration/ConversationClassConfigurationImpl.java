@@ -1,6 +1,5 @@
 package com.github.overengineer.scope.conversation.configuration;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -8,6 +7,7 @@ import java.util.Set;
 
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationUtil;
+import com.github.overengineer.scope.util.Bijector;
 
 /**
  * the  classic java map-wrapping bean with verbose data-struct-oriented internal classes.
@@ -16,7 +16,7 @@ import com.github.overengineer.scope.conversation.ConversationUtil;
  */
 public class ConversationClassConfigurationImpl implements ConversationClassConfiguration {
 
-    private final Map<String, Field> fields = new HashMap<String, Field>();
+    private final Set<Bijector> bijectors = new HashSet<Bijector>();
     private final Set<String> actions = new HashSet<String>();
     private final Map<String, BeginConfig> beginActions = new HashMap<String, BeginConfig>();
     private final Map<String, Boolean> endActions = new HashMap<String, Boolean>();
@@ -30,16 +30,16 @@ public class ConversationClassConfigurationImpl implements ConversationClassConf
      * {@inheritDoc}
      */
     @Override
-    public void addField(String name, Field field) {
-        fields.put(name, field);
+    public void addBijector(Bijector bijector) {
+        bijectors.add(bijector);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Field> getFields() {
-        return fields;
+    public Set<Bijector> getBijectors() {
+        return bijectors;
     }
 
     /**

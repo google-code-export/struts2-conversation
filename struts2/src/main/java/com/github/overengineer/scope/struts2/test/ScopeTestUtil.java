@@ -27,7 +27,9 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import com.github.overengineer.scope.util.Bijector;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -144,9 +146,8 @@ public class ScopeTestUtil {
                 if (conversationId != null) {
                     Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
                     if (conversationContext != null) {
-                        Map<String, Field> actionConversationFields = conversation.getFields();
-                        if (actionConversationFields != null) {
-                            InjectionUtil.setFieldValues(target, actionConversationFields, conversationContext);
+                        for (Bijector bijector : conversation.getBijectors()) {
+                            bijector.injectFromContext(target, conversationContext);
                         }
                     }
                 }
@@ -159,16 +160,19 @@ public class ScopeTestUtil {
         if (actionConversationConfigs != null) {
             for (ConversationClassConfiguration conversation : actionConversationConfigs) {
 
-                Map<String, Field> actionConversationFields = conversation.getFields();
                 String conversationName = conversation.getConversationName();
                 String conversationId = conversationAdapter.getRequestContext().get(conversationName);
 
                 if (conversationId != null) {
 
-                    if (actionConversationFields != null) {
+                    Set<Bijector> bijectors = conversation.getBijectors();
+
+                    if (bijectors.size() > 0) {
 
                         Map<String, Object> conversationContext = conversationAdapter.getConversationContext(conversationName, conversationId);
-                        conversationContext.putAll(InjectionUtil.getFieldValues(target, actionConversationFields));
+                        for (Bijector bijector : bijectors) {
+                            bijector.extractIntoContext(target, conversationContext);
+                        }
                     }
 
                     conversationAdapter.getViewContext().put(conversationName, conversationId);

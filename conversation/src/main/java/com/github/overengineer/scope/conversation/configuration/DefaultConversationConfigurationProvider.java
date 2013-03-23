@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.github.overengineer.scope.util.BijectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
 
     protected ConversationArbitrator arbitrator;
     protected ActionProvider actionProvider;
+    protected BijectorFactory bijectorFactory;
     protected ConcurrentMap<Class<?>, Collection<ConversationClassConfiguration>> classConfigurations = new ConcurrentHashMap<Class<?>, Collection<ConversationClassConfiguration>>();
     protected long maxIdleTimeMillis = Defaults.CONVERSATION_IDLE_TIMEOUT;
     protected int maxInstances = Defaults.CONVERSATION_MAX_INSTANCES;
@@ -85,6 +87,11 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     @Component
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
+    }
+
+    @Component
+    public void setBijectorFactory(BijectorFactory bijectorFactory) {
+        this.bijectorFactory = bijectorFactory;
     }
 
     /**
@@ -149,7 +156,7 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding field " + fieldName + " to ConversationClassConfiguration for Conversation " + conversation);
                         }
-                        configuration.addField(fieldName, field);
+                        configuration.addBijector(bijectorFactory.create(fieldName, field));
                     }
                 }
             }

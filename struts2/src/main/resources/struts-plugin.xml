@@ -45,6 +45,7 @@
 
     <constant name="com.github.overengineer.scope.container.ScopeContainer" value="defaultScopeContainer"/>
     <constant name="com.github.overengineer.scope.ActionProvider" value="strutsActionProvider"/>
+    <constant name="com.github.overengineer.scope.util.BijectorFactory" value="defaultBijectorFactory"/>
 
     <constant name="com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider"
               value="defaultConversationConfigurationProvider"/>
@@ -77,6 +78,10 @@
     <bean name="defaultScopeContainer"
           type="com.github.overengineer.scope.container.ScopeContainer"
           class="com.github.overengineer.scope.struts2.StrutsScopeContainer"/>
+
+    <bean name="defaultBijectorFactory"
+          type="com.github.overengineer.scope.util.BijectorFactory"
+          class="com.github.overengineer.scope.util.BijectorImplFactory"/>
 
     <bean name="strutsActionProvider"
           type="com.github.overengineer.scope.ActionProvider"
