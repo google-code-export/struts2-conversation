@@ -16,6 +16,7 @@ public class BijectorImpl implements Bijector {
     private String fieldName;
     private String contextKey;
     private Class<?> declaringClass;
+    private Class<?> fieldType;
     private transient Field field;
     private boolean primitive;
 
@@ -24,8 +25,24 @@ public class BijectorImpl implements Bijector {
         this.contextKey = contextKey;
         declaringClass = field.getDeclaringClass();
         this.field = field;
-        field.setAccessible(true);
-        primitive = field.getType().isPrimitive();
+        ReflectionUtil.makeAccessible(field);
+        fieldType = field.getType();
+        primitive = fieldType.isPrimitive();
+    }
+
+    @Override
+    public Class<?> getFieldType() {
+        return fieldType;
+    }
+
+    @Override
+    public Class<?> getDeclaringClass() {
+         return declaringClass;
+    }
+
+    @Override
+    public String getContextKey() {
+        return contextKey;
     }
 
     @Override

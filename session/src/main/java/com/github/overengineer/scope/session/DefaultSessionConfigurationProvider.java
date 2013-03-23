@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.overengineer.scope.util.BijectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +49,16 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
     protected transient SessionConfiguration configuration = new SessionConfiguration();
     protected Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
     protected ActionProvider actionProvider;
+    protected BijectorFactory bijectorFactory;
 
     @Component
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
+    }
+
+    @Component
+    public void setBijectorFactory(BijectorFactory bijectorFactory) {
+        this.bijectorFactory = bijectorFactory;
     }
 
     /**
@@ -107,14 +114,13 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
         for (Field field : ReflectionUtil.getFields(clazz)) {
             if (field.isAnnotationPresent(SessionField.class)) {
                 LOG.debug("Adding @SessionField " + field.getName() + " from class " + clazz.getName() + " to the SessionConfiguration");
-                SessionField sessionField = (SessionField) field.getAnnotation(SessionField.class);
+                SessionField sessionField = field.getAnnotation(SessionField.class);
                 String name = sessionField.name();
                 if (name.equals(SessionField.DEFAULT)) {
                     name = field.getName();
                 }
                 String key = SessionUtil.buildKey(name, field.getType());
-                ReflectionUtil.makeAccessible(field);
-                this.configuration.addField(clazz, key, field);
+                this.configuration.addBijector(clazz, bijectorFactory.create(key, field));
             }
         }
     }

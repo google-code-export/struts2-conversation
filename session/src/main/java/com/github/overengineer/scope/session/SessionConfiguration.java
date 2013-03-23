@@ -23,9 +23,12 @@
  ******************************************************************************/
 package com.github.overengineer.scope.session;
 
-import java.lang.reflect.Field;
+import com.github.overengineer.scope.util.Bijector;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is used to cache the fields and action IDs for all
@@ -37,35 +40,28 @@ import java.util.Map;
  */
 public class SessionConfiguration {
 
-    private Map<Class<?>, Map<String, Field>> fields;
-
-    public SessionConfiguration() {
-        fields = new HashMap<Class<?>, Map<String, Field>>();
-    }
+    private Map<Class<?>, Set<Bijector>> bijectorCache = new HashMap<Class<?>, Set<Bijector>>();
 
     /**
-     * Caches the given field in the configuration
      *
      * @param clazz
-     * @param name
-     * @param field
+     * @param bijector
      */
-    public void addField(Class<?> clazz, String name, Field field) {
-        Map<String, Field> classFields = fields.get(clazz);
-        if (classFields == null) {
-            classFields = new HashMap<String, Field>();
+    public void addBijector(Class<?> clazz, Bijector bijector) {
+        Set<Bijector> bijectors = bijectorCache.get(clazz);
+        if (bijectors == null) {
+            bijectors = new HashSet<Bijector>();
+            bijectorCache.put(clazz, bijectors);
         }
-        classFields.put(name, field);
-        fields.put(clazz, classFields);
+        bijectors.add(bijector);
     }
 
     /**
-     * Returns the cached fields for the given class
      *
      * @param clazz
      * @return
      */
-    public Map<String, Field> getFields(Class<?> clazz) {
-        return fields.get(clazz);
+    public Set<Bijector> getBijectors(Class<?> clazz) {
+        return bijectorCache.get(clazz);
     }
 }

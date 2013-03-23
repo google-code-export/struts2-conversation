@@ -23,14 +23,14 @@
  ******************************************************************************/
 package com.github.overengineer.scope.session;
 
-import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 
+import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.util.Bijector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.container.Component;
-import com.github.overengineer.scope.util.InjectionUtil;
 
 /**
  * The default implementation of the {@link SessionManager}. Also
@@ -58,20 +58,16 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
         Object action = sessionAdapter.getAction();
         Class<?> actionClass = action.getClass();
         SessionConfiguration configuration = this.configurationProvider.getSessionConfiguration(actionClass);
-        Map<String, Field> classSessionFields = configuration.getFields(actionClass);
+        Set<Bijector> bijectors = configuration.getBijectors(actionClass);
 
-        if (classSessionFields != null) {
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempting to inject session fields before executing " + sessionAdapter.getActionId());
-            }
+        if (bijectors != null) {
 
             Map<String, Object> sessionContext = sessionAdapter.getSessionContext();
-            InjectionUtil.setFieldValues(action, classSessionFields, sessionContext);
+            for (Bijector bijector : bijectors) {
+                bijector.injectFromContext(action, sessionContext);
+            }
             sessionAdapter.addPostProcessor(this);
 
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug("No session field were found for the action " + sessionAdapter.getActionId());
         }
 
     }
@@ -85,23 +81,17 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
         Object action = sessionAdapter.getAction();
         Class<?> actionClass = action.getClass();
         SessionConfiguration configuration = this.configurationProvider.getSessionConfiguration(actionClass);
-        Map<String, Field> classSessionFields = configuration.getFields(actionClass);
+        Set<Bijector> bijectors = configuration.getBijectors(actionClass);
 
-        if (classSessionFields != null) {
+        if (bijectors != null) {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting SessionField values following action execution from action of class " + action.getClass());
-            }
-
-            Map<String, Object> classSessionFieldValues = InjectionUtil.getFieldValues(action, classSessionFields);
             Map<String, Object> sessionContext = sessionAdapter.getSessionContext();
-            sessionContext.putAll(classSessionFieldValues);
-
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No SessionFields found for class " + action.getClass());
+            for (Bijector bijector : bijectors) {
+                bijector.extractIntoContext(action, sessionContext);
             }
+
         }
+
     }
 
 }
