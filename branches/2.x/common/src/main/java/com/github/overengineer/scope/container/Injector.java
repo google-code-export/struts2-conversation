@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.container;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.util.ReflectionUtil;
 
-public interface Injector<T> {
+public interface Injector<T> extends Serializable {
 
     void inject(T component, ScopeContainer container);
 

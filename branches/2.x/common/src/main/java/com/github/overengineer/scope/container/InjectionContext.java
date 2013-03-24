@@ -1,6 +1,9 @@
 package com.github.overengineer.scope.container;
 
-public interface InjectionContext<T> {
+import java.io.Serializable;
+
+public interface InjectionContext<T> extends Serializable {
+
     T getSingletonComponent();
 
     T getPrototypeComponent();
@@ -8,4 +11,5 @@ public interface InjectionContext<T> {
     Class<? extends T> getImplementationType();
 
     ScopeContainer getContainer();
+
 }
