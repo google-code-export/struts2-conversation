@@ -13,9 +13,9 @@ public abstract class BaseScopeContainer implements ScopeContainer {
 
     private final Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getComponent(Class<T> clazz) {
-        @SuppressWarnings("unchecked")
         InjectionStrategy<T> strategy = (InjectionStrategy<T>) strategies.get(clazz);
         if (strategy == null) {
             synchronized (strategies) {
@@ -30,32 +30,28 @@ public abstract class BaseScopeContainer implements ScopeContainer {
         return strategy.getComponent();
     }
 
-    protected <T> InjectionContextImpl<T> getInjectionContext(Class<T> componentClass) {
+    protected <T> InjectionContext<T> getInjectionContext(Class<T> componentClass) {
         return new InjectionContextImpl<T>(componentClass);
     }
 
     class InjectionContextImpl<T> implements InjectionContext<T> {
 
+        Class<T> componentType;
         Class<? extends T> implementationType;
-        T singletonComponent;
 
         InjectionContextImpl(Class<T> componentType) {
-            this.implementationType = BaseScopeContainer.this.getImplementationType(componentType);
-            this.singletonComponent = BaseScopeContainer.this.getComponentFromPrimaryContainer(componentType);
+            this.componentType = componentType;
+            implementationType = BaseScopeContainer.this.getImplementationType(componentType);
         }
 
         @Override
         public T getSingletonComponent() {
-            return singletonComponent;
+            return BaseScopeContainer.this.getSingletonComponent(componentType);
         }
 
         @Override
         public T getPrototypeComponent() {
-            try {
-                return implementationType.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Could not create new instance of component", e);
-            }
+            return BaseScopeContainer.this.getNewComponentInstance(componentType);
         }
 
         @Override
@@ -70,7 +66,9 @@ public abstract class BaseScopeContainer implements ScopeContainer {
 
     }
 
-    protected abstract <T> T getComponentFromPrimaryContainer(Class<T> clazz);
+    protected abstract <T> T getSingletonComponent(Class<T> clazz);
+
+    protected abstract <T> T getNewComponentInstance(Class<T> clazz);
 
     protected abstract <T> Class<? extends T> getImplementationType(Class<T> clazz);
 

@@ -1,5 +1,7 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.standalone;
 import com.github.overengineer.scope.CommonModule;
+import com.github.overengineer.scope.container.BaseScopeContainer;
+import com.github.overengineer.scope.container.ScopeContainer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +11,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
 
     private static final long serialVersionUID = -3502345525425524764L;
 
-    private Map<Class<?>, Object> components = new HashMap<Class<?>, Object>();
+    private Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
 
     public SimpleScopeContainer() {
@@ -22,13 +24,13 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     public StandaloneContainer loadModule(Module module) {
         for (Entry<Class<?>, Class<?>> componentEntry : module.getTypeMappings().entrySet()) {
             try {
-                components.put(componentEntry.getKey(), componentEntry.getValue().newInstance());
+                instantiators.put(componentEntry.getKey(), Instantiator.Factory.create(componentEntry.getValue()));
             } catch (Exception e) {
                 throw new RuntimeException("There was an error attempting to create a component", e);
             }
         }
         for (Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            components.put(componentEntry.getKey(), componentEntry.getValue());
+            instantiators.put(componentEntry.getKey(), Instantiator.Factory.wrap(componentEntry.getValue()));
         }
         for (Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
@@ -39,7 +41,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     @Override
     public <T> StandaloneContainer add(Class<T> componentType, Class<? extends T> implementationType) {
         try {
-            components.put(componentType, implementationType.newInstance());
+            instantiators.put(componentType, Instantiator.Factory.create(implementationType));
         } catch (Exception e) {
             throw new RuntimeException("There was an error attempting to create a component", e);
         }
@@ -48,7 +50,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
 
     @Override
     public <T, I extends T> StandaloneContainer addInstance(Class<T> componentType, I implementation) {
-        components.put(componentType, implementation);
+        instantiators.put(componentType, Instantiator.Factory.wrap(implementation));
         return this;
     }
 
@@ -66,14 +68,20 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <T> T getComponentFromPrimaryContainer(Class<T> clazz) {
-        return (T) components.get(clazz);
+    protected <T> T getSingletonComponent(Class<T> clazz) {
+        return (T) instantiators.get(clazz).getInstance(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <T> T getNewComponentInstance(Class<T> clazz) {
+        return (T) instantiators.get(clazz).getInstance(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
-        return (Class<? extends T>) components.get(clazz).getClass();
+        return (Class<? extends T>) instantiators.get(clazz).getTargetType();
     }
 
 }
