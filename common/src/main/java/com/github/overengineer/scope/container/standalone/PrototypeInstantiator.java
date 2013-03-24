@@ -2,7 +2,6 @@ package com.github.overengineer.scope.container.standalone;
 
 import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.container.standalone.Instantiator;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,8 +17,8 @@ public class PrototypeInstantiator<T> implements Instantiator<T> {
 
     private Class<T> type;
     private transient Constructor<T> constructor;
-    private ParameterProxy[] parameterProxies;
-    private Object[] parameters;
+    private transient ParameterProxy[] parameterProxies;
+    private transient Object[] parameters;
 
     public PrototypeInstantiator(Class<T> type) {
         this.type = type;

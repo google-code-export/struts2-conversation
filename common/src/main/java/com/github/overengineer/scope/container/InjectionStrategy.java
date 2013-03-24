@@ -1,6 +1,8 @@
 package com.github.overengineer.scope.container;
 
-public interface InjectionStrategy<T> {
+import java.io.Serializable;
+
+public interface InjectionStrategy<T> extends Serializable {
 
     T getComponent();
 

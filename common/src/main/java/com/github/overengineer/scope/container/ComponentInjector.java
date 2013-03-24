@@ -5,19 +5,15 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ComponentInjector<T> implements Injector<T> {
+public final class ComponentInjector<T> extends BaseInjector<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentInjector.class);
 
-    private final Method setter;
-    private final Class<?> type;
-
-    public ComponentInjector(final Method setter, final Class<?> type) {
-        this.setter = setter;
-        this.type = type;
+    public ComponentInjector(Method setter, Class<?> type) {
+        super(setter, type);
     }
 
-    public void inject(final T component, final ScopeContainer container) {
+    public void inject(T component, ScopeContainer container) {
         try {
             Object dependency = container.getComponent(type);
             if (LOG.isDebugEnabled()) {
