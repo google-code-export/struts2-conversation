@@ -1,4 +1,6 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.standalone;
+
+import com.github.overengineer.scope.container.ScopeContainer;
 
 public interface StandaloneContainer extends ScopeContainer {
 

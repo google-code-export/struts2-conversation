@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.SimpleScopeContainer;
+import com.github.overengineer.scope.container.standalone.SimpleScopeContainer;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.session.SessionModule;

@@ -1,7 +1,6 @@
 package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.scope.container.BaseScopeContainer;
-import com.github.overengineer.scope.container.BaseScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainer;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
@@ -33,7 +32,7 @@ public class StrutsScopeContainer extends BaseScopeContainer {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <T> T getComponentFromPrimaryContainer(Class<T> clazz) {
+    protected <T> T getSingletonComponent(Class<T> clazz) {
         if (ScopeContainer.class.isAssignableFrom(clazz)) {
             return (T) this;
         } else {
@@ -47,8 +46,18 @@ public class StrutsScopeContainer extends BaseScopeContainer {
 
     @SuppressWarnings("unchecked")
     @Override
+    protected <T> T getNewComponentInstance(Class<T> clazz) {
+        try {
+            return (T) getSingletonComponent(clazz).getClass().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create new instance of component", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
-        return (Class<? extends T>) getComponentFromPrimaryContainer(clazz).getClass();
+        return (Class<? extends T>) getSingletonComponent(clazz).getClass();
     }
 
 }
