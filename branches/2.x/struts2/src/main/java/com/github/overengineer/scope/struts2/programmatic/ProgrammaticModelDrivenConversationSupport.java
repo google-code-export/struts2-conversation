@@ -29,10 +29,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.overengineer.scope.container.MetaProvider;
+import com.github.overengineer.scope.container.Provider;
 import org.apache.struts2.StrutsStatics;
 
-import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
@@ -65,11 +65,11 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     private static final long serialVersionUID = -3567083451289146237L;
 
     private T model;
-    protected ScopeContainer scopeContainer;
+    protected Provider scopeContainer;
 
     @Inject
-    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-        scopeContainer = scopeContainerProvider.getScopeContainer();
+    public void setScopeContainerProvider(MetaProvider scopeContainerProvider) {
+        scopeContainer = scopeContainerProvider.getProvider();
     }
 
     /**
@@ -118,9 +118,9 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     public void prepare() {
         ActionContext actionContext = ActionContext.getContext();
         HttpServletRequest request = (HttpServletRequest) actionContext.get(StrutsStatics.HTTP_REQUEST);
-        ConversationContextManager contextManager = scopeContainer.getComponent(JeeConversationContextManagerProvider.class).getManager(request);
+        ConversationContextManager contextManager = scopeContainer.get(JeeConversationContextManagerProvider.class).getManager(request);
         try {
-            scopeContainer.getComponent(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
+            scopeContainer.get(ConversationProcessor.class).processConversations(new StrutsConversationAdapter(actionContext.getActionInvocation(), contextManager));
             Map<String, Map<String, String>> stackItem = new HashMap<String, Map<String, String>>();
             stackItem.put(StrutsScopeConstants.CONVERSATION_ID_MAP_STACK_KEY, ConversationAdapter.getAdapter().getViewContext());
             actionContext.getValueStack().push(stackItem);

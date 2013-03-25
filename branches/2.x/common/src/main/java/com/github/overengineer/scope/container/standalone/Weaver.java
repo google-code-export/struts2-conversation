@@ -1,6 +1,8 @@
 package com.github.overengineer.scope.container.standalone;
-import com.github.overengineer.scope.container.BaseScopeContainer;
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.BaseProvider;
+import com.github.overengineer.scope.container.ComponentProvider;
+import com.github.overengineer.scope.container.PropertyProvider;
+import com.github.overengineer.scope.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,18 +10,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class SimpleScopeContainer extends BaseScopeContainer implements StandaloneContainer {
+public class Weaver extends BaseProvider implements Container {
 
     private static final long serialVersionUID = -3502345525425524764L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleScopeContainer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Weaver.class);
 
     private Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
 
-    public SimpleScopeContainer() {
-        addInstance(ScopeContainer.class, this);
-        addInstance(StandaloneContainer.class, this);
+    public Weaver() {
+        addInstance(Provider.class, this);
+        addInstance(ComponentProvider.class, this);
+        addInstance(PropertyProvider.class, this);
+        addInstance(Container.class, this);
     }
 
     @Override
@@ -27,7 +31,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
         LOG.info("Verifying container.");
         try {
             for (Class<?> componentType : instantiators.keySet()) {
-                getComponent(componentType);
+                get(componentType);
             }
         } catch (Exception e) {
             throw new WiringException("An exception occurred while verifying the container", e);
@@ -36,7 +40,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     }
 
     @Override
-    public StandaloneContainer loadModule(Module module) {
+    public Container loadModule(Module module) {
         for (Entry<Class<?>, Class<?>> componentEntry : module.getTypeMappings().entrySet()) {
             try {
                 instantiators.put(componentEntry.getKey(), Instantiator.Factory.create(componentEntry.getValue()));
@@ -54,7 +58,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     }
 
     @Override
-    public <T> StandaloneContainer add(Class<T> componentType, Class<? extends T> implementationType) {
+    public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
         try {
             instantiators.put(componentType, Instantiator.Factory.create(implementationType));
         } catch (Exception e) {
@@ -64,13 +68,13 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     }
 
     @Override
-    public <T, I extends T> StandaloneContainer addInstance(Class<T> componentType, I implementation) {
+    public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
         instantiators.put(componentType, Instantiator.Factory.wrap(implementation));
         return this;
     }
 
     @Override
-    public StandaloneContainer addProperty(String propertyName, Object propertyValue) {
+    public Container addProperty(String propertyName, Object propertyValue) {
         properties.put(propertyName, propertyValue);
         return this;
     }

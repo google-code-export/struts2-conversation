@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.container.standalone;
 
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 
 /**
  */
@@ -13,8 +13,8 @@ public class ComponentParameterProxy<T> implements ParameterProxy<T> {
     }
 
     @Override
-    public T get(ScopeContainer container) {
-        return container.getComponent(type);
+    public T get(Provider provider) {
+        return provider.get(type);
     }
 
 }

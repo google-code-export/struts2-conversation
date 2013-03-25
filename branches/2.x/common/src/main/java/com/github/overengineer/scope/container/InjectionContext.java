@@ -10,6 +10,6 @@ public interface InjectionContext<T> extends Serializable {
 
     Class<? extends T> getImplementationType();
 
-    ScopeContainer getContainer();
+    Provider getContainer();
 
 }

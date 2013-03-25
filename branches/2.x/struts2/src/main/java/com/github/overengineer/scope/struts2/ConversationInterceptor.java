@@ -30,12 +30,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.overengineer.scope.container.ComponentProvider;
+import com.github.overengineer.scope.container.MetaProvider;
 import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
 import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
@@ -97,7 +97,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 
     protected JeeConversationContextManagerProvider contextManagerProvider;
     protected ConversationProcessor processor;
-    protected ScopeContainer scopeContainer;
+    protected ComponentProvider componentProvider;
     protected Set<String> shortCircuitResults = Collections.emptySet();
 
     public void setShortCircuitResults(String shortCircuitResults) {
@@ -105,8 +105,8 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     }
 
     @Inject
-    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-        scopeContainer = scopeContainerProvider.getScopeContainer();
+    public void setMetaProvider(MetaProvider metaProvider) {
+        componentProvider = metaProvider.getProvider();
     }
 
     /**
@@ -125,9 +125,9 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 
         LOG.info("Initializing the Conversation Interceptor");
 
-        contextManagerProvider = scopeContainer.getComponent(JeeConversationContextManagerProvider.class);
+        contextManagerProvider = componentProvider.get(JeeConversationContextManagerProvider.class);
 
-        processor = scopeContainer.getComponent(ConversationProcessor.class);
+        processor = componentProvider.get(ConversationProcessor.class);
 
         LOG.info("Conversation Interceptor successfully initialized");
 

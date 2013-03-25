@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.container.standalone;
 
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 
 /**
  */
@@ -19,7 +19,7 @@ public class FalseInstantiator<T> implements Instantiator<T> {
     }
 
     @Override
-    public T getInstance(ScopeContainer container) {
+    public T getInstance(Provider provider) {
         return instance;
     }
 }

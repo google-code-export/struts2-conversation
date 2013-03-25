@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.github.overengineer.scope.container.ScopeContainerProvider;
+import com.github.overengineer.scope.container.MetaProvider;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.configuration.ConversationClassConfiguration;
 import com.github.overengineer.scope.conversation.configuration.ConversationConfigurationProvider;
@@ -26,8 +26,8 @@ public class ShowConfigAction extends org.apache.struts2.config_browser.ShowConf
     private ConversationConfigurationProvider conversationConfigurationProvider;
 
     @Inject
-    public void setConversationConfigurationProvider(ScopeContainerProvider scopeContainerProvider) {
-        this.conversationConfigurationProvider = scopeContainerProvider.getScopeContainer().getComponent(ConversationConfigurationProvider.class);
+    public void setConversationConfigurationProvider(MetaProvider scopeContainerProvider) {
+        this.conversationConfigurationProvider = scopeContainerProvider.getProvider().get(ConversationConfigurationProvider.class);
     }
 
     @Override

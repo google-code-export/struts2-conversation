@@ -1,7 +1,7 @@
 package com.github.overengineer.scope.container.standalone;
 
 import com.github.overengineer.scope.container.Property;
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.lang.annotation.Annotation;
  */
 public interface ParameterProxy<T> extends Serializable {
 
-    T get(ScopeContainer container);
+    T get(Provider provider);
 
     class Factory {
         public static <T> ParameterProxy<T> create(Class<T> type, Annotation[] annotations) {

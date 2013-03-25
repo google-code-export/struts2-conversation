@@ -7,14 +7,11 @@ import static org.junit.Assert.assertNotSame;
 import java.io.IOException;
 import java.io.Serializable;
 
+import com.github.overengineer.scope.container.Provider;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
-import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.DefaultJeeConversationContextManagerProvider;
-import com.github.overengineer.scope.conversation.context.JeeConversationContextManagerProvider;
 import com.github.overengineer.scope.testutil.SerializableObjectTest;
 import com.github.overengineer.scope.testutil.SerializationTestingUtil;
 
@@ -26,11 +23,11 @@ public class DefaultHttpConversationContextManagerProviderTest extends
 
         DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider();
 
-        managerProvider.setScopeContainer(new ScopeContainer() {
+        managerProvider.setComponentProvider(new Provider() {
 
             @SuppressWarnings("unchecked")
             @Override
-            public <T> T getComponent(Class<T> clazz) {
+            public <T> T get(Class<T> clazz) {
                 return (T) new DefaultConversationContextManager();
             }
 

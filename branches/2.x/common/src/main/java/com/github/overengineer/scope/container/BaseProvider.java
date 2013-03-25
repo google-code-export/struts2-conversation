@@ -6,16 +6,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseScopeContainer implements ScopeContainer {
+public abstract class BaseProvider implements Provider {
 
     private static final long serialVersionUID = -6820777796732236492L;
-    private static final Logger LOG = LoggerFactory.getLogger(BaseScopeContainer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseProvider.class);
 
     private final Map<Class<?>, InjectionStrategy<?>> strategies = new HashMap<Class<?>, InjectionStrategy<?>>();
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getComponent(Class<T> clazz) {
+    public <T> T get(Class<T> clazz) {
         InjectionStrategy<T> strategy = (InjectionStrategy<T>) strategies.get(clazz);
         if (strategy == null) {
             synchronized (strategies) {
@@ -41,17 +41,17 @@ public abstract class BaseScopeContainer implements ScopeContainer {
 
         InjectionContextImpl(Class<T> componentType) {
             this.componentType = componentType;
-            implementationType = BaseScopeContainer.this.getImplementationType(componentType);
+            implementationType = BaseProvider.this.getImplementationType(componentType);
         }
 
         @Override
         public T getSingletonComponent() {
-            return BaseScopeContainer.this.getSingletonComponent(componentType);
+            return BaseProvider.this.getSingletonComponent(componentType);
         }
 
         @Override
         public T getPrototypeComponent() {
-            return BaseScopeContainer.this.getNewComponentInstance(componentType);
+            return BaseProvider.this.getNewComponentInstance(componentType);
         }
 
         @Override
@@ -60,8 +60,8 @@ public abstract class BaseScopeContainer implements ScopeContainer {
         }
 
         @Override
-        public ScopeContainer getContainer() {
-            return BaseScopeContainer.this;
+        public Provider getContainer() {
+            return BaseProvider.this;
         }
 
     }

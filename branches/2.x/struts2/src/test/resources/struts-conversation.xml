@@ -7,10 +7,10 @@
 <struts>
 
     <bean name="moduleScopeContainer"
-          type="com.github.overengineer.scope.container.ScopeContainer"
+          type="com.github.overengineer.scope.container.Provider"
           class="com.github.overengineer.scope.struts2.StrutsModuleContainer" />
 
-    <constant name="com.github.overengineer.scope.container.ScopeContainer" value="moduleScopeContainer"/>
+    <constant name="com.github.overengineer.scope.container.Provider" value="moduleScopeContainer"/>
 
     <constant name="struts.conversation.processor" value="expressionConversationProcessor"/>
 

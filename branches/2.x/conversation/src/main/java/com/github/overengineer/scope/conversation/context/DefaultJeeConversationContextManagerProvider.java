@@ -26,11 +26,11 @@ package com.github.overengineer.scope.conversation.context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.github.overengineer.scope.container.ComponentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.container.Component;
-import com.github.overengineer.scope.container.ScopeContainer;
 
 /**
  * The default implementation of the
@@ -44,11 +44,11 @@ public class DefaultJeeConversationContextManagerProvider implements JeeConversa
 
     private static Logger LOG = LoggerFactory.getLogger(DefaultJeeConversationContextManagerProvider.class);
 
-    protected ScopeContainer scopeContainer;
+    protected ComponentProvider componentProvider;
 
     @Component
-    public void setScopeContainer(ScopeContainer scopeContainer) {
-        this.scopeContainer = scopeContainer;
+    public void setComponentProvider(ComponentProvider componentProvider) {
+        this.componentProvider = componentProvider;
     }
 
     /**
@@ -68,7 +68,7 @@ public class DefaultJeeConversationContextManagerProvider implements JeeConversa
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating new ConversationContextManager for session with ID [{}]  ", session.getId());
         }
-        ConversationContextManager contextManager = scopeContainer.getComponent(ConversationContextManager.class);
+        ConversationContextManager contextManager = componentProvider.get(ConversationContextManager.class);
         JeeConversationUtil.setContextManager(session, contextManager);
         return contextManager;
     }

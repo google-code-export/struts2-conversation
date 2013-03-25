@@ -23,11 +23,11 @@
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
 
+import com.github.overengineer.scope.container.MetaProvider;
+import com.github.overengineer.scope.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.session.SessionManager;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.inject.Inject;
@@ -44,11 +44,11 @@ public class SessionInterceptor implements Interceptor {
     private static final Logger LOG = LoggerFactory.getLogger(SessionInterceptor.class);
 
     protected SessionManager sessionManager;
-    protected ScopeContainer scopeContainer;
+    protected Provider scopeContainer;
 
     @Inject
-    public void setScopeContainerProvider(ScopeContainerProvider scopeContainerProvider) {
-        scopeContainer = scopeContainerProvider.getScopeContainer();
+    public void setScopeContainerProvider(MetaProvider scopeContainerProvider) {
+        scopeContainer = scopeContainerProvider.getProvider();
     }
 
     /**
@@ -67,7 +67,7 @@ public class SessionInterceptor implements Interceptor {
 
         LOG.info("Initializing the Session Interceptor...");
 
-        sessionManager = scopeContainer.getComponent(SessionManager.class);
+        sessionManager = scopeContainer.get(SessionManager.class);
 
         LOG.info("...Session Interceptor successfully initialized.");
 
