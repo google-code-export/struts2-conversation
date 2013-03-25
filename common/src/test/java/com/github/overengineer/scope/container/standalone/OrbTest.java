@@ -82,6 +82,8 @@ public class OrbTest {
 
         container.addInstance(SchedulerProvider.class, given);
 
+        container.addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
+
         SchedulerProvider received = container.get(SchedulerProvider.class);
 
         assertEquals(given, received);
