@@ -1,11 +1,9 @@
 package com.github.overengineer.scope.container.standalone;
 
-import com.github.overengineer.scope.container.Property;
 import com.github.overengineer.scope.container.ScopeContainer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +42,7 @@ public class PrototypeInstantiator<T> implements Instantiator<T> {
         parameterProxies = new ParameterProxy[parameterTypes.length];
         parameters = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
-            parameterProxies[i] = new ParameterProxy(parameterTypes[i], annotations[i]);
+            parameterProxies[i] = ParameterProxy.Factory.create(parameterTypes[i], annotations[i]);
         }
     }
 
@@ -75,26 +73,5 @@ public class PrototypeInstantiator<T> implements Instantiator<T> {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.init();
-    }
-
-    private static class ParameterProxy implements Serializable {
-        Class<?> parameterType;
-        boolean property = false;
-        String name;
-        ParameterProxy(Class<?> parameterType, Annotation[] annotations) {
-            this.parameterType = parameterType;
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof Property) {
-                   property = true;
-                    name = ((Property) annotation).value();
-                }
-            }
-        }
-        public Object get(ScopeContainer container) {
-            if (property) {
-                return container.getProperty(parameterType, name);
-            }
-            return container.getComponent(parameterType);
-        }
     }
 }
