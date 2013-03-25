@@ -26,7 +26,7 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
             try {
                 instantiators.put(componentEntry.getKey(), Instantiator.Factory.create(componentEntry.getValue()));
             } catch (Exception e) {
-                throw new RuntimeException("There was an error attempting to create a component", e);
+                throw new RuntimeException("There was an error attempting to create component of type [" + componentEntry.getValue().getName() + "]", e);
             }
         }
         for (Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
@@ -81,6 +81,8 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
+        System.out.println(clazz);
+        System.out.println(instantiators.get(clazz));
         return (Class<? extends T>) instantiators.get(clazz).getTargetType();
     }
 
