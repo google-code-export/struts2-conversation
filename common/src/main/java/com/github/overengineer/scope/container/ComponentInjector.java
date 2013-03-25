@@ -21,7 +21,7 @@ public final class ComponentInjector<T> extends BaseInjector<T> {
             }
             setter.invoke(component, dependency);
         } catch (Exception e) {
-            LOG.error("Could not set component of type [{}] on component of type [{}] using setter [{}]", type.getName(), component.getClass().getName(), setter.getName(), e);
+            throw new InjectionException("Could not set component of type [" + type.getName() + "] on component of type [" + component.getClass().getName() + "] using setter [" + setter.getName() + "]", e);
         }
     }
 

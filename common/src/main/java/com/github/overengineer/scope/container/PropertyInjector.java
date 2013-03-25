@@ -24,7 +24,7 @@ public final class PropertyInjector<T> extends BaseInjector<T> {
             }
             setter.invoke(component, value);
         } catch (Exception e) {
-            LOG.error("Could not set property [{}] of type [{}] on component of type [{}] using setter [{}]", name, type.getName(), component.getClass().getName(), setter.getName(), e);
+            throw new InjectionException("Could not set property [" + name  + "] of type [" + type.getName() + "] on component of type [" + component.getClass().getName() + "] using setter [" + setter.getName() + "]", e);
         }
     }
 
