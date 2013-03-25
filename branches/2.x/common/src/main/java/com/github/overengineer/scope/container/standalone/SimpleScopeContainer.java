@@ -1,5 +1,4 @@
 package com.github.overengineer.scope.container.standalone;
-import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.BaseScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainer;
 import org.slf4j.Logger;
@@ -21,15 +20,14 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     public SimpleScopeContainer() {
         addInstance(ScopeContainer.class, this);
         addInstance(StandaloneContainer.class, this);
-        loadModule(new CommonModule());
     }
 
     @Override
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (Instantiator<?> instantiator : instantiators.values()) {
-                instantiator.getInstance(this);
+            for (Class<?> componentType : instantiators.keySet()) {
+                getComponent(componentType);
             }
         } catch (Exception e) {
             throw new WiringException("An exception occurred while verifying the container", e);
@@ -80,7 +78,11 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(Class<T> clazz, String name) {
-        return (T) properties.get(name);
+        Object property = properties.get(name);
+        if (property == null) {
+            throw new RuntimeException("No property of name [" + name + "] has been registered with the container");
+        }
+        return (T) property;
     }
 
     @SuppressWarnings("unchecked")
@@ -98,7 +100,11 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
-        return (Class<? extends T>) instantiators.get(clazz).getTargetType();
+        Instantiator<T> instantiator = (Instantiator<T>) instantiators.get(clazz);
+        if (instantiator == null) {
+            throw new RuntimeException("No components of type [" + clazz.getName() + "] have been registered with the container");
+        }
+        return instantiator.getTargetType();
     }
 
 }
