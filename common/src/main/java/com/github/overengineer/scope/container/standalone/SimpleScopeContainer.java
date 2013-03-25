@@ -2,6 +2,8 @@ package com.github.overengineer.scope.container.standalone;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.BaseScopeContainer;
 import com.github.overengineer.scope.container.ScopeContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,8 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
 
     private static final long serialVersionUID = -3502345525425524764L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleScopeContainer.class);
+
     private Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -18,6 +22,19 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
         addInstance(ScopeContainer.class, this);
         addInstance(StandaloneContainer.class, this);
         loadModule(new CommonModule());
+    }
+
+    @Override
+    public void verify() throws WiringException {
+        LOG.info("Verifying container.");
+        try {
+            for (Instantiator<?> instantiator : instantiators.values()) {
+                instantiator.getInstance(this);
+            }
+        } catch (Exception e) {
+            throw new WiringException("An exception occurred while verifying the container", e);
+        }
+        LOG.info("Container verified.");
     }
 
     @Override
