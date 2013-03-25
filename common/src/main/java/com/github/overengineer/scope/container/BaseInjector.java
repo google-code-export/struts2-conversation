@@ -2,7 +2,6 @@ package com.github.overengineer.scope.container;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**

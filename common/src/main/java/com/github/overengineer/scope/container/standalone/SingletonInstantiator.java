@@ -1,8 +1,6 @@
 package com.github.overengineer.scope.container.standalone;
 
 import com.github.overengineer.scope.container.ScopeContainer;
-import com.github.overengineer.scope.container.standalone.Instantiator;
-import com.github.overengineer.scope.container.standalone.PrototypeInstantiator;
 
 /**
  */
