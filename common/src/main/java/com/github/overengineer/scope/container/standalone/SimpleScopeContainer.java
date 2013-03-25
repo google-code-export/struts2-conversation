@@ -81,8 +81,6 @@ public class SimpleScopeContainer extends BaseScopeContainer implements Standalo
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
-        System.out.println(clazz);
-        System.out.println(instantiators.get(clazz));
         return (Class<? extends T>) instantiators.get(clazz).getTargetType();
     }
 
