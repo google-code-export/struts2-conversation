@@ -1,8 +1,5 @@
 package com.github.overengineer.scope.container.standalone;
-import com.github.overengineer.scope.container.BaseProvider;
-import com.github.overengineer.scope.container.ComponentProvider;
-import com.github.overengineer.scope.container.PropertyProvider;
-import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.scope.container.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,16 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Weaver extends BaseProvider implements Container {
+public class Orb extends BaseProvider implements Container {
 
     private static final long serialVersionUID = -3502345525425524764L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Weaver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Orb.class);
 
     private Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
 
-    public Weaver() {
+    public Orb() {
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
@@ -84,7 +81,7 @@ public class Weaver extends BaseProvider implements Container {
     public <T> T getProperty(Class<T> clazz, String name) {
         Object property = properties.get(name);
         if (property == null) {
-            throw new RuntimeException("No property of name [" + name + "] has been registered with the container");
+            throw new MissingDependencyException("No property of name [" + name + "] has been registered with the container");
         }
         return (T) property;
     }
@@ -106,7 +103,7 @@ public class Weaver extends BaseProvider implements Container {
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
         Instantiator<T> instantiator = (Instantiator<T>) instantiators.get(clazz);
         if (instantiator == null) {
-            throw new RuntimeException("No components of type [" + clazz.getName() + "] have been registered with the container");
+            throw new MissingDependencyException("No components of type [" + clazz.getName() + "] have been registered with the container");
         }
         return instantiator.getTargetType();
     }

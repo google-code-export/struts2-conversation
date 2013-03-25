@@ -44,11 +44,11 @@ public class SessionInterceptor implements Interceptor {
     private static final Logger LOG = LoggerFactory.getLogger(SessionInterceptor.class);
 
     protected SessionManager sessionManager;
-    protected Provider scopeContainer;
+    protected Provider provider;
 
     @Inject
-    public void setScopeContainerProvider(MetaProvider scopeContainerProvider) {
-        scopeContainer = scopeContainerProvider.getProvider();
+    public void setMetaProvider(MetaProvider metaProvider) {
+        provider = metaProvider.getProvider();
     }
 
     /**
@@ -67,7 +67,7 @@ public class SessionInterceptor implements Interceptor {
 
         LOG.info("Initializing the Session Interceptor...");
 
-        sessionManager = scopeContainer.get(SessionManager.class);
+        sessionManager = provider.get(SessionManager.class);
 
         LOG.info("...Session Interceptor successfully initialized.");
 
