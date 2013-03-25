@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.container.standalone;
 
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -52,13 +52,13 @@ public class PrototypeInstantiator<T> implements Instantiator<T> {
     }
 
     @Override
-    public T getInstance(ScopeContainer container) {
+    public T getInstance(Provider provider) {
         try {
             if (constructor == null) {
                 return type.newInstance();
             }
             for (int i = 0; i < parameterProxies.length; i++) {
-                parameters[i] = parameterProxies[i].get(container);
+                parameters[i] = parameterProxies[i].get(provider);
             }
             return constructor.newInstance(parameters);
         } catch (InstantiationException e) {

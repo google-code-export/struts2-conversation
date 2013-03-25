@@ -1,7 +1,7 @@
 package com.github.overengineer.scope.container.standalone;
 
 import com.github.overengineer.scope.container.Prototype;
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 public interface Instantiator<T> extends Serializable {
 
     Class<T> getTargetType();
-    T getInstance(ScopeContainer container);
+    T getInstance(Provider provider);
 
     class Factory {
         public static <T> Instantiator<T> create(Class<T> type) {

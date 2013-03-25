@@ -12,17 +12,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
+ *
  */
-public class SimpleScopeContainerTest {
+public class WeaverTest {
 
     @Test
     public void testLoadModule() {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         container.loadModule(new CommonModule());
 
-        TimeoutMonitor monitor = container.getComponent(TimeoutMonitor.class);
+        TimeoutMonitor monitor = container.get(TimeoutMonitor.class);
 
         assertNotNull(monitor);
 
@@ -31,7 +32,7 @@ public class SimpleScopeContainerTest {
     @Test
     public void testVerify_positive() throws WiringException {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         container.verify();
 
@@ -44,7 +45,7 @@ public class SimpleScopeContainerTest {
     @Test(expected = WiringException.class)
     public void testVerify_negative() throws WiringException {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
@@ -55,26 +56,30 @@ public class SimpleScopeContainerTest {
     @Test
     public void testAddAndGetComponent() {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
-        SchedulerProvider provider = container.getComponent(SchedulerProvider.class);
+        SchedulerProvider provider = container.get(SchedulerProvider.class);
 
         assertTrue(provider instanceof DefaultSchedulerProvider);
+
+        container.add(ConstructorTest.class, ConstructorTest.class);
+
+        assertEquals(provider, container.get(ConstructorTest.class).provider);
 
     }
 
     @Test
     public void testAddAndGetInstance() {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         SchedulerProvider given = new DefaultSchedulerProvider();
 
         container.addInstance(SchedulerProvider.class, given);
 
-        SchedulerProvider received = container.getComponent(SchedulerProvider.class);
+        SchedulerProvider received = container.get(SchedulerProvider.class);
 
         assertEquals(given, received);
 
@@ -83,12 +88,19 @@ public class SimpleScopeContainerTest {
     @Test
     public void testAddAndGetProperty() {
 
-        StandaloneContainer container = new SimpleScopeContainer();
+        Container container = new Weaver();
 
         container.addProperty("test", 69L);
 
         assertEquals((Long) 69L, container.getProperty(Long.TYPE, "test"));
 
+    }
+
+    public static class ConstructorTest {
+        SchedulerProvider provider;
+        public ConstructorTest(SchedulerProvider provider) {
+            this.provider = provider;
+        }
     }
 
 }

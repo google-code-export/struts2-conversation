@@ -1,11 +1,11 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.BaseScopeContainer;
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.BaseProvider;
+import com.github.overengineer.scope.container.Provider;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsScopeContainer extends BaseScopeContainer {
+public class StrutsScopeContainer extends BaseProvider {
 
     private static final long serialVersionUID = -6820777796732236492L;
 
@@ -33,7 +33,7 @@ public class StrutsScopeContainer extends BaseScopeContainer {
     @SuppressWarnings("unchecked")
     @Override
     protected <T> T getSingletonComponent(Class<T> clazz) {
-        if (ScopeContainer.class.isAssignableFrom(clazz)) {
+        if (clazz.isAssignableFrom(StrutsScopeContainer.class)) {
             return (T) this;
         } else {
             String typeKey = container.getInstance(String.class, clazz.getName());
@@ -57,6 +57,9 @@ public class StrutsScopeContainer extends BaseScopeContainer {
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Class<? extends T> getImplementationType(Class<T> clazz) {
+        if (clazz.isAssignableFrom(StrutsScopeContainer.class)) {
+            return (Class<? extends T>) StrutsScopeContainer.class;
+        }
         return (Class<? extends T>) getSingletonComponent(clazz).getClass();
     }
 

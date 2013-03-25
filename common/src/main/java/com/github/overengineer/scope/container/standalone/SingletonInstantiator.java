@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.container.standalone;
 
-import com.github.overengineer.scope.container.ScopeContainer;
+import com.github.overengineer.scope.container.Provider;
 
 /**
  */
@@ -19,9 +19,9 @@ public class SingletonInstantiator<T> implements Instantiator<T> {
     }
 
     @Override
-    public T getInstance(ScopeContainer container) {
+    public T getInstance(Provider provider) {
         if (singleton == null) {
-            singleton = delegateInstantiator.getInstance(container);
+            singleton = delegateInstantiator.getInstance(provider);
         }
         return singleton;
     }

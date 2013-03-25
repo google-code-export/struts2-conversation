@@ -29,10 +29,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.overengineer.scope.bijection.Bijector;
+import com.github.overengineer.scope.container.MetaProvider;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.github.overengineer.scope.container.ScopeContainerProvider;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationConstants;
 import com.github.overengineer.scope.conversation.ConversationUtil;
@@ -62,7 +62,7 @@ public class ScopeTestUtil {
             configurationProvider = Dispatcher
                     .getInstance()
                     .getContainer()
-                    .getInstance(ScopeContainerProvider.class).getScopeContainer().getComponent(ConversationConfigurationProvider.class);
+                    .getInstance(MetaProvider.class).getProvider().get(ConversationConfigurationProvider.class);
         }
         return configurationProvider;
     }

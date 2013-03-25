@@ -43,7 +43,7 @@
     <constant name="conversation.max.instances" value="20"/>
     <constant name="overengineer.monitoring.thread.pool.size" value="20"/>
 
-    <constant name="com.github.overengineer.scope.container.ScopeContainer" value="defaultScopeContainer"/>
+    <constant name="com.github.overengineer.scope.container.Provider" value="defaultScopeContainer"/>
     <constant name="com.github.overengineer.scope.ActionProvider" value="strutsActionProvider"/>
     <constant name="com.github.overengineer.scope.bijection.BijectorFactory" value="defaultBijectorFactory"/>
 
@@ -72,11 +72,11 @@
               value="timeoutConversationContextManager"/>
 
     <bean name="default"
-          type="com.github.overengineer.scope.container.ScopeContainerProvider"
+          type="com.github.overengineer.scope.container.MetaProvider"
           class="com.github.overengineer.scope.struts2.StrutsScopeContainerProvider"/>
 
     <bean name="defaultScopeContainer"
-          type="com.github.overengineer.scope.container.ScopeContainer"
+          type="com.github.overengineer.scope.container.Provider"
           class="com.github.overengineer.scope.struts2.StrutsScopeContainer"/>
 
     <bean name="defaultBijectorFactory"
