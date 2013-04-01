@@ -7,6 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * TODO handle cyclic refs
+ *
+ * TODO nested containers
+ *
+ * TODO interface ComponentPostProcessor<T>
+ *
+ * TODO Container container = Orb.Builder.with(postProcessors).with(proxyStrategyFactory).build();
+ */
 public class Orb extends BaseProvider implements Container {
 
     private static final long serialVersionUID = -3502345525425524764L;

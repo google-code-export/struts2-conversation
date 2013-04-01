@@ -2,6 +2,7 @@ package com.github.overengineer.scope.container.standalone;
 
 import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.CommonModule;
+import com.github.overengineer.scope.container.Prototype;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -49,6 +50,8 @@ public class OrbTest {
         Container container = new Orb();
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
+
+        container.addProperty(CommonConstants.Properties.MONITORING_FREQUENCY, 4L);
 
         container.verify();
 
@@ -101,6 +104,7 @@ public class OrbTest {
 
     }
 
+    @Prototype
     public static class ConstructorTest {
         SchedulerProvider provider;
         public ConstructorTest(SchedulerProvider provider) {
