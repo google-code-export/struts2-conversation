@@ -23,7 +23,6 @@
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.MetaProvider;
 import com.github.overengineer.scope.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class SessionInterceptor implements Interceptor {
     protected Provider provider;
 
     @Inject
-    public void setMetaProvider(MetaProvider metaProvider) {
+    public void setMetaProvider(StrutsScopeContainerProvider metaProvider) {
         provider = metaProvider.getProvider();
     }
 

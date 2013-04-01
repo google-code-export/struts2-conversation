@@ -1,13 +1,10 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.MetaProvider;
 import com.github.overengineer.scope.container.Provider;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsScopeContainerProvider implements MetaProvider {
-
-    private static final long serialVersionUID = 5288295007865319291L;
+public class StrutsScopeContainerProvider {
 
     private Container container;
     private String scopeContainerKey;
@@ -22,7 +19,6 @@ public class StrutsScopeContainerProvider implements MetaProvider {
         this.container = container;
     }
 
-    @Override
     public Provider getProvider() {
         return container.getInstance(Provider.class, scopeContainerKey);
     }

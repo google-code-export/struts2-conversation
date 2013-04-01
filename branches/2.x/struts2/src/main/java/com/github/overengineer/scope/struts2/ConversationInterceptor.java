@@ -31,7 +31,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.overengineer.scope.container.ComponentProvider;
-import com.github.overengineer.scope.container.MetaProvider;
 import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +104,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
     }
 
     @Inject
-    public void setMetaProvider(MetaProvider metaProvider) {
+    public void setMetaProvider(StrutsScopeContainerProvider metaProvider) {
         componentProvider = metaProvider.getProvider();
     }
 

@@ -1,7 +1,4 @@
-package com.github.overengineer.scope.container.alt;
-
-import com.github.overengineer.scope.container.Provider;
-import com.github.overengineer.scope.container.standalone.Instantiator;
+package com.github.overengineer.scope.container;
 
 import java.util.List;
 

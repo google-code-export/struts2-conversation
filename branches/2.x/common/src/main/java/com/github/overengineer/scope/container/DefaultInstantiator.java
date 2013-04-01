@@ -1,8 +1,4 @@
-package com.github.overengineer.scope.container.alt;
-
-import com.github.overengineer.scope.container.Provider;
-import com.github.overengineer.scope.container.standalone.Instantiator;
-import com.github.overengineer.scope.container.standalone.ParameterProxy;
+package com.github.overengineer.scope.container;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -46,11 +42,6 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
         for (int i = 0; i < parameterTypes.length; i++) {
             parameterProxies[i] = ParameterProxy.Factory.create(parameterTypes[i], annotations[i]);
         }
-    }
-
-    @Override
-    public Class<T> getTargetType() {
-        return type;
     }
 
     @Override
