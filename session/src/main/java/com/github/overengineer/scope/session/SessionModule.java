@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.session;
 
-import com.github.overengineer.scope.container.standalone.BaseModule;
+import com.github.overengineer.scope.container.BaseModule;
 
 public class SessionModule extends BaseModule {
 

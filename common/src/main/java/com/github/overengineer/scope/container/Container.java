@@ -1,6 +1,4 @@
-package com.github.overengineer.scope.container.standalone;
-
-import com.github.overengineer.scope.container.Provider;
+package com.github.overengineer.scope.container;
 
 public interface Container extends Provider {
 
@@ -13,5 +11,7 @@ public interface Container extends Provider {
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
 
     Container addProperty(String propertyName, Object propertyValue);
+
+    Container addListener(ComponentInitializationListener listener);
 
 }

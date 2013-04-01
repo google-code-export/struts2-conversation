@@ -1,7 +1,5 @@
-package com.github.overengineer.scope.container.standalone;
+package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.Property;
-import com.github.overengineer.scope.container.Provider;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 import java.io.Serializable;

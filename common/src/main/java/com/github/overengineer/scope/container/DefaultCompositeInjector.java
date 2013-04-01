@@ -1,7 +1,4 @@
-package com.github.overengineer.scope.container.alt;
-
-import com.github.overengineer.scope.container.Injector;
-import com.github.overengineer.scope.container.Provider;
+package com.github.overengineer.scope.container;
 
 import java.util.Set;
 

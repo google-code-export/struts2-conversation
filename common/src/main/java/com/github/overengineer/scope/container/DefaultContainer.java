@@ -1,12 +1,5 @@
-package com.github.overengineer.scope.container.alt;
+package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.ComponentProvider;
-import com.github.overengineer.scope.container.MissingDependencyException;
-import com.github.overengineer.scope.container.PropertyProvider;
-import com.github.overengineer.scope.container.Provider;
-import com.github.overengineer.scope.container.standalone.Container;
-import com.github.overengineer.scope.container.standalone.Module;
-import com.github.overengineer.scope.container.standalone.WiringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +79,12 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public Container addListener(ComponentInitializationListener listener) {
+        initializationListeners.add(listener);
+        return this;
+    }
+
+    @Override
     public <T> T get(Class<T> clazz) {
         @SuppressWarnings("unchecked")
         ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(clazz);
@@ -104,4 +103,5 @@ public class DefaultContainer implements Container {
         }
         return (T) property;
     }
+
 }

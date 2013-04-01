@@ -1,6 +1,4 @@
-package com.github.overengineer.scope.container.standalone;
-
-import com.github.overengineer.scope.container.Provider;
+package com.github.overengineer.scope.container;
 
 /**
  */

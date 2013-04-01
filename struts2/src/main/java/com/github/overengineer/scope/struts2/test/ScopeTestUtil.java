@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.overengineer.scope.bijection.Bijector;
-import com.github.overengineer.scope.container.MetaProvider;
+import com.github.overengineer.scope.struts2.StrutsScopeContainerProvider;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -62,7 +62,7 @@ public class ScopeTestUtil {
             configurationProvider = Dispatcher
                     .getInstance()
                     .getContainer()
-                    .getInstance(MetaProvider.class).getProvider().get(ConversationConfigurationProvider.class);
+                    .getInstance(StrutsScopeContainerProvider.class).getProvider().get(ConversationConfigurationProvider.class);
         }
         return configurationProvider;
     }

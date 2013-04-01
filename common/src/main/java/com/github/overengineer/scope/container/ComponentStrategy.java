@@ -1,6 +1,4 @@
-package com.github.overengineer.scope.container.alt;
-
-import com.github.overengineer.scope.container.*;
+package com.github.overengineer.scope.container;
 
 import java.io.Serializable;
 import java.util.List;

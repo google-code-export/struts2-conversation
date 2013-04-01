@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container.alt;
+package com.github.overengineer.scope.container;
 
 import java.io.Serializable;
 
@@ -6,6 +6,6 @@ import java.io.Serializable;
  */
 public interface ComponentInitializationListener extends Serializable {
 
-    <T, TT extends T> TT onInitialization(T component);
+    <T> T onInitialization(T component);
 
 }

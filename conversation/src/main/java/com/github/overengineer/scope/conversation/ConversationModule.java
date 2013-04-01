@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.conversation;
 
-import com.github.overengineer.scope.container.standalone.BaseModule;
+import com.github.overengineer.scope.container.BaseModule;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;

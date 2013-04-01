@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container.standalone;
+package com.github.overengineer.scope.container;
 
 import java.util.HashMap;
 import java.util.Map;

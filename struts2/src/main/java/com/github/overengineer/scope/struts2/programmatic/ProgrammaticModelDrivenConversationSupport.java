@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.overengineer.scope.container.MetaProvider;
 import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.scope.struts2.StrutsScopeContainerProvider;
 import org.apache.struts2.StrutsStatics;
 
 import com.github.overengineer.scope.conversation.ConversationAdapter;
@@ -68,7 +68,7 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
     protected Provider scopeContainer;
 
     @Inject
-    public void setScopeContainerProvider(MetaProvider scopeContainerProvider) {
+    public void setScopeContainerProvider(StrutsScopeContainerProvider scopeContainerProvider) {
         scopeContainer = scopeContainerProvider.getProvider();
     }
 
