@@ -16,9 +16,9 @@ public final class PropertyInjector<T> extends BaseInjector<T> {
         this.name = name;
     }
 
-    public void inject(final T component, final Provider container) {
+    public void inject(final T component, final Provider provider) {
         try {
-            Object value = container.getProperty(type, name);
+            Object value = provider.getProperty(type, name);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Setting property [{}] on component of type [{}] with value [{}]", name, component.getClass().getName(), value);
             }

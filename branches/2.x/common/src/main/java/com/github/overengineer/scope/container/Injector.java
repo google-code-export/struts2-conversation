@@ -13,7 +13,7 @@ import com.github.overengineer.scope.util.ReflectionUtil;
 
 public interface Injector<T> extends Serializable {
 
-    void inject(T component, Provider container);
+    void inject(T component, Provider provider);
 
     class CacheBuilder {
 

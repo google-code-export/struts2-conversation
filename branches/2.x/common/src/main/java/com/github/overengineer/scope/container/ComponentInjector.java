@@ -13,9 +13,9 @@ public final class ComponentInjector<T> extends BaseInjector<T> {
         super(setter, type);
     }
 
-    public void inject(T component, Provider container) {
+    public void inject(T component, Provider provider) {
         try {
-            Object dependency = container.get(type);
+            Object dependency = provider.get(type);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Setting component of type [{}] on component of type [{}]", dependency.getClass().getName(), component.getClass().getName());
             }
