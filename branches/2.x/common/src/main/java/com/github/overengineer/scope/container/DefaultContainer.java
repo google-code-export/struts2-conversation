@@ -9,6 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * TODO handle cyclic refs
+ *
+ * TODO nested containers
+ *
+ * TODO singleton instance repository so that one instance can be used across multiple interface mappings -
+ * this can also be used to support hotswapping of proxies
+ *
+ * TODO Container container = Orb.Builder.with(postProcessors).with(proxyStrategyFactory).build();
  */
 public class DefaultContainer implements Container {
 
@@ -17,8 +25,10 @@ public class DefaultContainer implements Container {
     private Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+    private ComponentStrategyFactory strategyFactory;
 
-    public DefaultContainer() {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory) {
+        this.strategyFactory = strategyFactory;
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
@@ -42,13 +52,13 @@ public class DefaultContainer implements Container {
     public Container loadModule(Module module) {
         for (Map.Entry<Class<?>, Class<?>> componentEntry : module.getTypeMappings().entrySet()) {
             try {
-                strategies.put(componentEntry.getKey(), ComponentStrategy.Factory.create(componentEntry.getValue()));
+                strategies.put(componentEntry.getKey(), strategyFactory.create(componentEntry.getValue()));
             } catch (Exception e) {
                 throw new RuntimeException("There was an error attempting to create component of type [" + componentEntry.getValue().getName() + "]", e);
             }
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            strategies.put(componentEntry.getKey(), ComponentStrategy.Factory.create(componentEntry.getValue()));
+            strategies.put(componentEntry.getKey(), strategyFactory.create(componentEntry.getValue()));
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
@@ -59,7 +69,7 @@ public class DefaultContainer implements Container {
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
         try {
-            strategies.put(componentType, ComponentStrategy.Factory.create(implementationType));
+            strategies.put(componentType, strategyFactory.create(implementationType));
         } catch (Exception e) {
             throw new RuntimeException("There was an error attempting to create a component", e);
         }
@@ -68,7 +78,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        strategies.put(componentType, ComponentStrategy.Factory.create(implementation));
+        strategies.put(componentType, strategyFactory.create(implementation));
         return this;
     }
 

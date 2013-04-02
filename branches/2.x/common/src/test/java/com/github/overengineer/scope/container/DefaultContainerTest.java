@@ -18,7 +18,7 @@ public class DefaultContainerTest {
     @Test
     public void testLoadModule() {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.loadModule(new CommonModule());
 
@@ -31,7 +31,7 @@ public class DefaultContainerTest {
     @Test
     public void testVerify_positive() throws WiringException {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.verify();
 
@@ -44,7 +44,7 @@ public class DefaultContainerTest {
     @Test(expected = WiringException.class)
     public void testVerify_negative() throws WiringException {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
@@ -57,7 +57,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetComponent() {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -76,7 +76,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetInstance() {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         SchedulerProvider given = new DefaultSchedulerProvider();
 
@@ -93,7 +93,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetProperty() {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.addProperty("test", 69L);
 
@@ -101,10 +101,10 @@ public class DefaultContainerTest {
 
     }
 
-    @Test
+    @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = new DefaultContainer();
+        Container container = ContainerBuilder.build();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -113,12 +113,36 @@ public class DefaultContainerTest {
         container.addListener(new ComponentInitializationListener() {
             @Override
             public <T> T onInitialization(T component) {
-                System.out.println("yo");
-                return component;
+                throw new Assertion();
             }
         });
 
         container.get(SchedulerProvider.class);
+
+    }
+
+    @Test
+    public void testCyclicRef() {
+
+        Container container = ContainerBuilder.withProxies().build();
+
+        container.add(ICyclicRef.class, CyclicTest.class);
+
+        container.add(ICyclicRef2.class, CyclicTest2.class);
+
+        ICyclicRef c = container.get(ICyclicRef.class);
+
+        assertNotNull(c.getRef());
+
+        c.getRef().getRef();
+
+        ICyclicRef2 c2 = container.get(ICyclicRef2.class);
+
+        assertNotNull(c2.getRef());
+
+        assertTrue(c.calls() == 2);
+
+        assertTrue(c2.calls() == 1); //one because its a prototype
 
     }
 
@@ -129,5 +153,58 @@ public class DefaultContainerTest {
             this.provider = provider;
         }
     }
+
+    public interface ICyclicRef {
+        ICyclicRef2 getRef();
+        int calls();
+    }
+
+    public interface ICyclicRef2 {
+        ICyclicRef getRef();
+        int calls();
+    }
+
+    @Prototype
+    public static class CyclicTest implements ICyclicRef {
+        ICyclicRef2 cyclicTest2;
+        int calls = 0;
+        public CyclicTest(ICyclicRef2 cyclicTest2) {
+            this.cyclicTest2 = cyclicTest2;
+        }
+
+        @Override
+        public ICyclicRef2 getRef() {
+            calls++;
+            return cyclicTest2;
+        }
+
+        @Override
+        public int calls() {
+            return calls;
+        }
+    }
+
+    @Prototype
+    public static class CyclicTest2 implements ICyclicRef2 {
+        ICyclicRef cyclicTest;
+        int calls = 0;
+        @Component
+        public void setCyclicTest(ICyclicRef cyclicTest) {
+            this.cyclicTest = cyclicTest;
+        }
+
+        @Override
+        public ICyclicRef getRef() {
+            calls++;
+            return cyclicTest;
+        }
+
+        @Override
+        public int calls() {
+            return calls;
+        }
+    }
+
+    public static class Assertion extends RuntimeException {}
 
 }
