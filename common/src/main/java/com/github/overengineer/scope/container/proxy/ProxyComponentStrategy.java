@@ -3,6 +3,7 @@ package com.github.overengineer.scope.container.proxy;
 import com.github.overengineer.scope.container.ComponentInitializationListener;
 import com.github.overengineer.scope.container.ComponentStrategy;
 import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.scope.container.WiringException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +13,14 @@ import java.util.Map;
  */
 public class ProxyComponentStrategy<T> implements ComponentStrategy<T> {
 
-
     private Class<?> type;
     private ComponentStrategy<T> delegateStrategy;
+    private ProxyHandlerFactory handlerFactory;
 
-    public ProxyComponentStrategy(Class<?> type, ComponentStrategy<T> delegateStrategy) {
+    public ProxyComponentStrategy(Class<?> type, ComponentStrategy<T> delegateStrategy, ProxyHandlerFactory handlerFactory) {
         this.type = type;
         this.delegateStrategy = delegateStrategy;
+        this.handlerFactory = handlerFactory;
     }
 
     @Override
@@ -31,16 +33,16 @@ public class ProxyComponentStrategy<T> implements ComponentStrategy<T> {
             ProxyCache.threadLocal.set(cache);
         }
 
+        @SuppressWarnings("unchecked")
+        ComponentProxyHandler<T> proxyHandler = (ComponentProxyHandler<T>) cache.proxyHandlers.get(type);
+
+        if (proxyHandler != null) {
+            return proxyHandler.getProxy();
+        }
+
         try {
 
-            @SuppressWarnings("unchecked")
-            ComponentProxyHandler<T> proxyHandler = (ComponentProxyHandler<T>) cache.proxyHandlers.get(type);
-
-            if (proxyHandler != null) {
-                return proxyHandler.getProxy();
-            }
-
-            proxyHandler = new JdkComponentProxyHandler<T>(type.getInterfaces());
+            proxyHandler = handlerFactory.createProxy(type);
 
             cache.proxyHandlers.put(type, proxyHandler);
 
@@ -51,6 +53,12 @@ public class ProxyComponentStrategy<T> implements ComponentStrategy<T> {
             cache.proxyHandlers.remove(type);
 
             return proxyHandler.getProxy();
+
+        } catch (Exception e) {
+
+            ProxyCache.threadLocal.remove();
+
+            throw new RuntimeException(new WiringException("An error occurred creating proxy and component for type [" + type.getName() + "]", e));
 
         } finally {
 

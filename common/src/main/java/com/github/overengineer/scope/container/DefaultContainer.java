@@ -9,19 +9,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * TODO bounded prototypes - ex that - scoped repositories?  container per scope?
+ *
+ * TODO concurrent speed test
+ *
  * TODO handle cyclic refs
  *
  * TODO nested containers
  *
- * TODO singleton instance repository so that one instance can be used across multiple interface mappings -
- * this can also be used to support hotswapping of proxies
- *
- * TODO Container container = Orb.Builder.with(postProcessors).with(proxyStrategyFactory).build();
+ * TODO hotswapping
  */
 public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
+    private Map<Class<?>, Class<?>> mappings = new HashMap<Class<?>, Class<?>>();
     private Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     private Map<String, Object> properties = new HashMap<String, Object>();
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
@@ -39,7 +41,7 @@ public class DefaultContainer implements Container {
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (Class<?> componentType : strategies.keySet()) {
+            for (Class<?> componentType : mappings.keySet()) {
                 get(componentType);
             }
         } catch (Exception e) {
@@ -51,14 +53,10 @@ public class DefaultContainer implements Container {
     @Override
     public Container loadModule(Module module) {
         for (Map.Entry<Class<?>, Class<?>> componentEntry : module.getTypeMappings().entrySet()) {
-            try {
-                strategies.put(componentEntry.getKey(), strategyFactory.create(componentEntry.getValue()));
-            } catch (Exception e) {
-                throw new RuntimeException("There was an error attempting to create component of type [" + componentEntry.getValue().getName() + "]", e);
-            }
+            addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            strategies.put(componentEntry.getKey(), strategyFactory.create(componentEntry.getValue()));
+            addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
@@ -68,17 +66,13 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        try {
-            strategies.put(componentType, strategyFactory.create(implementationType));
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error attempting to create a component", e);
-        }
+        addMapping(componentType, implementationType);
         return this;
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        strategies.put(componentType, strategyFactory.create(implementation));
+        addMapping(componentType, implementation);
         return this;
     }
 
@@ -96,11 +90,12 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz) {
-        @SuppressWarnings("unchecked")
-        ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(clazz);
-        if (strategy == null) {
+        Class<?> implementationType = mappings.get(clazz);
+        if (implementationType == null) {
             throw new MissingDependencyException("No components of type [" + clazz.getName() + "] have been registered with the container");
         }
+        @SuppressWarnings("unchecked")
+        ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(implementationType);
         return strategy.get(this, initializationListeners);
     }
 
@@ -112,6 +107,16 @@ public class DefaultContainer implements Container {
             throw new MissingDependencyException("No property of name [" + name + "] has been registered with the container");
         }
         return (T) property;
+    }
+
+    private void addMapping(Class<?> type, Class<?> implementationType) {
+        strategies.put(implementationType, strategyFactory.create(implementationType));
+        mappings.put(type, implementationType);
+    }
+
+    private void addMapping(Class<?> type, Object implementation) {
+        strategies.put(implementation.getClass(), strategyFactory.create(implementation));
+        mappings.put(type, implementation.getClass());
     }
 
 }

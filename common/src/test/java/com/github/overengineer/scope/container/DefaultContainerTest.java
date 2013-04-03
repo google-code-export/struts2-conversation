@@ -9,6 +9,7 @@ import com.github.overengineer.scope.monitor.TimeoutMonitor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -124,11 +125,12 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef() {
 
-        Container container = ContainerBuilder.withProxies().build();
-
-        container.add(ICyclicRef.class, CyclicTest.class);
-
-        container.add(ICyclicRef2.class, CyclicTest2.class);
+        Container container = ContainerBuilder
+                .withCgLibProxies()
+                .build()
+                .add(ICyclicRef.class, CyclicTest.class)
+                .add(ICyclicRef2.class, CyclicTest2.class)
+                .add(ICyclicRef3.class, CyclicTest3.class);
 
         ICyclicRef c = container.get(ICyclicRef.class);
 
@@ -140,9 +142,31 @@ public class DefaultContainerTest {
 
         assertNotNull(c2.getRef());
 
-        assertTrue(c.calls() == 2);
+        assertEquals(2, c2.getRef().calls());
 
-        assertTrue(c2.calls() == 1); //one because its a prototype
+        assertEquals(2, c2.calls()); //one because its a prototype
+
+        ICyclicRef3 c3 = container.get(ICyclicRef3.class);
+
+        assertNotNull(c3.getRef());
+
+        assertEquals(1, c.getRef().calls());
+
+    }
+
+    @Test
+    public void testCyclicRef2() {
+
+        Container container = ContainerBuilder
+                .withCgLibProxies()
+                .build()
+                .add(ICyclicRef.class, CyclicTest.class)
+                .add(ICyclicRef2.class, CyclicTest2.class)
+                .add(ICyclicRef3.class, CyclicTest3.class);
+
+        ICyclicRef c = container.get(ICyclicRef.class);
+
+        assertEquals(1, c.getRef().getRef().getRef().calls());
 
     }
 
@@ -155,7 +179,7 @@ public class DefaultContainerTest {
     }
 
     public interface ICyclicRef {
-        ICyclicRef2 getRef();
+        ICyclicRef3 getRef();
         int calls();
     }
 
@@ -164,18 +188,23 @@ public class DefaultContainerTest {
         int calls();
     }
 
-    @Prototype
+    public interface ICyclicRef3 {
+        ICyclicRef2 getRef();
+        int calls();
+    }
+
     public static class CyclicTest implements ICyclicRef {
-        ICyclicRef2 cyclicTest2;
+        ICyclicRef3 cyclicTest3;
         int calls = 0;
-        public CyclicTest(ICyclicRef2 cyclicTest2) {
-            this.cyclicTest2 = cyclicTest2;
+        public CyclicTest(ICyclicRef3 cyclicTest3) {
+            cyclicTest3.calls();
+            this.cyclicTest3 = cyclicTest3;
         }
 
         @Override
-        public ICyclicRef2 getRef() {
+        public ICyclicRef3 getRef() {
             calls++;
-            return cyclicTest2;
+            return cyclicTest3;
         }
 
         @Override
@@ -195,6 +224,26 @@ public class DefaultContainerTest {
 
         @Override
         public ICyclicRef getRef() {
+            calls++;
+            return cyclicTest;
+        }
+
+        @Override
+        public int calls() {
+            return calls;
+        }
+    }
+
+    @Prototype
+    public static class CyclicTest3 implements ICyclicRef3 {
+        ICyclicRef2 cyclicTest;
+        int calls = 0;
+        public CyclicTest3(ICyclicRef2 cyclicTest) {
+            this.cyclicTest = cyclicTest;
+        }
+
+        @Override
+        public ICyclicRef2 getRef() {
             calls++;
             return cyclicTest;
         }

@@ -2,6 +2,7 @@ package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
+import com.github.overengineer.scope.container.DefaultComponentStrategyFactory;
 import com.github.overengineer.scope.container.DefaultContainer;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -14,6 +15,10 @@ public class StrutsModuleContainer extends DefaultContainer {
     private static final long serialVersionUID = 3180479652636319036L;
 
     private Container container;
+
+    public StrutsModuleContainer() {
+        super(new DefaultComponentStrategyFactory());
+    }
 
     @Inject
     public void setContainer(Container container) {

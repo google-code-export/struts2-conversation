@@ -1,8 +1,13 @@
 package com.github.overengineer.scope.container;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  */
 public class ComponentParameterProxy<T> implements ParameterProxy<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentParameterProxy.class);
 
     private Class<T> type;
 
@@ -12,7 +17,11 @@ public class ComponentParameterProxy<T> implements ParameterProxy<T> {
 
     @Override
     public T get(Provider provider) {
-        return provider.get(type);
+        T component = provider.get(type);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Resolving component parameter of type [{}] to component of type [{}]", type.getName(), component.getClass().getName());
+        }
+        return component;
     }
 
 }

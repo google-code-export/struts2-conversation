@@ -15,6 +15,12 @@
 
         <!-- Optional, Provided Scope Dependencies -->
         <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
