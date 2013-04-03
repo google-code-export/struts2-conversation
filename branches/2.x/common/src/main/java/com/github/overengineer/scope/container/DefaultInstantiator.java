@@ -1,5 +1,8 @@
 package com.github.overengineer.scope.container;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
@@ -10,6 +13,8 @@ import java.lang.reflect.InvocationTargetException;
  *
  */
 public class DefaultInstantiator<T> implements Instantiator<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInstantiator.class);
 
     private Class<T> type;
     private transient Constructor<T> constructor;
@@ -33,9 +38,6 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
                 annotations = constructor.getParameterAnnotations();
             }
         }
-        if (constructor == null) {
-            return;
-        }
         constructor.setAccessible(true);
         parameterProxies = new ParameterProxy[parameterTypes.length];
         parameters = new Object[parameterTypes.length];
@@ -47,19 +49,15 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     @Override
     public T getInstance(Provider provider) {
         try {
-            if (constructor == null) {
-                return type.newInstance();
+            if (LOG.isDebugEnabled() && parameterProxies.length > 0) {
+                LOG.debug("Performing constructor injection on component of type [{}]", type);
             }
             for (int i = 0; i < parameterProxies.length; i++) {
                 parameters[i] = parameterProxies[i].get(provider);
             }
             return constructor.newInstance(parameters);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new InjectionException("Could not create new instance of type [" + type.getName() + "]", e);
         }
     }
 

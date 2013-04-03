@@ -1,8 +1,13 @@
 package com.github.overengineer.scope.container;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  */
 public class PropertyParameterProxy<T> implements ParameterProxy<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyParameterProxy.class);
 
     private Class<T> type;
     private String name;
@@ -14,6 +19,10 @@ public class PropertyParameterProxy<T> implements ParameterProxy<T> {
 
     @Override
     public T get(Provider provider) {
-        return provider.getProperty(type, name);
+        T property = provider.getProperty(type, name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Resolving property parameter [{}] to value [{}]", name, property);
+        }
+        return property;
     }
 }
