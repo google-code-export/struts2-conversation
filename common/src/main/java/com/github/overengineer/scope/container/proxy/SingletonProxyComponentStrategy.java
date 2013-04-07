@@ -44,7 +44,13 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     }
 
     @Override
-    public void setProxyHandler(ComponentProxyHandler<T> proxyHandler) {
+    public void swap(ComponentProxyHandler<T> proxyHandler, Provider provider, List<ComponentInitializationListener> initializationListeners) {
+
         this.proxyHandler = proxyHandler;
+
+        T component = delegateStrategy.get(provider, initializationListeners);
+
+        proxyHandler.setComponent(component);
+
     }
 }

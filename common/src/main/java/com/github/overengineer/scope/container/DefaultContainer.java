@@ -9,25 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO bounded prototypes - ex that - scoped repositories?  container per scope?
  *
- * TODO concurrent speed test
- *
- * TODO handle cyclic refs
- *
- * TODO nested containers
- *
- * TODO hotswapping
+ * TODO nested, scoped containers and scoped proxies
  */
 public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    private Map<Class<?>, Class<?>> mappings = new HashMap<Class<?>, Class<?>>();
-    private Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
-    private Map<String, Object> properties = new HashMap<String, Object>();
-    private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
-    private ComponentStrategyFactory strategyFactory;
+    protected Map<Class<?>, Class<?>> mappings = new HashMap<Class<?>, Class<?>>();
+    protected Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
+    protected Map<String, Object> properties = new HashMap<String, Object>();
+    protected List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+    protected ComponentStrategyFactory strategyFactory;
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory) {
         this.strategyFactory = strategyFactory;
@@ -109,12 +102,12 @@ public class DefaultContainer implements Container {
         return (T) property;
     }
 
-    private void addMapping(Class<?> type, Class<?> implementationType) {
+    protected void addMapping(Class<?> type, Class<?> implementationType) {
         strategies.put(implementationType, strategyFactory.create(implementationType));
         mappings.put(type, implementationType);
     }
 
-    private void addMapping(Class<?> type, Object implementation) {
+    protected void addMapping(Class<?> type, Object implementation) {
         strategies.put(implementation.getClass(), strategyFactory.create(implementation));
         mappings.put(type, implementation.getClass());
     }

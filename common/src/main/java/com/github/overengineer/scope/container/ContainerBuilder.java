@@ -1,6 +1,7 @@
 package com.github.overengineer.scope.container;
 
 import com.github.overengineer.scope.container.proxy.CgLibProxyHandlerFactory;
+import com.github.overengineer.scope.container.proxy.HotSwappableProxyContainer;
 import com.github.overengineer.scope.container.proxy.JdkProxyHandlerFactory;
 import com.github.overengineer.scope.container.proxy.ProxyComponentStrategyFactory;
 
@@ -12,30 +13,26 @@ import java.util.List;
  */
 public class ContainerBuilder {
 
-    public static Builder with(Collection<ComponentInitializationListener> listeners) {
-        return new Builder().with(listeners);
+    public static Builder begin() {
+        return new BasicBuilder();
     }
 
-    public static Builder with(ComponentInitializationListener listener) {
-        return new Builder().with(listener);
+    public interface Builder {
+        Builder with(Collection<ComponentInitializationListener> listeners);
+        Builder with(ComponentInitializationListener listener);
+        ProxyBuilder withJdkProxies();
+        ProxyBuilder withCgLibProxies();
+        Container build();
     }
 
-    public static Builder withJdkProxies() {
-        return new Builder().withJdkProxies();
+    public interface ProxyBuilder extends Builder {
+        HotSwappableContainer build();
     }
 
-    public static Builder withCgLibProxies() {
-        return new Builder().withCgLibProxies();
-    }
+    public static class BasicBuilder implements Builder {
 
-    public static Container build() {
-        return new Builder().build();
-    }
-
-    public static class Builder {
-
-        private ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory();
-        private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+        ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory();
+        List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
 
         public Builder with(Collection<ComponentInitializationListener> listeners) {
             for (ComponentInitializationListener listener : listeners) {
@@ -49,14 +46,12 @@ public class ContainerBuilder {
             return this;
         }
 
-        public Builder withJdkProxies() {
-            strategyFactory = new ProxyComponentStrategyFactory(strategyFactory, new JdkProxyHandlerFactory());
-            return this;
+        public ProxyBuilder withJdkProxies() {
+            return new ProxyBuilderImpl(this, new ProxyComponentStrategyFactory(strategyFactory, new JdkProxyHandlerFactory()));
         }
 
-        public Builder withCgLibProxies() {
-            strategyFactory = new ProxyComponentStrategyFactory(strategyFactory, new CgLibProxyHandlerFactory());
-            return this;
+        public ProxyBuilder withCgLibProxies() {
+            return new ProxyBuilderImpl(this, new ProxyComponentStrategyFactory(strategyFactory, new CgLibProxyHandlerFactory()));
         }
 
         public Container build() {
@@ -66,6 +61,26 @@ public class ContainerBuilder {
             }
             return container;
         }
+    }
+
+    public static class ProxyBuilderImpl extends BasicBuilder implements ProxyBuilder {
+
+        ProxyComponentStrategyFactory strategyFactory;
+
+        ProxyBuilderImpl(BasicBuilder basicBuilder, ProxyComponentStrategyFactory strategyFactory) {
+            this.initializationListeners = basicBuilder.initializationListeners;
+            this.strategyFactory = strategyFactory;
+        }
+
+        @Override
+        public HotSwappableContainer build() {
+            HotSwappableContainer container = new HotSwappableProxyContainer(strategyFactory);
+            for (ComponentInitializationListener listener : initializationListeners) {
+                container.addListener(listener);
+            }
+            return container;
+        }
+
     }
 
 }
