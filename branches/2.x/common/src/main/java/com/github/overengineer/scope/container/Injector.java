@@ -19,7 +19,7 @@ public interface Injector<T> extends Serializable {
 
         private static Logger LOG = LoggerFactory.getLogger(CacheBuilder.class);
 
-        public static <T> Set<Injector<T>> build(Class<? extends T> implementationType) {
+        public static <T, TT extends T> Set<Injector<T>> build(Class<TT> implementationType) {
 
             if (implementationType.isInterface()) {
                 throw new RuntimeException("Type [{}] is an interface.  Cannot build injector cache for an interface.");

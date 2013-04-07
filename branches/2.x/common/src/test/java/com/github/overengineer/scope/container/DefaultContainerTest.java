@@ -19,7 +19,7 @@ public class DefaultContainerTest {
     @Test
     public void testLoadModule() {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.loadModule(new CommonModule());
 
@@ -32,7 +32,7 @@ public class DefaultContainerTest {
     @Test
     public void testVerify_positive() throws WiringException {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.verify();
 
@@ -45,7 +45,7 @@ public class DefaultContainerTest {
     @Test(expected = WiringException.class)
     public void testVerify_negative() throws WiringException {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
@@ -58,7 +58,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetComponent() {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -77,7 +77,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetInstance() {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         SchedulerProvider given = new DefaultSchedulerProvider();
 
@@ -94,7 +94,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetProperty() {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.addProperty("test", 69L);
 
@@ -105,7 +105,7 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = ContainerBuilder.build();
+        Container container = ContainerBuilder.begin().build();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -125,9 +125,12 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef() {
 
-        Container container = ContainerBuilder
+        HotSwappableContainer container = ContainerBuilder
+                .begin()
                 .withCgLibProxies()
-                .build()
+                .build();
+
+        container
                 .add(ICyclicRef.class, CyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);
@@ -157,9 +160,12 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef2() {
 
-        Container container = ContainerBuilder
+        HotSwappableContainer container = ContainerBuilder
+                .begin()
                 .withCgLibProxies()
-                .build()
+                .build();
+
+        container
                 .add(ICyclicRef.class, CyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);
@@ -167,6 +173,27 @@ public class DefaultContainerTest {
         ICyclicRef c = container.get(ICyclicRef.class);
 
         assertEquals(1, c.getRef().getRef().getRef().calls());
+
+    }
+
+    @Test
+    public void testHotSwapping() throws HotSwapException {
+
+        HotSwappableContainer container = ContainerBuilder
+                .begin()
+                .withCgLibProxies()
+                .build();
+
+        container
+                .add(ICyclicRef.class, CyclicTest.class)
+                .add(ICyclicRef2.class, CyclicTest2.class)
+                .add(ICyclicRef3.class, CyclicTest3.class);
+
+        ICyclicRef c = container.get(ICyclicRef.class);
+
+        container.swap(ICyclicRef.class, CyclicTestHot.class);
+
+        assertEquals(69, c.calls());
 
     }
 
@@ -183,6 +210,7 @@ public class DefaultContainerTest {
         int calls();
     }
 
+    @Prototype
     public interface ICyclicRef2 {
         ICyclicRef getRef();
         int calls();
@@ -210,6 +238,16 @@ public class DefaultContainerTest {
         @Override
         public int calls() {
             return calls;
+        }
+    }
+
+    public static class CyclicTestHot extends CyclicTest {
+        public CyclicTestHot(ICyclicRef3 cyclicTest3) {
+            super(cyclicTest3);
+        }
+        @Override
+        public int calls() {
+            return 69;
         }
     }
 
