@@ -6,6 +6,7 @@ import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
+import com.github.overengineer.scope.testutil.ConcurrentExecutionAssistant;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -68,9 +69,9 @@ public class DefaultContainerTest {
 
         assertTrue(provider instanceof DefaultSchedulerProvider);
 
-        container.add(ConstructorTest.class, ConstructorTest.class);
+        container.add(IConstructorTest.class, ConstructorTest.class);
 
-        assertEquals(provider, container.get(ConstructorTest.class).provider);
+        assertEquals(provider, ((ConstructorTest) container.get(IConstructorTest.class)).provider);
 
     }
 
@@ -127,7 +128,7 @@ public class DefaultContainerTest {
 
         HotSwappableContainer container = ContainerBuilder
                 .begin()
-                .withCgLibProxies()
+                .withJdkProxies()
                 .build();
 
         container
@@ -162,7 +163,7 @@ public class DefaultContainerTest {
 
         HotSwappableContainer container = ContainerBuilder
                 .begin()
-                .withCgLibProxies()
+                .withJdkProxies()
                 .build();
 
         container
@@ -181,7 +182,7 @@ public class DefaultContainerTest {
 
         HotSwappableContainer container = ContainerBuilder
                 .begin()
-                .withCgLibProxies()
+                .withJdkProxies()
                 .build();
 
         container
@@ -197,8 +198,48 @@ public class DefaultContainerTest {
 
     }
 
+    @Test
+    public void testSpeed() throws Exception {
+
+        int threads = 1;
+        long duration = 1000;
+
+        final HotSwappableContainer container = ContainerBuilder
+                .begin()
+                .withJdkProxies()
+                .build();
+
+        container
+                .add(IBean.class, Bean.class)
+                .add(IBean2.class, Bean2.class);
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container.get(IBean.class);
+            }
+        }, threads).run(duration, "double prototype");
+
+        final Container container2 = ContainerBuilder
+                .begin()
+                .withJdkProxies()
+                .build();
+
+        container2.loadModule(new CommonModule());
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container2.get(SchedulerProvider.class);
+            }
+        }, threads).run(duration, "singleton");
+
+    }
+
+    interface IConstructorTest {}
+
     @Prototype
-    public static class ConstructorTest {
+    public static class ConstructorTest implements IConstructorTest {
         SchedulerProvider provider;
         public ConstructorTest(SchedulerProvider provider) {
             this.provider = provider;
@@ -242,7 +283,7 @@ public class DefaultContainerTest {
     }
 
     public static class CyclicTestHot extends CyclicTest {
-        public CyclicTestHot(ICyclicRef3 cyclicTest3) {
+        public CyclicTestHot(ICyclicRef3 cyclicTest3, ICyclicRef self) {
             super(cyclicTest3);
         }
         @Override
@@ -255,8 +296,7 @@ public class DefaultContainerTest {
     public static class CyclicTest2 implements ICyclicRef2 {
         ICyclicRef cyclicTest;
         int calls = 0;
-        @Component
-        public void setCyclicTest(ICyclicRef cyclicTest) {
+        public CyclicTest2(ICyclicRef cyclicTest) {
             this.cyclicTest = cyclicTest;
         }
 

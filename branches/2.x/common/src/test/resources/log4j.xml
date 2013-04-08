@@ -11,7 +11,7 @@
     </appender>
 
     <category name="com.github.overengineer">
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="CONSOLE"/>
     </category>
 

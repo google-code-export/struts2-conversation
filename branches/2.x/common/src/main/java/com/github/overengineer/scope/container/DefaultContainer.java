@@ -103,11 +103,21 @@ public class DefaultContainer implements Container {
     }
 
     protected void addMapping(Class<?> type, Class<?> implementationType) {
+
+        if (!type.isInterface()) {
+            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + type.getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
+        }
+
         strategies.put(implementationType, strategyFactory.create(implementationType));
         mappings.put(type, implementationType);
     }
 
     protected void addMapping(Class<?> type, Object implementation) {
+
+        if (!type.isInterface()) {
+            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + type.getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
+        }
+
         strategies.put(implementation.getClass(), strategyFactory.create(implementation));
         mappings.put(type, implementation.getClass());
     }
