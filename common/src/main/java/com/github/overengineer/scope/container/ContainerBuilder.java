@@ -1,6 +1,5 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.proxy.CgLibProxyHandlerFactory;
 import com.github.overengineer.scope.container.proxy.HotSwappableProxyContainer;
 import com.github.overengineer.scope.container.proxy.JdkProxyHandlerFactory;
 import com.github.overengineer.scope.container.proxy.ProxyComponentStrategyFactory;
@@ -21,7 +20,6 @@ public class ContainerBuilder {
         Builder with(Collection<ComponentInitializationListener> listeners);
         Builder with(ComponentInitializationListener listener);
         ProxyBuilder withJdkProxies();
-        ProxyBuilder withCgLibProxies();
         Container build();
     }
 
@@ -48,10 +46,6 @@ public class ContainerBuilder {
 
         public ProxyBuilder withJdkProxies() {
             return new ProxyBuilderImpl(this, new ProxyComponentStrategyFactory(strategyFactory, new JdkProxyHandlerFactory()));
-        }
-
-        public ProxyBuilder withCgLibProxies() {
-            return new ProxyBuilderImpl(this, new ProxyComponentStrategyFactory(strategyFactory, new CgLibProxyHandlerFactory()));
         }
 
         public Container build() {
