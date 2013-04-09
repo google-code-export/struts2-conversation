@@ -2,7 +2,6 @@ package com.github.overengineer.scope.container.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  */
@@ -12,8 +11,8 @@ public class JdkComponentProxyHandler<T> implements ComponentProxyHandler<T>, In
     private T proxy;
 
     @SuppressWarnings("unchecked")
-    public JdkComponentProxyHandler(Class[] interfaces) {
-        this.proxy = (T) Proxy.newProxyInstance(ComponentProxyHandler.class.getClassLoader(), interfaces, this);
+    public JdkComponentProxyHandler(JdkProxyFactory factory) {
+        this.proxy = (T) factory.newProxyInstance(this);
     }
 
     @Override

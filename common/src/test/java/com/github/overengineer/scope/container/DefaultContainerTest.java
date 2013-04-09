@@ -181,6 +181,9 @@ public class DefaultContainerTest {
 
         assertEquals(1, c.getRef().getRef().getRef().calls());
 
+        container.get(ICyclicRef2.class);
+        container.get(ICyclicRef2.class);
+        container.get(ICyclicRef2.class);
     }
 
     @Test
@@ -205,23 +208,10 @@ public class DefaultContainerTest {
     }
 
     @Test
-    public void brokeShit() {
-        final Container container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build()
-                .add(ICyclicRef.class, CyclicTestHot.class)
-                .add(ICyclicRef2.class, CyclicTest2.class)
-                .add(ICyclicRef3.class, CyclicTest3.class);
-
-        container.get(ICyclicRef2.class);
-    }
-
-    @Test
     public void testSpeed() throws Exception {
 
-        int threads = 1;
-        long duration = 1000;
+        int threads = 4;
+        long duration = 5000;
 
         final Container container3 = ContainerBuilder
                 .begin()
@@ -396,24 +386,14 @@ public class DefaultContainerTest {
     }
 
     @Prototype
-    public static class PCyclicTest implements ICyclicRef {
-        ICyclicRef3 cyclicTest3;
-        int calls = 0;
+    public static class PCyclicTest extends CyclicTest {
         @Inject
-        public PCyclicTest(ICyclicRef3 cyclicTest3) {
-            cyclicTest3.calls();
-            this.cyclicTest3 = cyclicTest3;
+        public PCyclicTest(ICyclicRef3 cyclicTest3, ICyclicRef self) {
+            super(cyclicTest3);
         }
-
-        @Override
-        public ICyclicRef3 getRef() {
-            calls++;
-            return cyclicTest3;
-        }
-
         @Override
         public int calls() {
-            return calls;
+            return 69;
         }
     }
 
