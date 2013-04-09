@@ -12,8 +12,9 @@ import com.google.inject.Injector;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.PicoContainer;
-import org.picocontainer.behaviors.Intercepting;
 import org.picocontainer.behaviors.Storing;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -207,11 +208,11 @@ public class DefaultContainerTest {
 
     }
 
-    @Test
-    public void testSpeed() throws Exception {
+    int threads = 4;
+    long duration = 2000;
 
-        int threads = 4;
-        long duration = 5000;
+    @Test
+    public void testPlainPrototypingSpeed() throws Exception {
 
         final Container container3 = ContainerBuilder
                 .begin()
@@ -226,38 +227,6 @@ public class DefaultContainerTest {
             }
         }, threads).run(duration, "my plain prototype");
 
-        final Container container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build()
-                .add(ICyclicRef.class, PCyclicTest.class)
-                .add(ICyclicRef2.class, CyclicTest2.class)
-                .add(ICyclicRef3.class, CyclicTest3.class);
-
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                container.get(ICyclicRef2.class);
-            }
-        }, threads).run(duration, "my interceptable prototype");
-
-        final Container container2 = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build()
-                .add(ISingleton.class, Singleton.class);
-
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                container2.get(ISingleton.class);
-            }
-        }, threads).run(duration, "my singleton");
-
-
-        /*
-            ======== PICO =========
-         */
         final PicoContainer picoContainer = new DefaultPicoContainer()
                 .addComponent(IBean.class, Bean.class)
                 .addComponent(IBean2.class, Bean2.class);
@@ -268,28 +237,6 @@ public class DefaultContainerTest {
                 picoContainer.getComponent(IBean.class);
             }
         }, threads).run(duration, "pico plain prototype");
-
-        final PicoContainer picoContainer2 = new DefaultPicoContainer(new Intercepting())
-                .addComponent(IBean.class, Bean.class)
-                .addComponent(IBean2.class, Bean2.class);
-
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                picoContainer2.getComponent(IBean.class);
-            }
-        }, threads).run(duration, "pico interceptable prototype");
-
-        final PicoContainer picoContainer3 = new DefaultPicoContainer(new Storing())
-                .addComponent(ISingleton.class, Singleton.class);
-
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                picoContainer3.getComponent(ISingleton.class);
-            }
-        }, threads).run(duration, "pico singleton");
-
 
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
@@ -306,21 +253,42 @@ public class DefaultContainerTest {
             }
         }, threads).run(duration, "guice plain prototypes");
 
-        final Injector injector2 = Guice.createInjector(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind(ICyclicRef.class).to(PCyclicTest.class);
-                bind(ICyclicRef2.class).to(CyclicTest2.class);
-                bind(ICyclicRef3.class).to(CyclicTest3.class);
-            }
-        });
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-plain-prototype.xml");
 
         new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                injector2.getInstance(ICyclicRef2.class);
+                applicationContext.getBean(Bean.class);
             }
-        }, threads).run(duration, "guice cyclic ref");
+        }, threads).run(duration, "spring plain prototypes");
+
+    }
+
+    @Test
+    public void testSingletonSpeed() throws Exception {
+
+        final Container container2 = ContainerBuilder
+                .begin()
+                .withJdkProxies()
+                .build()
+                .add(ISingleton.class, Singleton.class);
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container2.get(ISingleton.class);
+            }
+        }, threads).run(duration, "my singleton");
+
+        final PicoContainer picoContainer3 = new DefaultPicoContainer(new Storing())
+                .addComponent(ISingleton.class, Singleton.class);
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                picoContainer3.getComponent(ISingleton.class);
+            }
+        }, threads).run(duration, "pico singleton");
 
         final Injector injector3 = Guice.createInjector(new AbstractModule() {
             @Override
@@ -335,6 +303,51 @@ public class DefaultContainerTest {
                 injector3.getInstance(ISingleton.class);
             }
         }, threads).run(duration, "guice singleton");
+
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-singleton.xml");
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                applicationContext.getBean(Singleton.class);
+            }
+        }, threads).run(duration, "spring singleton");
+
+    }
+
+    @Test
+    public void testCyclicRefSpeed() throws Exception {
+
+        final Container container = ContainerBuilder
+                .begin()
+                .withJdkProxies()
+                .build()
+                .add(ICyclicRef.class, PCyclicTest.class)
+                .add(ICyclicRef2.class, CyclicTest2.class)
+                .add(ICyclicRef3.class, CyclicTest3.class);
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container.get(ICyclicRef2.class);
+            }
+        }, threads).run(duration, "my cyclic refs");
+
+        final Injector injector2 = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(ICyclicRef.class).to(PCyclicTest.class);
+                bind(ICyclicRef2.class).to(CyclicTest2.class);
+                bind(ICyclicRef3.class).to(CyclicTest3.class);
+            }
+        });
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                injector2.getInstance(ICyclicRef2.class);
+            }
+        }, threads).run(duration, "guice cyclic refs");
 
     }
 
