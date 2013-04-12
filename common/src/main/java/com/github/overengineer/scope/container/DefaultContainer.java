@@ -10,7 +10,8 @@ import java.util.Map;
 
 /**
  *
- * TODO nested, scoped containers and scoped proxies
+ * TODO nested, scoped containers and scoped proxies, interceptors, cleanup proxying
+ * to have single handler class that accepts a proxy instead of a factory
  */
 public class DefaultContainer implements Container {
 

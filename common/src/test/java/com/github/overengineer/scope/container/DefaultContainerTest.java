@@ -13,8 +13,11 @@ import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.behaviors.Storing;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -209,7 +212,74 @@ public class DefaultContainerTest {
     }
 
     int threads = 4;
-    long duration = 2000;
+    long duration = 5000;
+
+    @Test
+    public void testContainerCreationSpeed() throws Exception {
+
+        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                final Container container3 = ContainerBuilder
+                        .begin()
+                        .build()
+                        .add(IBean.class, Bean.class)
+                        .add(IBean2.class, Bean2.class);
+                container3.get(IBean.class);
+            }
+        }, threads).run(duration, "my container creation");
+
+        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                final PicoContainer picoContainer = new DefaultPicoContainer()
+                        .addComponent(IBean.class, Bean.class)
+                        .addComponent(IBean2.class, Bean2.class);
+                picoContainer.getComponent(IBean.class);
+            }
+        }, threads).run(duration, "pico container creation");
+
+        long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                final Injector injector = Guice.createInjector(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(IBean.class).to(Bean.class);
+                        bind(IBean2.class).to(Bean2.class);
+                    }
+                });
+                injector.getInstance(IBean.class);
+            }
+        }, threads).run(duration, "guice container creation");
+
+        long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+
+                final GenericApplicationContext applicationContext = new GenericApplicationContext();
+
+                GenericBeanDefinition beanDefinition2 = new GenericBeanDefinition();
+                beanDefinition2.setBeanClass(Bean2.class);
+                applicationContext.registerBeanDefinition("bean2", beanDefinition2);
+
+                GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+                beanDefinition.setBeanClass(Bean.class);
+                ConstructorArgumentValues constructorArgs = new ConstructorArgumentValues();
+                constructorArgs.addIndexedArgumentValue(0, applicationContext.getBean("bean2"));
+
+                beanDefinition.setConstructorArgumentValues(constructorArgs);
+                applicationContext.registerBeanDefinition("bean", beanDefinition);
+
+                applicationContext.getBean("bean");
+
+            }
+        }, threads).run(duration, "spring container creation");
+
+        printComparison(mines, picos, "pico");
+        printComparison(mines, guices, "guice");
+        printComparison(mines, springs, "spring");
+    }
 
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
@@ -220,7 +290,7 @@ public class DefaultContainerTest {
                 .add(IBean.class, Bean.class)
                 .add(IBean2.class, Bean2.class);
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container3.get(IBean.class);
@@ -231,7 +301,7 @@ public class DefaultContainerTest {
                 .addComponent(IBean.class, Bean.class)
                 .addComponent(IBean2.class, Bean2.class);
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 picoContainer.getComponent(IBean.class);
@@ -246,7 +316,7 @@ public class DefaultContainerTest {
             }
         });
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 injector.getInstance(IBean.class);
@@ -255,13 +325,20 @@ public class DefaultContainerTest {
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-plain-prototype.xml");
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 applicationContext.getBean(Bean.class);
             }
         }, threads).run(duration, "spring plain prototypes");
 
+        printComparison(mines, picos, "pico");
+        printComparison(mines, guices, "guice");
+        printComparison(mines, springs, "spring");
+    }
+
+    private void printComparison(long mine, long theirs, String theirName) {
+        System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);
     }
 
     @Test
@@ -273,7 +350,7 @@ public class DefaultContainerTest {
                 .build()
                 .add(ISingleton.class, Singleton.class);
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container2.get(ISingleton.class);
@@ -283,7 +360,7 @@ public class DefaultContainerTest {
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Storing())
                 .addComponent(ISingleton.class, Singleton.class);
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 picoContainer3.getComponent(ISingleton.class);
@@ -297,7 +374,7 @@ public class DefaultContainerTest {
             }
         });
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 injector3.getInstance(ISingleton.class);
@@ -306,12 +383,16 @@ public class DefaultContainerTest {
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-singleton.xml");
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 applicationContext.getBean(Singleton.class);
             }
         }, threads).run(duration, "spring singleton");
+
+        printComparison(mines, picos, "pico");
+        printComparison(mines, guices, "guice");
+        printComparison(mines, springs, "spring");
 
     }
 
@@ -326,7 +407,7 @@ public class DefaultContainerTest {
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long mines= new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container.get(ICyclicRef2.class);
@@ -342,12 +423,14 @@ public class DefaultContainerTest {
             }
         });
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 injector2.getInstance(ICyclicRef2.class);
             }
         }, threads).run(duration, "guice cyclic refs");
+
+        printComparison(mines, guices, "guice");
 
     }
 
