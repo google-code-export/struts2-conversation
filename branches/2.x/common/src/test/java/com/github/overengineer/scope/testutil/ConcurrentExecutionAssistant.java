@@ -52,9 +52,9 @@ public class ConcurrentExecutionAssistant {
 
             long count = callCount;
 
-            System.out.println(id + " events");
+            System.out.println(id);
 
-            System.out.println("    Processed " + count + " events in " + duration / 1000 + " seconds");
+            System.out.println("    " + count + " executions in " + duration / 1000 + " seconds");
 
             double doubleDuration = duration * 1.0d;
             double msPerEvent = doubleDuration / count;
@@ -64,7 +64,7 @@ public class ConcurrentExecutionAssistant {
             return count;
         }
         private void primeJVM() throws Exception {
-            for (int i = 0; i < 1000000; i++) {
+            for (int i = 0; i < 100000; i++) {
                 execution.execute();
             }
         }
