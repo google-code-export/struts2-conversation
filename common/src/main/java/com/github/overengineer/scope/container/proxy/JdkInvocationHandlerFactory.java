@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  */
-public class JdkProxyHandlerFactory implements ProxyHandlerFactory {
+public class JdkInvocationHandlerFactory implements ProxyHandlerFactory {
 
     private Map<Class<?>, JdkProxyFactory> proxyFactories = new HashMap<Class<?>, JdkProxyFactory>();
 
@@ -16,10 +16,6 @@ public class JdkProxyHandlerFactory implements ProxyHandlerFactory {
             proxyFactory = new DefaultJdkProxyFactory(targetClass);
             proxyFactories.put(targetClass, proxyFactory);
         }
-        InvocationHandler<T> handler = new JdkInvocationHandler<T>(proxyFactory);
-        //TODO
-        handler.setInvocationFactory(new DefaultInvocationFactory());
-        return handler;
+        return new JdkComponentProxyHandler<T>(proxyFactory);
     }
-
 }
