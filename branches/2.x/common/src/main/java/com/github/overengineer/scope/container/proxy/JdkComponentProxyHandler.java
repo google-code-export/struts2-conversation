@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
  */
 public class JdkComponentProxyHandler<T> implements ComponentProxyHandler<T>, InvocationHandler {
 
-    private T component;
+    protected T component;
     private T proxy;
 
     @SuppressWarnings("unchecked")
@@ -26,7 +26,8 @@ public class JdkComponentProxyHandler<T> implements ComponentProxyHandler<T>, In
     }
 
     @Override
-    public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-        return method.invoke(component, objects);
+    public Object invoke(Object o, Method method, Object[] parameters) throws Throwable {
+        return method.invoke(component, parameters);
     }
+
 }
