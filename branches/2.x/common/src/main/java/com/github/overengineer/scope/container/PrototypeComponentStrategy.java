@@ -1,5 +1,8 @@
 package com.github.overengineer.scope.container;
 
+import com.github.overengineer.scope.container.inject.CompositeInjector;
+import com.github.overengineer.scope.container.instantiate.Instantiator;
+
 import java.util.List;
 
 /**
@@ -8,14 +11,16 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
 
     private CompositeInjector<T> injector;
     private Instantiator<T> instantiator;
+    private List<ComponentInitializationListener> initializationListeners;
 
-    public PrototypeComponentStrategy(CompositeInjector<T> injector, Instantiator<T> instantiator) {
+    public PrototypeComponentStrategy(CompositeInjector<T> injector, Instantiator<T> instantiator, List<ComponentInitializationListener> initializationListeners) {
         this.injector = injector;
         this.instantiator = instantiator;
+        this.initializationListeners = initializationListeners;
     }
 
     @Override
-    public T get(Provider provider, List<ComponentInitializationListener> initializationListeners) {
+    public T get(Provider provider) {
         T component = instantiator.getInstance(provider);
         injector.inject(component, provider);
         if (component instanceof PostConstructable) {

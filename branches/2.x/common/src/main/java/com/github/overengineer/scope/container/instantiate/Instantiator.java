@@ -1,4 +1,6 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.instantiate;
+
+import com.github.overengineer.scope.container.Provider;
 
 import java.io.Serializable;
 

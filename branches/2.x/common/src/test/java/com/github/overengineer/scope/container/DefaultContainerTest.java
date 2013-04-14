@@ -2,6 +2,10 @@ package com.github.overengineer.scope.container;
 
 import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.CommonModule;
+import com.github.overengineer.scope.container.proxy.HotSwapException;
+import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
+import com.github.overengineer.scope.container.proxy.aop.Interceptor;
+import com.github.overengineer.scope.container.proxy.aop.Invocation;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -116,21 +120,20 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = ContainerBuilder.begin().build();
-
-        container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
-
-        container.addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
-
-        container.addListener(new ComponentInitializationListener() {
-            @Override
-            public <T> T onInitialization(T component) {
-                throw new Assertion();
-            }
-        });
+        Container container = ContainerBuilder.begin().withListener(Listener.class).build()
+                .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
+                .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4)
+                .start();
 
         container.get(SchedulerProvider.class);
 
+    }
+
+    public static class Listener implements ComponentInitializationListener {
+        @Override
+        public <T> T onInitialization(T component) {
+            throw new Assertion();
+        }
     }
 
     @Test
@@ -144,7 +147,8 @@ public class DefaultContainerTest {
         container
                 .add(ICyclicRef.class, CyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
-                .add(ICyclicRef3.class, CyclicTest3.class);
+                .add(ICyclicRef3.class, CyclicTest3.class)
+        .start();
 
         ICyclicRef c = container.get(ICyclicRef.class);
 
@@ -211,8 +215,29 @@ public class DefaultContainerTest {
 
     }
 
+    @Test(expected = Assertion.class)
+    public void testIntercept() throws HotSwapException {
+
+        ContainerBuilder
+                .begin()
+                .withJdkProxies()
+                .withInterceptor(new TestInterceptor())
+                .build()
+                .add(SchedulerProvider.class, DefaultSchedulerProvider.class);
+
+    }
+
+    public static class TestInterceptor implements Interceptor {
+        @Override
+        public Object intercept(Invocation invocation) throws Exception {
+            throw new Assertion();
+        }
+    }
+
+
     int threads = 4;
     long duration = 5000;
+    long primingRuns = 10000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
@@ -227,7 +252,7 @@ public class DefaultContainerTest {
                         .add(IBean2.class, Bean2.class);
                 container3.get(IBean.class);
             }
-        }, threads).run(duration, "my container creation");
+        }, threads).run(duration, primingRuns, "my container creation");
 
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -237,7 +262,7 @@ public class DefaultContainerTest {
                         .addComponent(IBean2.class, Bean2.class);
                 picoContainer.getComponent(IBean.class);
             }
-        }, threads).run(duration, "pico container creation");
+        }, threads).run(duration, primingRuns, "pico container creation");
 
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -251,7 +276,7 @@ public class DefaultContainerTest {
                 });
                 injector.getInstance(IBean.class);
             }
-        }, threads).run(duration, "guice container creation");
+        }, threads).run(duration, primingRuns, "guice container creation");
 
         long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -274,7 +299,7 @@ public class DefaultContainerTest {
                 applicationContext.getBean("bean");
 
             }
-        }, threads).run(duration, "spring container creation");
+        }, threads).run(duration, primingRuns, "spring container creation");
 
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
@@ -295,7 +320,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 container3.get(IBean.class);
             }
-        }, threads).run(duration, "my plain prototype");
+        }, threads).run(duration, primingRuns, "my plain prototype");
 
         final PicoContainer picoContainer = new DefaultPicoContainer()
                 .addComponent(IBean.class, Bean.class)
@@ -306,7 +331,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 picoContainer.getComponent(IBean.class);
             }
-        }, threads).run(duration, "pico plain prototype");
+        }, threads).run(duration, primingRuns, "pico plain prototype");
 
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
@@ -321,7 +346,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 injector.getInstance(IBean.class);
             }
-        }, threads).run(duration, "guice plain prototypes");
+        }, threads).run(duration, primingRuns, "guice plain prototypes");
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-plain-prototype.xml");
 
@@ -330,7 +355,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 applicationContext.getBean(Bean.class);
             }
-        }, threads).run(duration, "spring plain prototypes");
+        }, threads).run(duration, primingRuns, "spring plain prototypes");
 
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
@@ -355,7 +380,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 container2.get(ISingleton.class);
             }
-        }, threads).run(duration, "my singleton");
+        }, threads).run(duration, primingRuns, "my singleton");
 
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Storing())
                 .addComponent(ISingleton.class, Singleton.class);
@@ -365,7 +390,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 picoContainer3.getComponent(ISingleton.class);
             }
-        }, threads).run(duration, "pico singleton");
+        }, threads).run(duration, primingRuns, "pico singleton");
 
         final Injector injector3 = Guice.createInjector(new AbstractModule() {
             @Override
@@ -379,7 +404,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 injector3.getInstance(ISingleton.class);
             }
-        }, threads).run(duration, "guice singleton");
+        }, threads).run(duration, primingRuns, "guice singleton");
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-singleton.xml");
 
@@ -388,7 +413,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 applicationContext.getBean(Singleton.class);
             }
-        }, threads).run(duration, "spring singleton");
+        }, threads).run(duration, primingRuns, "spring singleton");
 
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
@@ -412,7 +437,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 container.get(ICyclicRef2.class);
             }
-        }, threads).run(duration, "my cyclic refs");
+        }, threads).run(duration, primingRuns, "my cyclic refs");
 
         final Injector injector2 = Guice.createInjector(new AbstractModule() {
             @Override
@@ -428,7 +453,7 @@ public class DefaultContainerTest {
             public void execute() throws HotSwapException {
                 injector2.getInstance(ICyclicRef2.class);
             }
-        }, threads).run(duration, "guice cyclic refs");
+        }, threads).run(duration, primingRuns, "guice cyclic refs");
 
         printComparison(mines, guices, "guice");
 

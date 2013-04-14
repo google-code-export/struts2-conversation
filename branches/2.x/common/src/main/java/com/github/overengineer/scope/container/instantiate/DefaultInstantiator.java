@@ -1,5 +1,7 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.instantiate;
 
+import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.scope.container.inject.InjectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

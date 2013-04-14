@@ -1,7 +1,8 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.inject;
 
 import java.lang.reflect.Method;
 
+import com.github.overengineer.scope.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

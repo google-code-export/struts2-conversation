@@ -1,14 +1,17 @@
-package com.github.overengineer.scope.container.proxy;
+package com.github.overengineer.scope.container.proxy.aop;
+
+import com.github.overengineer.scope.container.proxy.JdkComponentProxyHandler;
+import com.github.overengineer.scope.container.proxy.JdkProxyFactory;
 
 import java.lang.reflect.Method;
 
 /**
  */
-public class JdkInvocationHandler<T> extends JdkComponentProxyHandler<T> implements InvocationHandler<T> {
+public class JdkAopProxyHandler<T> extends JdkComponentProxyHandler<T> implements AopProxyHandler<T> {
 
     private InvocationFactory invocationFactory;
 
-    public JdkInvocationHandler(JdkProxyFactory factory) {
+    public JdkAopProxyHandler(JdkProxyFactory factory) {
         super(factory);
     }
 

@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.inject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
