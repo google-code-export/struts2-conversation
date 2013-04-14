@@ -5,6 +5,7 @@ import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.aop.Interceptor;
+import com.github.overengineer.scope.container.proxy.aop.InterceptorRules;
 import com.github.overengineer.scope.container.proxy.aop.Invocation;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
@@ -227,6 +228,7 @@ public class DefaultContainerTest {
 
     }
 
+    @InterceptorRules(classes = Container.class)
     public static class TestInterceptor implements Interceptor {
         @Override
         public Object intercept(Invocation invocation) throws Exception {

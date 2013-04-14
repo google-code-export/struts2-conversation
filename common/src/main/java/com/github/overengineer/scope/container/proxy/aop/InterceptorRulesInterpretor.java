@@ -5,5 +5,5 @@ import java.lang.reflect.Method;
 /**
  */
 public interface InterceptorRulesInterpretor {
-    boolean appliesToMethod(Interceptor interceptor, Method method);
+    boolean appliesToMethod(Interceptor interceptor, Class targetClass, Method method);
 }
