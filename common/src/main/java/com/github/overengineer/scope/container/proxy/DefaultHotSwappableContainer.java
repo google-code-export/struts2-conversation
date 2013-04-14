@@ -2,12 +2,15 @@ package com.github.overengineer.scope.container.proxy;
 
 import com.github.overengineer.scope.container.*;
 
+import java.util.List;
+
 /**
  */
-public class HotSwappableProxyContainer extends DefaultContainer implements HotSwappableContainer {
+public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public HotSwappableProxyContainer(ProxyComponentStrategyFactory strategyFactory) {
-        super(strategyFactory);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, @Property(Properties.LISTENERS) List<Class<? extends ComponentInitializationListener>> initializationListenerClasses) {
+        super(strategyFactory, initializationListenerClasses);
+        addInstance(HotSwappableContainer.class, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -24,13 +27,13 @@ public class HotSwappableProxyContainer extends DefaultContainer implements HotS
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
 
-        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.create(implementationType);
+        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, initializationListeners, currentImplementationType, currentStrategy);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
             throw new HotSwapException(target, currentImplementationType, implementationType);
         }
 
-        ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this, initializationListeners);
+        ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
 
     }
 
@@ -48,13 +51,13 @@ public class HotSwappableProxyContainer extends DefaultContainer implements HotS
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
 
-        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.create(implementation);
+        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createInstanceStrategy(implementation, initializationListeners);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
             throw new HotSwapException(target, currentImplementationType, implementation.getClass());
         }
 
-        ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this, initializationListeners);
+        ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
 
     }
 }

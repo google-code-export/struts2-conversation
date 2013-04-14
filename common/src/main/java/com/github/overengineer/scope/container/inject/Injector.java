@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.inject;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.scope.container.Property;
+import com.github.overengineer.scope.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

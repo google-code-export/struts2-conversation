@@ -1,10 +1,7 @@
 package com.github.overengineer.scope.container.proxy;
 
-import com.github.overengineer.scope.container.ComponentInitializationListener;
 import com.github.overengineer.scope.container.ComponentStrategy;
 import com.github.overengineer.scope.container.Provider;
-
-import java.util.List;
 
 /**
  */
@@ -22,7 +19,7 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
     }
 
     @Override
-    public T get(Provider provider, List<ComponentInitializationListener> initializationListeners) {
+    public T get(Provider provider) {
 
         ProxyHandlerHolder holder = handlerHolder.get();
 
@@ -40,7 +37,7 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
 
             handlerHolder.set(holder);
 
-            T component = delegateStrategy.get(provider, initializationListeners);
+            T component = delegateStrategy.get(provider);
 
             proxyHandler.setComponent(component);
 

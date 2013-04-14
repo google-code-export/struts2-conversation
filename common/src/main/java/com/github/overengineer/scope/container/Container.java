@@ -2,6 +2,8 @@ package com.github.overengineer.scope.container;
 
 public interface Container extends Provider {
 
+    Container start();
+
     void verify() throws WiringException;
 
     Container loadModule(Module module);
@@ -11,7 +13,5 @@ public interface Container extends Provider {
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
 
     Container addProperty(String propertyName, Object propertyValue);
-
-    Container addListener(ComponentInitializationListener listener);
 
 }

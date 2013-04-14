@@ -1,4 +1,6 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.inject;
+
+import com.github.overengineer.scope.container.Provider;
 
 import java.util.Set;
 

@@ -32,14 +32,14 @@ public class ConcurrentExecutionAssistant {
                 }));
             }
         }
-        public long run(long duration, String id) throws Exception {
+        public long run(long duration, long primingRuns, String id) throws Exception {
 
             PrintStream out = System.out;
 
             //since printing to the screen is the biggest bottleneck, we remove it
             System.setOut(new PrintStream(new FileOutputStream("/dev/null")));
 
-            primeJVM();
+            primeJVM(primingRuns);
 
             running = true;
             for (Thread thread : threads) {
@@ -63,8 +63,8 @@ public class ConcurrentExecutionAssistant {
 
             return count;
         }
-        private void primeJVM() throws Exception {
-            for (int i = 0; i < 100000; i++) {
+        private void primeJVM(long runs) throws Exception {
+            for (int i = 0; i < runs; i++) {
                 execution.execute();
             }
         }

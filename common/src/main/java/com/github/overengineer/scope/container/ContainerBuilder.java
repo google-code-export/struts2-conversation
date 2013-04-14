@@ -1,8 +1,7 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.proxy.HotSwappableProxyContainer;
-import com.github.overengineer.scope.container.proxy.JdkProxyHandlerFactory;
-import com.github.overengineer.scope.container.proxy.ProxyComponentStrategyFactory;
+import com.github.overengineer.scope.container.proxy.*;
+import com.github.overengineer.scope.container.proxy.aop.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,62 +16,68 @@ public class ContainerBuilder {
     }
 
     public interface Builder {
-        Builder with(Collection<ComponentInitializationListener> listeners);
-        Builder with(ComponentInitializationListener listener);
+        Builder withListener(Class<? extends ComponentInitializationListener> listener);
         ProxyBuilder withJdkProxies();
         Container build();
     }
 
-    public interface ProxyBuilder extends Builder {
+    public interface ProxyBuilder {
+        ProxyBuilder withInterceptor(Interceptor interceptor);
         HotSwappableContainer build();
     }
 
     public static class BasicBuilder implements Builder {
 
-        ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory();
-        List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+        List<Class<? extends ComponentInitializationListener>> initializationListeners = new ArrayList<Class<? extends ComponentInitializationListener>>();
+        BootstrapContainer bootstrapContainer = new BootstrapContainer();
 
-        public Builder with(Collection<ComponentInitializationListener> listeners) {
-            for (ComponentInitializationListener listener : listeners) {
-                initializationListeners.add(listener);
-            }
-            return this;
-        }
-
-        public Builder with(ComponentInitializationListener listener) {
+        public Builder withListener(Class<? extends ComponentInitializationListener> listener) {
             initializationListeners.add(listener);
             return this;
         }
 
         public ProxyBuilder withJdkProxies() {
-            return new ProxyBuilderImpl(this, new ProxyComponentStrategyFactory(strategyFactory, new JdkProxyHandlerFactory()));
+            return new ProxyBuilderImpl(this);
         }
 
         public Container build() {
-            Container container = new DefaultContainer(strategyFactory);
-            for (ComponentInitializationListener listener : initializationListeners) {
-                container.addListener(listener);
-            }
-            return container;
+            bootstrapContainer.properties.put(Properties.LISTENERS, initializationListeners);
+            bootstrapContainer.addMapping(ComponentStrategyFactory.class, DefaultComponentStrategyFactory.class);
+            bootstrapContainer.addMapping(Container.class, DefaultContainer.class);
+            return bootstrapContainer.get(Container.class).get(Container.class);
         }
     }
 
-    public static class ProxyBuilderImpl extends BasicBuilder implements ProxyBuilder {
+    public static class ProxyBuilderImpl implements ProxyBuilder {
 
-        ProxyComponentStrategyFactory strategyFactory;
+        List<Interceptor> interceptors = new ArrayList<Interceptor>();
+        BasicBuilder basicBuilder;
 
-        ProxyBuilderImpl(BasicBuilder basicBuilder, ProxyComponentStrategyFactory strategyFactory) {
-            this.initializationListeners = basicBuilder.initializationListeners;
-            this.strategyFactory = strategyFactory;
+        ProxyBuilderImpl(BasicBuilder basicBuilder) {
+            this.basicBuilder = basicBuilder;
+        }
+
+        @Override
+        public ProxyBuilder withInterceptor(Interceptor interceptor) {
+            interceptors.add(interceptor);
+            return this;
         }
 
         @Override
         public HotSwappableContainer build() {
-            HotSwappableContainer container = new HotSwappableProxyContainer(strategyFactory);
-            for (ComponentInitializationListener listener : initializationListeners) {
-                container.addListener(listener);
+            basicBuilder.bootstrapContainer.addMapping(ProxyHandlerFactory.class, JdkProxyHandlerFactory.class);
+            basicBuilder.bootstrapContainer.addMapping(ComponentStrategyFactory.class, DefaultComponentStrategyFactory.class);
+            basicBuilder.bootstrapContainer.addMapping(ComponentStrategyFactory.class, ProxyComponentStrategyFactory.class);
+            basicBuilder.bootstrapContainer.addMapping(Container.class, DefaultHotSwappableContainer.class);
+            basicBuilder.bootstrapContainer.addMapping(HotSwappableContainer.class, DefaultHotSwappableContainer.class);
+            basicBuilder.bootstrapContainer.properties.put(Properties.LISTENERS, basicBuilder.initializationListeners);
+            if (!interceptors.isEmpty()) {
+                basicBuilder.bootstrapContainer.addMapping(ProxyHandlerFactory.class, JdkAopProxyHandlerFactory.class);
+                basicBuilder.bootstrapContainer.addMapping(InvocationFactory.class, InterceptableInvocationFactory.class);
+                basicBuilder.bootstrapContainer.addMapping(InterceptorRulesInterpretor.class, DefaultInterceptorRulesInterpretor.class);
+                basicBuilder.bootstrapContainer.properties.put(Properties.INTERCEPTORS, interceptors);
             }
-            return container;
+            return basicBuilder.bootstrapContainer.get(HotSwappableContainer.class).get(HotSwappableContainer.class);
         }
 
     }

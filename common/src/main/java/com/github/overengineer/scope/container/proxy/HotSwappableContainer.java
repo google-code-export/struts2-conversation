@@ -1,4 +1,6 @@
-package com.github.overengineer.scope.container;
+package com.github.overengineer.scope.container.proxy;
+
+import com.github.overengineer.scope.container.Container;
 
 /**
  */

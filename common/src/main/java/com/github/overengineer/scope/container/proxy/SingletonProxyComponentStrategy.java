@@ -1,10 +1,7 @@
 package com.github.overengineer.scope.container.proxy;
 
-import com.github.overengineer.scope.container.ComponentInitializationListener;
 import com.github.overengineer.scope.container.ComponentStrategy;
 import com.github.overengineer.scope.container.Provider;
-
-import java.util.List;
 
 /**
  */
@@ -22,7 +19,7 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     }
 
     @Override
-    public T get(Provider provider, List<ComponentInitializationListener> initializationListeners) {
+    public T get(Provider provider) {
 
         if (proxyHandler != null) {
             return proxyHandler.getProxy();
@@ -30,7 +27,7 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
 
         proxyHandler = handlerFactory.createProxy(type);
 
-        T component = delegateStrategy.get(provider, initializationListeners);
+        T component = delegateStrategy.get(provider);
 
         proxyHandler.setComponent(component);
 
@@ -44,11 +41,11 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     }
 
     @Override
-    public void swap(ComponentProxyHandler<T> proxyHandler, Provider provider, List<ComponentInitializationListener> initializationListeners) {
+    public void swap(ComponentProxyHandler<T> proxyHandler, Provider provider) {
 
         this.proxyHandler = proxyHandler;
 
-        T component = delegateStrategy.get(provider, initializationListeners);
+        T component = delegateStrategy.get(provider);
 
         proxyHandler.setComponent(component);
 

@@ -7,6 +7,6 @@ import java.util.List;
  */
 public interface ComponentStrategy<T> extends Serializable {
 
-    T get(Provider provider, List<ComponentInitializationListener> initializationListeners);
+    T get(Provider provider);
 
 }
