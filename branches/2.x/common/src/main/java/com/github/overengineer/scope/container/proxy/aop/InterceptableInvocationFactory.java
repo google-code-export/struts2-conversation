@@ -30,7 +30,7 @@ public class InterceptableInvocationFactory  implements InvocationFactory {
         if (methodInterceptors == null) {
             methodInterceptors = new ArrayList<Interceptor>();
             for (Interceptor interceptor : interceptors) {
-                if (rulesInterpretor.appliesToMethod(interceptor, method)) {
+                if (rulesInterpretor.appliesToMethod(interceptor, target.getClass(), method)) {
                     methodInterceptors.add(interceptor);
                 }
             }

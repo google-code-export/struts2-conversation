@@ -6,9 +6,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface InterceptorRules {
-    Class[] classes();
-    Class<?> returnType();
-    Class[] paramterTypes();
-    String methodNameExpression();
-    String classNameExpression();
+    Class[] classes() default {};
+    Class<?> returnType() default PlaceHolder.class;
+    Class[] paramterTypes() default PlaceHolder.class;
+    String methodNameExpression() default "";
+    String classNameExpression() default "";
+
+    public class PlaceHolder {}
 }
