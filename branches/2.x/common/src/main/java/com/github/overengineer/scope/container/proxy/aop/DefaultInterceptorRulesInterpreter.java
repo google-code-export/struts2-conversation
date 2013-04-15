@@ -1,10 +1,11 @@
 package com.github.overengineer.scope.container.proxy.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
  */
-public class DefaultInterceptorRulesInterpretor implements InterceptorRulesInterpretor {
+public class DefaultInterceptorRulesInterpreter implements InterceptorRulesInterpreter {
 
     @Override
     public boolean appliesToMethod(Interceptor interceptor, Class targetClass, Method method) {
@@ -16,7 +17,8 @@ public class DefaultInterceptorRulesInterpretor implements InterceptorRulesInter
                 methodNameMatches(method.getName(), rules.methodNameExpression()) &&
                 returnTypeMatches(method.getReturnType(), rules.returnType()) &&
                 classMatches(targetClass, rules.classes(), rules.classNameExpression()) &&
-                parametersMatch(method.getParameterTypes(), rules.paramterTypes());
+                parametersMatch(method.getParameterTypes(), rules.paramterTypes()) &&
+                annotationsMatch(method, rules.annotations());
     }
 
     private boolean methodNameMatches(String targetMethodName, String rulesMethodNameExpression) {
@@ -34,8 +36,7 @@ public class DefaultInterceptorRulesInterpretor implements InterceptorRulesInter
             classObjectMatches = false;
             for (Class<?> cls : rulesClasses) {
                 if (cls.isAssignableFrom(targetClass)) {
-                    classObjectMatches = true;
-                    break;
+                    return true;
                 }
             }
         }
@@ -62,6 +63,18 @@ public class DefaultInterceptorRulesInterpretor implements InterceptorRulesInter
             }
         }
         return true;
+    }
+
+    private boolean annotationsMatch(Method targetMethod, Class<? extends Annotation>[] rulesAnnotations) {
+        if (rulesAnnotations.length == 1 && rulesAnnotations[0] == InterceptorRules.PlaceHolder.class) {
+            return true;
+        }
+        for (Class<? extends Annotation> rulesAnnotation : rulesAnnotations) {
+            if (targetMethod.isAnnotationPresent(rulesAnnotation)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

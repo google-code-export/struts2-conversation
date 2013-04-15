@@ -4,7 +4,6 @@ import com.github.overengineer.scope.container.proxy.*;
 import com.github.overengineer.scope.container.proxy.aop.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -74,7 +73,7 @@ public class ContainerBuilder {
             if (!interceptors.isEmpty()) {
                 basicBuilder.bootstrapContainer.addMapping(ProxyHandlerFactory.class, JdkAopProxyHandlerFactory.class);
                 basicBuilder.bootstrapContainer.addMapping(InvocationFactory.class, InterceptableInvocationFactory.class);
-                basicBuilder.bootstrapContainer.addMapping(InterceptorRulesInterpretor.class, DefaultInterceptorRulesInterpretor.class);
+                basicBuilder.bootstrapContainer.addMapping(InterceptorRulesInterpreter.class, DefaultInterceptorRulesInterpreter.class);
                 basicBuilder.bootstrapContainer.properties.put(Properties.INTERCEPTORS, interceptors);
             }
             return basicBuilder.bootstrapContainer.get(HotSwappableContainer.class).get(HotSwappableContainer.class);

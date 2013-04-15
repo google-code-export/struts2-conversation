@@ -24,6 +24,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -247,9 +249,7 @@ public class DefaultContainerTest {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                final Container container3 = ContainerBuilder
-                        .begin()
-                        .build()
+                final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory(), Collections.<Class<? extends ComponentInitializationListener>>emptyList())
                         .add(IBean.class, Bean.class)
                         .add(IBean2.class, Bean2.class);
                 container3.get(IBean.class);
