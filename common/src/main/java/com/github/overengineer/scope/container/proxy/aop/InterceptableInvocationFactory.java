@@ -14,10 +14,10 @@ import java.util.Map;
 public class InterceptableInvocationFactory  implements InvocationFactory {
 
     private List<Interceptor> interceptors;
-    private InterceptorRulesInterpretor rulesInterpretor;
+    private InterceptorRulesInterpreter rulesInterpretor;
     private Map<InterceptorCacheKey, List<Interceptor>> cache = new HashMap<InterceptorCacheKey, List<Interceptor>>();
 
-    public InterceptableInvocationFactory(@Property(Properties.INTERCEPTORS) List<Interceptor> interceptors, InterceptorRulesInterpretor rulesInterpretor) {
+    public InterceptableInvocationFactory(@Property(Properties.INTERCEPTORS) List<Interceptor> interceptors, InterceptorRulesInterpreter rulesInterpretor) {
         this.interceptors = interceptors;
         this.rulesInterpretor = rulesInterpretor;
     }
