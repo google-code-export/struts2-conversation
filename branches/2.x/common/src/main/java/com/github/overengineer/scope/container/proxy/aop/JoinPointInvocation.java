@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @author rees.byars
  */
-public interface Invocation<T> {
+public interface JoinPointInvocation<T> {
     T getTarget();
     Object[] getParameters();
     Method getMethod();

@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface InterceptorRules {
+public @interface Pointcut {
 
     Class[] classes() default {};
     Class<?> returnType() default PlaceHolder.class;

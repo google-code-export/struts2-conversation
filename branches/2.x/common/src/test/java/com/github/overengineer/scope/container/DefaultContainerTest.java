@@ -4,9 +4,9 @@ import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
-import com.github.overengineer.scope.container.proxy.aop.Interceptor;
-import com.github.overengineer.scope.container.proxy.aop.InterceptorRules;
-import com.github.overengineer.scope.container.proxy.aop.Invocation;
+import com.github.overengineer.scope.container.proxy.aop.AdvisingInterceptor;
+import com.github.overengineer.scope.container.proxy.aop.JoinPointInvocation;
+import com.github.overengineer.scope.container.proxy.aop.Pointcut;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -230,10 +230,10 @@ public class DefaultContainerTest {
 
     }
 
-    @InterceptorRules(classes = Container.class)
-    public static class TestInterceptor implements Interceptor {
+    @Pointcut(paramterTypes = {Class.class, Class.class})
+    public static class TestInterceptor implements AdvisingInterceptor {
         @Override
-        public Object intercept(Invocation invocation) throws Exception {
+        public Object intercept(JoinPointInvocation invocation) throws Exception {
             throw new Assertion();
         }
     }
