@@ -13,23 +13,23 @@ import java.util.Map;
  */
 public class InterceptableInvocationFactory  implements InvocationFactory {
 
-    private List<Interceptor> interceptors;
-    private InterceptorRulesInterpreter rulesInterpretor;
-    private Map<InterceptorCacheKey, List<Interceptor>> cache = new HashMap<InterceptorCacheKey, List<Interceptor>>();
+    private List<AdvisingInterceptor> interceptors;
+    private PointcutInterpreter rulesInterpretor;
+    private Map<InterceptorCacheKey, List<AdvisingInterceptor>> cache = new HashMap<InterceptorCacheKey, List<AdvisingInterceptor>>();
 
-    public InterceptableInvocationFactory(@Property(Properties.INTERCEPTORS) List<Interceptor> interceptors, InterceptorRulesInterpreter rulesInterpretor) {
+    public InterceptableInvocationFactory(@Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors, PointcutInterpreter rulesInterpretor) {
         this.interceptors = interceptors;
         this.rulesInterpretor = rulesInterpretor;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Invocation<T> create(T target, Method method, Object[] parameters) {
+    public <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters) {
         InterceptorCacheKey cacheKey = new InterceptorCacheKey(target.getClass(), method);
-        List<Interceptor> methodInterceptors = cache.get(cacheKey);
+        List<AdvisingInterceptor> methodInterceptors = cache.get(cacheKey);
         if (methodInterceptors == null) {
-            methodInterceptors = new ArrayList<Interceptor>();
-            for (Interceptor interceptor : interceptors) {
+            methodInterceptors = new ArrayList<AdvisingInterceptor>();
+            for (AdvisingInterceptor interceptor : interceptors) {
                 if (rulesInterpretor.appliesToMethod(interceptor, target.getClass(), method)) {
                     methodInterceptors.add(interceptor);
                 }

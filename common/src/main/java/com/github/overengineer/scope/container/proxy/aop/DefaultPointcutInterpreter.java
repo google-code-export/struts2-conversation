@@ -5,14 +5,14 @@ import java.lang.reflect.Method;
 
 /**
  */
-public class DefaultInterceptorRulesInterpreter implements InterceptorRulesInterpreter {
+public class DefaultPointcutInterpreter implements PointcutInterpreter {
 
     @Override
-    public boolean appliesToMethod(Interceptor interceptor, Class targetClass, Method method) {
-        if (method.getDeclaringClass() == Interceptor.class) {
+    public boolean appliesToMethod(AdvisingInterceptor interceptor, Class targetClass, Method method) {
+        if (method.getDeclaringClass() == AdvisingInterceptor.class) {
             return false;
         }
-        InterceptorRules rules = interceptor.getClass().getAnnotation(InterceptorRules.class);
+        Pointcut rules = interceptor.getClass().getAnnotation(Pointcut.class);
         return
                 methodNameMatches(method.getName(), rules.methodNameExpression()) &&
                 returnTypeMatches(method.getReturnType(), rules.returnType()) &&
@@ -26,7 +26,7 @@ public class DefaultInterceptorRulesInterpreter implements InterceptorRulesInter
     }
 
     private boolean returnTypeMatches(Class targetMethodReturnType, Class<?> rulesMethodReturnType) {
-        return rulesMethodReturnType == InterceptorRules.PlaceHolder.class || rulesMethodReturnType.isAssignableFrom(targetMethodReturnType);
+        return rulesMethodReturnType == Pointcut.PlaceHolder.class || rulesMethodReturnType.isAssignableFrom(targetMethodReturnType);
     }
 
     private boolean classMatches(Class targetClass, Class[] rulesClasses, String rulesClassNameExpression) {
@@ -51,7 +51,7 @@ public class DefaultInterceptorRulesInterpreter implements InterceptorRulesInter
     }
 
     private boolean parametersMatch(Class[] targetParameterTypes, Class<?>[] rulesParameterTypes) {
-        if (rulesParameterTypes.length == 1 && rulesParameterTypes[0] == InterceptorRules.PlaceHolder.class) {
+        if (rulesParameterTypes.length == 1 && rulesParameterTypes[0] == Pointcut.PlaceHolder.class) {
             return true;
         }
         if (targetParameterTypes.length != rulesParameterTypes.length) {
@@ -66,7 +66,7 @@ public class DefaultInterceptorRulesInterpreter implements InterceptorRulesInter
     }
 
     private boolean annotationsMatch(Method targetMethod, Class<? extends Annotation>[] rulesAnnotations) {
-        if (rulesAnnotations.length == 1 && rulesAnnotations[0] == InterceptorRules.PlaceHolder.class) {
+        if (rulesAnnotations.length == 1 && rulesAnnotations[0] == Pointcut.PlaceHolder.class) {
             return true;
         }
         for (Class<? extends Annotation> rulesAnnotation : rulesAnnotations) {

@@ -5,5 +5,5 @@ import java.lang.reflect.Method;
 /**
  */
 public interface InvocationFactory {
-    <T> Invocation<T> create(T target, Method method, Object[] parameters);
+    <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters);
 }

@@ -21,7 +21,7 @@ public class ContainerBuilder {
     }
 
     public interface ProxyBuilder {
-        ProxyBuilder withInterceptor(Interceptor interceptor);
+        ProxyBuilder withInterceptor(AdvisingInterceptor interceptor);
         HotSwappableContainer build();
     }
 
@@ -49,7 +49,7 @@ public class ContainerBuilder {
 
     public static class ProxyBuilderImpl implements ProxyBuilder {
 
-        List<Interceptor> interceptors = new ArrayList<Interceptor>();
+        List<AdvisingInterceptor> interceptors = new ArrayList<AdvisingInterceptor>();
         BasicBuilder basicBuilder;
 
         ProxyBuilderImpl(BasicBuilder basicBuilder) {
@@ -57,7 +57,7 @@ public class ContainerBuilder {
         }
 
         @Override
-        public ProxyBuilder withInterceptor(Interceptor interceptor) {
+        public ProxyBuilder withInterceptor(AdvisingInterceptor interceptor) {
             interceptors.add(interceptor);
             return this;
         }
@@ -73,7 +73,7 @@ public class ContainerBuilder {
             if (!interceptors.isEmpty()) {
                 basicBuilder.bootstrapContainer.addMapping(ProxyHandlerFactory.class, JdkAopProxyHandlerFactory.class);
                 basicBuilder.bootstrapContainer.addMapping(InvocationFactory.class, InterceptableInvocationFactory.class);
-                basicBuilder.bootstrapContainer.addMapping(InterceptorRulesInterpreter.class, DefaultInterceptorRulesInterpreter.class);
+                basicBuilder.bootstrapContainer.addMapping(PointcutInterpreter.class, DefaultPointcutInterpreter.class);
                 basicBuilder.bootstrapContainer.properties.put(Properties.INTERCEPTORS, interceptors);
             }
             return basicBuilder.bootstrapContainer.get(HotSwappableContainer.class).get(HotSwappableContainer.class);
