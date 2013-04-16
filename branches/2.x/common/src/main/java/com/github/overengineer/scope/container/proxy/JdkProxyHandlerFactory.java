@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class JdkProxyHandlerFactory implements ProxyHandlerFactory {
 
-    private Map<Class<?>, JdkProxyFactory> proxyFactories = new HashMap<Class<?>, JdkProxyFactory>();
+    private final Map<Class<?>, JdkProxyFactory> proxyFactories = new HashMap<Class<?>, JdkProxyFactory>();
 
     @Override
     public <T> ComponentProxyHandler<T> createProxy(Class<?> targetClass) {

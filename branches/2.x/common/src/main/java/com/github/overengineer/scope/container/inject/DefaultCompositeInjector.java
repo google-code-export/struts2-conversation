@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class DefaultCompositeInjector<T> implements CompositeInjector<T> {
 
-    private Set<Injector<T>> injectors;
+    private final Set<Injector<T>> injectors;
 
     public DefaultCompositeInjector(Set<Injector<T>> injectors) {
          this.injectors = injectors;

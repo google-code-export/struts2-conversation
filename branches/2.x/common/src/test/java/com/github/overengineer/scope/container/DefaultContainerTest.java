@@ -324,6 +324,14 @@ public class DefaultContainerTest {
         printComparison(mines, springs, "spring");
     }
 
+    @Pointcut(classes = {IBean.class, ISingleton.class})
+    public static class TestInterceptor2 implements AdvisingInterceptor {
+        @Override
+        public Object intercept(JoinPointInvocation invocation) throws Exception {
+            return invocation.invoke();
+        }
+    }
+
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
@@ -336,7 +344,7 @@ public class DefaultContainerTest {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                container3.get(IBean.class);
+                container3.get(IBean.class).stuff();
             }
         }, threads).run(duration, primingRuns, "my plain prototype");
 
@@ -347,7 +355,7 @@ public class DefaultContainerTest {
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                picoContainer.getComponent(IBean.class);
+                picoContainer.getComponent(IBean.class).stuff();
             }
         }, threads).run(duration, primingRuns, "pico plain prototype");
 
@@ -362,7 +370,7 @@ public class DefaultContainerTest {
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                injector.getInstance(IBean.class);
+                injector.getInstance(IBean.class).stuff();
             }
         }, threads).run(duration, primingRuns, "guice plain prototypes");
 
@@ -371,7 +379,7 @@ public class DefaultContainerTest {
         long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                applicationContext.getBean(Bean.class);
+                applicationContext.getBean(Bean.class).stuff();
             }
         }, threads).run(duration, primingRuns, "spring plain prototypes");
 
@@ -396,7 +404,7 @@ public class DefaultContainerTest {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                container2.get(ISingleton.class);
+                container2.get(ISingleton.class).yo();
             }
         }, threads).run(duration, primingRuns, "my singleton");
 
@@ -406,7 +414,7 @@ public class DefaultContainerTest {
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                picoContainer3.getComponent(ISingleton.class);
+                picoContainer3.getComponent(ISingleton.class).yo();
             }
         }, threads).run(duration, primingRuns, "pico singleton");
 
@@ -420,7 +428,7 @@ public class DefaultContainerTest {
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                injector3.getInstance(ISingleton.class);
+                injector3.getInstance(ISingleton.class).yo();
             }
         }, threads).run(duration, primingRuns, "guice singleton");
 
@@ -429,7 +437,7 @@ public class DefaultContainerTest {
         long springs = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                applicationContext.getBean(Singleton.class);
+                applicationContext.getBean(Singleton.class).yo();
             }
         }, threads).run(duration, primingRuns, "spring singleton");
 
@@ -589,9 +597,13 @@ public class DefaultContainerTest {
         }
     }
 
-    interface ISingleton{}
+    public interface ISingleton{void yo();}
 
-    public static class Singleton implements ISingleton {}
+    public static class Singleton implements ISingleton {
+        @Override
+        public void yo() {
+        }
+    }
 
     public static class Assertion extends RuntimeException {}
 

@@ -9,9 +9,9 @@ import java.lang.reflect.Method;
 public abstract class BaseInjector<T> implements Injector<T> {
 
     protected transient Method setter;
-    private String setterName;
-    private Class<?> setterDeclarer;
-    protected Class<?> type;
+    private final String setterName;
+    private final Class<?> setterDeclarer;
+    protected final Class<?> type;
 
     public BaseInjector(Method setter, Class<?> type) {
         this.setter = setter;

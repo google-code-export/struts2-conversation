@@ -9,9 +9,9 @@ import java.util.List;
  */
 public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
 
-    private CompositeInjector<T> injector;
-    private Instantiator<T> instantiator;
-    private List<ComponentInitializationListener> initializationListeners;
+    private final CompositeInjector<T> injector;
+    private final Instantiator<T> instantiator;
+    private final List<ComponentInitializationListener> initializationListeners;
 
     public PrototypeComponentStrategy(CompositeInjector<T> injector, Instantiator<T> instantiator, List<ComponentInitializationListener> initializationListeners) {
         this.injector = injector;
