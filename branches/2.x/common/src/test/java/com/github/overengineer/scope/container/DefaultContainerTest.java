@@ -4,9 +4,8 @@ import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
-import com.github.overengineer.scope.container.proxy.aop.AdvisingInterceptor;
-import com.github.overengineer.scope.container.proxy.aop.JoinPointInvocation;
-import com.github.overengineer.scope.container.proxy.aop.Pointcut;
+import com.github.overengineer.scope.container.proxy.ProxyModule;
+import com.github.overengineer.scope.container.proxy.aop.*;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -37,7 +36,7 @@ public class DefaultContainerTest {
     @Test
     public void testLoadModule() {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         container.loadModule(new CommonModule());
 
@@ -50,7 +49,7 @@ public class DefaultContainerTest {
     @Test
     public void testVerify_positive() throws WiringException {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         container.verify();
 
@@ -63,7 +62,7 @@ public class DefaultContainerTest {
     @Test(expected = WiringException.class)
     public void testVerify_negative() throws WiringException {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
@@ -76,7 +75,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetComponent() {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -95,7 +94,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetInstance() {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         SchedulerProvider given = new DefaultSchedulerProvider();
 
@@ -112,7 +111,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetProperty() {
 
-        Container container = ContainerBuilder.begin().build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
 
         container.addProperty("test", 69L);
 
@@ -123,7 +122,7 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = ContainerBuilder.begin().withListener(Listener.class).build()
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory()).addListener(Listener.class)
                 .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
                 .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4)
                 .start();
@@ -142,10 +141,9 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef() {
 
-        HotSwappableContainer container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build();
+        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory())
+                .loadModule(new ProxyModule())
+                .get(HotSwappableContainer.class);
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
@@ -178,10 +176,7 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef2() {
 
-        HotSwappableContainer container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build();
+        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class);
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
@@ -200,10 +195,7 @@ public class DefaultContainerTest {
     @Test
     public void testHotSwapping() throws HotSwapException {
 
-        HotSwappableContainer container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build();
+        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class);
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
@@ -221,12 +213,12 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        Container container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .withInterceptor(new TestInterceptor())
-                .withInterceptor(new TestInterceptor())
-                .build();
+        Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
+                .loadModule(new AopModule())
+                .get(AopContainer.class)
+                .get(AopContainer.class)
+                .addInterceptor(TestInterceptor.class)
+                .addInterceptor(TestInterceptor.class);
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
         container.add(ICyclicRef3.class, CyclicTest3.class);
@@ -265,7 +257,7 @@ public class DefaultContainerTest {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory(), Collections.<Class<? extends ComponentInitializationListener>>emptyList())
+                final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory())
                         .add(IBean.class, Bean.class)
                         .add(IBean2.class, Bean2.class);
                 container3.get(IBean.class);
@@ -335,9 +327,7 @@ public class DefaultContainerTest {
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
-        final Container container3 = ContainerBuilder
-                .begin()
-                .build()
+        final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory())
                 .add(IBean.class, Bean.class)
                 .add(IBean2.class, Bean2.class);
 
@@ -395,10 +385,8 @@ public class DefaultContainerTest {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build()
+        final Container container2 = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule())
+                .get(HotSwappableContainer.class)
                 .add(ISingleton.class, Singleton.class);
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
@@ -450,10 +438,7 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRefSpeed() throws Exception {
 
-        final Container container = ContainerBuilder
-                .begin()
-                .withJdkProxies()
-                .build()
+        final Container container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);
