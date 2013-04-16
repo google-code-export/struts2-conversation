@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
-    private List<AdvisingInterceptor> interceptors;
-    private PointcutInterpreter rulesInterpretor;
-    private Map<InterceptorCacheKey, List<AdvisingInterceptor>> cache = new HashMap<InterceptorCacheKey, List<AdvisingInterceptor>>();
+    private final List<AdvisingInterceptor> interceptors;
+    private final PointcutInterpreter rulesInterpretor;
+    private final Map<InterceptorCacheKey, List<AdvisingInterceptor>> cache = new HashMap<InterceptorCacheKey, List<AdvisingInterceptor>>();
 
     public AdvisedInvocationFactory(@Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors, PointcutInterpreter rulesInterpretor) {
         this.interceptors = interceptors;

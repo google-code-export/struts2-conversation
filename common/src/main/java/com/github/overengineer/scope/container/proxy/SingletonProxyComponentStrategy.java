@@ -8,9 +8,9 @@ import com.github.overengineer.scope.container.Provider;
 public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStrategy<T> {
 
     private ComponentProxyHandler<T> proxyHandler;
-    private Class<?> type;
-    private ComponentStrategy<T> delegateStrategy;
-    private ProxyHandlerFactory handlerFactory;
+    private final Class<?> type;
+    private final ComponentStrategy<T> delegateStrategy;
+    private final ProxyHandlerFactory handlerFactory;
 
     public SingletonProxyComponentStrategy(Class<?> type, ComponentStrategy<T> delegateStrategy, ProxyHandlerFactory handlerFactory) {
         this.type = type;

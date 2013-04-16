@@ -7,10 +7,10 @@ import com.github.overengineer.scope.container.Provider;
  */
 public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> {
 
-    private Class<?> type;
-    private ComponentStrategy<T> delegateStrategy;
-    private ProxyHandlerFactory handlerFactory;
-    private ThreadLocal<ProxyHandlerHolder> handlerHolder = new ThreadLocal<ProxyHandlerHolder>();
+    private final Class<?> type;
+    private final ComponentStrategy<T> delegateStrategy;
+    private final ProxyHandlerFactory handlerFactory;
+    private final ThreadLocal<ProxyHandlerHolder> handlerHolder = new ThreadLocal<ProxyHandlerHolder>();
 
     public PrototypeProxyComponentStrategy(Class<?> type, ComponentStrategy<T> delegateStrategy, ProxyHandlerFactory handlerFactory) {
         this.type = type;

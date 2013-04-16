@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 public class JdkComponentProxyHandler<T> implements ComponentProxyHandler<T>, InvocationHandler {
 
     protected T component;
-    private T proxy;
+    private final T proxy;
 
     @SuppressWarnings("unchecked")
     public JdkComponentProxyHandler(JdkProxyFactory factory) {

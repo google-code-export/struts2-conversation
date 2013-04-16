@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class JdkAopProxyHandlerFactory implements ProxyHandlerFactory {
 
-    private Map<Class<?>, JdkProxyFactory> proxyFactories = new HashMap<Class<?>, JdkProxyFactory>();
-    private JoinPointInvocationFactory invocationFactory;
+    private final Map<Class<?>, JdkProxyFactory> proxyFactories = new HashMap<Class<?>, JdkProxyFactory>();
+    private final JoinPointInvocationFactory invocationFactory;
 
     public JdkAopProxyHandlerFactory(JoinPointInvocationFactory invocationFactory) {
         this.invocationFactory = invocationFactory;

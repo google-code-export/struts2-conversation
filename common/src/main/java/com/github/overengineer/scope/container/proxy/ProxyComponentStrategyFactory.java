@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
 
-    private ComponentStrategyFactory delegateFactory;
-    private ProxyHandlerFactory handlerFactory;
+    private final ComponentStrategyFactory delegateFactory;
+    private final ProxyHandlerFactory handlerFactory;
 
     public ProxyComponentStrategyFactory(ComponentStrategyFactory delegateFactory, ProxyHandlerFactory handlerFactory) {
         this.delegateFactory = delegateFactory;

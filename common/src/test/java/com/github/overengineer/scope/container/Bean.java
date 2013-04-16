@@ -13,4 +13,7 @@ public class Bean implements IBean {
         bean2.doStuff();
     }
 
+    @Override
+    public void stuff() {
+    }
 }

@@ -10,8 +10,8 @@ import java.util.List;
 public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
 
     private T component;
-    private ComponentStrategy<T> delegateStrategy;
-    private List<ComponentInitializationListener> initializationListeners;
+    private final ComponentStrategy<T> delegateStrategy;
+    private final List<ComponentInitializationListener> initializationListeners;
 
     public SingletonComponentStrategy(CompositeInjector<T> injector, Instantiator<T> instantiator, List<ComponentInitializationListener> initializationListeners) {
         this.initializationListeners = initializationListeners;
