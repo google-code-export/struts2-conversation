@@ -8,6 +8,8 @@ public interface Container extends Provider {
 
     Container loadModule(Module module);
 
+    Container addListener(Class<? extends ComponentInitializationListener> listenerClass);
+
     <T> Container add(Class<T> componentType, Class<? extends T> implementationType);
 
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);

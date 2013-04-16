@@ -2,14 +2,12 @@ package com.github.overengineer.scope.container.proxy;
 
 import com.github.overengineer.scope.container.*;
 
-import java.util.List;
-
 /**
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, @Property(Properties.LISTENERS) List<Class<? extends ComponentInitializationListener>> initializationListenerClasses) {
-        super(strategyFactory, initializationListenerClasses);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory) {
+        super(strategyFactory);
         addInstance(HotSwappableContainer.class, this);
     }
 

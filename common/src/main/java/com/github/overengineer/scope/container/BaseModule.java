@@ -1,16 +1,15 @@
 package com.github.overengineer.scope.container;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BaseModule implements Module {
 
-    private Map<Class<?>, Class<?>> typeMappings = new HashMap<Class<?>, Class<?>>();
-    private Map<Class<?>, Object> instanceMappings = new HashMap<Class<?>, Object>();
-    private Map<String, Object> properties = new HashMap<String, Object>();
+    private Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
+    private Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
+    private Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     @Override
-    public final Map<Class<?>, Class<?>> getTypeMappings() {
+    public final Map<Class<?>, List<Class<?>>> getTypeMappings() {
         return typeMappings;
     }
 
@@ -38,13 +37,18 @@ public class BaseModule implements Module {
 
     public static class TypeMapper<V> {
         private Class<V> value;
-        private Map<Class<?>, Class<?>> map;
-        public TypeMapper(Class<V> value, Map<Class<?>, Class<?>> map) {
+        private Map<Class<?>, List<Class<?>>> map;
+        public TypeMapper(Class<V> value, Map<Class<?>, List<Class<?>>> map) {
             this.value = value;
             this.map = map;
         }
         public TypeMapper<V> forType(Class<? super V> key) {
-            map.put(key, value);
+            List<Class<?>> mappings = map.get(key);
+            if (mappings == null) {
+                mappings = new LinkedList<Class<?>>();
+                map.put(key, mappings);
+            }
+            mappings.add(value);
             return this;
         }
 
