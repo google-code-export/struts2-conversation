@@ -11,13 +11,13 @@ import java.util.Map;
 
 /**
  */
-public class InterceptableInvocationFactory  implements InvocationFactory {
+public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
     private List<AdvisingInterceptor> interceptors;
     private PointcutInterpreter rulesInterpretor;
     private Map<InterceptorCacheKey, List<AdvisingInterceptor>> cache = new HashMap<InterceptorCacheKey, List<AdvisingInterceptor>>();
 
-    public InterceptableInvocationFactory(@Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors, PointcutInterpreter rulesInterpretor) {
+    public AdvisedInvocationFactory(@Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors, PointcutInterpreter rulesInterpretor) {
         this.interceptors = interceptors;
         this.rulesInterpretor = rulesInterpretor;
     }
@@ -36,7 +36,7 @@ public class InterceptableInvocationFactory  implements InvocationFactory {
             }
             cache.put(cacheKey, methodInterceptors);
         }
-        return new InterceptableInvocation<T>((methodInterceptors).iterator(), target, method, parameters);
+        return new AdvisedInvocation<T>((methodInterceptors).iterator(), target, method, parameters);
     }
 
     private static class InterceptorCacheKey {

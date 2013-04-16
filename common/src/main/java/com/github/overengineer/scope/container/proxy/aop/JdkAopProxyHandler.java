@@ -9,14 +9,10 @@ import java.lang.reflect.Method;
  */
 public class JdkAopProxyHandler<T> extends JdkComponentProxyHandler<T> implements AopProxyHandler<T> {
 
-    private InvocationFactory invocationFactory;
+    private JoinPointInvocationFactory invocationFactory;
 
-    public JdkAopProxyHandler(JdkProxyFactory factory) {
+    public JdkAopProxyHandler(JdkProxyFactory factory, JoinPointInvocationFactory invocationFactory) {
         super(factory);
-    }
-
-    @Override
-    public void setInvocationFactory(InvocationFactory invocationFactory) {
         this.invocationFactory = invocationFactory;
     }
 

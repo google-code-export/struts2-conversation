@@ -5,14 +5,14 @@ import java.util.Iterator;
 
 /**
  */
-public class InterceptableInvocation<T> implements JoinPointInvocation<T> {
+public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
 
     private final Iterator<AdvisingInterceptor> interceptorIterator;
     private final T target;
     private final Method method;
     private final Object[] parameters;
 
-    InterceptableInvocation(Iterator<AdvisingInterceptor> interceptorIterator, T target, Method method, Object[] parameters) {
+    AdvisedInvocation(Iterator<AdvisingInterceptor> interceptorIterator, T target, Method method, Object[] parameters) {
         this.interceptorIterator = interceptorIterator;
         this.target = target;
         this.method = method;

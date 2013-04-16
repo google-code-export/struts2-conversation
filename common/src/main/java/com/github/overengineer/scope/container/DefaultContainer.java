@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  *
  * TODO Features:
- * TODO nested, scoped containers and scoped proxies, factories, interceptor rules
+ * TODO nested, scoped containers and scoped proxies, factories, complete interceptor rules
  *
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations, add module loading to the bootstrapper
@@ -18,6 +18,7 @@ import java.util.Map;
  * TODO throw decorationexception if a defaultinstantiator tries to reference itself
  * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
+ * TODO returning "this" from container gives non-proxy version.
  */
 public class DefaultContainer extends BootstrapContainer implements Container {
 
