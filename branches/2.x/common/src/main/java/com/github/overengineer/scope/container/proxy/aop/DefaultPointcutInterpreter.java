@@ -22,7 +22,7 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
     }
 
     private boolean methodNameMatches(String targetMethodName, String rulesMethodNameExpression) {
-        return true;
+        return rulesMethodNameExpression == null || rulesMethodNameExpression.isEmpty() || rulesMethodNameExpression.equals("") || targetMethodName.equals(rulesMethodNameExpression);
     }
 
     private boolean returnTypeMatches(Class targetMethodReturnType, Class<?> rulesMethodReturnType) {
@@ -31,9 +31,9 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
 
     private boolean classMatches(Class targetClass, Class[] rulesClasses, String rulesClassNameExpression) {
 
-        boolean classObjectMatches = true;
-        if (rulesClasses != null && rulesClasses.length > 0) {
-            classObjectMatches = false;
+        boolean rulesClassesApply = rulesClasses != null && rulesClasses.length > 0;
+
+        if (rulesClassesApply) {
             for (Class<?> cls : rulesClasses) {
                 if (cls.isAssignableFrom(targetClass)) {
                     return true;
@@ -41,13 +41,12 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
             }
         }
 
-        boolean expressionMatches = true;
-        if (rulesClassNameExpression != null) {
-            expressionMatches = false;
+        if (rulesClassNameExpression != null && !rulesClassNameExpression.isEmpty() && !rulesClassNameExpression.equals("")) {
+            return targetClass.getName().contains(rulesClassNameExpression);
 
         }
 
-        return classObjectMatches; // || expressionMatches;
+        return !rulesClassesApply;
     }
 
     private boolean parametersMatch(Class[] targetParameterTypes, Class<?>[] rulesParameterTypes) {
@@ -66,15 +65,16 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
     }
 
     private boolean annotationsMatch(Method targetMethod, Class<? extends Annotation>[] rulesAnnotations) {
-        if (rulesAnnotations.length == 1 && rulesAnnotations[0] == Pointcut.PlaceHolder.class) {
-            return true;
-        }
-        for (Class<? extends Annotation> rulesAnnotation : rulesAnnotations) {
-            if (targetMethod.isAnnotationPresent(rulesAnnotation)) {
-                return true;
+        boolean match = true;
+        if (rulesAnnotations != null && rulesAnnotations.length > 0) {
+            match = false;
+            for (Class<? extends Annotation> a : rulesAnnotations) {
+                if (targetMethod.isAnnotationPresent(a)) {
+                    return true;
+                }
             }
         }
-        return false;
+        return match;
     }
 
 }

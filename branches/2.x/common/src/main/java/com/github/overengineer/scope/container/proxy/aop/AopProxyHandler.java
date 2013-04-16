@@ -5,7 +5,4 @@ import com.github.overengineer.scope.container.proxy.ComponentProxyHandler;
 /**
  */
 public interface AopProxyHandler<T> extends ComponentProxyHandler<T> {
-
-    void setInvocationFactory(InvocationFactory invocationFactory);
-
 }

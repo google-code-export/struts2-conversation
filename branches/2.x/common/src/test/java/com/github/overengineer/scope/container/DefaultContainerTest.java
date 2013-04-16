@@ -221,20 +221,36 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        ContainerBuilder
+        Container container = ContainerBuilder
                 .begin()
                 .withJdkProxies()
                 .withInterceptor(new TestInterceptor())
-                .build()
-                .add(SchedulerProvider.class, DefaultSchedulerProvider.class);
+                .withInterceptor(new TestInterceptor())
+                .build();
 
+        container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
+        container.add(ICyclicRef3.class, CyclicTest3.class);
     }
 
-    @Pointcut(paramterTypes = {Class.class, Class.class})
+    @Pointcut(
+            paramterTypes = {Class.class, Class.class},
+            annotations = {},
+            classes = {},
+            classNameExpression = "com.github.overengineer",
+            methodNameExpression = "add",
+            returnType = Object.class)
     public static class TestInterceptor implements AdvisingInterceptor {
+
+        int i = 0;
+
         @Override
         public Object intercept(JoinPointInvocation invocation) throws Exception {
-            throw new Assertion();
+            System.out.println(this);
+            if (i > 0) throw new Assertion();
+            i++;
+            Object result = invocation.invoke();
+            System.out.println(this);
+            return result;
         }
     }
 

@@ -4,6 +4,6 @@ import java.lang.reflect.Method;
 
 /**
  */
-public interface InvocationFactory {
+public interface JoinPointInvocationFactory {
     <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters);
 }

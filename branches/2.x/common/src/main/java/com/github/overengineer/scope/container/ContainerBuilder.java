@@ -72,7 +72,7 @@ public class ContainerBuilder {
             basicBuilder.bootstrapContainer.properties.put(Properties.LISTENERS, basicBuilder.initializationListeners);
             if (!interceptors.isEmpty()) {
                 basicBuilder.bootstrapContainer.addMapping(ProxyHandlerFactory.class, JdkAopProxyHandlerFactory.class);
-                basicBuilder.bootstrapContainer.addMapping(InvocationFactory.class, InterceptableInvocationFactory.class);
+                basicBuilder.bootstrapContainer.addMapping(JoinPointInvocationFactory.class, AdvisedInvocationFactory.class);
                 basicBuilder.bootstrapContainer.addMapping(PointcutInterpreter.class, DefaultPointcutInterpreter.class);
                 basicBuilder.bootstrapContainer.properties.put(Properties.INTERCEPTORS, interceptors);
             }
