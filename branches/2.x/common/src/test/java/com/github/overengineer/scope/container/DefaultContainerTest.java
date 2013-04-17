@@ -217,9 +217,8 @@ public class DefaultContainerTest {
         Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
                 .loadModule(new AopModule())
                 .get(AopContainer.class)
-                .get(AopContainer.class)
                 .addInterceptor(TestInterceptor.class)
-                .addInterceptor(TestInterceptor.class);
+                .addInterceptor(MetaInterceptor.class);
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
         container.add(ICyclicRef3.class, CyclicTest3.class);
@@ -244,6 +243,16 @@ public class DefaultContainerTest {
             Object result = invocation.invoke();
             System.out.println(this);
             return result;
+        }
+    }
+
+    @Pointcut(classes = AdvisingInterceptor.class)
+    public static class MetaInterceptor implements AdvisingInterceptor {
+
+        @Override
+        public Object intercept(JoinPointInvocation invocation) throws Throwable {
+            System.out.println("METACEPTOR, ATTACK!!!!");
+            return invocation.invoke();
         }
     }
 
