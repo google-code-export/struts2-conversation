@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
+ * @author rees.byars
  */
 public class DefaultJdkProxyFactory implements JdkProxyFactory {
 

@@ -5,6 +5,7 @@ import com.github.overengineer.scope.container.inject.CompositeInjector;
 import java.util.List;
 
 /**
+ * @author rees.byars
  */
 public class InstanceStrategy<T> implements ComponentStrategy<T> {
 

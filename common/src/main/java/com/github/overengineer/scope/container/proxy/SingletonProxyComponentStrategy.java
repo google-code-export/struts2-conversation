@@ -4,6 +4,7 @@ import com.github.overengineer.scope.container.ComponentStrategy;
 import com.github.overengineer.scope.container.Provider;
 
 /**
+ * @author rees.byars
  */
 public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStrategy<T> {
 

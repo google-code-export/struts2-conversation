@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
 /**
+ * @author rees.byars
  */
 public interface ParameterProxy<T> extends Serializable {
 

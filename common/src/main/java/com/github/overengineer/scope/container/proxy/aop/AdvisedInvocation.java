@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 /**
+ * @author rees.byars
  */
 public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
 

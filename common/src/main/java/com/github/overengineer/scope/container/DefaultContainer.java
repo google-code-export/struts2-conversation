@@ -8,7 +8,7 @@ import java.util.*;
 /**
  *
  * TODO Features:
- * TODO nested, scoped containers and scoped proxies, factories, complete interceptor rules (@OR, @AND, @NOT)
+ * TODO nested, scoped containers and scoped proxies, factories, enhance interceptor rules (@OR, @AND, @NOT)
  * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
  * TODO DecoratableContainer + LifecycleContainer
@@ -16,7 +16,8 @@ import java.util.*;
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
  * TODO throw decorationexception if a defaultinstantiator tries to reference itself
- * TODO make everything serializable as much as possible
+ *
+ * @author rees.byars
  */
 public class DefaultContainer implements Container {
 

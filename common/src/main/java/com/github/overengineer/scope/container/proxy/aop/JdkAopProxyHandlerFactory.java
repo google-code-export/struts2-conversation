@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author rees.byars
  */
 public class JdkAopProxyHandlerFactory implements ProxyHandlerFactory {
 

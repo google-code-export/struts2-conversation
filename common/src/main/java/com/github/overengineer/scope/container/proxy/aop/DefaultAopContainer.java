@@ -6,6 +6,7 @@ import com.github.overengineer.scope.container.proxy.DefaultHotSwappableContaine
 import java.util.List;
 
 /**
+ * @author rees.byars
  */
 public class DefaultAopContainer extends DefaultHotSwappableContainer implements AopContainer {
 

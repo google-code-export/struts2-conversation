@@ -3,6 +3,8 @@ package com.github.overengineer.scope.container.proxy.aop;
 import com.github.overengineer.scope.container.Properties;
 import com.github.overengineer.scope.container.Property;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author rees.byars
  */
 public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
     private final List<Aspect> aspects;
     private final PointcutInterpreter rulesInterpretor;
-    private final Map<AspectCacheKey, List<Aspect>> cache = new HashMap<AspectCacheKey, List<Aspect>>();
+    private transient Map<AspectCacheKey, List<Aspect>> cache = new HashMap<AspectCacheKey, List<Aspect>>();
 
     public AdvisedInvocationFactory(@Property(Properties.ASPECTS) List<Aspect> aspects, PointcutInterpreter rulesInterpretor) {
         this.aspects = aspects;
@@ -39,6 +42,11 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
         return new AdvisedInvocation<T>((methodAspects).iterator(), target, method, parameters);
     }
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        cache = new HashMap<AspectCacheKey, List<Aspect>>();
+    }
+
     private static class AspectCacheKey {
 
         private final Class<?> targetClass;
@@ -58,12 +66,12 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
                 return false;
             }
             AspectCacheKey otherKey = (AspectCacheKey) other;
-            return this.method.equals(otherKey.method) && this.targetClass.equals(otherKey.targetClass);
+            return method.equals(otherKey.method) && targetClass.equals(otherKey.targetClass);
         }
 
         @Override
         public int hashCode() {
-            return this.method.hashCode() * 29 + (this.targetClass != null ? this.targetClass.hashCode() : 0);
+            return method.hashCode() * 29 + (targetClass != null ? targetClass.hashCode() : 0);
         }
 
     }

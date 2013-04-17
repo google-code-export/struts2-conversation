@@ -8,6 +8,7 @@ import com.github.overengineer.scope.container.PrototypeComponentStrategy;
 import java.util.List;
 
 /**
+ * @author rees.byars
  */
 public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
 

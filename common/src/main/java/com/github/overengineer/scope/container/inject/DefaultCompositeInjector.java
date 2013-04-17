@@ -5,6 +5,7 @@ import com.github.overengineer.scope.container.Provider;
 import java.util.Set;
 
 /**
+ * @author rees.byars
  */
 public class DefaultCompositeInjector<T> implements CompositeInjector<T> {
 

@@ -3,6 +3,7 @@ package com.github.overengineer.scope.container.proxy;
 import java.lang.reflect.Proxy;
 
 /**
+ * @author rees.byars
  */
 public class ProxyUtil {
 

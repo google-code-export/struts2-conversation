@@ -395,7 +395,7 @@ public class DefaultContainerTest {
 
         final Container container2 = ProxyUtil.getRealComponent(new DefaultContainer(new DefaultComponentStrategyFactory())
                 .loadModule(new ProxyModule())
-                .get(HotSwappableContainer.class)
+                .get(Container.class)
                 .add(ISingleton.class, Singleton.class));
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {

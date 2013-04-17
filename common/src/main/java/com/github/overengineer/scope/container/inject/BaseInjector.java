@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 
 /**
+ * @author rees.byars
  */
 public abstract class BaseInjector<T> implements Injector<T> {
 
