@@ -15,17 +15,22 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
         if (aspectClass == targetClass) {
             return false;
         }
-        Pointcut rules = aspectClass.getAnnotation(Pointcut.class);
-        return
-                methodNameMatches(method.getName(), rules.methodNameExpression()) &&
-                returnTypeMatches(method.getReturnType(), rules.returnType()) &&
-                classMatches(targetClass, rules.classes(), rules.classNameExpression()) &&
-                parametersMatch(method.getParameterTypes(), rules.paramterTypes()) &&
-                annotationsMatch(method, rules.annotations());
+        try {
+            Pointcut rules = aspectClass.getAnnotation(Pointcut.class);
+            return
+                    methodNameMatches(method.getName(), rules.methodNameExpression()) &&
+                            returnTypeMatches(method.getReturnType(), rules.returnType()) &&
+                            classMatches(targetClass, rules.classes(), rules.classNameExpression()) &&
+                            parametersMatch(method.getParameterTypes(), rules.paramterTypes()) &&
+                            annotationsMatch(method, rules.annotations());
+        } catch (NullPointerException e) {
+            return true;
+        }
+
     }
 
     private boolean methodNameMatches(String targetMethodName, String rulesMethodNameExpression) {
-        return rulesMethodNameExpression == null || rulesMethodNameExpression.isEmpty() || rulesMethodNameExpression.equals("") || targetMethodName.equals(rulesMethodNameExpression);
+        return rulesMethodNameExpression.equals("") || matchesWildCardExpression(targetMethodName, rulesMethodNameExpression);
     }
 
     private boolean returnTypeMatches(Class targetMethodReturnType, Class<?> rulesMethodReturnType) {
@@ -44,9 +49,8 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
             }
         }
 
-        if (rulesClassNameExpression != null && !rulesClassNameExpression.isEmpty() && !rulesClassNameExpression.equals("")) {
-            return targetClass.getName().contains(rulesClassNameExpression);
-
+        if (!rulesClassNameExpression.equals("")) {
+            return matchesWildCardExpression(targetClass.getName(), rulesClassNameExpression);
         }
 
         return !rulesClassesApply;
@@ -78,6 +82,22 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
             }
         }
         return match;
+    }
+
+    private static final String WILD_CARD = "*";
+
+    private static boolean matchesWildCardExpression(String targetString, String wildCardExpression) {
+        boolean frontWild = wildCardExpression.startsWith(WILD_CARD);
+        boolean backWild = wildCardExpression.endsWith(WILD_CARD);
+        if (frontWild && backWild) {
+            return targetString.contains(wildCardExpression.substring(1, wildCardExpression.length() - 1));
+        } else if (frontWild) {
+            return targetString.endsWith(wildCardExpression.substring(1));
+        } else if (backWild) {
+            return targetString.startsWith(wildCardExpression.substring(0, wildCardExpression.length() - 1));
+        } else {
+            return targetString.equals(wildCardExpression);
+        }
     }
 
 }
