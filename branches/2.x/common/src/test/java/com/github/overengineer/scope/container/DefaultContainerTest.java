@@ -5,6 +5,7 @@ import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.ProxyModule;
+import com.github.overengineer.scope.container.proxy.ProxyUtil;
 import com.github.overengineer.scope.container.proxy.aop.*;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
@@ -236,7 +237,7 @@ public class DefaultContainerTest {
         int i = 0;
 
         @Override
-        public Object intercept(JoinPointInvocation invocation) throws Exception {
+        public Object intercept(JoinPointInvocation invocation) throws Throwable {
             System.out.println(this);
             if (i > 0) throw new Assertion();
             i++;
@@ -319,7 +320,7 @@ public class DefaultContainerTest {
     @Pointcut(classes = {IBean.class, ISingleton.class})
     public static class TestInterceptor2 implements AdvisingInterceptor {
         @Override
-        public Object intercept(JoinPointInvocation invocation) throws Exception {
+        public Object intercept(JoinPointInvocation invocation) throws Throwable {
             return invocation.invoke();
         }
     }
@@ -385,9 +386,10 @@ public class DefaultContainerTest {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule())
+        final Container container2 = ProxyUtil.getRealComponent(new DefaultContainer(new DefaultComponentStrategyFactory())
+                .loadModule(new ProxyModule())
                 .get(HotSwappableContainer.class)
-                .add(ISingleton.class, Singleton.class);
+                .add(ISingleton.class, Singleton.class));
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -438,7 +440,9 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRefSpeed() throws Exception {
 
-        final Container container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class)
+        final Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
+                .loadModule(new ProxyModule())
+                .get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);

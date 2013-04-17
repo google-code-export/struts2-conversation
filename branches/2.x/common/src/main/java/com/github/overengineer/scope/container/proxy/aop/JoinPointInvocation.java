@@ -9,5 +9,5 @@ public interface JoinPointInvocation<T> {
     T getTarget();
     Object[] getParameters();
     Method getMethod();
-    Object invoke() throws Exception;
+    Object invoke() throws Throwable;
 }
