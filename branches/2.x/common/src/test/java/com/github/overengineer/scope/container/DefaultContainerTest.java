@@ -212,23 +212,23 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
+        new DefaultContainer(new DefaultComponentStrategyFactory())
                 .loadModule(new AopModule())
                 .get(AopContainer.class)
                 .addAspect(TestInterceptor.class)
-                .addAspect(MetaInterceptor.class);
-
-        container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
-        container.add(ICyclicRef3.class, CyclicTest3.class);
+                .addAspect(Metaceptor.class)
+                .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
+                .add(ICyclicRef3.class, CyclicTest3.class);
     }
 
     @Pointcut(
             paramterTypes = {Class.class, Class.class},
             annotations = {},
             classes = {},
-            classNameExpression = "com.github.overengineer",
+            classNameExpression = "*github.overengineer*",
             methodNameExpression = "add",
-            returnType = Object.class)
+            returnType = Object.class
+    )
     public static class TestInterceptor implements Aspect {
 
         int i = 0;
@@ -245,7 +245,7 @@ public class DefaultContainerTest {
     }
 
     @Pointcut(classes = Aspect.class)
-    public static class MetaInterceptor implements Aspect {
+    public static class Metaceptor implements Aspect {
 
         @Override
         public Object advise(JoinPointInvocation invocation) throws Throwable {
