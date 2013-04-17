@@ -13,38 +13,38 @@ import java.util.Map;
  */
 public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
-    private final List<AdvisingInterceptor> interceptors;
+    private final List<Aspect> aspects;
     private final PointcutInterpreter rulesInterpretor;
-    private final Map<InterceptorCacheKey, List<AdvisingInterceptor>> cache = new HashMap<InterceptorCacheKey, List<AdvisingInterceptor>>();
+    private final Map<AspectCacheKey, List<Aspect>> cache = new HashMap<AspectCacheKey, List<Aspect>>();
 
-    public AdvisedInvocationFactory(@Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors, PointcutInterpreter rulesInterpretor) {
-        this.interceptors = interceptors;
+    public AdvisedInvocationFactory(@Property(Properties.ASPECTS) List<Aspect> aspects, PointcutInterpreter rulesInterpretor) {
+        this.aspects = aspects;
         this.rulesInterpretor = rulesInterpretor;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters) {
-        InterceptorCacheKey cacheKey = new InterceptorCacheKey(target.getClass(), method);
-        List<AdvisingInterceptor> methodInterceptors = cache.get(cacheKey);
-        if (methodInterceptors == null) {
-            methodInterceptors = new ArrayList<AdvisingInterceptor>();
-            for (AdvisingInterceptor interceptor : interceptors) {
-                if (rulesInterpretor.appliesToMethod(interceptor, target.getClass(), method)) {
-                    methodInterceptors.add(interceptor);
+        AspectCacheKey cacheKey = new AspectCacheKey(target.getClass(), method);
+        List<Aspect> methodAspects = cache.get(cacheKey);
+        if (methodAspects == null) {
+            methodAspects = new ArrayList<Aspect>();
+            for (Aspect aspect : aspects) {
+                if (rulesInterpretor.appliesToMethod(aspect, target.getClass(), method)) {
+                    methodAspects.add(aspect);
                 }
             }
-            cache.put(cacheKey, methodInterceptors);
+            cache.put(cacheKey, methodAspects);
         }
-        return new AdvisedInvocation<T>((methodInterceptors).iterator(), target, method, parameters);
+        return new AdvisedInvocation<T>((methodAspects).iterator(), target, method, parameters);
     }
 
-    private static class InterceptorCacheKey {
+    private static class AspectCacheKey {
 
         private final Class<?> targetClass;
         private final Method method;
 
-        public InterceptorCacheKey(Class<?> targetClass, Method method) {
+        public AspectCacheKey(Class<?> targetClass, Method method) {
             this.targetClass = targetClass;
             this.method = method;
         }
@@ -54,10 +54,10 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
             if (this == other) {
                 return true;
             }
-            if (!(other instanceof InterceptorCacheKey)) {
+            if (!(other instanceof AspectCacheKey)) {
                 return false;
             }
-            InterceptorCacheKey otherKey = (InterceptorCacheKey) other;
+            AspectCacheKey otherKey = (AspectCacheKey) other;
             return this.method.equals(otherKey.method) && this.targetClass.equals(otherKey.targetClass);
         }
 

@@ -19,6 +19,6 @@ public class AopModule extends BaseModule {
         use(DefaultAopContainer.class).forType(Container.class);
         use(DefaultAopContainer.class).forType(HotSwappableContainer.class);
         use(DefaultAopContainer.class).forType(AopContainer.class);
-        set(Properties.INTERCEPTORS).to(new ArrayList<AdvisingInterceptor>());
+        set(Properties.ASPECTS).to(new ArrayList<Aspect>());
     }
 }

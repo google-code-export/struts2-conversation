@@ -8,13 +8,13 @@ import java.util.Iterator;
  */
 public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
 
-    private final Iterator<AdvisingInterceptor> interceptorIterator;
+    private final Iterator<Aspect> aspectIterator;
     private final T target;
     private final Method method;
     private final Object[] parameters;
 
-    AdvisedInvocation(Iterator<AdvisingInterceptor> interceptorIterator, T target, Method method, Object[] parameters) {
-        this.interceptorIterator = interceptorIterator;
+    AdvisedInvocation(Iterator<Aspect> aspectIterator, T target, Method method, Object[] parameters) {
+        this.aspectIterator = aspectIterator;
         this.target = target;
         this.method = method;
         this.parameters = parameters;
@@ -38,8 +38,8 @@ public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
     @SuppressWarnings("unchecked")
     @Override
     public Object invoke() throws Throwable {
-        if (interceptorIterator.hasNext()) {
-            return interceptorIterator.next().intercept(this);
+        if (aspectIterator.hasNext()) {
+            return aspectIterator.next().advise(this);
         }
         try {
             return method.invoke(target, parameters);

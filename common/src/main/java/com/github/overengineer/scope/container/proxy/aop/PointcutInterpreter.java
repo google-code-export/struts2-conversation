@@ -5,5 +5,5 @@ import java.lang.reflect.Method;
 /**
  */
 public interface PointcutInterpreter {
-    boolean appliesToMethod(AdvisingInterceptor interceptor, Class targetClass, Method method);
+    boolean appliesToMethod(Aspect aspect, Class targetClass, Method method);
 }
