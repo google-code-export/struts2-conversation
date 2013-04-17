@@ -9,19 +9,19 @@ import java.util.List;
  */
 public class DefaultAopContainer extends DefaultHotSwappableContainer implements AopContainer {
 
-    protected final List<AdvisingInterceptor> interceptors;
+    protected final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, @Property(Properties.INTERCEPTORS) List<AdvisingInterceptor> interceptors) {
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, @Property(Properties.ASPECTS) List<Aspect> aspects) {
         super(strategyFactory);
-        this.interceptors = interceptors;
+        this.aspects = aspects;
         addInstance(AopContainer.class, this);
     }
 
 
     @Override
-    public <A extends AdvisingInterceptor<?>> AopContainer addInterceptor(Class<A> interceptorClass) {
+    public <A extends Aspect<?>> AopContainer addAspect(Class<A> interceptorClass) {
         ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass, initializationListeners);
-        interceptors.add(strategy.get(this));
+        aspects.add(strategy.get(this));
         return get(AopContainer.class);
     }
 }

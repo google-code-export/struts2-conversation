@@ -5,5 +5,5 @@ import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 /**
  */
 public interface AopContainer extends HotSwappableContainer {
-    <A extends AdvisingInterceptor<?>> AopContainer addInterceptor(Class<A> interceptorClass);
+    <A extends Aspect<?>> AopContainer addAspect(Class<A> aspectClass);
 }

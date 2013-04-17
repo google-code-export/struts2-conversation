@@ -10,12 +10,12 @@ import java.lang.reflect.Method;
 public class DefaultPointcutInterpreter implements PointcutInterpreter {
 
     @Override
-    public boolean appliesToMethod(AdvisingInterceptor interceptor, Class targetClass, Method method) {
-        Class<?> interceptorClass = ProxyUtil.getRealComponent(interceptor).getClass();
-        if (interceptorClass == targetClass) {
+    public boolean appliesToMethod(Aspect aspect, Class targetClass, Method method) {
+        Class<?> aspectClass = ProxyUtil.getRealComponent(aspect).getClass();
+        if (aspectClass == targetClass) {
             return false;
         }
-        Pointcut rules = interceptorClass.getAnnotation(Pointcut.class);
+        Pointcut rules = aspectClass.getAnnotation(Pointcut.class);
         return
                 methodNameMatches(method.getName(), rules.methodNameExpression()) &&
                 returnTypeMatches(method.getReturnType(), rules.returnType()) &&

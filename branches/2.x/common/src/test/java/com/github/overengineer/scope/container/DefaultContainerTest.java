@@ -24,8 +24,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.Collections;
-
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -217,8 +215,8 @@ public class DefaultContainerTest {
         Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
                 .loadModule(new AopModule())
                 .get(AopContainer.class)
-                .addInterceptor(TestInterceptor.class)
-                .addInterceptor(MetaInterceptor.class);
+                .addAspect(TestInterceptor.class)
+                .addAspect(MetaInterceptor.class);
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
         container.add(ICyclicRef3.class, CyclicTest3.class);
@@ -231,12 +229,12 @@ public class DefaultContainerTest {
             classNameExpression = "com.github.overengineer",
             methodNameExpression = "add",
             returnType = Object.class)
-    public static class TestInterceptor implements AdvisingInterceptor {
+    public static class TestInterceptor implements Aspect {
 
         int i = 0;
 
         @Override
-        public Object intercept(JoinPointInvocation invocation) throws Throwable {
+        public Object advise(JoinPointInvocation invocation) throws Throwable {
             System.out.println(this);
             if (i > 0) throw new Assertion();
             i++;
@@ -246,11 +244,11 @@ public class DefaultContainerTest {
         }
     }
 
-    @Pointcut(classes = AdvisingInterceptor.class)
-    public static class MetaInterceptor implements AdvisingInterceptor {
+    @Pointcut(classes = Aspect.class)
+    public static class MetaInterceptor implements Aspect {
 
         @Override
-        public Object intercept(JoinPointInvocation invocation) throws Throwable {
+        public Object advise(JoinPointInvocation invocation) throws Throwable {
             System.out.println("METACEPTOR, ATTACK!!!!");
             return invocation.invoke();
         }
@@ -327,9 +325,9 @@ public class DefaultContainerTest {
     }
 
     @Pointcut(classes = {IBean.class, ISingleton.class})
-    public static class TestInterceptor2 implements AdvisingInterceptor {
+    public static class TestInterceptor2 implements Aspect {
         @Override
-        public Object intercept(JoinPointInvocation invocation) throws Throwable {
+        public Object advise(JoinPointInvocation invocation) throws Throwable {
             return invocation.invoke();
         }
     }
