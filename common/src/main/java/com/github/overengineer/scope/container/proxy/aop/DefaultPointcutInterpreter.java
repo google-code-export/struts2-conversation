@@ -1,5 +1,7 @@
 package com.github.overengineer.scope.container.proxy.aop;
 
+import com.github.overengineer.scope.container.proxy.ProxyUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -12,7 +14,7 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
         if (method.getDeclaringClass() == AdvisingInterceptor.class) {
             return false;
         }
-        Pointcut rules = interceptor.getClass().getAnnotation(Pointcut.class);
+        Pointcut rules = ProxyUtil.getRealComponent(interceptor).getClass().getAnnotation(Pointcut.class);
         return
                 methodNameMatches(method.getName(), rules.methodNameExpression()) &&
                 returnTypeMatches(method.getReturnType(), rules.returnType()) &&

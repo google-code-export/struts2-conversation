@@ -9,6 +9,8 @@ public interface ComponentProxyHandler<T> extends Serializable {
 
     T getProxy();
 
+    T getComponent();
+
     void setComponent(T component);
 
 }

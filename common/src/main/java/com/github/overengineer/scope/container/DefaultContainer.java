@@ -8,15 +8,15 @@ import java.util.*;
 /**
  *
  * TODO Features:
- * TODO nested, scoped containers and scoped proxies, factories, complete interceptor rules
- *
- * TODO Tech debt:
- * TODO cleanup interceptor impl, move from extensions to decorations, add module loading to the bootstrapper
- * TODO get rid of bootstrapper, re-add addListener, remove from constructor - default container can builder other containers
- * TODO throw decorationexception if a defaultinstantiator tries to reference itself
+ * TODO nested, scoped containers and scoped proxies, factories, complete interceptor rules (@OR, @AND, @NOT)
  * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
- * TODO returning "this" from container gives non-proxy version.
+ * TODO DecoratableContainer + LifecycleContainer
+ *
+ * TODO Tech debt:
+ * TODO cleanup interceptor impl, move from extensions to decorations
+ * TODO throw decorationexception if a defaultinstantiator tries to reference itself
+ * TODO make everything serializable as much as possible
  */
 public class DefaultContainer implements Container {
 

@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.container.proxy.aop;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -36,11 +37,15 @@ public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke() throws Exception {
+    public Object invoke() throws Throwable {
         if (interceptorIterator.hasNext()) {
             return interceptorIterator.next().intercept(this);
         }
-        return method.invoke(target, parameters);
+        try {
+            return method.invoke(target, parameters);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 
 }
