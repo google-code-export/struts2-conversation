@@ -10,6 +10,7 @@ import com.github.overengineer.scope.container.instantiate.Instantiator;
 import java.util.List;
 
 /**
+ * @author rees.byars
  */
 public class DefaultComponentStrategyFactory implements ComponentStrategyFactory {
 

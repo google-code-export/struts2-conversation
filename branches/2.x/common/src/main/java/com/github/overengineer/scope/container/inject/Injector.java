@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.util.ReflectionUtil;
 
+/**
+ * @author rees.byars
+ */
 public interface Injector<T> extends Serializable {
 
     void inject(T component, Provider provider);

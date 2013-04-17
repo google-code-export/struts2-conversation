@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * @author rees.byars
  */
 public class JdkComponentProxyHandler<T> implements ComponentProxyHandler<T>, InvocationHandler {
 

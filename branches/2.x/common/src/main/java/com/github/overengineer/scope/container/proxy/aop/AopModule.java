@@ -6,6 +6,7 @@ import com.github.overengineer.scope.container.proxy.*;
 import java.util.ArrayList;
 
 /**
+ * @author rees.byars
  */
 public class AopModule extends BaseModule {
 

@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 /**
+ * @author rees.byars
  */
 public class DecoratorInstantiator<T> implements Instantiator<T> {
 

@@ -1,6 +1,7 @@
 package com.github.overengineer.scope.container;
 
 /**
+ * @author rees.byars
  */
 public class MissingDependencyException extends RuntimeException {
     public MissingDependencyException(String message) {

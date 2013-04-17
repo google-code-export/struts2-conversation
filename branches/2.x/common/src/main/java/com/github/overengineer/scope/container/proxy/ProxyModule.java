@@ -6,6 +6,7 @@ import com.github.overengineer.scope.container.Container;
 import com.github.overengineer.scope.container.DefaultComponentStrategyFactory;
 
 /**
+ * @author rees.byars
  */
 public class ProxyModule extends BaseModule {
 

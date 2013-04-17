@@ -2,11 +2,14 @@ package com.github.overengineer.scope.container;
 
 import java.util.*;
 
+/**
+ * @author rees.byars
+ */
 public class BaseModule implements Module {
 
-    private Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
-    private Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
-    private Map<String, Object> properties = new LinkedHashMap<String, Object>();
+    private final Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
+    private final Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
+    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     @Override
     public final Map<Class<?>, List<Class<?>>> getTypeMappings() {
@@ -36,8 +39,8 @@ public class BaseModule implements Module {
     }
 
     public static class TypeMapper<V> {
-        private Class<V> value;
-        private Map<Class<?>, List<Class<?>>> map;
+        private final Class<V> value;
+        private final Map<Class<?>, List<Class<?>>> map;
         public TypeMapper(Class<V> value, Map<Class<?>, List<Class<?>>> map) {
             this.value = value;
             this.map = map;
@@ -55,8 +58,8 @@ public class BaseModule implements Module {
     }
 
     public static class InstanceMapper<V> {
-        private V value;
-        private Map<Class<?>, Object> map;
+        private final V value;
+        private final Map<Class<?>, Object> map;
         public InstanceMapper(V value, Map<Class<?>, Object> map) {
             this.value = value;
             this.map = map;
@@ -68,8 +71,8 @@ public class BaseModule implements Module {
     }
 
     public static class PropertyMapper {
-        private String key;
-        private Map<String, Object> map;
+        private final String key;
+        private final Map<String, Object> map;
         public PropertyMapper(String key, Map<String, Object> map) {
             this.key = key;
             this.map = map;

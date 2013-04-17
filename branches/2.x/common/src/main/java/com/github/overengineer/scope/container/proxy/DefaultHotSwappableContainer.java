@@ -3,6 +3,7 @@ package com.github.overengineer.scope.container.proxy;
 import com.github.overengineer.scope.container.*;
 
 /**
+ * @author rees.byars
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 

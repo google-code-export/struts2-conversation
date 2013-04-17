@@ -5,13 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * @author rees.byars
  */
 public class PropertyParameterProxy<T> implements ParameterProxy<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyParameterProxy.class);
 
-    private Class<T> type;
-    private String name;
+    private final Class<T> type;
+    private final String name;
 
     public PropertyParameterProxy(Class<T> type, String name) {
         this.type = type;

@@ -11,13 +11,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 /**
- *
+ * @author rees.byars
  */
 public class DefaultInstantiator<T> implements Instantiator<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstantiator.class);
 
-    private Class<T> type;
+    private final Class<T> type;
     private transient Constructor<T> constructor;
     private transient ParameterProxy[] parameterProxies;
     private transient Object[] parameters;

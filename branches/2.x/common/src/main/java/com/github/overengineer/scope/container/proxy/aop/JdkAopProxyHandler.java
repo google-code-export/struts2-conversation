@@ -6,6 +6,7 @@ import com.github.overengineer.scope.container.proxy.JdkProxyFactory;
 import java.lang.reflect.Method;
 
 /**
+ * @author rees.byars
  */
 public class JdkAopProxyHandler<T> extends JdkComponentProxyHandler<T> implements AopProxyHandler<T> {
 

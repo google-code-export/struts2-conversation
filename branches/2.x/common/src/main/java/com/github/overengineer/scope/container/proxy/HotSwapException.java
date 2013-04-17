@@ -1,6 +1,7 @@
 package com.github.overengineer.scope.container.proxy;
 
 /**
+ * @author rees.byars
  */
 public class HotSwapException extends Exception {
     public HotSwapException(Class<?> target, Class<?> currentImpl, Class<?> newImpl) {

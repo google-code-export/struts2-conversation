@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
+ * @author rees.byars
  */
 public class DefaultPointcutInterpreter implements PointcutInterpreter {
 

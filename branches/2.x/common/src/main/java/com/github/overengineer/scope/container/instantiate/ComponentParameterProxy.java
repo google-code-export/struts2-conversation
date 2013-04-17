@@ -5,12 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * @author rees.byars
  */
 public class ComponentParameterProxy<T> implements ParameterProxy<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentParameterProxy.class);
 
-    private Class<T> type;
+    private final Class<T> type;
 
     public ComponentParameterProxy(Class<T> type) {
         this.type = type;

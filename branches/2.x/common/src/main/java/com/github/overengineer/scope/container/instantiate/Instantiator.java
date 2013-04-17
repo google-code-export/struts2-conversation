@@ -5,6 +5,7 @@ import com.github.overengineer.scope.container.Provider;
 import java.io.Serializable;
 
 /**
+ * @author rees.byars
  */
 public interface Instantiator<T> extends Serializable {
 
