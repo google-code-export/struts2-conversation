@@ -2,7 +2,6 @@ package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
-import com.github.overengineer.scope.container.ComponentInitializationListener;
 import com.github.overengineer.scope.container.DefaultComponentStrategyFactory;
 import com.github.overengineer.scope.container.DefaultContainer;
 import com.github.overengineer.scope.conversation.ConversationModule;
@@ -11,8 +10,6 @@ import com.github.overengineer.scope.session.SessionModule;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-import java.util.Collections;
-
 public class StrutsModuleContainer extends DefaultContainer {
 
     private static final long serialVersionUID = 3180479652636319036L;
@@ -20,7 +17,7 @@ public class StrutsModuleContainer extends DefaultContainer {
     private Container container;
 
     public StrutsModuleContainer() {
-        super(new DefaultComponentStrategyFactory(), Collections.<Class<? extends ComponentInitializationListener>>emptyList());
+        super(new DefaultComponentStrategyFactory());
     }
 
     @Inject
