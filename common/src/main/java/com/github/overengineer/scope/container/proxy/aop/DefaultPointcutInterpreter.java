@@ -11,10 +11,11 @@ public class DefaultPointcutInterpreter implements PointcutInterpreter {
 
     @Override
     public boolean appliesToMethod(AdvisingInterceptor interceptor, Class targetClass, Method method) {
-        if (method.getDeclaringClass() == AdvisingInterceptor.class) {
+        Class<?> interceptorClass = ProxyUtil.getRealComponent(interceptor).getClass();
+        if (interceptorClass == targetClass) {
             return false;
         }
-        Pointcut rules = ProxyUtil.getRealComponent(interceptor).getClass().getAnnotation(Pointcut.class);
+        Pointcut rules = interceptorClass.getAnnotation(Pointcut.class);
         return
                 methodNameMatches(method.getName(), rules.methodNameExpression()) &&
                 returnTypeMatches(method.getReturnType(), rules.returnType()) &&
