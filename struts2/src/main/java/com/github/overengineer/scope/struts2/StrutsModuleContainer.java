@@ -27,9 +27,9 @@ public class StrutsModuleContainer extends DefaultContainer {
     }
 
     protected void init() {
-        loadModule(new CommonModule());
-        loadModule(new SessionModule());
-        loadModule(new ConversationModule());
+        loadModule(CommonModule.class);
+        loadModule(SessionModule.class);
+        loadModule(ConversationModule.class);
         add(ConversationArbitrator.class, StrutsConversationArbitrator.class);
         addStrutsInstance(ActionProvider.class);
     }

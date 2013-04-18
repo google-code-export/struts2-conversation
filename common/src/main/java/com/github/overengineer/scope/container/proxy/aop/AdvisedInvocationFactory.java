@@ -39,7 +39,7 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
             }
             cache.put(cacheKey, methodAspects);
         }
-        return new AdvisedInvocation<T>((methodAspects).iterator(), target, method, parameters);
+        return new AdvisedInvocation<T>(methodAspects.iterator(), target, method, parameters);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

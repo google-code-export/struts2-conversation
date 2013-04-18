@@ -35,9 +35,9 @@ public class DefaultContainerTest {
     @Test
     public void testLoadModule() {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
-        container.loadModule(new CommonModule());
+        container.loadModule(CommonModule.class);
 
         TimeoutMonitor monitor = container.get(TimeoutMonitor.class);
 
@@ -48,11 +48,11 @@ public class DefaultContainerTest {
     @Test
     public void testVerify_positive() throws WiringException {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
         container.verify();
 
-        container.loadModule(new CommonModule());
+        container.loadModule(CommonModule.class);
 
         container.verify();
 
@@ -61,7 +61,7 @@ public class DefaultContainerTest {
     @Test(expected = WiringException.class)
     public void testVerify_negative() throws WiringException {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
@@ -72,9 +72,38 @@ public class DefaultContainerTest {
     }
 
     @Test
+    public void testAddChild() {
+
+        Container master = Clarence.please().gimmeThatTainer();
+
+        Container common = Clarence.please().gimmeThatTainer();
+
+        Container sibling = Clarence.please().gimmeThatTainer();
+
+        common.loadModule(CommonModule.class);
+
+        master.addChild(common);
+
+        assertNotNull(common.get(TimeoutMonitor.class));
+
+        assertNotNull(master.get(TimeoutMonitor.class));
+
+        try {
+            assertNull(sibling.get(TimeoutMonitor.class));
+        } catch (MissingDependencyException e) {
+             //sup
+        }
+
+        sibling.addChild(common);
+
+        assertNotNull(sibling.get(TimeoutMonitor.class));
+
+    }
+
+    @Test
     public void testAddAndGetComponent() {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
@@ -123,8 +152,7 @@ public class DefaultContainerTest {
 
         Container container = new DefaultContainer(new DefaultComponentStrategyFactory()).addListener(Listener.class)
                 .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
-                .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4)
-                .start();
+                .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
         container.get(SchedulerProvider.class);
 
@@ -140,15 +168,12 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef() {
 
-        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory())
-                .loadModule(new ProxyModule())
-                .get(HotSwappableContainer.class);
+        HotSwappableContainer container = Clarence.please().gimmeThatProxyTainer();
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
-                .add(ICyclicRef3.class, CyclicTest3.class)
-        .start();
+                .add(ICyclicRef3.class, CyclicTest3.class);
 
         ICyclicRef c = container.get(ICyclicRef.class);
 
@@ -175,7 +200,7 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRef2() {
 
-        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class);
+        HotSwappableContainer container = Clarence.please().gimmeThatProxyTainer();
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
@@ -194,7 +219,7 @@ public class DefaultContainerTest {
     @Test
     public void testHotSwapping() throws HotSwapException {
 
-        HotSwappableContainer container = new DefaultContainer(new DefaultComponentStrategyFactory()).loadModule(new ProxyModule()).get(HotSwappableContainer.class);
+        HotSwappableContainer container = Clarence.please().gimmeThatProxyTainer();
 
         container
                 .add(ICyclicRef.class, CyclicTest.class)
@@ -212,24 +237,22 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        new DefaultContainer(new DefaultComponentStrategyFactory())
-                .loadModule(new AopModule())
-                .get(AopContainer.class)
-                .addAspect(TestInterceptor.class)
+        Clarence.please().gimmeThatAopTainer()
+                .addAspect(TestAspect.class)
                 .addAspect(Metaceptor.class)
-                .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
+                .addInstance(SchedulerProvider.class, new DefaultSchedulerProvider())
                 .add(ICyclicRef3.class, CyclicTest3.class);
     }
 
     @Pointcut(
-            paramterTypes = {Class.class, Class.class},
+            paramterTypes = {Class.class, Object.class},
             annotations = {},
             classes = {},
             classNameExpression = "*github.overengineer*",
-            methodNameExpression = "add",
+            methodNameExpression = "add*",
             returnType = Object.class
     )
-    public static class TestInterceptor implements Aspect {
+    public static class TestAspect implements Aspect {
 
         int i = 0;
 
@@ -394,7 +417,7 @@ public class DefaultContainerTest {
     public void testSingletonSpeed() throws Exception {
 
         final Container container2 = ProxyUtil.getRealComponent(new DefaultContainer(new DefaultComponentStrategyFactory())
-                .loadModule(new ProxyModule())
+                .loadModule(ProxyModule.class)
                 .get(Container.class)
                 .add(ISingleton.class, Singleton.class));
 
@@ -448,7 +471,7 @@ public class DefaultContainerTest {
     public void testCyclicRefSpeed() throws Exception {
 
         final Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
-                .loadModule(new ProxyModule())
+                .loadModule(ProxyModule.class)
                 .get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
