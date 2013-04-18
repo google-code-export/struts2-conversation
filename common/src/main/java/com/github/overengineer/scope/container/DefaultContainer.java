@@ -84,8 +84,11 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container addChild(Container container) {
-        children.add(container);
+    public Container addChild(Container child) {
+        children.add(child);
+        for (Container cascadingContainer : cascadingContainers) {
+            child.addCascadingContainer(cascadingContainer);
+        }
         return get(Container.class);
     }
 
@@ -154,6 +157,20 @@ public class DefaultContainer implements Container {
     public <T> T getProperty(Class<T> clazz, String name) {
         Object property = properties.get(name);
         if (property == null) {
+            for (Container child : children) {
+                try {
+                    return child.getProperty(clazz, name);
+                } catch (MissingDependencyException e) {
+                    //ignore
+                }
+            }
+            for (Container child : cascadingContainers) {
+                try {
+                    return child.getProperty(clazz, name);
+                } catch (MissingDependencyException e) {
+                    //ignore
+                }
+            }
             throw new MissingDependencyException("No property of name [" + name + "] has been registered with the container");
         }
         return (T) property;
