@@ -17,7 +17,7 @@ import java.util.*;
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
  * TODO throw decorationexception if a defaultinstantiator tries to reference itself
- * TODO swapping and interceptors on child containers
+ * TODO swapping on child containers
  *
  *
  * @author rees.byars
@@ -155,9 +155,6 @@ public class DefaultContainer implements Container {
         }
         for (Container child : children) {
             components.addAll(child.getAllComponents());
-        }
-        for (Container cascader : cascadingContainers) {
-            components.addAll(cascader.getAllComponents());
         }
         return components;
     }
