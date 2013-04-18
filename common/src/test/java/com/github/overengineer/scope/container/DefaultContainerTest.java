@@ -100,6 +100,12 @@ public class DefaultContainerTest {
 
         assertNotNull(sibling.get(TimeoutMonitor.class));
 
+        try {
+            common.get(TestInterceptor2.class);
+        } catch (MissingDependencyException e) {
+            //sup
+        }
+
     }
 
     @Test
