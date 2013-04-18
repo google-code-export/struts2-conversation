@@ -25,4 +25,10 @@ public interface Container extends Provider {
 
     List<Object> getAllComponents();
 
+    List<Container> getCascadingContainers();
+
+    List<Container> getChildren();
+
+    Container getReal();
+
 }

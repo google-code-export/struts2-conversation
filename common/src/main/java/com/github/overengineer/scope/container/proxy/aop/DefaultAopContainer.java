@@ -22,16 +22,40 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
     @Override
     public <A extends Aspect<?>> AopContainer addAspect(Class<A> interceptorClass) {
         ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass, initializationListeners);
+        Aspect aspect = strategy.get(this);
         aspects.add(strategy.get(this));
+        for (Container container : getChildren()) {
+            if (container instanceof AopContainer) {
+                ((AopContainer) container).getAspects().add(aspect);
+            }
+        }
+        for (Container container : getCascadingContainers()) {
+            if (container instanceof AopContainer) {
+                ((AopContainer) container).getAspects().add(aspect);
+            }
+        }
         return get(AopContainer.class);
+    }
+
+    @Override
+    public List<Aspect> getAspects() {
+        return aspects;
     }
 
     @Override
     public List<Object> getAllComponents() {
         List<Object> components = new LinkedList<Object>();
         components.addAll(super.getAllComponents());
-        for (Aspect aspect : aspects) {
-            components.add(aspect);
+        components.addAll(aspects);
+        for (Container container : getChildren()) {
+            if (container instanceof AopContainer) {
+                components.addAll(((AopContainer) container).getAspects());
+            }
+        }
+        for (Container container : getCascadingContainers()) {
+            if (container instanceof AopContainer) {
+                components.addAll(((AopContainer) container).getAspects());
+            }
         }
         return components;
     }

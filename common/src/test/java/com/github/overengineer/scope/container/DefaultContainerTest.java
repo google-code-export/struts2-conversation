@@ -96,7 +96,17 @@ public class DefaultContainerTest {
              //sup
         }
 
-        master.addCascadingContainer(common);
+        Container cascadeFuck = Clarence.please().gimmeThatTainer();
+
+        master.addCascadingContainer(cascadeFuck);
+
+        try {
+            cascadeFuck.addChild(common);
+        } catch (CircularReferenceException e) {
+
+        }
+
+        cascadeFuck.loadModule(CommonModule.class);
 
         assertNotNull(sibling.get(TimeoutMonitor.class));
 
@@ -106,13 +116,19 @@ public class DefaultContainerTest {
             //sup
         }
 
-        master.add(ISingleton.class, Singleton.class);
+        Container global = Clarence.please().gimmeThatTainer();
 
-        master.addCascadingContainer(master);
+        global.add(ISingleton.class, Singleton.class);
+
+        master.addCascadingContainer(global);
 
         sibling.get(ISingleton.class);
 
-        System.out.println(master.getAllComponents());
+        try {
+            master.get(TestInterceptor2.class);
+        } catch (MissingDependencyException e) {
+            //sup
+        }
 
     }
 
