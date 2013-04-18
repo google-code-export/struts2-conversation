@@ -28,6 +28,7 @@ public class DefaultContainer implements Container {
     protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+    protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
 
@@ -66,6 +67,15 @@ public class DefaultContainer implements Container {
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
+        }
+        return get(Container.class);
+    }
+
+    @Override
+    public Container addCascadingContainer(Container container) {
+        cascadingContainers.add(container);
+        for (Container child : children) {
+            child.addCascadingContainer(container);
         }
         return get(Container.class);
     }
@@ -116,6 +126,13 @@ public class DefaultContainer implements Container {
         Class<?> implementationType = mappings.get(clazz);
         if (implementationType == null) {
             for (Container child : children) {
+                try {
+                    return child.get(clazz);
+                } catch (MissingDependencyException e) {
+                    //ignore
+                }
+            }
+            for (Container child : cascadingContainers) {
                 try {
                     return child.get(clazz);
                 } catch (MissingDependencyException e) {

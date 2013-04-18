@@ -11,6 +11,8 @@ public interface Container extends Provider {
 
     Container loadModule(Class<? extends Module> module);
 
+    Container addCascadingContainer(Container container);
+
     Container addChild(Container container);
 
     Container addListener(Class<? extends ComponentInitializationListener> listenerClass);
