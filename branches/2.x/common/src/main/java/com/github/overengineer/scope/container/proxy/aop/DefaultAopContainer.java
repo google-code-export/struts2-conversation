@@ -29,11 +29,6 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
                 ((AopContainer) container).getAspects().add(aspect);
             }
         }
-        for (Container container : getCascadingContainers()) {
-            if (container instanceof AopContainer) {
-                ((AopContainer) container).getAspects().add(aspect);
-            }
-        }
         return get(AopContainer.class);
     }
 
@@ -48,11 +43,6 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
         components.addAll(super.getAllComponents());
         components.addAll(aspects);
         for (Container container : getChildren()) {
-            if (container instanceof AopContainer) {
-                components.addAll(((AopContainer) container).getAspects());
-            }
-        }
-        for (Container container : getCascadingContainers()) {
             if (container instanceof AopContainer) {
                 components.addAll(((AopContainer) container).getAspects());
             }
