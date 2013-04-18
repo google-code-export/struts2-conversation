@@ -84,6 +84,8 @@ public class DefaultContainerTest {
 
         master.addChild(common);
 
+        master.addChild(sibling);
+
         assertNotNull(common.get(TimeoutMonitor.class));
 
         assertNotNull(master.get(TimeoutMonitor.class));
@@ -94,7 +96,7 @@ public class DefaultContainerTest {
              //sup
         }
 
-        sibling.addChild(common);
+        master.addCascadingContainer(common);
 
         assertNotNull(sibling.get(TimeoutMonitor.class));
 
