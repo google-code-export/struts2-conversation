@@ -34,6 +34,12 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
 
+        for (Container child : children) {
+            if (child instanceof HotSwappableContainer) {
+                ((HotSwappableContainer) child).swap(target, implementationType);
+            }
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -57,6 +63,12 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         }
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
+
+        for (Container child : children) {
+            if (child instanceof HotSwappableContainer) {
+                ((HotSwappableContainer) child).swap(target, implementation);
+            }
+        }
 
     }
 }
