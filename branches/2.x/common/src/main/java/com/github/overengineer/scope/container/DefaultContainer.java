@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.container;
 
+import com.github.overengineer.scope.container.proxy.ProxyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,9 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addCascadingContainer(Container container) {
-        cascadingContainers.add(container);
+        if (!(ProxyUtil.getRealComponent(container) == this) ) {
+            cascadingContainers.add(container);
+        }
         for (Container child : children) {
             child.addCascadingContainer(container);
         }
