@@ -12,8 +12,8 @@ import java.util.*;
  * TODO scoped proxies, factories, enhance interceptor rules (@OR, @AND, @NOT)
  * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
- * TODO DecoratableContainer + LifecycleContainer
  * TODO messaging/eventing
+ * TODO named containers + MDC logging
  *
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
@@ -74,9 +74,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addCascadingContainer(Container container) {
-        if (!(ProxyUtil.getRealComponent(container) == this) ) {
-            cascadingContainers.add(container);
-        }
+        cascadingContainers.add(container);
         for (Container child : children) {
             child.addCascadingContainer(container);
         }
@@ -138,9 +136,11 @@ public class DefaultContainer implements Container {
                     //ignore
                 }
             }
-            for (Container child : cascadingContainers) {
+            for (Container container : cascadingContainers) {
                 try {
-                    return child.get(clazz);
+                    if (!(ProxyUtil.getRealComponent(container) == this) ) {
+                        return container.get(clazz);
+                    }
                 } catch (MissingDependencyException e) {
                     //ignore
                 }
