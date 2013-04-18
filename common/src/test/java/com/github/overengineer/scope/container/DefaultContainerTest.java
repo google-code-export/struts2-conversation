@@ -320,10 +320,10 @@ public class DefaultContainerTest {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory())
+                Clarence.please().gimmeThatTainer()
                         .add(IBean.class, Bean.class)
-                        .add(IBean2.class, Bean2.class);
-                container3.get(IBean.class);
+                        .add(IBean2.class, Bean2.class)
+                        .get(IBean.class);
             }
         }, threads).run(duration, primingRuns, "my container creation");
 
@@ -390,7 +390,7 @@ public class DefaultContainerTest {
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
-        final Container container3 = new DefaultContainer(new DefaultComponentStrategyFactory())
+        final Container container3 = Clarence.please().gimmeThatTainer()
                 .add(IBean.class, Bean.class)
                 .add(IBean2.class, Bean2.class);
 
@@ -448,10 +448,9 @@ public class DefaultContainerTest {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = ProxyUtil.getRealComponent(new DefaultContainer(new DefaultComponentStrategyFactory())
-                .loadModule(ProxyModule.class)
-                .get(Container.class)
-                .add(ISingleton.class, Singleton.class));
+        final Container container2 = Clarence.please().gimmeThatProxyTainer()
+                .add(ISingleton.class, Singleton.class)
+                .getReal();
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override

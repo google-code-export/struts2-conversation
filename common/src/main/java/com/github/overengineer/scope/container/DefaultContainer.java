@@ -17,8 +17,6 @@ import java.util.*;
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
  * TODO throw decorationexception if a defaultinstantiator tries to reference itself
- * TODO swapping on child containers
- *
  *
  * @author rees.byars
  */
