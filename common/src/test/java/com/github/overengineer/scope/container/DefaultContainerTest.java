@@ -106,6 +106,14 @@ public class DefaultContainerTest {
             //sup
         }
 
+        master.add(ISingleton.class, Singleton.class);
+
+        master.addCascadingContainer(master);
+
+        sibling.get(ISingleton.class);
+
+        System.out.println(master.getAllComponents());
+
     }
 
     @Test

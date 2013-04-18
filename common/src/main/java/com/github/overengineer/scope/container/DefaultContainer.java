@@ -122,6 +122,9 @@ public class DefaultContainer implements Container {
         for (ComponentStrategy strategy : strategies.values()) {
             components.add(strategy.get(this));
         }
+        for (Container child : children) {
+            components.addAll(child.getAllComponents());
+        }
         return components;
     }
 
