@@ -8,10 +8,11 @@ import java.util.*;
 /**
  *
  * TODO Features:
- * TODO nested, scoped containers and scoped proxies, factories, enhance interceptor rules (@OR, @AND, @NOT)
+ * TODO scoped proxies, factories, enhance interceptor rules (@OR, @AND, @NOT)
  * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
  * TODO DecoratableContainer + LifecycleContainer
+ * TODO messaging/eventing
  *
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
@@ -27,6 +28,7 @@ public class DefaultContainer implements Container {
     protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+    protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory) {
@@ -35,12 +37,7 @@ public class DefaultContainer implements Container {
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
-    }
-
-    @Override
-    public Container start() {
         addProperty(Properties.LISTENERS, initializationListeners);
-        return get(Container.class);
     }
 
     @Override
@@ -57,7 +54,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container loadModule(Module module) {
+    public Container loadModule(Class<? extends Module> moduleClass) {
+        Module module = strategyFactory.create(moduleClass, initializationListeners).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
                 addMapping(componentEntry.getKey(), cls);
@@ -69,6 +67,12 @@ public class DefaultContainer implements Container {
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
         }
+        return get(Container.class);
+    }
+
+    @Override
+    public Container addChild(Container container) {
+        children.add(container);
         return get(Container.class);
     }
 
@@ -98,9 +102,26 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public List<Object> getAllComponents() {
+        List<Object> components = new LinkedList<Object>();
+        components.addAll(initializationListeners);
+        for (ComponentStrategy strategy : strategies.values()) {
+            components.add(strategy.get(this));
+        }
+        return components;
+    }
+
+    @Override
     public <T> T get(Class<T> clazz) {
         Class<?> implementationType = mappings.get(clazz);
         if (implementationType == null) {
+            for (Container child : children) {
+                try {
+                    return child.get(clazz);
+                } catch (MissingDependencyException e) {
+                    //ignore
+                }
+            }
             throw new MissingDependencyException("No components of type [" + clazz.getName() + "] have been registered with the container");
         }
         @SuppressWarnings("unchecked")
