@@ -81,7 +81,9 @@ public class DefaultConversationArbitrator implements ConversationArbitrator {
     public Collection<Method> getCandidateConversationMethods(Class<?> clazz) {
         Set<Method> conversationMethods = new HashSet<Method>();
         for (Method method : ReflectionUtil.getMethods(clazz)) {
-            if (method.isAnnotationPresent(ConversationAction.class)) {
+            if (method.isAnnotationPresent(ConversationAction.class)
+                    || method.isAnnotationPresent(BeginConversation.class)
+                    || method.isAnnotationPresent(EndConversation.class)) {
                 conversationMethods.add(method);
             } else if (isConversationController(clazz) && isAction(method)) {
                 conversationMethods.add(method);
