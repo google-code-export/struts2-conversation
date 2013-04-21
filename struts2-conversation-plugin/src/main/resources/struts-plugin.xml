@@ -42,6 +42,7 @@
 	<constant name="conversation.idle.timeout" value="28800000"/>
 	<constant name="conversation.max.instances" value="20"/>
 	<constant name="conversation.monitoring.thread.pool.size" value="20"/>
+    <constant name="conversation.auto.start" value="false"/>
 	
 	<constant name="com.google.code.rees.scope.container.ScopeContainer" value="defaultScopeContainer"/>
 	<constant name="com.google.code.rees.scope.ActionProvider" value="strutsActionProvider"/>
@@ -106,6 +107,10 @@
 			<result-type 
 				name="conversationRedirect" 
 				class="com.google.code.rees.scope.struts2.ConversationRedirectResult"/>
+
+            <result-type
+                    name="conversationPrepareRedirect"
+                    class="com.google.code.rees.scope.struts2.ConversationPrepareRedirectResult"/>
 				
 		</result-types>
 	
@@ -126,6 +131,10 @@
 		</interceptors>
 		
 		<default-interceptor-ref name="defaultConversationStack" />
+
+        <global-results>
+            <result name="conversationPrepareRedirect" type="conversationPrepareRedirect"/>
+        </global-results>
 		
 	</package>
 	

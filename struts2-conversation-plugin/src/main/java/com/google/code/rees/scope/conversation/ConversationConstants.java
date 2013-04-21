@@ -33,40 +33,43 @@ public interface ConversationConstants {
 	/**
 	 * 20
 	 */
-	public static final int DEFAULT_MONITORING_THREAD_POOL_SIZE = 20;
+	int DEFAULT_MONITORING_THREAD_POOL_SIZE = 20;
 	
 	/**
 	 * 20
 	 */
-	public static final int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
+	int DEFAULT_MAXIMUM_NUMBER_OF_A_GIVEN_CONVERSATION = 20;
 	
 	/**
 	 * 8 hours
 	 */
-	public static final long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
+	long DEFAULT_CONVERSATION_MAX_IDLE_TIME = 28800000;
 	
 	/**
 	 * used as a key to identify the {@link com.google.code.rees.scope.conversation.context.ConversationContextManager ConversationContextManager} 
 	 * within the session context
 	 */
-    public static final String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
+    String CONVERSATION_CONTEXT_MANAGER_KEY = "rees.scope.conversation.context.manager.key";
     
     /**
 	 * used as a key to identify the TimeoutMonitor 
 	 * within the session context
 	 */
-    public static final String CONVERSATION_TIMEOUT_MONITOR_KEY = "rees.scope.conversation.timeout.monitor.key";
+    String CONVERSATION_TIMEOUT_MONITOR_KEY = "rees.scope.conversation.timeout.monitor.key";
     
-    public static final String CONVERSATION_NAME_SUFFIX = "_conversation";
-    public static final String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+    String CONVERSATION_NAME_SUFFIX = "_conversation";
+    String DEFAULT_CONTROLLER_SUFFIX = "Controller";
+
+    String CONVERSATION_PREPARE_REDIRECT_RESULT = "conversationPrepareRedirect";
     
     interface Properties {
 
-		public static final String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
-		public static final String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
-		public static final String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
-		public static final String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
-		public static final String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
+		String CONVERSATION_MONITORING_FREQUENCY = "conversation.monitoring.frequency";
+		String CONVERSATION_MONITORING_THREAD_POOL_SIZE = "conversation.monitoring.thread.pool.size";
+		String CONVERSATION_IDLE_TIMEOUT = "conversation.idle.timeout";
+		String CONVERSATION_MAX_INSTANCES = "conversation.max.instances";
+		String CONVERSATION_PACKAGE_NESTING_KEY = "conversation.package.nesting";
+        String CONVERSATION_AUTO_START = "conversation.auto.start";
     	
     }
     
