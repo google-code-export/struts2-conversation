@@ -13,10 +13,52 @@ import java.util.*;
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
  * TODO messaging/eventing
  * TODO named containers
+ * TODO child container impl that uses same strategy factory as parent and can remove itself from parent? makeBabay()
+ * TODO for scoped proxies - new proxy that uses a provider to obtain it's component on each request -
+ * TODO       new ThreadLocalContainer interface and DelegatingThreadLocalContainer impl
+ * TODO       new ThreadLocalContainerStrategy, so new DelegatingThreadLocalContainer(threadLocalStrategy);
+ * TODO       for instance:
+ *
+ * <pre>
+ *
+ *     class SessionScopedContainerStrategy implements ThreadLocalContainerStrategy {
+ *
+ *          SessionScopedContainerStrategy(Module ... sessionModules) {
+ *
+ *          }
+ *
+ *          public Container getContainer(String name?) {
+ *              HttpServletRequest request = RequestHolder.getRequest();
+ *              HttpSession session = request.getSession(true);
+ *              Container = session.get("session.scoped.container." + name);
+ *              if (container == null) {
+ *                  container = Clarence.please.gimmeThatTainer(sessionModules);
+ *                  session.put(...
+ *              }
+ *              return container;
+ *          }
+ *
+ *     }
+ *
+ *
+ * </pre>
+ *
+ * TODO ScopedProxyHandler(ThreadLocalContainer container)
+ * TODO
+ *
  *
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
- * TODO throw decorationexception if a defaultinstantiator tries to reference itself
+ * TODO throw decorationexception if a defaultinstantiator tries to reference
+ * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement,
+ * TODO then the aop container can just interface with its cache and that of its children
+ *
+ *
+ * TODO - Naming schemes
+ * TODO cascading container = heirloom (it's passed down from parent to child to child to child, etc.)
+ * TODO addChild = adopt - nest
+ * TODO makeChild = makeBaby
+ *
  *
  * @author rees.byars
  */
@@ -38,7 +80,6 @@ public class DefaultContainer implements Container {
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
-        addProperty(Properties.LISTENERS, initializationListeners);
     }
 
     @Override

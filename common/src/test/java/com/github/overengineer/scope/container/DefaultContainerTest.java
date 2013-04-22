@@ -269,8 +269,11 @@ public class DefaultContainerTest {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        Clarence.please().gimmeThatAopTainer()
-                .addAspect(TestAspect.class)
+        AopContainer c = Clarence.please().gimmeThatAopTainer();
+
+        c.loadModule(CommonModule.class);
+
+        c.addAspect(TestAspect.class)
                 .addAspect(Metaceptor.class)
                 .addInstance(SchedulerProvider.class, new DefaultSchedulerProvider())
                 .add(ICyclicRef3.class, CyclicTest3.class);
@@ -285,6 +288,10 @@ public class DefaultContainerTest {
             returnType = Object.class
     )
     public static class TestAspect implements Aspect {
+
+        public TestAspect(TimeoutMonitor monitor) {
+
+        }
 
         int i = 0;
 
@@ -448,7 +455,7 @@ public class DefaultContainerTest {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatProxyTainer()
+        final Container container2 = Clarence.please().gimmeThatAopTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
