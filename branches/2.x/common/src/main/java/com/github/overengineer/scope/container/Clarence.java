@@ -25,7 +25,7 @@ public class Clarence {
     }
 
     public Container gimmeThatTainer() {
-        return builder.get(Container.class);
+        return builder;
     }
 
 }
