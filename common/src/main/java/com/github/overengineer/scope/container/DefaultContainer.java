@@ -3,6 +3,7 @@ package com.github.overengineer.scope.container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -43,6 +44,30 @@ import java.util.*;
  *
  * </pre>
  *
+ *
+ *  <pre>
+ *
+ *     class MyApplication extends WebApplication {
+ *
+ *
+ *          protected void configure() {
+ *
+ *              requestScope.loadModule(...
+ *
+ *              sessionScope.loadModule(...
+ *
+ *              globalScope.loadModule(...
+ *
+ *              master.loadModule(...
+ *
+ *
+ *          }
+ *
+ *     }
+ *
+ *
+ * </pre>
+ *
  * TODO ScopedProxyHandler(ThreadLocalContainer container)
  * TODO
  *
@@ -66,7 +91,7 @@ public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    protected final Map<Class<?>, Class<?>> mappings = new HashMap<Class<?>, Class<?>>();
+    protected final Map<Key, Class<?>> mappings = new HashMap<Key, Class<?>>();
     protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
@@ -86,7 +111,7 @@ public class DefaultContainer implements Container {
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (Class<?> componentType : mappings.keySet()) {
+            for (Key componentType : mappings.keySet()) {
                 get(componentType);
             }
         } catch (Exception e) {
@@ -226,23 +251,33 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz) {
-        Class<?> implementationType = mappings.get(clazz);
+        return get(Key.Builder.fromType(clazz));
+    }
+
+    @Override
+    public <T> T get(Type type) {
+        return get(Key.Builder.fromType(type));
+    }
+
+    @Override
+    public <T> T get(Key key) {
+        Class<?> implementationType = mappings.get(key);
         if (implementationType == null) {
             for (Container child : children) {
                 try {
-                    return child.get(clazz);
+                    return child.get(key);
                 } catch (MissingDependencyException e) {
                     //ignore
                 }
             }
             for (Container container : cascadingContainers) {
                 try {
-                    return container.get(clazz);
+                    return container.get(key);
                 } catch (MissingDependencyException e) {
                     //ignore
                 }
             }
-            throw new MissingDependencyException("No components of type [" + clazz.getName() + "] have been registered with the container");
+            throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
         }
         @SuppressWarnings("unchecked")
         ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(implementationType);
@@ -279,14 +314,16 @@ public class DefaultContainer implements Container {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + type.getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
         }
 
-        Class<?> existing = mappings.get(type);
+        Key key = Key.Builder.fromType(type);
+
+        Class<?> existing = mappings.get(key);
         if (existing != null) {
             strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, initializationListeners, existing, strategies.get(existing)));
         } else {
             strategies.put(implementationType, strategyFactory.create(implementationType, initializationListeners));
         }
 
-        mappings.put(type, implementationType);
+        mappings.put(key, implementationType);
     }
 
     protected void addMapping(Class<?> type, Object implementation) {
@@ -296,7 +333,7 @@ public class DefaultContainer implements Container {
         }
 
         strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation, initializationListeners));
-        mappings.put(type, implementation.getClass());
+        mappings.put(Key.Builder.fromType(type), implementation.getClass());
     }
 
     protected boolean isTargetCascaderOfThis(Container target) {

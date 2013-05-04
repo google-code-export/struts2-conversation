@@ -16,7 +16,9 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
 
-        Class<?> currentImplementationType = mappings.get(target);
+        Key targetKey = Key.Builder.fromType(target);
+
+        Class<?> currentImplementationType = mappings.get(targetKey);
 
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(currentImplementationType);
 
@@ -46,7 +48,9 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
 
-        Class<?> currentImplementationType = mappings.get(target);
+        Key targetKey = Key.Builder.fromType(target);
+
+        Class<?> currentImplementationType = mappings.get(targetKey);
 
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(currentImplementationType);
 
