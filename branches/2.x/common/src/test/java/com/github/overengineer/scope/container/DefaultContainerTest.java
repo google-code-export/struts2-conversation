@@ -455,7 +455,7 @@ public class DefaultContainerTest {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatAopTainer()
+        final Container container2 = Clarence.please().gimmeThatProxyTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
