@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @author rees.byars
@@ -29,21 +31,21 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        Class[] parameterTypes = {};
+        Type[] genericParameterTypes = {};
         Annotation[][] annotations = {};
         for (Constructor candidateConstructor : type.getDeclaredConstructors()) {
-            Class[] candidateTypes = candidateConstructor.getParameterTypes();
-            if (candidateTypes.length >= parameterTypes.length) {
+            Type[] candidateTypes = candidateConstructor.getGenericParameterTypes();
+            if (candidateTypes.length >= genericParameterTypes.length) {
                 constructor = candidateConstructor;
-                parameterTypes = candidateTypes;
+                genericParameterTypes = candidateTypes;
                 annotations = constructor.getParameterAnnotations();
             }
         }
         constructor.setAccessible(true);
-        parameterProxies = new ParameterProxy[parameterTypes.length];
-        parameters = new Object[parameterTypes.length];
-        for (int i = 0; i < parameterTypes.length; i++) {
-            parameterProxies[i] = ParameterProxy.Factory.create(parameterTypes[i], annotations[i]);
+        parameterProxies = new ParameterProxy[genericParameterTypes.length];
+        parameters = new Object[genericParameterTypes.length];
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            parameterProxies[i] = ParameterProxy.Factory.create(genericParameterTypes[i], annotations[i]);
         }
     }
 

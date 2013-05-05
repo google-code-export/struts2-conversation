@@ -1,8 +1,5 @@
 package com.github.overengineer.scope.container.proxy.aop;
 
-import com.github.overengineer.scope.container.Properties;
-import com.github.overengineer.scope.container.Property;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
@@ -20,7 +17,7 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
     private final PointcutInterpreter rulesInterpretor;
     private transient Map<AspectCacheKey, List<Aspect>> cache = new HashMap<AspectCacheKey, List<Aspect>>();
 
-    public AdvisedInvocationFactory(@Property(Properties.ASPECTS) List<Aspect> aspects, PointcutInterpreter rulesInterpretor) {
+    public AdvisedInvocationFactory(List<Aspect> aspects, PointcutInterpreter rulesInterpretor) {
         this.aspects = aspects;
         this.rulesInterpretor = rulesInterpretor;
     }

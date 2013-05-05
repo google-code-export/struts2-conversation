@@ -12,6 +12,10 @@ public interface Module {
 
     Map<Class<?>, Object> getInstanceMappings();
 
+    Map<Key, List<Class<?>>> getGenericTypeMappings();
+
+    Map<Key, Object> getGenericInstanceMappings();
+
     Map<String, Object> getProperties();
 
 }

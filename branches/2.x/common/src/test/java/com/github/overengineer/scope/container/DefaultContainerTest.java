@@ -24,6 +24,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -176,6 +179,25 @@ public class DefaultContainerTest {
         container.addProperty("test", 69L);
 
         assertEquals((Long) 69L, container.getProperty(Long.TYPE, "test"));
+
+    }
+
+    @Test
+    public void testAddAndGetGeneric() {
+
+        Container container = Clarence.please().gimmeThatTainer();
+
+        List<String> strings = new ArrayList<String>();
+
+        List<Integer> integers = new ArrayList<Integer>();
+
+        container.addInstance(new Key.Generic<List<String>>(){}, strings);
+
+        container.addInstance(new Key.Generic<List<Integer>>(){}, integers);
+
+        assertEquals(strings, container.get(new Key.Generic<List<String>>(){}));
+
+        assertEquals(integers, container.get(new Key.Generic<List<Integer>>(){}));
 
     }
 

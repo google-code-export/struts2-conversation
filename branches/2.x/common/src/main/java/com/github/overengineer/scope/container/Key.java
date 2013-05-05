@@ -13,10 +13,23 @@ import java.lang.reflect.Type;
 public interface Key {
 
     Type getType();
+    Class getTargetClass();
 
     abstract class Generic<T> implements Key {
 
-        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        ParameterizedType parameterizedType;
+        Type type;
+        Class targetClass;
+
+        public Generic() {
+            parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+            type = parameterizedType.getActualTypeArguments()[0];
+            if (type instanceof ParameterizedType) {
+                targetClass = (Class) ((ParameterizedType) type).getRawType();
+            } else {
+                //TODO throw new KeyException("blah");
+            }
+        }
 
         @Override
         public int hashCode() {
@@ -29,8 +42,13 @@ public interface Key {
         }
 
         @Override
+        public Class getTargetClass() {
+            return targetClass;
+        }
+
+        @Override
         public boolean equals(Object object) {
-            return object instanceof Key && type == ((Key) object).getType();
+            return object instanceof Key && type.equals(((Key) object).getType());
         }
     }
 
@@ -43,14 +61,27 @@ public interface Key {
         static class DefaultKey implements Key {
 
             Type type;
+            Class targetClass;
 
             protected DefaultKey(Type type) {
                 this.type = type;
+                if (type instanceof Class) {
+                    targetClass = (Class) type;
+                } else if (type instanceof ParameterizedType) {
+                    targetClass = (Class) ((ParameterizedType) type).getRawType();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
             }
 
             @Override
             public Type getType() {
                 return type;
+            }
+
+            @Override
+            public Class getTargetClass() {
+                return targetClass;
             }
 
             @Override
@@ -60,7 +91,7 @@ public interface Key {
 
             @Override
             public boolean equals(Object object) {
-                return object instanceof Key && type == ((Key) object).getType();
+                return object instanceof Key && type.equals(((Key) object).getType());
             }
         }
     }

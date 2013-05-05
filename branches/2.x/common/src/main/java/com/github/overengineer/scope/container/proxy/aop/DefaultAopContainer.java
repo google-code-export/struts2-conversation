@@ -13,7 +13,7 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     protected final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, @Property(Properties.ASPECTS) List<Aspect> aspects) {
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, List<Aspect> aspects) {
         super(strategyFactory);
         this.aspects = aspects;
         addInstance(AopContainer.class, this);

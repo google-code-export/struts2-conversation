@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 
 /**
  * @author rees.byars
@@ -34,27 +35,28 @@ public class DecoratorInstantiator<T> implements Instantiator<T> {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        Class[] parameterTypes = {};
+        Type[] genericParameterTypes = {};
         Annotation[][] annotations = {};
         for (Constructor candidateConstructor : type.getDeclaredConstructors()) {
-            Class[] candidateTypes = candidateConstructor.getParameterTypes();
-            if (candidateTypes.length >= parameterTypes.length) {
+            Type[] candidateTypes = candidateConstructor.getGenericParameterTypes();
+            if (candidateTypes.length >= genericParameterTypes.length) {
                 constructor = candidateConstructor;
-                parameterTypes = candidateTypes;
+                genericParameterTypes = candidateTypes;
                 annotations = constructor.getParameterAnnotations();
             }
         }
         constructor.setAccessible(true);
-        parameterProxies = new ParameterProxy[parameterTypes.length];
-        parameters = new Object[parameterTypes.length];
+        parameterProxies = new ParameterProxy[genericParameterTypes.length];
+        parameters = new Object[genericParameterTypes.length];
         boolean decorated = false;
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> paramType = parameterTypes[i];
-            if (decoratorDelegateType != null && paramType.isAssignableFrom(decoratorDelegateType)) {
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            Type paramType = genericParameterTypes[i];
+            //TODO make work for generics!!!
+            if (decoratorDelegateType != null && paramType instanceof Class && ((Class)paramType).isAssignableFrom(decoratorDelegateType)) {
                 parameterProxies[i] = new DelegateProxy(decoratorDelegateStrategy);
                 decorated = true;
             } else {
-                parameterProxies[i] = ParameterProxy.Factory.create(parameterTypes[i], annotations[i]);
+                parameterProxies[i] = ParameterProxy.Factory.create(paramType, annotations[i]);
             }
         }
 

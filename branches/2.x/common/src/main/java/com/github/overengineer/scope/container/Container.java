@@ -19,7 +19,11 @@ public interface Container extends Provider {
 
     <T> Container add(Class<T> componentType, Class<? extends T> implementationType);
 
+    <T> Container add(Key key, Class<? extends T> implementationType);
+
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
+
+    <T, I extends T> Container addInstance(Key key, I implementation);
 
     Container addProperty(String propertyName, Object propertyValue);
 
