@@ -4,6 +4,7 @@ import com.github.overengineer.scope.container.*;
 import com.github.overengineer.scope.container.proxy.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author rees.byars
@@ -20,6 +21,6 @@ public class AopModule extends BaseModule {
         use(DefaultAopContainer.class).forType(Container.class);
         use(DefaultAopContainer.class).forType(HotSwappableContainer.class);
         use(DefaultAopContainer.class).forType(AopContainer.class);
-        set(Properties.ASPECTS).to(new ArrayList<Aspect>());
+        useInstance(new ArrayList<Aspect>()).forGeneric(new Key.Generic<List<Aspect>>(){});
     }
 }

@@ -131,10 +131,18 @@ public class DefaultContainer implements Container {
         Module module = strategyFactory.create(moduleClass, initializationListeners).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
-                addMapping(componentEntry.getKey(), cls);
+                addMapping(Key.Builder.fromType(componentEntry.getKey()), cls);
             }
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
+            addMapping(Key.Builder.fromType(componentEntry.getKey()), componentEntry.getValue());
+        }
+        for (Map.Entry<Key, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
+            for (Class<?> cls : componentEntry.getValue()) {
+                addMapping(componentEntry.getKey(), cls);
+            }
+        }
+        for (Map.Entry<Key, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
             addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
@@ -194,13 +202,25 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        addMapping(componentType, implementationType);
+        add(Key.Builder.fromType(componentType), implementationType);
+        return get(Container.class);
+    }
+
+    @Override
+    public <T> Container add(Key key, Class<? extends T> implementationType) {
+        addMapping(key, implementationType);
         return get(Container.class);
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        addMapping(componentType, implementation);
+        addInstance(Key.Builder.fromType(componentType), implementation);
+        return get(Container.class);
+    }
+
+    @Override
+    public <T, I extends T> Container addInstance(Key key, I implementation) {
+        addMapping(key, implementation);
         return get(Container.class);
     }
 
@@ -308,13 +328,11 @@ public class DefaultContainer implements Container {
         return (T) property;
     }
 
-    protected void addMapping(Class<?> type, Class<?> implementationType) {
+    protected void addMapping(Key key, Class<?> implementationType) {
 
-        if (!type.isInterface()) {
-            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + type.getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
+        if (!key.getTargetClass().isInterface()) {
+            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
         }
-
-        Key key = Key.Builder.fromType(type);
 
         Class<?> existing = mappings.get(key);
         if (existing != null) {
@@ -326,14 +344,14 @@ public class DefaultContainer implements Container {
         mappings.put(key, implementationType);
     }
 
-    protected void addMapping(Class<?> type, Object implementation) {
+    protected void addMapping(Key key, Object implementation) {
 
-        if (!type.isInterface()) {
-            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + type.getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
+        if (!key.getTargetClass().isInterface()) {
+            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
         }
 
         strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation, initializationListeners));
-        mappings.put(Key.Builder.fromType(type), implementation.getClass());
+        mappings.put(key, implementation.getClass());
     }
 
     protected boolean isTargetCascaderOfThis(Container target) {

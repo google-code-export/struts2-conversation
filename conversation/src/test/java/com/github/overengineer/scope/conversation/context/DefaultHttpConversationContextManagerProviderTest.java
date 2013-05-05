@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotSame;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 
+import com.github.overengineer.scope.container.Key;
 import com.github.overengineer.scope.container.Provider;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,6 +31,16 @@ public class DefaultHttpConversationContextManagerProviderTest extends
             @Override
             public <T> T get(Class<T> clazz) {
                 return (T) new DefaultConversationContextManager();
+            }
+
+            @Override
+            public <T> T get(Type type) {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public <T> T get(Key key) {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
