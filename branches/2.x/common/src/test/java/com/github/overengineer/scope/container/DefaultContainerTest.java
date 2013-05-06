@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class DefaultContainerTest {
+public class DefaultContainerTest implements Serializable {
 
     @Test
     public void testLoadModule() {
@@ -56,11 +57,17 @@ public class DefaultContainerTest {
 
         container.loadModule(CommonModule.class);
 
+        List<String> strings = new ArrayList<String>();
+
+        container.addInstance(new GenericKey<List<String>>() {}, strings);
+
         container = SerializationTestingUtil.getSerializedCopy(container);
 
         TimeoutMonitor monitor = container.get(TimeoutMonitor.class);
 
         assertNotNull(monitor);
+
+        assertEquals(strings, container.get(new GenericKey<List<String>>(){}));
     }
 
     @Test
