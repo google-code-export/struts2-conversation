@@ -4,13 +4,14 @@ import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.ProxyModule;
 import com.github.overengineer.scope.container.proxy.aop.AopContainer;
 import com.github.overengineer.scope.container.proxy.aop.AopModule;
+import com.github.overengineer.scope.container.type.DefaultKeyGenerator;
 
 /**
  * @author rees.byars
  */
 public class Clarence {
 
-    Container builder = new DefaultContainer(new DefaultComponentStrategyFactory());
+    Container builder = new DefaultContainer(new DefaultComponentStrategyFactory(), new DefaultKeyGenerator());
 
     public static Clarence please() {
         return new Clarence();

@@ -1,5 +1,7 @@
 package com.github.overengineer.scope.container;
 
+import com.github.overengineer.scope.container.type.SerializableKey;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +14,9 @@ public interface Module {
 
     Map<Class<?>, Object> getInstanceMappings();
 
-    Map<Key, List<Class<?>>> getGenericTypeMappings();
+    Map<SerializableKey, List<Class<?>>> getGenericTypeMappings();
 
-    Map<Key, Object> getGenericInstanceMappings();
+    Map<SerializableKey, Object> getGenericInstanceMappings();
 
     Map<String, Object> getProperties();
 

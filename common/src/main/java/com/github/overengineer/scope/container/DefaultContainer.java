@@ -1,5 +1,8 @@
 package com.github.overengineer.scope.container;
 
+import com.github.overengineer.scope.container.type.Key;
+import com.github.overengineer.scope.container.type.KeyGenerator;
+import com.github.overengineer.scope.container.type.SerializableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,16 +94,18 @@ public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    protected final Map<Key, Class<?>> mappings = new HashMap<Key, Class<?>>();
+    protected final Map<SerializableKey, Class<?>> mappings = new HashMap<SerializableKey, Class<?>>();
     protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
     protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
+    protected final KeyGenerator keyGenerator;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator) {
         this.strategyFactory = strategyFactory;
+        this.keyGenerator = keyGenerator;
         addInstance(Container.class, this);
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
@@ -131,18 +136,18 @@ public class DefaultContainer implements Container {
         Module module = strategyFactory.create(moduleClass, initializationListeners).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
-                addMapping(Key.Builder.fromType(componentEntry.getKey()), cls);
+                addMapping(keyGenerator.fromClass(componentEntry.getKey()), cls);
             }
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            addMapping(Key.Builder.fromType(componentEntry.getKey()), componentEntry.getValue());
+            addMapping(keyGenerator.fromClass(componentEntry.getKey()), componentEntry.getValue());
         }
-        for (Map.Entry<Key, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
+        for (Map.Entry<SerializableKey, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
                 addMapping(componentEntry.getKey(), cls);
             }
         }
-        for (Map.Entry<Key, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
+        for (Map.Entry<SerializableKey, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
             addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
@@ -202,24 +207,24 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        add(Key.Builder.fromType(componentType), implementationType);
+        add(keyGenerator.fromClass(componentType), implementationType);
         return get(Container.class);
     }
 
     @Override
-    public <T> Container add(Key key, Class<? extends T> implementationType) {
+    public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
         addMapping(key, implementationType);
         return get(Container.class);
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        addInstance(Key.Builder.fromType(componentType), implementation);
+        addInstance(keyGenerator.fromClass(componentType), implementation);
         return get(Container.class);
     }
 
     @Override
-    public <T, I extends T> Container addInstance(Key key, I implementation) {
+    public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
         addMapping(key, implementation);
         return get(Container.class);
     }
@@ -271,12 +276,12 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz) {
-        return get(Key.Builder.fromType(clazz));
+        return get(keyGenerator.fromType(clazz));
     }
 
     @Override
     public <T> T get(Type type) {
-        return get(Key.Builder.fromType(type));
+        return get(keyGenerator.fromType(type));
     }
 
     @Override
@@ -328,7 +333,7 @@ public class DefaultContainer implements Container {
         return (T) property;
     }
 
-    protected void addMapping(Key key, Class<?> implementationType) {
+    protected void addMapping(SerializableKey key, Class<?> implementationType) {
 
         if (!key.getTargetClass().isInterface()) {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
@@ -344,7 +349,7 @@ public class DefaultContainer implements Container {
         mappings.put(key, implementationType);
     }
 
-    protected void addMapping(Key key, Object implementation) {
+    protected void addMapping(SerializableKey key, Object implementation) {
 
         if (!key.getTargetClass().isInterface()) {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");

@@ -5,8 +5,8 @@ import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.ProxyModule;
-import com.github.overengineer.scope.container.proxy.ProxyUtil;
 import com.github.overengineer.scope.container.proxy.aop.*;
+import com.github.overengineer.scope.container.type.GenericKey;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -157,7 +157,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetInstance() {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
         SchedulerProvider given = new DefaultSchedulerProvider();
 
@@ -174,7 +174,7 @@ public class DefaultContainerTest {
     @Test
     public void testAddAndGetProperty() {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory());
+        Container container = Clarence.please().gimmeThatTainer();
 
         container.addProperty("test", 69L);
 
@@ -191,20 +191,21 @@ public class DefaultContainerTest {
 
         List<Integer> integers = new ArrayList<Integer>();
 
-        container.addInstance(new Key.Generic<List<String>>(){}, strings);
+        container.addInstance(new GenericKey<List<String>>(){}, strings);
 
-        container.addInstance(new Key.Generic<List<Integer>>(){}, integers);
+        container.addInstance(new GenericKey<List<Integer>>(){}, integers);
 
-        assertEquals(strings, container.get(new Key.Generic<List<String>>(){}));
+        assertEquals(strings, container.get(new GenericKey<List<String>>() {
+        }));
 
-        assertEquals(integers, container.get(new Key.Generic<List<Integer>>(){}));
+        assertEquals(integers, container.get(new GenericKey<List<Integer>>(){}));
 
     }
 
     @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = new DefaultContainer(new DefaultComponentStrategyFactory()).addListener(Listener.class)
+        Container container = Clarence.please().gimmeThatTainer().addListener(Listener.class)
                 .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
                 .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
@@ -530,7 +531,7 @@ public class DefaultContainerTest {
     @Test
     public void testCyclicRefSpeed() throws Exception {
 
-        final Container container = new DefaultContainer(new DefaultComponentStrategyFactory())
+        final Container container = Clarence.please().gimmeThatTainer()
                 .loadModule(ProxyModule.class)
                 .get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)

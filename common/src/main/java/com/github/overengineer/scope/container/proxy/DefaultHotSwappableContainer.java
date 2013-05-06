@@ -1,14 +1,16 @@
 package com.github.overengineer.scope.container.proxy;
 
 import com.github.overengineer.scope.container.*;
+import com.github.overengineer.scope.container.type.Key;
+import com.github.overengineer.scope.container.type.KeyGenerator;
 
 /**
  * @author rees.byars
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory) {
-        super(strategyFactory);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator) {
+        super(strategyFactory, keyGenerator);
         addInstance(HotSwappableContainer.class, this);
     }
 
@@ -16,7 +18,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
 
-        Key targetKey = Key.Builder.fromType(target);
+        Key targetKey = keyGenerator.fromType(target);
 
         Class<?> currentImplementationType = mappings.get(targetKey);
 
@@ -48,7 +50,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
 
-        Key targetKey = Key.Builder.fromType(target);
+        Key targetKey = keyGenerator.fromType(target);
 
         Class<?> currentImplementationType = mappings.get(targetKey);
 
