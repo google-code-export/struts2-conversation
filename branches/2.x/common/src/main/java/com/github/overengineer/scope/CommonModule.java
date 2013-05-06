@@ -1,7 +1,7 @@
 package com.github.overengineer.scope;
 
 import com.github.overengineer.scope.bijection.BijectorImplFactory;
-import com.github.overengineer.scope.container.BaseModule;
+import com.github.overengineer.container.BaseModule;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;

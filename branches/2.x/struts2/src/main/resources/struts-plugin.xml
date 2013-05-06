@@ -43,7 +43,7 @@
     <constant name="conversation.max.instances" value="20"/>
     <constant name="overengineer.monitoring.thread.pool.size" value="20"/>
 
-    <constant name="com.github.overengineer.scope.container.Provider" value="defaultScopeContainer"/>
+    <constant name="com.github.overengineer.container.Provider" value="defaultScopeContainer"/>
     <constant name="com.github.overengineer.scope.ActionProvider" value="strutsActionProvider"/>
 
     <bean name="default"
@@ -51,7 +51,7 @@
           class="com.github.overengineer.scope.struts2.StrutsScopeContainerProvider"/>
 
     <bean name="defaultScopeContainer"
-          type="com.github.overengineer.scope.container.Provider"
+          type="com.github.overengineer.container.Provider"
           class="com.github.overengineer.scope.struts2.StrutsModuleContainer"/>
 
     <bean name="strutsActionProvider"

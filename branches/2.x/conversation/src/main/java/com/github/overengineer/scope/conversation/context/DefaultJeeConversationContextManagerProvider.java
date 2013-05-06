@@ -26,11 +26,11 @@ package com.github.overengineer.scope.conversation.context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.github.overengineer.scope.container.ComponentProvider;
+import com.github.overengineer.container.ComponentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.container.Component;
 
 /**
  * The default implementation of the

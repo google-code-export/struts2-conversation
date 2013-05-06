@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.container.Provider;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 

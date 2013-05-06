@@ -4,9 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean class="com.github.overengineer.scope.container.Bean" scope="prototype">
-        <constructor-arg ref="com.github.overengineer.scope.container.Bean2"/>
+    <bean class="com.github.overengineer.container.Bean" scope="prototype">
+        <constructor-arg ref="com.github.overengineer.container.Bean2"/>
     </bean>
-    <bean class="com.github.overengineer.scope.container.Bean2" scope="prototype"/>
+    <bean class="com.github.overengineer.container.Bean2" scope="prototype"/>
 
 </beans>

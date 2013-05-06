@@ -30,7 +30,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.overengineer.scope.container.ComponentProvider;
+import com.github.overengineer.container.ComponentProvider;
 import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

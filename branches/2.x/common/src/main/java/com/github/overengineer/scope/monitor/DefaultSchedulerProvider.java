@@ -8,8 +8,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.overengineer.scope.CommonConstants.Properties;
-import com.github.overengineer.scope.container.PostConstructable;
-import com.github.overengineer.scope.container.Property;
+import com.github.overengineer.container.PostConstructable;
+import com.github.overengineer.container.Property;
 
 public class DefaultSchedulerProvider implements SchedulerProvider, PostConstructable {
 
