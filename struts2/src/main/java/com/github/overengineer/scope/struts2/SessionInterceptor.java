@@ -23,7 +23,7 @@
  ******************************************************************************/
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.container.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

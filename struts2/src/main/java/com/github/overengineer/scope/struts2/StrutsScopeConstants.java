@@ -37,6 +37,6 @@ public interface StrutsScopeConstants {
     String CONVERSATION_ID_MAP_STACK_KEY = "conversationIdMapStackKey";
     String SESSION_FIELD_MAP_KEY = "session.field.map";
 
-    String SCOPE_CONTAINER_KEY = "com.github.overengineer.scope.container.Provider";
+    String SCOPE_CONTAINER_KEY = "com.github.overengineer.container.Provider";
 
 }

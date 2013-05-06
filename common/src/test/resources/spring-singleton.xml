@@ -5,6 +5,6 @@
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-    <bean class="com.github.overengineer.scope.container.DefaultContainerTest$Singleton"/>
+    <bean class="com.github.overengineer.container.DefaultContainerTest$Singleton"/>
 
 </beans>

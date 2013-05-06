@@ -29,7 +29,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.overengineer.scope.container.Provider;
+import com.github.overengineer.container.Provider;
 import com.github.overengineer.scope.struts2.StrutsScopeContainerProvider;
 import org.apache.struts2.StrutsStatics;
 

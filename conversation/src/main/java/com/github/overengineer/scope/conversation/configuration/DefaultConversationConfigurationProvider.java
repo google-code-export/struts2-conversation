@@ -37,9 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.scope.container.Component;
-import com.github.overengineer.scope.container.PostConstructable;
-import com.github.overengineer.scope.container.Property;
+import com.github.overengineer.container.Component;
+import com.github.overengineer.container.PostConstructable;
+import com.github.overengineer.container.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;

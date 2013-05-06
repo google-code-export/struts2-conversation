@@ -28,7 +28,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.container.Component;
+import com.github.overengineer.container.Component;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.annotations.ConversationField;

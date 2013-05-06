@@ -2,9 +2,9 @@ package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
-import com.github.overengineer.scope.container.DefaultComponentStrategyFactory;
-import com.github.overengineer.scope.container.DefaultContainer;
-import com.github.overengineer.scope.container.key.DefaultKeyGenerator;
+import com.github.overengineer.container.DefaultComponentStrategyFactory;
+import com.github.overengineer.container.DefaultContainer;
+import com.github.overengineer.container.key.DefaultKeyGenerator;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.session.SessionModule;

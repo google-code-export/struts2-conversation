@@ -68,6 +68,7 @@
         <module>struts2-conversation-config-browser-extension</module>
         <module>struts2-junit4-plugin</module>
         <module>conversation-expression</module>
+        <module>container</module>
     </modules>
 
     <properties>
