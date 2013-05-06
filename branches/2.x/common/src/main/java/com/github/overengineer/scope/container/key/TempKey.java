@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container.type;
+package com.github.overengineer.scope.container.key;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

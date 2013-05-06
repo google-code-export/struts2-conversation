@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.type.Key;
+import com.github.overengineer.scope.container.key.Key;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;

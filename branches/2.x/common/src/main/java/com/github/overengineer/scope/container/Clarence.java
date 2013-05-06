@@ -4,7 +4,7 @@ import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.ProxyModule;
 import com.github.overengineer.scope.container.proxy.aop.AopContainer;
 import com.github.overengineer.scope.container.proxy.aop.AopModule;
-import com.github.overengineer.scope.container.type.DefaultKeyGenerator;
+import com.github.overengineer.scope.container.key.DefaultKeyGenerator;
 
 /**
  * @author rees.byars

@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container.type;
+package com.github.overengineer.scope.container.key;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;

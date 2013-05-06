@@ -1,8 +1,8 @@
 package com.github.overengineer.scope.container.proxy;
 
 import com.github.overengineer.scope.container.*;
-import com.github.overengineer.scope.container.type.Key;
-import com.github.overengineer.scope.container.type.KeyGenerator;
+import com.github.overengineer.scope.container.key.Key;
+import com.github.overengineer.scope.container.key.KeyGenerator;
 
 /**
  * @author rees.byars

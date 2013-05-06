@@ -6,7 +6,7 @@ import com.github.overengineer.scope.container.proxy.HotSwapException;
 import com.github.overengineer.scope.container.proxy.HotSwappableContainer;
 import com.github.overengineer.scope.container.proxy.ProxyModule;
 import com.github.overengineer.scope.container.proxy.aop.*;
-import com.github.overengineer.scope.container.type.GenericKey;
+import com.github.overengineer.scope.container.key.GenericKey;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
@@ -223,6 +223,55 @@ public class DefaultContainerTest implements Serializable {
         assertEquals(integers, container.get(new GenericKey<List<Integer>>(){}));
 
     }
+
+    @Test
+    public void testRegisterFactory() {
+
+        Container container = Clarence.please().gimmeThatTainer();
+
+        container.loadModule(CommonModule.class);
+
+        container.registerFactory(new GenericKey<Factory<TimeoutMonitor>>(){});
+
+        Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
+
+        assert timeoutMonitorFactory.create() != null;
+
+        container.add(IConstructorTest.class, FactoryTest.class);
+
+        IConstructorTest i = container.get(IConstructorTest.class);
+
+        assertEquals(timeoutMonitorFactory, ((FactoryTest) i).timeoutMonitorFactory);
+
+        /* TODO - replace class references with Key references!!!
+
+        container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryDecorator.class);
+
+        timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
+
+        assert timeoutMonitorFactory.create() != null;
+
+        assert timeoutMonitorFactory instanceof FactoryDecorator;
+
+        */
+
+    }
+
+    public static interface Factory<T>{
+        T create();
+    }
+
+    public static class FactoryTest implements IConstructorTest {
+
+        Factory<TimeoutMonitor> timeoutMonitorFactory;
+
+        public FactoryTest(Factory<TimeoutMonitor> timeoutMonitorFactory) {
+            this.timeoutMonitorFactory = timeoutMonitorFactory;
+        }
+
+
+    }
+
 
     @Test(expected = Assertion.class)
     public void testAddListener() {

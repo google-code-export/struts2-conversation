@@ -1,11 +1,11 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.type.Key;
-import com.github.overengineer.scope.container.type.KeyGenerator;
-import com.github.overengineer.scope.container.type.SerializableKey;
+import com.github.overengineer.scope.container.factory.DefaultFactoryFactory;
+import com.github.overengineer.scope.container.key.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -153,6 +153,9 @@ public class DefaultContainer implements Container {
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
         }
+        for (SerializableKey factoryKey : module.getRegisteredFactories()) {
+            registerFactory(factoryKey);
+        }
         return get(Container.class);
     }
 
@@ -227,6 +230,16 @@ public class DefaultContainer implements Container {
     public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
         addMapping(key, implementation);
         return get(Container.class);
+    }
+
+    @Override
+    public Container registerFactory(SerializableKey factoryKey) {
+        //TODO perform checks and throw informative exceptions, inject factory factory
+        Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
+        SerializableKey targetKey = KeyUtil.getMatchingKey(keyGenerator.fromType(producedType), mappings.keySet());
+        Container me = get(Container.class);
+        addInstance(factoryKey, new DefaultFactoryFactory().createFactory(factoryKey.getTargetClass(), targetKey, me));
+        return me;
     }
 
     @Override
