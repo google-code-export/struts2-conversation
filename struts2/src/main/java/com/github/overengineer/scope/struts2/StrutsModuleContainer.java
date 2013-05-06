@@ -4,7 +4,7 @@ import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.container.DefaultComponentStrategyFactory;
 import com.github.overengineer.scope.container.DefaultContainer;
-import com.github.overengineer.scope.container.type.DefaultKeyGenerator;
+import com.github.overengineer.scope.container.key.DefaultKeyGenerator;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.session.SessionModule;

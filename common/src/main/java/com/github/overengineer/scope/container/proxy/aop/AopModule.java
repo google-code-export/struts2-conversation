@@ -2,9 +2,9 @@ package com.github.overengineer.scope.container.proxy.aop;
 
 import com.github.overengineer.scope.container.*;
 import com.github.overengineer.scope.container.proxy.*;
-import com.github.overengineer.scope.container.type.DefaultKeyGenerator;
-import com.github.overengineer.scope.container.type.GenericKey;
-import com.github.overengineer.scope.container.type.KeyGenerator;
+import com.github.overengineer.scope.container.key.DefaultKeyGenerator;
+import com.github.overengineer.scope.container.key.GenericKey;
+import com.github.overengineer.scope.container.key.KeyGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

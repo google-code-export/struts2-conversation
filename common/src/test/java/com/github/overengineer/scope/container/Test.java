@@ -15,21 +15,6 @@ public class Test {
 
     }
 
-    /*
-        TODO
-        two types of factories allowed:     (1) register a generic, paramterized factory interface
-                                                (this means single factory interface, but multiple component interfaces)
-                                                module.registerGenericFactory(...);
-
-                                            (2) register a factory interface per with a specific target target type
-                                                (this means multiple factory interfaces, but single component interface)
-                                                module.mapFactory(...).toType(...);
-
-
-
-
-     */
-
     public static void main(String... args) throws Exception {
         Field stringListField = Test.class.getDeclaredField("stringList");
         ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();

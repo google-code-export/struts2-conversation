@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 
-import com.github.overengineer.scope.container.type.Key;
+import com.github.overengineer.scope.container.key.Key;
 import com.github.overengineer.scope.container.Provider;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

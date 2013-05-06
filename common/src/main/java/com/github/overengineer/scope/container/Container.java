@@ -1,7 +1,6 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.type.Key;
-import com.github.overengineer.scope.container.type.SerializableKey;
+import com.github.overengineer.scope.container.key.SerializableKey;
 
 import java.util.List;
 
@@ -28,11 +27,7 @@ public interface Container extends Provider {
 
     <T, I extends T> Container addInstance(SerializableKey key, I implementation);
 
-    /*Container registerFactory(Generic factoryKey);
-
-    Container registerFactory(Generic factoryKey, Class producedTypeInterface);
-
-    Container registerFactory(Generic factoryKey, Key producedTypeKey);*/
+    Container registerFactory(SerializableKey factoryKey);
 
     Container addProperty(String propertyName, Object propertyValue);
 

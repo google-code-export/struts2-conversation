@@ -2,7 +2,7 @@ package com.github.overengineer.scope.container.proxy.aop;
 
 import com.github.overengineer.scope.container.*;
 import com.github.overengineer.scope.container.proxy.DefaultHotSwappableContainer;
-import com.github.overengineer.scope.container.type.KeyGenerator;
+import com.github.overengineer.scope.container.key.KeyGenerator;
 
 import java.util.LinkedList;
 import java.util.List;

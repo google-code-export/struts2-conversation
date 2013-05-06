@@ -1,7 +1,7 @@
 package com.github.overengineer.scope.container.factory;
 
 import com.github.overengineer.scope.container.Provider;
-import com.github.overengineer.scope.container.type.Key;
+import com.github.overengineer.scope.container.key.Key;
 
 /**
  * a FactoryFactory that removes the need for all other FactoryFactories

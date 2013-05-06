@@ -1,7 +1,7 @@
 package com.github.overengineer.scope.container;
 
-import com.github.overengineer.scope.container.type.GenericKey;
-import com.github.overengineer.scope.container.type.SerializableKey;
+import com.github.overengineer.scope.container.key.GenericKey;
+import com.github.overengineer.scope.container.key.SerializableKey;
 
 import java.util.*;
 
@@ -14,6 +14,7 @@ public class BaseModule implements Module {
     private final Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
     private final Map<SerializableKey, List<Class<?>>> genericTypeMappings = new LinkedHashMap<SerializableKey, List<Class<?>>>();
     private final Map<SerializableKey, Object> genericInstanceMappings = new LinkedHashMap<SerializableKey, Object>();
+    private final Set<SerializableKey> registeredFactories = new LinkedHashSet<SerializableKey>();
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     @Override
@@ -37,20 +38,29 @@ public class BaseModule implements Module {
     }
 
     @Override
+    public Set<SerializableKey> getRegisteredFactories() {
+        return registeredFactories;
+    }
+
+    @Override
     public final Map<String, Object> getProperties() {
         return properties;
     }
 
-    public <V> TypeMapper<V> use(Class<V> implementationClass) {
+    protected  <V> TypeMapper<V> use(Class<V> implementationClass) {
         return new TypeMapper<V>(implementationClass);
     }
 
-    public <V> InstanceMapper<V> useInstance(V instance) {
+    protected  <V> InstanceMapper<V> useInstance(V instance) {
         return new InstanceMapper<V>(instance);
     }
 
-    public PropertyMapper set(String name) {
+    protected PropertyMapper set(String name) {
         return new PropertyMapper(name);
+    }
+
+    protected void registerFactory(GenericKey factoryKey) {
+        registeredFactories.add(factoryKey);
     }
 
     public class TypeMapper<V> {

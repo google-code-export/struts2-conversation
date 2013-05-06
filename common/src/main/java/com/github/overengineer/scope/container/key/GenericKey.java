@@ -1,4 +1,4 @@
-package com.github.overengineer.scope.container.type;
+package com.github.overengineer.scope.container.key;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
  */
 public abstract class GenericKey<T> implements SerializableKey {
 
-    private transient ParameterizedType parameterizedType;
     private transient Type type;
     private transient Class targetClass;
 
@@ -20,7 +19,7 @@ public abstract class GenericKey<T> implements SerializableKey {
     }
 
     private void init() {
-        parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         type = parameterizedType.getActualTypeArguments()[0];
         if (type instanceof ParameterizedType) {
             targetClass = (Class) ((ParameterizedType) type).getRawType();
