@@ -1,5 +1,8 @@
 package com.github.overengineer.scope.container;
 
+import com.github.overengineer.scope.container.type.GenericKey;
+import com.github.overengineer.scope.container.type.SerializableKey;
+
 import java.util.*;
 
 /**
@@ -9,8 +12,8 @@ public class BaseModule implements Module {
 
     private final Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
     private final Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
-    private final Map<Key, List<Class<?>>> genericTypeMappings = new LinkedHashMap<Key, List<Class<?>>>();
-    private final Map<Key, Object> genericInstanceMappings = new LinkedHashMap<Key, Object>();
+    private final Map<SerializableKey, List<Class<?>>> genericTypeMappings = new LinkedHashMap<SerializableKey, List<Class<?>>>();
+    private final Map<SerializableKey, Object> genericInstanceMappings = new LinkedHashMap<SerializableKey, Object>();
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     @Override
@@ -24,12 +27,12 @@ public class BaseModule implements Module {
     }
 
     @Override
-    public Map<Key, List<Class<?>>> getGenericTypeMappings() {
+    public Map<SerializableKey, List<Class<?>>> getGenericTypeMappings() {
         return genericTypeMappings;
     }
 
     @Override
-    public Map<Key, Object> getGenericInstanceMappings() {
+    public Map<SerializableKey, Object> getGenericInstanceMappings() {
         return genericInstanceMappings;
     }
 
@@ -64,7 +67,7 @@ public class BaseModule implements Module {
             mappings.add(value);
             return this;
         }
-        public TypeMapper<V> forGeneric(Key.Generic key) {
+        public TypeMapper<V> forGeneric(GenericKey key) {
             List<Class<?>> mappings = genericTypeMappings.get(key);
             if (mappings == null) {
                 mappings = new LinkedList<Class<?>>();
@@ -84,7 +87,7 @@ public class BaseModule implements Module {
             instanceMappings.put(key, value);
             return this;
         }
-        public InstanceMapper<V> forGeneric(Key.Generic key) {
+        public InstanceMapper<V> forGeneric(GenericKey key) {
             genericInstanceMappings.put(key, value);
             return this;
         }
