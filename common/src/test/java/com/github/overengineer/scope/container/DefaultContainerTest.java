@@ -12,6 +12,7 @@ import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
 import com.github.overengineer.scope.testutil.ConcurrentExecutionAssistant;
+import com.github.overengineer.scope.testutil.SerializationTestingUtil;
 import com.google.inject.*;
 import com.google.inject.Injector;
 import org.junit.Test;
@@ -46,6 +47,20 @@ public class DefaultContainerTest {
 
         assertNotNull(monitor);
 
+    }
+
+    @Test
+    public void testSerialization() {
+
+        Container container = Clarence.please().gimmeThatTainer();
+
+        container.loadModule(CommonModule.class);
+
+        container = SerializationTestingUtil.getSerializedCopy(container);
+
+        TimeoutMonitor monitor = container.get(TimeoutMonitor.class);
+
+        assertNotNull(monitor);
     }
 
     @Test
