@@ -1,8 +1,9 @@
 package com.github.overengineer.container.factory;
 
 import com.github.overengineer.container.Provider;
-import com.github.overengineer.container.key.Key;
+import com.github.overengineer.container.key.SerializableKey;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -14,11 +15,11 @@ public class DefaultFactoryFactory implements FactoryFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T createFactory(final Class<T> factoryInterface, final Key producedTypeKey, final Provider provider) {
+    public <T> T createFactory(final Class<T> factoryInterface, final SerializableKey producedTypeKey, final Provider provider) {
         DynamicFactory<T> dynamicFactory = new DynamicFactory<T>(factoryInterface, producedTypeKey, provider);
         T proxy = (T) Proxy.newProxyInstance(
                 provider.getClass().getClassLoader(),
-                new Class[]{factoryInterface},
+                new Class[]{factoryInterface, Serializable.class},
                 dynamicFactory
         );
         dynamicFactory.proxy = proxy;
@@ -28,11 +29,11 @@ public class DefaultFactoryFactory implements FactoryFactory {
     static class DynamicFactory<T> implements InvocationHandler  {
 
         private final Class<T> factoryInterface;
-        private final Key producedTypeKey;
+        private final SerializableKey producedTypeKey;
         private final Provider provider;
         T proxy;
 
-        DynamicFactory(Class<T> factoryInterface, Key producedTypeKey, Provider provider) {
+        DynamicFactory(Class<T> factoryInterface, SerializableKey producedTypeKey, Provider provider) {
             this.factoryInterface = factoryInterface;
             this.producedTypeKey = producedTypeKey;
             this.provider = provider;
