@@ -1,6 +1,7 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.DefaultFactoryFactory;
+import com.github.overengineer.container.factory.DefaultMetaFactory;
+import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.key.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,14 +103,19 @@ public class DefaultContainer implements Container {
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyGenerator keyGenerator;
+    protected final MetaFactory metaFactory;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator, MetaFactory metaFactory) {
         this.strategyFactory = strategyFactory;
         this.keyGenerator = keyGenerator;
+        this.metaFactory = metaFactory;
         addInstance(Container.class, this);
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
+        addInstance(ComponentStrategyFactory.class, strategyFactory);
+        addInstance(KeyGenerator.class, keyGenerator);
+        addInstance(MetaFactory.class, metaFactory);
     }
 
     @Override
@@ -234,11 +240,11 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container registerFactory(SerializableKey factoryKey) {
-        //TODO perform checks and throw informative exceptions, inject factory factory
+        //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = KeyUtil.getMatchingKey(keyGenerator.fromType(producedType), mappings.keySet());
         Container me = get(Container.class);
-        addInstance(factoryKey, new DefaultFactoryFactory().createFactory(factoryKey.getTargetClass(), targetKey, me));
+        addInstance(factoryKey, metaFactory.createFactory(factoryKey.getTargetClass(), targetKey, me));
         return me;
     }
 

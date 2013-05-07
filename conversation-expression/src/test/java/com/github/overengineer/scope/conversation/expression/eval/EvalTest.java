@@ -28,7 +28,7 @@ public abstract class EvalTest {
     protected String mockConversationId = "1";
     protected MockHttpServletRequest request = new MockHttpServletRequest();
     protected DefaultConversationContextManager contextManager = new DefaultConversationContextManager();
-    protected MockConversationAdapter adapter = MockConversationAdapter.init(request, new DefaultJeeConversationContextManagerProvider() {
+    protected MockConversationAdapter adapter = MockConversationAdapter.init(request, new DefaultJeeConversationContextManagerProvider(null) {
 
         private static final long serialVersionUID = 1L;
 

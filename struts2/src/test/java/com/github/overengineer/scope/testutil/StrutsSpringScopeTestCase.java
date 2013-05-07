@@ -16,7 +16,6 @@ public abstract class StrutsSpringScopeTestCase<T> extends StrutsSpringTest<T> {
     @Override
     public void beforeResult(ActionInvocation invocation, String resultCode) {
         final ConversationAdapter adapter = ConversationAdapter.getAdapter();
-        ;
         ConversationAdapter.setAdapter(new ConversationAdapter() {
 
             private static final long serialVersionUID = 1L;
