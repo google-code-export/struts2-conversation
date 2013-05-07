@@ -13,6 +13,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.github.overengineer</groupId>
+            <artifactId>container</artifactId>
+        </dependency>
+
         <!-- Optional, Provided Scope Dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>

@@ -1,16 +1,10 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.scope.CommonConstants;
-import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.*;
 import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
-import com.github.overengineer.scope.monitor.ScheduledExecutorTimeoutMonitor;
-import com.github.overengineer.scope.monitor.SchedulerProvider;
-import com.github.overengineer.scope.monitor.TimeoutMonitor;
 import com.google.inject.*;
 import com.google.inject.Injector;
 import org.junit.Test;
@@ -22,6 +16,12 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import scope.CommonConstants;
+import scope.CommonModule;
+import scope.monitor.DefaultSchedulerProvider;
+import scope.monitor.ScheduledExecutorTimeoutMonitor;
+import scope.monitor.SchedulerProvider;
+import scope.monitor.TimeoutMonitor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
