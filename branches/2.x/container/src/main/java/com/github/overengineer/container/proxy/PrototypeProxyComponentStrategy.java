@@ -3,6 +3,9 @@ package com.github.overengineer.container.proxy;
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.Provider;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 /**
  * @author rees.byars
  */
@@ -11,7 +14,7 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
     private final Class<?> type;
     private final ComponentStrategy<T> delegateStrategy;
     private final ProxyHandlerFactory handlerFactory;
-    private final ThreadLocal<ProxyHandlerHolder> handlerHolder = new ThreadLocal<ProxyHandlerHolder>();
+    private transient ThreadLocal<ProxyHandlerHolder> handlerHolder = new ThreadLocal<ProxyHandlerHolder>();
 
     public PrototypeProxyComponentStrategy(Class<?> type, ComponentStrategy<T> delegateStrategy, ProxyHandlerFactory handlerFactory) {
         this.type = type;
@@ -50,6 +53,11 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
 
         }
 
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        handlerHolder = new ThreadLocal<ProxyHandlerHolder>();
     }
 
     class ProxyHandlerHolder {

@@ -51,9 +51,12 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSerialization() {
 
-        Container container = Clarence.please().gimmeThatTainer();
+        AopContainer container = Clarence.please().gimmeThatAopTainer();
 
         container.loadModule(CommonModule.class);
+
+        container.addAspect(TestAspect.class)
+                .addAspect(Metaceptor.class);
 
         List<String> strings = new ArrayList<String>();
 
@@ -410,8 +413,8 @@ public class DefaultContainerTest implements Serializable {
 
 
     int threads = 4;
-    long duration = 1000;
-    long primingRuns = 1000;
+    long duration = 5000;
+    long primingRuns = 10000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {

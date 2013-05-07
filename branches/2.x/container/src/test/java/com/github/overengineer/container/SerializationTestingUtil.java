@@ -17,6 +17,7 @@ public class SerializationTestingUtil {
             oos.writeObject(target);
             oos.close();
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             fail("Object could not be serialized:  " + ioe.getMessage());
         }
 
