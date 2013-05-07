@@ -4,7 +4,8 @@ package com.github.overengineer.container;
  */
 public class TestModule extends BaseModule {
 
-    public TestModule() {
+    @Override
+    protected void configure() {
 
         use(Bean.class).forType(IBean.class);
 

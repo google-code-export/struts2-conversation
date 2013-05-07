@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * @author rees.byars
  */
-public class BaseModule implements Module {
+public abstract class BaseModule implements Module {
 
     private final Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
     private final Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
@@ -16,6 +16,10 @@ public class BaseModule implements Module {
     private final Map<SerializableKey, Object> genericInstanceMappings = new LinkedHashMap<SerializableKey, Object>();
     private final Set<SerializableKey> registeredFactories = new LinkedHashSet<SerializableKey>();
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
+
+    public BaseModule() {
+        configure();
+    }
 
     @Override
     public final Map<Class<?>, List<Class<?>>> getTypeMappings() {
@@ -46,6 +50,8 @@ public class BaseModule implements Module {
     public final Map<String, Object> getProperties() {
         return properties;
     }
+
+    protected abstract void configure();
 
     protected  <V> TypeMapper<V> use(Class<V> implementationClass) {
         return new TypeMapper<V>(implementationClass);

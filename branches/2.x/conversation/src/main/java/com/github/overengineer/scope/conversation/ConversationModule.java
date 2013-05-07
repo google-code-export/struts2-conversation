@@ -18,7 +18,8 @@ import com.github.overengineer.scope.conversation.processing.InjectionConversati
 
 public class ConversationModule extends BaseModule {
 
-    public ConversationModule() {
+    @Override
+    protected void configure() {
 
         use(DefaultConversationConfigurationProvider.class).forType(ConversationConfigurationProvider.class);
         use(DefaultConversationArbitrator.class).forType(ConversationArbitrator.class);

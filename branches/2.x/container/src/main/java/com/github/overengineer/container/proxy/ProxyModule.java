@@ -12,7 +12,8 @@ import com.github.overengineer.container.key.KeyGenerator;
  */
 public class ProxyModule extends BaseModule {
 
-    public ProxyModule() {
+    @Override
+    protected void configure() {
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(DefaultKeyGenerator.class).forType(KeyGenerator.class);

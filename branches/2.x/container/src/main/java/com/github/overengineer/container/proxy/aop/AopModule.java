@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class AopModule extends BaseModule {
 
-    public AopModule() {
+    @Override
+    protected void configure() {
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(ProxyComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
