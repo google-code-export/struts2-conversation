@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.Provider;
+import com.github.overengineer.scope.Factory;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
@@ -23,32 +24,12 @@ public class DefaultHttpConversationContextManagerProviderTest extends
     @Test
     public void testGetManager() throws IOException, ClassNotFoundException {
 
-        DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider();
-
-        managerProvider.setComponentProvider(new Provider() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public <T> T get(Class<T> clazz) {
-                return (T) new DefaultConversationContextManager();
-            }
+        DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider(new Factory<ConversationContextManager>() {
 
             @Override
-            public <T> T get(Type type) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            public ConversationContextManager create() {
+                return new DefaultConversationContextManager();
             }
-
-            @Override
-            public <T> T get(Key key) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public <T> T getProperty(Class<T> clazz, String name) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
         });
 
         MockHttpServletRequest request1 = new MockHttpServletRequest();

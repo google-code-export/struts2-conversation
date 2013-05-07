@@ -26,7 +26,7 @@ package com.github.overengineer.scope.conversation.context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.github.overengineer.container.ComponentProvider;
+import com.github.overengineer.scope.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +44,10 @@ public class DefaultJeeConversationContextManagerProvider implements JeeConversa
 
     private static Logger LOG = LoggerFactory.getLogger(DefaultJeeConversationContextManagerProvider.class);
 
-    protected ComponentProvider componentProvider;
+    protected Factory<ConversationContextManager> contextManagerFactory;
 
-    @Component
-    public void setComponentProvider(ComponentProvider componentProvider) {
-        this.componentProvider = componentProvider;
+    public DefaultJeeConversationContextManagerProvider(Factory<ConversationContextManager> contextManagerFactory) {
+        this.contextManagerFactory = contextManagerFactory;
     }
 
     /**
@@ -68,7 +67,7 @@ public class DefaultJeeConversationContextManagerProvider implements JeeConversa
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating new ConversationContextManager for session with ID [{}]  ", session.getId());
         }
-        ConversationContextManager contextManager = componentProvider.get(ConversationContextManager.class);
+        ConversationContextManager contextManager = contextManagerFactory.create();
         JeeConversationUtil.setContextManager(session, contextManager);
         return contextManager;
     }

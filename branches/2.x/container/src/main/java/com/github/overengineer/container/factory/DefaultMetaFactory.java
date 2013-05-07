@@ -11,11 +11,11 @@ import java.lang.reflect.Proxy;
 /**
  * @author rees.byars
  */
-public class DefaultFactoryFactory implements FactoryFactory {
+public class DefaultMetaFactory implements MetaFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T createFactory(final Class<T> factoryInterface, final SerializableKey producedTypeKey, final Provider provider) {
+    public <T> T createFactory(final Class factoryInterface, final SerializableKey producedTypeKey, final Provider provider) {
         DynamicFactory<T> dynamicFactory = new DynamicFactory<T>(factoryInterface, producedTypeKey, provider);
         T proxy = (T) Proxy.newProxyInstance(
                 provider.getClass().getClassLoader(),

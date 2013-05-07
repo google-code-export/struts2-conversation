@@ -1,6 +1,7 @@
 package com.github.overengineer.container.proxy;
 
 import com.github.overengineer.container.*;
+import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyGenerator;
 
@@ -9,8 +10,8 @@ import com.github.overengineer.container.key.KeyGenerator;
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator) {
-        super(strategyFactory, keyGenerator);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator, MetaFactory metaFactory) {
+        super(strategyFactory, keyGenerator, metaFactory);
         addInstance(HotSwappableContainer.class, this);
     }
 

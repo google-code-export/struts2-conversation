@@ -1,6 +1,8 @@
 package com.github.overengineer.scope.conversation;
 
 import com.github.overengineer.container.BaseModule;
+import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.scope.Factory;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -27,6 +29,8 @@ public class ConversationModule extends BaseModule {
         use(DefaultJeeConversationContextManagerProvider.class).forType(JeeConversationContextManagerProvider.class);
         use(DefaultConversationContextFactory.class).forType(ConversationContextFactory.class);
         use(TimeoutConversationContextManager.class).forType(ConversationContextManager.class);
+
+        registerFactory(new GenericKey<Factory<ConversationContextManager>>(){});
 
         set(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
         set(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);

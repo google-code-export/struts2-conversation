@@ -1,5 +1,6 @@
 package com.github.overengineer.scope.struts2;
 
+import com.github.overengineer.container.factory.DefaultMetaFactory;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.container.DefaultComponentStrategyFactory;
@@ -18,7 +19,7 @@ public class StrutsModuleContainer extends DefaultContainer {
     private Container container;
 
     public StrutsModuleContainer() {
-        super(new DefaultComponentStrategyFactory(), new DefaultKeyGenerator());
+        super(new DefaultComponentStrategyFactory(), new DefaultKeyGenerator(), new DefaultMetaFactory());
     }
 
     @Inject
