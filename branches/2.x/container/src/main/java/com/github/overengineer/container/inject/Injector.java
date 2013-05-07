@@ -9,10 +9,9 @@ import java.util.Set;
 import com.github.overengineer.container.Component;
 import com.github.overengineer.container.Property;
 import com.github.overengineer.container.Provider;
+import com.github.overengineer.container.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**
  * @author rees.byars
