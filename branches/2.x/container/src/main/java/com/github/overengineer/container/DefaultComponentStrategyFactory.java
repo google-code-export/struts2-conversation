@@ -2,10 +2,7 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.inject.CompositeInjector;
 import com.github.overengineer.container.inject.InjectorFactory;
-import com.github.overengineer.container.instantiate.DecoratorInstantiator;
-import com.github.overengineer.container.instantiate.DefaultInstantiator;
-import com.github.overengineer.container.instantiate.Instantiator;
-import com.github.overengineer.container.instantiate.ParameterProxyFactory;
+import com.github.overengineer.container.instantiate.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     @Override
     public <T> ComponentStrategy<T> create(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = new DefaultInstantiator<T>(implementationType, parameterProxyFactory);
+        Instantiator<T> instantiator = new DefaultInstantiator<T>(implementationType, new DefaultParameterProvider(parameterProxyFactory));
         if (implementationType.isAnnotationPresent(Prototype.class)) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
@@ -44,7 +41,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     @Override
     public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = new DecoratorInstantiator<T>(implementationType, parameterProxyFactory, delegateClass, delegateStrategy);
+        Instantiator<T> instantiator = new DefaultInstantiator<T>(implementationType, new DecoratorParameterProvider(parameterProxyFactory, delegateClass, delegateStrategy));
         if (implementationType.isAnnotationPresent(Prototype.class)) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {

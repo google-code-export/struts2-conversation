@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 
 /**
  * @author rees.byars
@@ -19,33 +17,20 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstantiator.class);
 
     private final Class<T> type;
-    private final ParameterProxyFactory parameterProxyFactory;
+    private final ParameterProxyProvider parameterProxyProvider;
     private transient Constructor<T> constructor;
-    private transient ParameterProxy[] parameterProxies;
     private transient Object[] parameters;
 
-    public DefaultInstantiator(Class<T> type, ParameterProxyFactory parameterProxyFactory) {
+    public DefaultInstantiator(Class<T> type, ParameterProxyProvider parameterProxyProvider) {
         this.type = type;
-        this.parameterProxyFactory = parameterProxyFactory;
-        this.init();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void init() {
-        constructor = new DefaultConstructorResolver().resolveConstructor(type, new ConstructorResolver.Callback() {
-            @Override
-            public void onResolution(Type[] genericParameterTypes, Annotation[][] annotations) {
-                parameterProxies = new ParameterProxy[genericParameterTypes.length];
-                parameters = new Object[genericParameterTypes.length];
-                for (int i = 0; i < genericParameterTypes.length; i++) {
-                    parameterProxies[i] = parameterProxyFactory.create(genericParameterTypes[i], annotations[i]);
-                }
-            }
-        });
+        this.parameterProxyProvider = parameterProxyProvider;
+        constructor = new DefaultConstructorResolver().resolveConstructor(type, parameterProxyProvider);
+        parameters = new Object[parameterProxyProvider.getParameterProxies().length];
     }
 
     @Override
     public T getInstance(Provider provider) {
+        ParameterProxy[] parameterProxies = parameterProxyProvider.getParameterProxies();
         try {
             if (LOG.isDebugEnabled() && parameterProxies.length > 0) {
                 LOG.debug("Performing constructor injection on component of type [{}]", type);
@@ -61,6 +46,7 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        this.init();
+        constructor = new DefaultConstructorResolver().resolveConstructor(type, parameterProxyProvider);
+        parameters = new Object[parameterProxyProvider.getParameterProxies().length];
     }
 }
