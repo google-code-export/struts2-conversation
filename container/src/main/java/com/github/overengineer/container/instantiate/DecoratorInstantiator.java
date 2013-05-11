@@ -38,36 +38,31 @@ public class DecoratorInstantiator<T> implements Instantiator<T> {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        Type[] genericParameterTypes = {};
-        Annotation[][] annotations = {};
-        for (Constructor candidateConstructor : type.getDeclaredConstructors()) {
-            Type[] candidateTypes = candidateConstructor.getGenericParameterTypes();
-            if (candidateTypes.length >= genericParameterTypes.length) {
-                constructor = candidateConstructor;
-                genericParameterTypes = candidateTypes;
-                annotations = constructor.getParameterAnnotations();
-            }
-        }
-        constructor.setAccessible(true);
-        parameterProxies = new ParameterProxy[genericParameterTypes.length];
-        parameters = new Object[genericParameterTypes.length];
-        boolean decorated = false;
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            Type paramType = genericParameterTypes[i];
-            //TODO make work for generics!!! need to compare keys
-            if (decoratorDelegateType != null && KeyUtil.getClass(paramType).isAssignableFrom(decoratorDelegateType)) {
-                parameterProxies[i] = new DelegateProxy(decoratorDelegateStrategy);
-                decorated = true;
-            } else {
-                parameterProxies[i] = parameterProxyFactory.create(paramType, annotations[i]);
-            }
-        }
+        constructor = new DefaultConstructorResolver().resolveConstructor(type, new ConstructorResolver.Callback() {
+            @Override
+            public void onResolution(Type[] genericParameterTypes, Annotation[][] annotations) {
+                parameterProxies = new ParameterProxy[genericParameterTypes.length];
+                parameters = new Object[genericParameterTypes.length];
+                boolean decorated = false;
+                for (int i = 0; i < genericParameterTypes.length; i++) {
+                    Type paramType = genericParameterTypes[i];
+                    //TODO make work for generics!!! need to compare keys
+                    if (decoratorDelegateType != null && KeyUtil.getClass(paramType).isAssignableFrom(decoratorDelegateType)) {
+                        parameterProxies[i] = new DelegateProxy(decoratorDelegateStrategy);
+                        decorated = true;
+                    } else {
+                        parameterProxies[i] = parameterProxyFactory.create(paramType, annotations[i]);
+                    }
+                }
 
-        //to prevent memory leaks in the case of millions of hot swaps
-        if (!decorated) {
-            this.decoratorDelegateStrategy = null;
-            this.decoratorDelegateType = null;
-        }
+                //to prevent memory leaks in the case of millions of hot swaps
+                if (!decorated) {
+                    DecoratorInstantiator.this.decoratorDelegateStrategy = null;
+                    DecoratorInstantiator.this.decoratorDelegateType = null;
+                }
+            }
+        });
+
     }
 
     @Override
