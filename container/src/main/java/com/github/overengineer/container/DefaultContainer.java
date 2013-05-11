@@ -1,6 +1,5 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.DefaultMetaFactory;
 import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.key.*;
 import org.slf4j.Logger;

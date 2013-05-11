@@ -10,8 +10,4 @@ public class ReflectionUtil {
         return method.getName().startsWith("set") && method.getParameterTypes().length == 1 && method.getReturnType() == Void.TYPE;
     }
 
-    public static boolean isPropertyType(Class<?> type) {
-        return type == String.class || type.isPrimitive();
-    }
-
 }

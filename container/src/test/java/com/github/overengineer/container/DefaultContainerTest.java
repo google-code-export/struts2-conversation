@@ -9,6 +9,7 @@ import com.google.inject.*;
 import com.google.inject.Injector;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
+import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.behaviors.Storing;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -244,6 +245,8 @@ public class DefaultContainerTest implements Serializable {
 
         assertEquals(timeoutMonitorFactory, ((FactoryTest) i).timeoutMonitorFactory);
 
+        System.out.println(timeoutMonitorFactory);
+
         /* TODO - replace class references with Key references!!!
 
         container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryDecorator.class);
@@ -414,7 +417,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 1000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
@@ -503,7 +506,7 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "my plain prototype");
 
-        final PicoContainer picoContainer = new DefaultPicoContainer()
+        final MutablePicoContainer picoContainer = new DefaultPicoContainer()
                 .addComponent(IBean.class, Bean.class)
                 .addComponent(IBean2.class, Bean2.class);
 

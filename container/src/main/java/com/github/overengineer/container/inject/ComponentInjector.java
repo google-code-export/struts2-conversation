@@ -1,6 +1,7 @@
 package com.github.overengineer.container.inject;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import com.github.overengineer.container.Provider;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ public final class ComponentInjector<T> extends BaseInjector<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentInjector.class);
 
-    public ComponentInjector(Method setter, Class<?> type) {
+    public ComponentInjector(Method setter, Type type) {
         super(setter, type);
     }
 
@@ -25,7 +26,7 @@ public final class ComponentInjector<T> extends BaseInjector<T> {
             }
             setter.invoke(component, dependency);
         } catch (Exception e) {
-            throw new InjectionException("Could not set component of type [" + type.getName() + "] on component of type [" + component.getClass().getName() + "] using setter [" + setter.getName() + "]", e);
+            throw new InjectionException("Could not set component of type [" + type + "] on component of type [" + component.getClass().getName() + "] using setter [" + setter.getName() + "]", e);
         }
     }
 
