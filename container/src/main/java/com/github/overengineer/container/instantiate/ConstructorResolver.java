@@ -12,7 +12,7 @@ public interface ConstructorResolver extends Serializable {
 
     <T> Constructor<T> resolveConstructor(Class<T> type, Callback callback);
 
-    interface Callback {
+    interface Callback extends Serializable {
         void onResolution(Type[] genericParameterTypes, Annotation[][] annotations);
     }
 
