@@ -3,6 +3,8 @@ package com.github.overengineer.container.instantiate;
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.inject.InjectionException;
+import com.github.overengineer.container.key.KeyUtil;
+import com.github.overengineer.container.key.TempKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +53,8 @@ public class DecoratorInstantiator<T> implements Instantiator<T> {
         boolean decorated = false;
         for (int i = 0; i < genericParameterTypes.length; i++) {
             Type paramType = genericParameterTypes[i];
-            //TODO make work for generics!!!
-            if (decoratorDelegateType != null && paramType instanceof Class && ((Class)paramType).isAssignableFrom(decoratorDelegateType)) {
+            //TODO make work for generics!!! need to compare keys
+            if (decoratorDelegateType != null && KeyUtil.getClass(paramType).isAssignableFrom(decoratorDelegateType)) {
                 parameterProxies[i] = new DelegateProxy(decoratorDelegateStrategy);
                 decorated = true;
             } else {

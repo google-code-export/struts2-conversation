@@ -1,6 +1,12 @@
 package com.github.overengineer.container;
 
 import com.github.overengineer.container.factory.DefaultMetaFactory;
+import com.github.overengineer.container.factory.MetaFactory;
+import com.github.overengineer.container.inject.DefaultInjectorFactory;
+import com.github.overengineer.container.inject.InjectorFactory;
+import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
+import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.AopContainer;
@@ -12,11 +18,17 @@ import com.github.overengineer.container.key.DefaultKeyGenerator;
  */
 public class Clarence {
 
-    Container builder =
-            new DefaultContainer(
-                    new DefaultComponentStrategyFactory(),
-                    new DefaultKeyGenerator(),
-                    new DefaultMetaFactory());
+    MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+    InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter);
+    ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory);
+    KeyGenerator keyGenerator = new DefaultKeyGenerator();
+    MetaFactory metaFactory = new DefaultMetaFactory();
+    Container builder = new DefaultContainer(strategyFactory, keyGenerator, metaFactory);
+
+    {
+        builder.addInstance(MetadataAdapter.class, metadataAdapter);
+        builder.addInstance(InjectorFactory.class, injectorFactory);
+    }
 
     public static Clarence please() {
         return new Clarence();
