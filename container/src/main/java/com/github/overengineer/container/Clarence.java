@@ -4,6 +4,8 @@ import com.github.overengineer.container.factory.DefaultMetaFactory;
 import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
+import com.github.overengineer.container.instantiate.DefaultParameterProxyFactory;
+import com.github.overengineer.container.instantiate.ParameterProxyFactory;
 import com.github.overengineer.container.key.KeyGenerator;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
@@ -20,7 +22,8 @@ public class Clarence {
 
     MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
     InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter);
-    ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory);
+    ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter);
+    ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory, parameterProxyFactory);
     KeyGenerator keyGenerator = new DefaultKeyGenerator();
     MetaFactory metaFactory = new DefaultMetaFactory();
     Container builder = new DefaultContainer(strategyFactory, keyGenerator, metaFactory);
@@ -28,6 +31,7 @@ public class Clarence {
     {
         builder.addInstance(MetadataAdapter.class, metadataAdapter);
         builder.addInstance(InjectorFactory.class, injectorFactory);
+        builder.addInstance(ParameterProxyFactory.class, parameterProxyFactory);
     }
 
     public static Clarence please() {

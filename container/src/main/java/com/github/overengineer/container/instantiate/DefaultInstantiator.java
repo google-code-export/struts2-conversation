@@ -19,12 +19,14 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstantiator.class);
 
     private final Class<T> type;
+    private final ParameterProxyFactory parameterProxyFactory;
     private transient Constructor<T> constructor;
     private transient ParameterProxy[] parameterProxies;
     private transient Object[] parameters;
 
-    public DefaultInstantiator(Class<T> type) {
+    public DefaultInstantiator(Class<T> type, ParameterProxyFactory parameterProxyFactory) {
         this.type = type;
+        this.parameterProxyFactory = parameterProxyFactory;
         this.init();
     }
 
@@ -44,7 +46,7 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
         parameterProxies = new ParameterProxy[genericParameterTypes.length];
         parameters = new Object[genericParameterTypes.length];
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            parameterProxies[i] = ParameterProxy.Factory.create(genericParameterTypes[i], annotations[i]);
+            parameterProxies[i] = parameterProxyFactory.create(genericParameterTypes[i], annotations[i]);
         }
     }
 
