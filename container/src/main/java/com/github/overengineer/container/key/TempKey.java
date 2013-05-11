@@ -1,6 +1,5 @@
 package com.github.overengineer.container.key;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -13,13 +12,7 @@ public class TempKey implements Key {
 
     public TempKey(Type type) {
         this.type = type;
-        if (type instanceof Class) {
-            targetClass = (Class) type;
-        } else if (type instanceof ParameterizedType) {
-            targetClass = (Class) ((ParameterizedType) type).getRawType();
-        } else {
-            throw new UnsupportedOperationException("The type [" + type + "] is currently unsupported");
-        }
+        targetClass = KeyUtil.getClass(type);
     }
 
     @Override

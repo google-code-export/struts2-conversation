@@ -247,17 +247,17 @@ public class DefaultContainerTest implements Serializable {
 
         System.out.println(timeoutMonitorFactory);
 
-        /* TODO - replace class references with Key references!!!
+        //TODO - replace class references with Key references!!!
 
-        container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryDecorator.class);
+        container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
 
         timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
 
         assert timeoutMonitorFactory.create() != null;
 
-        assert timeoutMonitorFactory instanceof FactoryDecorator;
+        assert timeoutMonitorFactory instanceof FactoryTest;
 
-        */
+
 
     }
 
@@ -265,7 +265,7 @@ public class DefaultContainerTest implements Serializable {
         T create();
     }
 
-    public static class FactoryTest implements IConstructorTest {
+    public static class FactoryTest implements IConstructorTest, Factory {
 
         Factory<TimeoutMonitor> timeoutMonitorFactory;
 
@@ -273,7 +273,10 @@ public class DefaultContainerTest implements Serializable {
             this.timeoutMonitorFactory = timeoutMonitorFactory;
         }
 
-
+        @Override
+        public Object create() {
+            return timeoutMonitorFactory.create();
+        }
     }
 
 
