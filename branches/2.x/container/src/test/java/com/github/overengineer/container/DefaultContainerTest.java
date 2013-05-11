@@ -420,7 +420,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 1000000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {

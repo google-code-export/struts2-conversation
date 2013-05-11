@@ -32,22 +32,16 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        Type[] genericParameterTypes = {};
-        Annotation[][] annotations = {};
-        for (Constructor candidateConstructor : type.getDeclaredConstructors()) {
-            Type[] candidateTypes = candidateConstructor.getGenericParameterTypes();
-            if (candidateTypes.length >= genericParameterTypes.length) {
-                constructor = candidateConstructor;
-                genericParameterTypes = candidateTypes;
-                annotations = constructor.getParameterAnnotations();
+        constructor = new DefaultConstructorResolver().resolveConstructor(type, new ConstructorResolver.Callback() {
+            @Override
+            public void onResolution(Type[] genericParameterTypes, Annotation[][] annotations) {
+                parameterProxies = new ParameterProxy[genericParameterTypes.length];
+                parameters = new Object[genericParameterTypes.length];
+                for (int i = 0; i < genericParameterTypes.length; i++) {
+                    parameterProxies[i] = parameterProxyFactory.create(genericParameterTypes[i], annotations[i]);
+                }
             }
-        }
-        constructor.setAccessible(true);
-        parameterProxies = new ParameterProxy[genericParameterTypes.length];
-        parameters = new Object[genericParameterTypes.length];
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            parameterProxies[i] = parameterProxyFactory.create(genericParameterTypes[i], annotations[i]);
-        }
+        });
     }
 
     @Override
