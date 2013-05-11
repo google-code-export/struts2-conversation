@@ -47,7 +47,7 @@ public class DefaultMetaFactory implements MetaFactory {
             } else if ("hashCode".equals(methodName)) {
                 return System.identityHashCode(proxy);
             } else if ("toString".equals(methodName)) {
-                return proxy.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(this));
+                return proxy.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(this)) + "_x_DYNAMIC_FACTORY_x_[" + factoryInterface + "]_produces_[" + producedTypeKey.getType() + "]";
             }
             return provider.get(producedTypeKey);
         }

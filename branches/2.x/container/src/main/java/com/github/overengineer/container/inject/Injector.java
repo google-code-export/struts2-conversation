@@ -2,13 +2,14 @@ package com.github.overengineer.container.inject;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.Property;
 import com.github.overengineer.container.Provider;
+import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
+import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +33,16 @@ public interface Injector<T> extends Serializable {
 
             LOG.trace("Building injectors for component of type [{}]", implementationType.getName());
 
+            MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+
             Set<Injector<T>> injectors = new HashSet<Injector<T>>();
             for (Method method : implementationType.getMethods()) {
                 if (ReflectionUtil.isPublicSetter(method)) {
-                    Class<?> type = method.getParameterTypes()[0];
-                    if (ReflectionUtil.isPropertyType(type) && method.isAnnotationPresent(Property.class)) {
-                        Property property = method.getAnnotation(Property.class);
-                        injectors.add(new PropertyInjector<T>(method, property.value(), type));
-                    } else if (method.isAnnotationPresent(Component.class)) {
+                    Type type = method.getGenericParameterTypes()[0];
+                    String propertyName = metadataAdapter.getPropertyName(method);
+                    if (propertyName != null) {
+                        injectors.add(new PropertyInjector<T>(method, propertyName, type));
+                    } else if (metadataAdapter.isComponentSetter(method)) {
                         injectors.add(new ComponentInjector<T>(method, type));
                     }
                 }
