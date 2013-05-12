@@ -1,6 +1,7 @@
 package com.github.overengineer.container.inject;
 
 import com.github.overengineer.container.Provider;
+import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.util.ReflectionUtil;
 
@@ -15,9 +16,11 @@ import java.util.Set;
 public class DefaultInjectorFactory implements InjectorFactory {
 
     private final MetadataAdapter metadataAdapter;
+    private final KeyRepository keyRepository;
 
-    public DefaultInjectorFactory(MetadataAdapter metadataAdapter) {
+    public DefaultInjectorFactory(MetadataAdapter metadataAdapter, KeyRepository keyRepository) {
         this.metadataAdapter = metadataAdapter;
+        this.keyRepository = keyRepository;
     }
 
     @Override
@@ -26,11 +29,12 @@ public class DefaultInjectorFactory implements InjectorFactory {
         for (Method method : implementationType.getMethods()) {
             if (ReflectionUtil.isPublicSetter(method)) {
                 Type type = method.getGenericParameterTypes()[0];
+                Class cls = method.getParameterTypes()[0];
                 String propertyName = metadataAdapter.getPropertyName(method);
                 if (propertyName != null) {
-                    injectors.add(new PropertyInjector<T>(method, propertyName, type));
+                    injectors.add(new PropertyInjector<T>(method, propertyName, cls));
                 } else if (metadataAdapter.isComponentSetter(method)) {
-                    injectors.add(new ComponentInjector<T>(method, type));
+                    injectors.add(new ComponentInjector<T>(method, cls, keyRepository.retrieveKey(type)));
                 }
             }
         }

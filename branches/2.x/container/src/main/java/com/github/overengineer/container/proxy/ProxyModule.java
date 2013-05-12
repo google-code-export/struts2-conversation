@@ -18,11 +18,8 @@ public class ProxyModule extends BaseModule {
 
     @Override
     protected void configure() {
-        use(DefaultMetadataAdapter.class).forType(MetadataAdapter.class);
-        use(DefaultInjectorFactory.class).forType(InjectorFactory.class);
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
-        use(DefaultKeyRepository.class).forType(KeyRepository.class);
         use(ProxyComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(DefaultHotSwappableContainer.class).forType(Container.class);
         use(DefaultHotSwappableContainer.class).forType(HotSwappableContainer.class);

@@ -23,8 +23,8 @@ public class Clarence {
 
     {
         MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
-        InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter);
         KeyRepository keyRepository = new DefaultKeyRepository();
+        InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, keyRepository);
         ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
         ConstructorResolver constructorResolver = new DefaultConstructorResolver();
         InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
