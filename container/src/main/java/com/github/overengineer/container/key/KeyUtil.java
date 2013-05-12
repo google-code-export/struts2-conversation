@@ -9,15 +9,6 @@ import java.util.Set;
  */
 public class KeyUtil {
 
-    public static SerializableKey getMatchingKey(Key toMatch, Set<SerializableKey> toMatchFrom) {
-        for (SerializableKey key : toMatchFrom) {
-            if (key.equals(toMatch)) {
-                return key;
-            }
-        }
-        return null;
-    }
-
     public static Class getClass(Type type) {
         if (type instanceof Class) {
             return (Class) type;

@@ -20,12 +20,8 @@ public class AopModule extends BaseModule {
 
     @Override
     protected void configure() {
-        use(DefaultMetadataAdapter.class).forType(MetadataAdapter.class);
-        use(DefaultInjectorFactory.class).forType(InjectorFactory.class);
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
-        use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(ProxyComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
-        use(DefaultKeyRepository.class).forType(KeyRepository.class);
         use(JdkAopProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(AdvisedInvocationFactory.class).forType(JoinPointInvocationFactory.class);
         use(DefaultPointcutInterpreter.class).forType(PointcutInterpreter.class);

@@ -54,6 +54,12 @@ public class DefaultContainerTest implements Serializable {
 
         AopContainer container = Clarence.please().gimmeThatAopTainer();
 
+        container.add(IBean.class, Bean3.class);
+
+        container.add(IBean2.class, Bean2.class);
+
+        container.addInstance(new GenericKey<List<Integer>>() {}, new ArrayList<Integer>());
+
         container.loadModule(CommonModule.class);
 
         container.addAspect(TestAspect.class)
@@ -70,6 +76,8 @@ public class DefaultContainerTest implements Serializable {
         assertNotNull(monitor);
 
         assertEquals(strings, container.get(new GenericKey<List<String>>(){}));
+
+        assertNotNull(container.get(IBean.class));
     }
 
     @Test
@@ -249,8 +257,6 @@ public class DefaultContainerTest implements Serializable {
 
         System.out.println(timeoutMonitorFactory);
 
-        //TODO - replace class references with Key references!!!
-
         container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
 
         timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
@@ -422,7 +428,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 1000000;
+    long primingRuns = 10000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {

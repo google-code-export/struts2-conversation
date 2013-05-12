@@ -1,5 +1,8 @@
 package com.github.overengineer.container.key;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +25,7 @@ public class DefaultKeyRepository implements KeyRepository {
     }
 
     @Override
-    public SerializableKey retrieveKey(Type type) {
+    public SerializableKey retrieveKey(final Type type) {
         Key temp = new TempKey(type);
         SerializableKey key = keys.get(temp);
         if (key != null) {
@@ -31,7 +34,35 @@ public class DefaultKeyRepository implements KeyRepository {
         if (type instanceof Class) {
             return retrieveKey((Class) type);
         }
-        throw new UnsupportedOperationException("No key exists for type [" + type + "]");
+        if (type instanceof ParameterizedType) {
+            return new LazyDelegatingKey(type);
+        }
+        throw new UnsupportedOperationException("Unsupported injection type [" + type + "]");
     }
+
+    public class LazyDelegatingKey extends DelegatingSerializableKey {
+
+        private SerializableKey key;
+        private transient Type type;
+
+        private LazyDelegatingKey(Type type) {
+            this.type = type;
+        }
+
+        @Override
+        protected SerializableKey getDelegateKey() {
+            if (key == null) {
+                key = keys.get(new TempKey(type));
+            }
+            return key;
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException {
+            getDelegateKey();
+            out.defaultWriteObject();
+        }
+
+    }
+
 
 }
