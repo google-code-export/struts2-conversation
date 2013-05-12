@@ -198,11 +198,13 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testAddAndGetProperty() {
 
-        Container container = Clarence.please().gimmeThatTainer();
+        Container container = Clarence.please().gimmeThatAopTainer();
 
         container.addProperty("test", 69L);
 
         assertEquals((Long) 69L, container.getProperty(Long.TYPE, "test"));
+
+        container.get(ComponentStrategyFactory.class);
 
     }
 

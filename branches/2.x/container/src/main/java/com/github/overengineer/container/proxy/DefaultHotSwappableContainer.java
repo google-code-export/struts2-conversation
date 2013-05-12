@@ -2,16 +2,16 @@ package com.github.overengineer.container.proxy;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.factory.MetaFactory;
-import com.github.overengineer.container.key.Key;
-import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.key.SerializableKey;
 
 /**
  * @author rees.byars
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator, MetaFactory metaFactory) {
-        super(strategyFactory, keyGenerator, metaFactory);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
+        super(strategyFactory, keyRepository, metaFactory);
         addInstance(HotSwappableContainer.class, this);
     }
 
@@ -19,7 +19,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
 
-        Key targetKey = keyGenerator.fromType(target);
+        SerializableKey targetKey = keyRepository.retrieveKey(target);
 
         Class<?> currentImplementationType = mappings.get(targetKey);
 
@@ -51,7 +51,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
 
-        Key targetKey = keyGenerator.fromType(target);
+        SerializableKey targetKey = keyRepository.retrieveKey(target);
 
         Class<?> currentImplementationType = mappings.get(targetKey);
 

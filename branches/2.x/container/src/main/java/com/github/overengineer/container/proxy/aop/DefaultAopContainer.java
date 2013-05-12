@@ -3,7 +3,7 @@ package com.github.overengineer.container.proxy.aop;
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
-import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.key.KeyRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +15,8 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     protected final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator, MetaFactory metaFactory, List<Aspect> aspects) {
-        super(strategyFactory, keyGenerator, metaFactory);
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<Aspect> aspects) {
+        super(strategyFactory, keyRepository, metaFactory);
         this.aspects = aspects;
         addInstance(AopContainer.class, this);
     }

@@ -4,34 +4,42 @@ import com.github.overengineer.container.factory.DefaultMetaFactory;
 import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
-import com.github.overengineer.container.instantiate.DefaultParameterProxyFactory;
-import com.github.overengineer.container.instantiate.ParameterProxyFactory;
-import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.instantiate.*;
+import com.github.overengineer.container.key.DefaultKeyRepository;
+import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.AopContainer;
 import com.github.overengineer.container.proxy.aop.AopModule;
-import com.github.overengineer.container.key.DefaultKeyGenerator;
 
 /**
  * @author rees.byars
  */
 public class Clarence {
 
-    MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
-    InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter);
-    ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter);
-    ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory, parameterProxyFactory);
-    KeyGenerator keyGenerator = new DefaultKeyGenerator();
-    MetaFactory metaFactory = new DefaultMetaFactory();
-    Container builder = new DefaultContainer(strategyFactory, keyGenerator, metaFactory);
+    private Container builder;
 
     {
+        MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+        InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter);
+        KeyRepository keyRepository = new DefaultKeyRepository();
+        ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
+        ConstructorResolver constructorResolver = new DefaultConstructorResolver();
+        InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
+        ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory, instantiatorFactory);
+
+        MetaFactory metaFactory = new DefaultMetaFactory();
+        builder = new DefaultContainer(strategyFactory, keyRepository, metaFactory);
         builder.addInstance(MetadataAdapter.class, metadataAdapter);
         builder.addInstance(InjectorFactory.class, injectorFactory);
         builder.addInstance(ParameterProxyFactory.class, parameterProxyFactory);
+        builder.addInstance(ConstructorResolver.class, constructorResolver);
+        builder.addInstance(InstantiatorFactory.class, instantiatorFactory);
+        builder.addInstance(KeyRepository.class, keyRepository);
+        builder.addInstance(MetaFactory.class, metaFactory);
+        builder.addInstance(ComponentStrategyFactory.class, strategyFactory);
     }
 
     public static Clarence please() {
@@ -39,11 +47,11 @@ public class Clarence {
     }
 
     public HotSwappableContainer gimmeThatProxyTainer() {
-        return builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class);
+        return (HotSwappableContainer) builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class).addChild(builder);
     }
 
     public AopContainer gimmeThatAopTainer() {
-        return builder.loadModule(AopModule.class).get(AopContainer.class);
+        return (AopContainer) builder.loadModule(AopModule.class).get(AopContainer.class).addChild(builder);
     }
 
     public Container gimmeThatTainer() {

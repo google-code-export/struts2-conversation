@@ -24,7 +24,7 @@ public abstract class GenericKey<T> implements SerializableKey {
         if (type instanceof ParameterizedType) {
             targetClass = (Class) ((ParameterizedType) type).getRawType();
         } else {
-            //TODO throw new KeyException("blah");
+            throw new UnsupportedOperationException("The GenericKey is invalid [" + type + "]");
         }
     }
 
