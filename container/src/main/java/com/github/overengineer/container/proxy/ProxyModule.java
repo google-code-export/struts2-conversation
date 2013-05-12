@@ -6,8 +6,8 @@ import com.github.overengineer.container.Container;
 import com.github.overengineer.container.DefaultComponentStrategyFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
-import com.github.overengineer.container.key.DefaultKeyGenerator;
-import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.key.DefaultKeyRepository;
+import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 
@@ -22,7 +22,7 @@ public class ProxyModule extends BaseModule {
         use(DefaultInjectorFactory.class).forType(InjectorFactory.class);
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
-        use(DefaultKeyGenerator.class).forType(KeyGenerator.class);
+        use(DefaultKeyRepository.class).forType(KeyRepository.class);
         use(ProxyComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(DefaultHotSwappableContainer.class).forType(Container.class);
         use(DefaultHotSwappableContainer.class).forType(HotSwappableContainer.class);

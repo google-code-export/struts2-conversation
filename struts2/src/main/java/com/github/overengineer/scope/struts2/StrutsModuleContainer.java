@@ -1,32 +1,26 @@
 package com.github.overengineer.scope.struts2;
 
-import com.github.overengineer.container.factory.DefaultMetaFactory;
-import com.github.overengineer.container.inject.DefaultInjectorFactory;
-import com.github.overengineer.container.instantiate.DefaultParameterProxyFactory;
-import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
+import com.github.overengineer.container.*;
+import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
-import com.github.overengineer.container.DefaultComponentStrategyFactory;
-import com.github.overengineer.container.DefaultContainer;
-import com.github.overengineer.container.key.DefaultKeyGenerator;
 import com.github.overengineer.scope.conversation.ConversationModule;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.session.SessionModule;
-import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.Inject;
 
-public class StrutsModuleContainer extends DefaultContainer {
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class StrutsModuleContainer implements Container {
 
     private static final long serialVersionUID = 3180479652636319036L;
 
-    private Container container;
-
-    public StrutsModuleContainer() {
-        super(new DefaultComponentStrategyFactory(new DefaultInjectorFactory(new DefaultMetadataAdapter()), new DefaultParameterProxyFactory(new DefaultMetadataAdapter())), new DefaultKeyGenerator(), new DefaultMetaFactory());
-    }
+    private com.opensymphony.xwork2.inject.Container container;
+    private Container delegate = Clarence.please().gimmeThatTainer();
 
     @Inject
-    public void setContainer(Container container) {
+    public void setContainer(com.opensymphony.xwork2.inject.Container container) {
         this.container = container;
         init();
     }
@@ -57,4 +51,93 @@ public class StrutsModuleContainer extends DefaultContainer {
         return (T) string;
     }
 
+    @Override
+    public void verify() throws WiringException {
+        delegate.verify();
+    }
+
+    @Override
+    public Container loadModule(Class<? extends Module> module) {
+        return delegate.loadModule(module);
+    }
+
+    @Override
+    public Container addCascadingContainer(Container container) {
+        return delegate.addCascadingContainer(container);
+    }
+
+    @Override
+    public Container addChild(Container container) {
+        return delegate.addChild(container);
+    }
+
+    @Override
+    public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
+        return delegate.addListener(listenerClass);
+    }
+
+    @Override
+    public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
+        return delegate.add(componentType, implementationType);
+    }
+
+    @Override
+    public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
+        return delegate.add(key, implementationType);
+    }
+
+    @Override
+    public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
+        return delegate.addInstance(componentType, implementation);
+    }
+
+    @Override
+    public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
+        return delegate.addInstance(key, implementation);
+    }
+
+    @Override
+    public Container registerFactory(SerializableKey factoryKey) {
+        return delegate.registerFactory(factoryKey);
+    }
+
+    @Override
+    public Container addProperty(String propertyName, Object propertyValue) {
+        return delegate.addProperty(propertyName, propertyValue);
+    }
+
+    @Override
+    public List<Object> getAllComponents() {
+        return delegate.getAllComponents();
+    }
+
+    @Override
+    public List<Container> getCascadingContainers() {
+        return delegate.getCascadingContainers();
+    }
+
+    @Override
+    public List<Container> getChildren() {
+        return delegate.getChildren();
+    }
+
+    @Override
+    public Container getReal() {
+        return delegate.getReal();
+    }
+
+    @Override
+    public <T> T get(Class<T> clazz) {
+        return delegate.get(clazz);
+    }
+
+    @Override
+    public <T> T get(Type type) {
+        return delegate.get(type);
+    }
+
+    @Override
+    public <T> T get(SerializableKey key) {
+        return delegate.get(key);
+    }
 }

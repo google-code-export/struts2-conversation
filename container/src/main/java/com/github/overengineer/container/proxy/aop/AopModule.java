@@ -3,12 +3,12 @@ package com.github.overengineer.container.proxy.aop;
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
+import com.github.overengineer.container.key.DefaultKeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.proxy.*;
-import com.github.overengineer.container.key.DefaultKeyGenerator;
 import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.key.KeyGenerator;
+import com.github.overengineer.container.key.KeyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class AopModule extends BaseModule {
         use(JdkProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(DefaultComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
         use(ProxyComponentStrategyFactory.class).forType(ComponentStrategyFactory.class);
-        use(DefaultKeyGenerator.class).forType(KeyGenerator.class);
+        use(DefaultKeyRepository.class).forType(KeyRepository.class);
         use(JdkAopProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(AdvisedInvocationFactory.class).forType(JoinPointInvocationFactory.class);
         use(DefaultPointcutInterpreter.class).forType(PointcutInterpreter.class);

@@ -12,17 +12,17 @@ import java.util.List;
 public class DefaultComponentStrategyFactory implements ComponentStrategyFactory {
 
     private final InjectorFactory injectorFactory;
-    private final ParameterProxyFactory parameterProxyFactory;
+    private final InstantiatorFactory instantiatorFactory;
 
-    public DefaultComponentStrategyFactory(InjectorFactory injectorFactory, ParameterProxyFactory parameterProxyFactory) {
+    public DefaultComponentStrategyFactory(InjectorFactory injectorFactory, InstantiatorFactory instantiatorFactory) {
         this.injectorFactory = injectorFactory;
-        this.parameterProxyFactory = parameterProxyFactory;
+        this.instantiatorFactory = instantiatorFactory;
     }
 
     @Override
     public <T> ComponentStrategy<T> create(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = new DefaultInstantiator<T>(implementationType, new DefaultParameterProvider(parameterProxyFactory));
+        Instantiator<T> instantiator = instantiatorFactory.create(implementationType);
         if (implementationType.isAnnotationPresent(Prototype.class)) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
@@ -41,7 +41,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     @Override
     public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = new DefaultInstantiator<T>(implementationType, new DecoratorParameterProvider(parameterProxyFactory, delegateClass, delegateStrategy));
+        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateClass, delegateStrategy);
         if (implementationType.isAnnotationPresent(Prototype.class)) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {

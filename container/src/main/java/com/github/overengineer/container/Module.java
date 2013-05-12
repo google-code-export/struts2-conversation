@@ -2,6 +2,7 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.key.SerializableKey;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.Set;
 /**
  * @author rees.byars
  */
-public interface Module {
+public interface Module extends Serializable {
 
     Map<Class<?>, List<Class<?>>> getTypeMappings();
 

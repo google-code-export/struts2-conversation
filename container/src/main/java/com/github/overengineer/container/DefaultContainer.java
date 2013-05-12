@@ -101,27 +101,24 @@ public class DefaultContainer implements Container {
     protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
-    protected final KeyGenerator keyGenerator;
+    protected final KeyRepository keyRepository;
     protected final MetaFactory metaFactory;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyGenerator keyGenerator, MetaFactory metaFactory) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         this.strategyFactory = strategyFactory;
-        this.keyGenerator = keyGenerator;
+        this.keyRepository = keyRepository;
         this.metaFactory = metaFactory;
         addInstance(Container.class, this);
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
-        addInstance(ComponentStrategyFactory.class, strategyFactory);
-        addInstance(KeyGenerator.class, keyGenerator);
-        addInstance(MetaFactory.class, metaFactory);
     }
 
     @Override
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (Key componentType : mappings.keySet()) {
+            for (SerializableKey componentType : mappings.keySet()) {
                 get(componentType);
             }
         } catch (Exception e) {
@@ -141,18 +138,20 @@ public class DefaultContainer implements Container {
         Module module = strategyFactory.create(moduleClass, initializationListeners).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
-                addMapping(keyGenerator.fromClass(componentEntry.getKey()), cls);
+                addMapping(keyRepository.retrieveKey(componentEntry.getKey()), cls);
             }
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            addMapping(keyGenerator.fromClass(componentEntry.getKey()), componentEntry.getValue());
+            addMapping(keyRepository.retrieveKey(componentEntry.getKey()), componentEntry.getValue());
         }
         for (Map.Entry<SerializableKey, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
+                keyRepository.addKey(componentEntry.getKey());
                 addMapping(componentEntry.getKey(), cls);
             }
         }
         for (Map.Entry<SerializableKey, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
+            keyRepository.addKey(componentEntry.getKey());
             addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
@@ -215,24 +214,26 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        add(keyGenerator.fromClass(componentType), implementationType);
+        add(keyRepository.retrieveKey(componentType), implementationType);
         return get(Container.class);
     }
 
     @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
+        keyRepository.addKey(key);
         addMapping(key, implementationType);
         return get(Container.class);
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        addInstance(keyGenerator.fromClass(componentType), implementation);
+        addInstance(keyRepository.retrieveKey(componentType), implementation);
         return get(Container.class);
     }
 
     @Override
     public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
+        keyRepository.addKey(key);
         addMapping(key, implementation);
         return get(Container.class);
     }
@@ -241,7 +242,7 @@ public class DefaultContainer implements Container {
     public Container registerFactory(SerializableKey factoryKey) {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
-        SerializableKey targetKey = KeyUtil.getMatchingKey(keyGenerator.fromType(producedType), mappings.keySet());
+        SerializableKey targetKey = keyRepository.retrieveKey(producedType);
         Container me = get(Container.class);
         addInstance(factoryKey, metaFactory.createFactory(factoryKey.getTargetClass(), targetKey, me));
         return me;
@@ -294,16 +295,16 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz) {
-        return get(keyGenerator.fromType(clazz));
+        return get(keyRepository.retrieveKey(clazz));
     }
 
     @Override
     public <T> T get(Type type) {
-        return get(keyGenerator.fromType(type));
+        return get(keyRepository.retrieveKey(type));
     }
 
     @Override
-    public <T> T get(Key key) {
+    public <T> T get(SerializableKey key) {
         Class<?> implementationType = mappings.get(key);
         if (implementationType == null) {
             for (Container child : children) {

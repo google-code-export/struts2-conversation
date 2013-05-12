@@ -28,4 +28,5 @@ public class DefaultParameterProvider implements ParameterProxyProvider {
     public ParameterProxy[] getParameterProxies() {
         return parameterProxies;
     }
+
 }
