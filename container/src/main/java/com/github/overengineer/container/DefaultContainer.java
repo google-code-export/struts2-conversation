@@ -148,12 +148,10 @@ public class DefaultContainer implements Container {
         }
         for (Map.Entry<SerializableKey, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
-                keyRepository.addKey(componentEntry.getKey());
                 addMapping(componentEntry.getKey(), cls);
             }
         }
         for (Map.Entry<SerializableKey, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
-            keyRepository.addKey(componentEntry.getKey());
             addMapping(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
@@ -222,7 +220,6 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
-        keyRepository.addKey(key);
         addMapping(key, implementationType);
         return thisGuy;
     }
@@ -235,7 +232,6 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
-        keyRepository.addKey(key);
         addMapping(key, implementation);
         return thisGuy;
     }
@@ -260,7 +256,7 @@ public class DefaultContainer implements Container {
         List<Object> components = new LinkedList<Object>();
         components.addAll(initializationListeners);
         for (ComponentStrategy strategy : strategies.values()) {
-            components.add(strategy.get(this));
+            components.add(strategy.get(thisGuy));
         }
         for (Container child : children) {
             components.addAll(child.getAllComponents());
@@ -363,6 +359,7 @@ public class DefaultContainer implements Container {
         if (existing != null) {
             strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, initializationListeners, existing, strategies.get(existing)));
         } else {
+            keyRepository.addKey(key);
             strategies.put(implementationType, strategyFactory.create(implementationType, initializationListeners));
         }
 
@@ -375,6 +372,7 @@ public class DefaultContainer implements Container {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
         }
 
+        keyRepository.addKey(key);
         strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation, initializationListeners));
         mappings.put(key, implementation.getClass());
     }

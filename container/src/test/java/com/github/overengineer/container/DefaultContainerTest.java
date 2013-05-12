@@ -265,8 +265,19 @@ public class DefaultContainerTest implements Serializable {
 
         assert timeoutMonitorFactory instanceof FactoryTest;
 
+    }
 
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLifecycle() {
+
+        Container container = Clarence.please().gimmeThatTainer().loadModule(CommonModule.class);
+
+        container.add(LifecycleControl.class, DefaultLifecycleControl.class);
+
+        LifecycleControl lifecycleControl = container.get(LifecycleControl.class);
+
+        lifecycleControl.start();
     }
 
     public static interface Factory<T>{
@@ -428,7 +439,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 1000000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
@@ -564,7 +575,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatProxyTainer()
+        final Container container2 = Clarence.please().gimmeThatAopTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
