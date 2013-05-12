@@ -18,9 +18,7 @@ public class DefaultKeyRepository implements KeyRepository {
 
     @Override
     public SerializableKey retrieveKey(Class cls) {
-        SerializableKey key = new ClassKey(cls);
-        keys.put(key, key);
-        return key;
+        return new ClassKey(cls);
     }
 
     @Override

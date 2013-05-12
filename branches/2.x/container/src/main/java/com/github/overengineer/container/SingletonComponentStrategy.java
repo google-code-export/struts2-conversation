@@ -12,10 +12,8 @@ public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
 
     private T component;
     private final ComponentStrategy<T> delegateStrategy;
-    private final List<ComponentInitializationListener> initializationListeners;
 
     public SingletonComponentStrategy(CompositeInjector<T> injector, Instantiator<T> instantiator, List<ComponentInitializationListener> initializationListeners) {
-        this.initializationListeners = initializationListeners;
         delegateStrategy = new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
     }
 
