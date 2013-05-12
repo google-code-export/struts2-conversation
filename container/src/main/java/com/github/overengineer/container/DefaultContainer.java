@@ -103,6 +103,7 @@ public class DefaultContainer implements Container {
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
     protected final MetaFactory metaFactory;
+    protected final Container thisGuy;
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         this.strategyFactory = strategyFactory;
@@ -112,6 +113,7 @@ public class DefaultContainer implements Container {
         addInstance(Provider.class, this);
         addInstance(ComponentProvider.class, this);
         addInstance(PropertyProvider.class, this);
+        thisGuy = get(Container.class);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class DefaultContainer implements Container {
         for (SerializableKey factoryKey : module.getRegisteredFactories()) {
             registerFactory(factoryKey);
         }
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
@@ -181,7 +183,7 @@ public class DefaultContainer implements Container {
         for (Container child : children) {
             child.addCascadingContainer(container);
         }
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
@@ -202,40 +204,40 @@ public class DefaultContainer implements Container {
         for (Container cascadingContainer : cascadingContainers) {
             child.addCascadingContainer(cascadingContainer);
         }
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
         ComponentStrategy strategy = strategyFactory.create(listenerClass, Collections.<ComponentInitializationListener>emptyList());
         initializationListeners.add((ComponentInitializationListener) strategy.get(this));
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
         add(keyRepository.retrieveKey(componentType), implementationType);
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
         keyRepository.addKey(key);
         addMapping(key, implementationType);
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
         addInstance(keyRepository.retrieveKey(componentType), implementation);
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
     public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
         keyRepository.addKey(key);
         addMapping(key, implementation);
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
@@ -243,15 +245,14 @@ public class DefaultContainer implements Container {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = keyRepository.retrieveKey(producedType);
-        Container me = get(Container.class);
-        addInstance(factoryKey, metaFactory.createFactory(factoryKey.getTargetClass(), targetKey, me));
-        return me;
+        addInstance(factoryKey, metaFactory.createFactory(factoryKey.getTargetClass(), targetKey, thisGuy));
+        return thisGuy;
     }
 
     @Override
     public Container addProperty(String propertyName, Object propertyValue) {
         properties.put(propertyName, propertyValue);
-        return get(Container.class);
+        return thisGuy;
     }
 
     @Override
