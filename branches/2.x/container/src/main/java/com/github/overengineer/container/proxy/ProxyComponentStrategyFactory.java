@@ -1,11 +1,8 @@
 package com.github.overengineer.container.proxy;
 
-import com.github.overengineer.container.ComponentInitializationListener;
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.ComponentStrategyFactory;
 import com.github.overengineer.container.PrototypeComponentStrategy;
-
-import java.util.List;
 
 /**
  * @author rees.byars
@@ -21,8 +18,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> create(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType, initializationListeners);
+    public <T> ComponentStrategy<T> create(Class<T> implementationType) {
+        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType);
         if (delegateStrategy instanceof PrototypeComponentStrategy) {
             return new PrototypeProxyComponentStrategy<T>(implementationType, delegateStrategy, handlerFactory);
         }
@@ -30,13 +27,13 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation, List<ComponentInitializationListener> initializationListeners) {
-        return new SingletonProxyComponentStrategy<T>(implementation.getClass(), delegateFactory.createInstanceStrategy(implementation, initializationListeners), handlerFactory);
+    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
+        return new SingletonProxyComponentStrategy<T>(implementation.getClass(), delegateFactory.createInstanceStrategy(implementation), handlerFactory);
     }
 
     @Override
-    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners, Class<?> delegateClass, ComponentStrategy<?> decoratorDelegateStrategy) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.createDecoratorStrategy(implementationType, initializationListeners, delegateClass, decoratorDelegateStrategy);
+    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, Class<?> delegateClass, ComponentStrategy<?> decoratorDelegateStrategy) {
+        ComponentStrategy<T> delegateStrategy = delegateFactory.createDecoratorStrategy(implementationType, delegateClass, decoratorDelegateStrategy);
         if (delegateStrategy instanceof PrototypeComponentStrategy) {
             return new PrototypeProxyComponentStrategy<T>(implementationType, delegateStrategy, handlerFactory);
         }

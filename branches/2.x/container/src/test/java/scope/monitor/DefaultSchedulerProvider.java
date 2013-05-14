@@ -1,13 +1,10 @@
 package scope.monitor;
 
-import com.github.overengineer.container.PostConstructable;
-import com.github.overengineer.container.Property;
+import com.github.overengineer.container.metadata.PostConstructable;
+import com.github.overengineer.container.metadata.Property;
 import scope.CommonConstants;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

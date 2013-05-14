@@ -16,8 +16,8 @@ public class DefaultInstantiatorFactory implements InstantiatorFactory {
     }
 
     @Override
-    public <T> Instantiator<T> create(Class<T> implementationType) {
-        return new DefaultInstantiator<T>(implementationType, constructorResolver, new DefaultParameterProvider(parameterProxyFactory));
+    public <T> Instantiator<T> create(Class<T> implementationType, Class ... trailingParamTypes) {
+        return new DefaultInstantiator<T>(implementationType, constructorResolver, new DefaultParameterProvider(parameterProxyFactory), trailingParamTypes);
     }
 
     @Override

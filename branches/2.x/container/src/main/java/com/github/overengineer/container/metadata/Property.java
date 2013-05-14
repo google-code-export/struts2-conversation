@@ -1,4 +1,4 @@
-package com.github.overengineer.container;
+package com.github.overengineer.container.metadata;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

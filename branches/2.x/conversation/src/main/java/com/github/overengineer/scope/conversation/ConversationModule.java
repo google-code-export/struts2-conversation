@@ -25,12 +25,12 @@ public class ConversationModule extends BaseModule {
         use(DefaultConversationArbitrator.class).forType(ConversationArbitrator.class);
         use(InjectionConversationProcessor.class).forType(ConversationProcessor.class);
         use(DefaultJeeConversationContextManagerProvider.class).forType(JeeConversationContextManagerProvider.class);
-        use(DefaultConversationContextFactory.class).forType(ConversationContextFactory.class);
         use(TimeoutConversationContextManager.class).forType(ConversationContextManager.class);
 
         use(ScheduledExecutorTimeoutMonitor.class).forGeneric(new GenericKey<TimeoutMonitor<ConversationContext>>() {});
 
-        registerFactory(new GenericKey<Factory<ConversationContextManager>>(){});
+        registerManagedComponentFactory(new GenericKey<Factory<ConversationContextManager>>() {});
+        registerNonManagedComponentFactory(ConversationContextFactory.class).toProduce(DefaultConversationContext.class);
 
         set(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
         set(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);

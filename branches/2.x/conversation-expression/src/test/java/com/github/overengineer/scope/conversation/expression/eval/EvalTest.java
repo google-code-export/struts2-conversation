@@ -5,14 +5,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.overengineer.scope.conversation.context.*;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.DefaultConversationContextFactory;
-import com.github.overengineer.scope.conversation.context.DefaultConversationContextManager;
-import com.github.overengineer.scope.conversation.context.DefaultJeeConversationContextManagerProvider;
 import com.github.overengineer.scope.conversation.expression.eval.Eval;
 import com.github.overengineer.scope.mocks.MockConversationAdapter;
 
@@ -58,7 +55,12 @@ public abstract class EvalTest {
 
         adapter.setAction(this);
 
-        this.contextManager.setContextFactory(new DefaultConversationContextFactory());
+        this.contextManager.setContextFactory(new ConversationContextFactory() {
+            @Override
+            public ConversationContext create(String conversationName, String conversationId, long maxIdleTime) {
+                return new DefaultConversationContext(conversationName, conversationId, maxIdleTime);
+            }
+        });
         this.contextManager.createContext(mockConversationName, 1L, 20);
     }
 

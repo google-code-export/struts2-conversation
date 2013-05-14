@@ -36,10 +36,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.github.overengineer.scope.CommonConstants.Properties;
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.PostConstructable;
-import com.github.overengineer.container.Property;
-import com.github.overengineer.container.Prototype;
+import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.PostConstructable;
+import com.github.overengineer.container.metadata.Property;
+import com.github.overengineer.container.metadata.Prototype;
 
 /**
  * An implementation of the {@link TimeoutMonitor} that makes use of a {@link ScheduledExecutorService}.

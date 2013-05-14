@@ -8,6 +8,6 @@ import java.io.Serializable;
  * @author rees.byars
  */
 public interface InstantiatorFactory extends Serializable {
-    <T> Instantiator<T> create(Class<T> implementationType);
+    <T> Instantiator<T> create(Class<T> implementationType, Class ... trailingParamTypes);
     <T> Instantiator<T> create(Class<T> implementationType, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy);
 }

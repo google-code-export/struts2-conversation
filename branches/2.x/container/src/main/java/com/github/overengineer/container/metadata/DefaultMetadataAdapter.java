@@ -1,9 +1,5 @@
 package com.github.overengineer.container.metadata;
 
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.Property;
-import com.github.overengineer.container.Scope;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -13,21 +9,38 @@ import java.lang.reflect.Type;
  */
 public class DefaultMetadataAdapter implements MetadataAdapter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Scope getScope(Class cls) {
-        throw new UnsupportedOperationException();
+        if (cls.isAnnotationPresent(Prototype.class)) {
+            return NativeScope.PROTOTYPE;
+        }
+        return NativeScope.SINGLETON;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initIfEligible(Object component) {
-        throw new UnsupportedOperationException();
+        if (component instanceof PostConstructable) {
+            ((PostConstructable) component).init();
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void notifyStartedIfEligible(Object component) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void notifyStoppedIfEligible(Object component) {
         throw new UnsupportedOperationException();

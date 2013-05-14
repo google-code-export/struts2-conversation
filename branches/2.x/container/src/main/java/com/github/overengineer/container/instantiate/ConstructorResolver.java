@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
  */
 public interface ConstructorResolver extends Serializable {
 
-    <T> Constructor<T> resolveConstructor(Class<T> type, Callback callback);
+    <T> Constructor<T> resolveConstructor(Class<T> type, Callback callback, Class ... trailingArgs);
 
     interface Callback extends Serializable {
         void onResolution(Type[] genericParameterTypes, Annotation[][] annotations);

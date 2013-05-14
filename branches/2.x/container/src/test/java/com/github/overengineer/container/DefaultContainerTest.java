@@ -1,5 +1,7 @@
 package com.github.overengineer.container;
 
+import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
@@ -243,7 +245,8 @@ public class DefaultContainerTest implements Serializable {
 
         container.loadModule(CommonModule.class);
 
-        container.registerFactory(new GenericKey<Factory<TimeoutMonitor>>(){});
+        container.registerManagedComponentFactory(new GenericKey<Factory<TimeoutMonitor>>() {
+        });
 
         Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
 
@@ -267,17 +270,50 @@ public class DefaultContainerTest implements Serializable {
 
     }
 
+    @Test
+    public void testNonManagedComponentFactory() {
+
+        Container container = Clarence.please().gimmeThatTainer();
+
+        SerializableKey factoryKey = new GenericKey<NonManagedComponentFactory<NamedComponent>>() {};
+
+        container.registerNonManagedComponentFactory(factoryKey, NonManagedComponent.class);
+
+        container.loadModule(CommonModule.class);
+
+        NonManagedComponentFactory<NamedComponent> namedComponentFactory = container.get(factoryKey);
+
+        assertEquals("test", namedComponentFactory.create("test").getName());
+
+    }
+
+    public interface NonManagedComponentFactory<T extends NamedComponent> {
+        T create(String name);
+    }
+
+    public interface NamedComponent {
+        String getName();
+    }
+
+    public static class NonManagedComponent implements NamedComponent {
+        String name;
+        public NonManagedComponent(TimeoutMonitor timeoutMonitor, String name) {
+            this.name = name;
+        }
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
 
     @Test(expected = UnsupportedOperationException.class)
     public void testLifecycle() {
-
-        Container container = Clarence.please().gimmeThatTainer().loadModule(CommonModule.class);
-
-        container.add(LifecycleControl.class, DefaultLifecycleControl.class);
-
-        LifecycleControl lifecycleControl = container.get(LifecycleControl.class);
-
-        lifecycleControl.start();
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .loadModule(CommonModule.class)
+                .add(LifecycleControl.class, DefaultLifecycleControl.class)
+                .get(LifecycleControl.class)
+                .start();
     }
 
     public static interface Factory<T>{
@@ -439,7 +475,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 1000000;
+    long primingRuns = 10000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
@@ -575,7 +611,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatAopTainer()
+        final Container container2 = Clarence.please().gimmeThatProxyTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
@@ -628,8 +664,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testCyclicRefSpeed() throws Exception {
 
-        final Container container = Clarence.please().gimmeThatTainer()
-                .loadModule(ProxyModule.class)
+        final Container container = Clarence.please().gimmeThatProxyTainer()
                 .get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)

@@ -20,7 +20,9 @@ public interface Module extends Serializable {
 
     Map<SerializableKey, Object> getGenericInstanceMappings();
 
-    Set<SerializableKey> getRegisteredFactories();
+    Set<SerializableKey> getManagedComponentFactories();
+
+    Map<SerializableKey, Class> getNonManagedComponentFactories();
 
     Map<String, Object> getProperties();
 

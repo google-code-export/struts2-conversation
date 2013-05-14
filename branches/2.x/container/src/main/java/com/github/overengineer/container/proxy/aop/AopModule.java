@@ -25,8 +25,6 @@ public class AopModule extends BaseModule {
         use(JdkAopProxyHandlerFactory.class).forType(ProxyHandlerFactory.class);
         use(AdvisedInvocationFactory.class).forType(JoinPointInvocationFactory.class);
         use(DefaultPointcutInterpreter.class).forType(PointcutInterpreter.class);
-        use(DefaultAopContainer.class).forType(Container.class);
-        use(DefaultAopContainer.class).forType(HotSwappableContainer.class);
         use(DefaultAopContainer.class).forType(AopContainer.class);
         useInstance(new ArrayList<Aspect>()).forGeneric(new GenericKey<List<Aspect>>(){});
     }

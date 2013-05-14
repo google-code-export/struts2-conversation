@@ -30,8 +30,6 @@ import com.github.overengineer.scope.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.container.Component;
-
 /**
  * The default implementation of the
  * {@link JeeConversationContextManagerProvider}

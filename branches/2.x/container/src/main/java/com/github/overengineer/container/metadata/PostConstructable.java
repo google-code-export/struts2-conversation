@@ -1,4 +1,4 @@
-package com.github.overengineer.container;
+package com.github.overengineer.container.metadata;
 
 /**
  * @author rees.byars

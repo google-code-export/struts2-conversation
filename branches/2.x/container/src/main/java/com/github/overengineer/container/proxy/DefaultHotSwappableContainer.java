@@ -31,7 +31,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
 
-        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, initializationListeners, currentImplementationType, currentStrategy);
+        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, currentImplementationType, currentStrategy);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
             throw new HotSwapException(target, currentImplementationType, implementationType);
@@ -63,7 +63,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
 
-        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createInstanceStrategy(implementation, initializationListeners);
+        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createInstanceStrategy(implementation);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
             throw new HotSwapException(target, currentImplementationType, implementation.getClass());
