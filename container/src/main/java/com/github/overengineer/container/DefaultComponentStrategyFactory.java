@@ -3,6 +3,8 @@ package com.github.overengineer.container;
 import com.github.overengineer.container.inject.CompositeInjector;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
+import com.github.overengineer.container.metadata.MetadataAdapter;
+import com.github.overengineer.container.metadata.NativeScope;
 
 import java.util.List;
 
@@ -11,19 +13,23 @@ import java.util.List;
  */
 public class DefaultComponentStrategyFactory implements ComponentStrategyFactory {
 
+    private final MetadataAdapter metadataAdapter;
     private final InjectorFactory injectorFactory;
     private final InstantiatorFactory instantiatorFactory;
+    private final List<ComponentInitializationListener> initializationListeners;
 
-    public DefaultComponentStrategyFactory(InjectorFactory injectorFactory, InstantiatorFactory instantiatorFactory) {
+    public DefaultComponentStrategyFactory(MetadataAdapter metadataAdapter, InjectorFactory injectorFactory, InstantiatorFactory instantiatorFactory, List<ComponentInitializationListener> initializationListeners) {
+        this.metadataAdapter = metadataAdapter;
         this.injectorFactory = injectorFactory;
         this.instantiatorFactory = instantiatorFactory;
+        this.initializationListeners = initializationListeners;
     }
 
     @Override
-    public <T> ComponentStrategy<T> create(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners) {
+    public <T> ComponentStrategy<T> create(Class<T> implementationType) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
         Instantiator<T> instantiator = instantiatorFactory.create(implementationType);
-        if (implementationType.isAnnotationPresent(Prototype.class)) {
+        if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
             return new SingletonComponentStrategy<T>(injector, instantiator, initializationListeners);
@@ -31,7 +37,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     }
 
     @Override
-    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation, List<ComponentInitializationListener> initializationListeners) {
+    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
         @SuppressWarnings("unchecked")
         Class<T> clazz = (Class<T>) implementation.getClass();
         CompositeInjector<T> injector = injectorFactory.create(clazz);
@@ -39,13 +45,14 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     }
 
     @Override
-    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, List<ComponentInitializationListener> initializationListeners, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
+    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
         Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateClass, delegateStrategy);
-        if (implementationType.isAnnotationPresent(Prototype.class)) {
+        if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
             return new SingletonComponentStrategy<T>(injector, instantiator, initializationListeners);
         }
     }
+
 }

@@ -97,13 +97,13 @@ public class DefaultContainer implements Container {
     protected final Map<SerializableKey, Class<?>> mappings = new HashMap<SerializableKey, Class<?>>();
     protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
-    protected final List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
     protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
     protected final MetaFactory metaFactory;
     protected final Container thisGuy;
+    private final SerializableKey initializationListenersKey = new GenericKey<List<ComponentInitializationListener>>() {};
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         this.strategyFactory = strategyFactory;
@@ -137,7 +137,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container loadModule(Class<? extends Module> moduleClass) {
-        Module module = strategyFactory.create(moduleClass, initializationListeners).get(this);
+        Module module = strategyFactory.create(moduleClass).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
             for (Class<?> cls : componentEntry.getValue()) {
                 addMapping(keyRepository.retrieveKey(componentEntry.getKey()), cls);
@@ -157,8 +157,11 @@ public class DefaultContainer implements Container {
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
         }
-        for (SerializableKey factoryKey : module.getRegisteredFactories()) {
-            registerFactory(factoryKey);
+        for (SerializableKey factoryKey : module.getManagedComponentFactories()) {
+            registerManagedComponentFactory(factoryKey);
+        }
+        for (Map.Entry<SerializableKey, Class> entry : module.getNonManagedComponentFactories().entrySet()) {
+            registerNonManagedComponentFactory(entry.getKey(), entry.getValue());
         }
         return thisGuy;
     }
@@ -207,8 +210,8 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
-        ComponentStrategy strategy = strategyFactory.create(listenerClass, Collections.<ComponentInitializationListener>emptyList());
-        initializationListeners.add((ComponentInitializationListener) strategy.get(this));
+        ComponentStrategy strategy = strategyFactory.create(listenerClass);
+        getInitializationListeners().add((ComponentInitializationListener) strategy.get(this));
         return thisGuy;
     }
 
@@ -237,11 +240,17 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerFactory(SerializableKey factoryKey) {
+    public Container registerManagedComponentFactory(SerializableKey factoryKey) {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = keyRepository.retrieveKey(producedType);
-        addInstance(factoryKey, metaFactory.createFactory(factoryKey.getTargetClass(), targetKey, thisGuy));
+        addInstance(factoryKey, metaFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, thisGuy));
+        return thisGuy;
+    }
+
+    @Override
+    public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
+        addInstance(factoryKey, metaFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, thisGuy));
         return thisGuy;
     }
 
@@ -252,9 +261,14 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public List<ComponentInitializationListener> getInitializationListeners() {
+        return get(initializationListenersKey);
+    }
+
+    @Override
     public List<Object> getAllComponents() {
         List<Object> components = new LinkedList<Object>();
-        components.addAll(initializationListeners);
+        components.addAll(getInitializationListeners());
         for (ComponentStrategy strategy : strategies.values()) {
             components.add(strategy.get(thisGuy));
         }
@@ -357,10 +371,10 @@ public class DefaultContainer implements Container {
 
         Class<?> existing = mappings.get(key);
         if (existing != null) {
-            strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, initializationListeners, existing, strategies.get(existing)));
+            strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, existing, strategies.get(existing)));
         } else {
             keyRepository.addKey(key);
-            strategies.put(implementationType, strategyFactory.create(implementationType, initializationListeners));
+            strategies.put(implementationType, strategyFactory.create(implementationType));
         }
 
         mappings.put(key, implementationType);
@@ -373,7 +387,7 @@ public class DefaultContainer implements Container {
         }
 
         keyRepository.addKey(key);
-        strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation, initializationListeners));
+        strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation));
         mappings.put(key, implementation.getClass());
     }
 

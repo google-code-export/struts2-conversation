@@ -1,6 +1,7 @@
 package com.github.overengineer.container;
 
 import com.github.overengineer.container.inject.CompositeInjector;
+import com.github.overengineer.container.metadata.PostConstructable;
 
 import java.util.List;
 

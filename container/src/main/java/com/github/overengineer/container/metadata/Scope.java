@@ -1,4 +1,4 @@
-package com.github.overengineer.container;
+package com.github.overengineer.container.metadata;
 
 import java.io.Serializable;
 

@@ -2,6 +2,8 @@ package com.github.overengineer.container.proxy.aop;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.factory.MetaFactory;
+import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
 import com.github.overengineer.container.key.KeyRepository;
 
@@ -13,19 +15,18 @@ import java.util.List;
  */
 public class DefaultAopContainer extends DefaultHotSwappableContainer implements AopContainer {
 
-    protected final List<Aspect> aspects;
+    protected final SerializableKey aspectsKey = new GenericKey<List<Aspect>>() {};
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<Aspect> aspects) {
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         super(strategyFactory, keyRepository, metaFactory);
-        this.aspects = aspects;
         addInstance(AopContainer.class, this);
     }
 
     @Override
     public <A extends Aspect<?>> AopContainer addAspect(Class<A> interceptorClass) {
-        ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass, initializationListeners);
+        ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass);
         Aspect aspect = strategy.get(this);
-        aspects.add(strategy.get(this));
+        getAspects().add(strategy.get(this));
         for (Container container : getChildren()) {
             if (container instanceof AopContainer) {
                 ((AopContainer) container).getAspects().add(aspect);
@@ -36,14 +37,14 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     @Override
     public List<Aspect> getAspects() {
-        return aspects;
+        return get(aspectsKey);
     }
 
     @Override
     public List<Object> getAllComponents() {
         List<Object> components = new LinkedList<Object>();
         components.addAll(super.getAllComponents());
-        components.addAll(aspects);
+        components.addAll(getAspects());
         for (Container container : getChildren()) {
             if (container instanceof AopContainer) {
                 components.addAll(((AopContainer) container).getAspects());

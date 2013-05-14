@@ -97,13 +97,23 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container registerFactory(SerializableKey factoryKey) {
-        return delegate.registerFactory(factoryKey);
+    public Container registerManagedComponentFactory(SerializableKey factoryKey) {
+        return delegate.registerManagedComponentFactory(factoryKey);
+    }
+
+    @Override
+    public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
+        return delegate.registerNonManagedComponentFactory(factoryKey, producedType);
     }
 
     @Override
     public Container addProperty(String propertyName, Object propertyValue) {
         return delegate.addProperty(propertyName, propertyValue);
+    }
+
+    @Override
+    public List<ComponentInitializationListener> getInitializationListeners() {
+        return delegate.getInitializationListeners();
     }
 
     @Override

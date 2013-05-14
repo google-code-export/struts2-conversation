@@ -6,6 +6,7 @@ import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
 import com.github.overengineer.container.key.DefaultKeyRepository;
+import com.github.overengineer.container.key.GenericKey;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
@@ -14,32 +15,29 @@ import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.AopContainer;
 import com.github.overengineer.container.proxy.aop.AopModule;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author rees.byars
  */
-public class Clarence {
+public class Clarence implements Serializable {
 
+    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+    private KeyRepository keyRepository = new DefaultKeyRepository();
+    private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, keyRepository);
+    private ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
+    private ConstructorResolver constructorResolver = new DefaultConstructorResolver();
+    private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
+    private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
+    private ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(metadataAdapter, injectorFactory, instantiatorFactory, initializationListeners);
+    private MetaFactory metaFactory = new DefaultMetaFactory(instantiatorFactory);
     private Container builder;
 
     {
-        MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
-        KeyRepository keyRepository = new DefaultKeyRepository();
-        InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, keyRepository);
-        ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
-        ConstructorResolver constructorResolver = new DefaultConstructorResolver();
-        InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
-        ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(injectorFactory, instantiatorFactory);
-
-        MetaFactory metaFactory = new DefaultMetaFactory();
         builder = new DefaultContainer(strategyFactory, keyRepository, metaFactory);
-        builder.addInstance(MetadataAdapter.class, metadataAdapter);
-        builder.addInstance(InjectorFactory.class, injectorFactory);
-        builder.addInstance(ParameterProxyFactory.class, parameterProxyFactory);
-        builder.addInstance(ConstructorResolver.class, constructorResolver);
-        builder.addInstance(InstantiatorFactory.class, instantiatorFactory);
-        builder.addInstance(KeyRepository.class, keyRepository);
-        builder.addInstance(MetaFactory.class, metaFactory);
-        builder.addInstance(ComponentStrategyFactory.class, strategyFactory);
+        builder.addInstance(new GenericKey<List<ComponentInitializationListener>>(){}, initializationListeners);
     }
 
     public static Clarence please() {
@@ -47,15 +45,30 @@ public class Clarence {
     }
 
     public HotSwappableContainer gimmeThatProxyTainer() {
-        return (HotSwappableContainer) builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class).addChild(builder);
+        makeYourStuffInjectable();
+        return (HotSwappableContainer) builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class).addCascadingContainer(builder);
     }
 
     public AopContainer gimmeThatAopTainer() {
-        return (AopContainer) builder.loadModule(AopModule.class).get(AopContainer.class).addChild(builder);
+        makeYourStuffInjectable();
+        return (AopContainer) builder.loadModule(AopModule.class).get(AopContainer.class).addCascadingContainer(builder);
     }
 
     public Container gimmeThatTainer() {
         return builder;
+    }
+
+    public Clarence makeYourStuffInjectable() {
+        builder
+                .addInstance(MetadataAdapter.class, metadataAdapter)
+                .addInstance(InjectorFactory.class, injectorFactory)
+                .addInstance(ParameterProxyFactory.class, parameterProxyFactory)
+                .addInstance(ConstructorResolver.class, constructorResolver)
+                .addInstance(InstantiatorFactory.class, instantiatorFactory)
+                .addInstance(KeyRepository.class, keyRepository)
+                .addInstance(MetaFactory.class, metaFactory)
+                .addInstance(ComponentStrategyFactory.class, strategyFactory);
+        return this;
     }
 
 }

@@ -2,6 +2,7 @@ package com.github.overengineer.scope.conversation.context;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.conversation.context.ConversationContext;
 import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.DefaultConversationContextFactory;
 import com.github.overengineer.scope.conversation.context.DefaultConversationContextManager;
 import com.github.overengineer.scope.testutil.SerializationTestingUtil;
 import com.github.overengineer.scope.testutil.thread.BasicTaskThread;
@@ -21,7 +21,8 @@ import com.github.overengineer.scope.testutil.thread.TaskThread;
 import com.github.overengineer.scope.testutil.thread.ThreadTask;
 
 
-public class DefaultConversationContextManagerTest {
+public class DefaultConversationContextManagerTest implements Serializable
+{
 
     static final String TEST_NAME = "test";
 
@@ -36,7 +37,12 @@ public class DefaultConversationContextManagerTest {
         String testName = "test-conversation";
         String testId = "testId";
         DefaultConversationContextManager mgr = new DefaultConversationContextManager();
-        mgr.setContextFactory(new DefaultConversationContextFactory());
+        mgr.setContextFactory(new ConversationContextFactory() {
+            @Override
+            public ConversationContext create(String conversationName, String conversationId, long maxIdleTime) {
+                return new DefaultConversationContext(conversationName, conversationId, maxIdleTime);
+            }
+        });
         ConversationContext ctx = mgr.getContext(testName, testId);
 
         mgr = SerializationTestingUtil.getSerializedCopy(mgr);
@@ -52,7 +58,12 @@ public class DefaultConversationContextManagerTest {
     public void testConcurrentModification() throws InterruptedException {
 
         DefaultConversationContextManager manager = new DefaultConversationContextManager();
-        manager.setContextFactory(new DefaultConversationContextFactory());
+        manager.setContextFactory(new ConversationContextFactory() {
+            @Override
+            public ConversationContext create(String conversationName, String conversationId, long maxIdleTime) {
+                return new DefaultConversationContext(conversationName, conversationId, maxIdleTime);
+            }
+        });
 
         TaskThread contractionThread = BasicTaskThread.spawnInstance();
         CollectionContractionTask collectionContractionTask = new CollectionContractionTask(manager);

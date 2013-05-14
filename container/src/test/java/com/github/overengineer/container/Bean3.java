@@ -1,6 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.proxy.aop.Aspect;
+import com.github.overengineer.container.metadata.Component;
 
 import java.util.List;
 

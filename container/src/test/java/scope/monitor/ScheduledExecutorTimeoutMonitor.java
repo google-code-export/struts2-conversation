@@ -24,10 +24,10 @@
  **********************************************************************************************************************/
 package scope.monitor;
 
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.PostConstructable;
-import com.github.overengineer.container.Property;
-import com.github.overengineer.container.Prototype;
+import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.PostConstructable;
+import com.github.overengineer.container.metadata.Property;
+import com.github.overengineer.container.metadata.Prototype;
 import scope.CommonConstants;
 
 import java.io.IOException;

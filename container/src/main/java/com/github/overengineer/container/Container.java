@@ -27,9 +27,13 @@ public interface Container extends Provider {
 
     <T, I extends T> Container addInstance(SerializableKey key, I implementation);
 
-    Container registerFactory(SerializableKey factoryKey);
+    Container registerManagedComponentFactory(SerializableKey factoryKey);
+
+    Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType);
 
     Container addProperty(String propertyName, Object propertyValue);
+
+    List<ComponentInitializationListener> getInitializationListeners();
 
     List<Object> getAllComponents();
 

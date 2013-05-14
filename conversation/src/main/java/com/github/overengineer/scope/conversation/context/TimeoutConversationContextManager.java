@@ -27,8 +27,8 @@ package com.github.overengineer.scope.conversation.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.Prototype;
+import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.scope.monitor.TimeoutListener;
 import com.github.overengineer.scope.monitor.TimeoutMonitor;
 

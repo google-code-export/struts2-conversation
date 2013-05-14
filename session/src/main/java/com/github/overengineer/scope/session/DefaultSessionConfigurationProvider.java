@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.container.Component;
-import com.github.overengineer.container.PostConstructable;
+import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.PostConstructable;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
 /**

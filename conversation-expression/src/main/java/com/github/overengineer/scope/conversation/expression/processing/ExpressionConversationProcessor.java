@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.conversation.expression.processing;
 
-import com.github.overengineer.container.Component;
+import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.exceptions.ConversationException;
 import com.github.overengineer.scope.conversation.expression.configuration.ExpressionConfiguration;

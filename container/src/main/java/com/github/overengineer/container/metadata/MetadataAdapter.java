@@ -1,7 +1,5 @@
 package com.github.overengineer.container.metadata;
 
-import com.github.overengineer.container.Scope;
-
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
