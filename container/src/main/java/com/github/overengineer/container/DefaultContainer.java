@@ -209,6 +209,11 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public Container newEmptyClone() {
+        return strategyFactory.create(this.getClass()).get(thisGuy);
+    }
+
+    @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
         ComponentStrategy strategy = strategyFactory.create(listenerClass);
         getInitializationListeners().add((ComponentInitializationListener) strategy.get(this));

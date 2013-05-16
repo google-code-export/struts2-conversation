@@ -72,6 +72,11 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public Container newEmptyClone() {
+        throw new UnsupportedOperationException("cannot clone the struts2 container");
+    }
+
+    @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
         return delegate.addListener(listenerClass);
     }

@@ -245,8 +245,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.loadModule(CommonModule.class);
 
-        container.registerManagedComponentFactory(new GenericKey<Factory<TimeoutMonitor>>() {
-        });
+        container.registerManagedComponentFactory(new GenericKey<Factory<TimeoutMonitor>>() {});
 
         Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
 
@@ -261,6 +260,8 @@ public class DefaultContainerTest implements Serializable {
         System.out.println(timeoutMonitorFactory);
 
         container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
+
+        container = SerializationTestingUtil.getSerializedCopy(container);
 
         timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
 
@@ -280,6 +281,8 @@ public class DefaultContainerTest implements Serializable {
         container.registerNonManagedComponentFactory(factoryKey, NonManagedComponent.class);
 
         container.loadModule(CommonModule.class);
+
+        container = SerializationTestingUtil.getSerializedCopy(container);
 
         NonManagedComponentFactory<NamedComponent> namedComponentFactory = container.get(factoryKey);
 
@@ -306,16 +309,6 @@ public class DefaultContainerTest implements Serializable {
         }
     }
 
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testLifecycle() {
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
-                .loadModule(CommonModule.class)
-                .add(LifecycleControl.class, DefaultLifecycleControl.class)
-                .get(LifecycleControl.class)
-                .start();
-    }
-
     public static interface Factory<T>{
         T create();
     }
@@ -332,6 +325,16 @@ public class DefaultContainerTest implements Serializable {
         public Object create() {
             return timeoutMonitorFactory.create();
         }
+    }
+
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLifecycle() {
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .loadModule(CommonModule.class)
+                .add(LifecycleControl.class, DefaultLifecycleControl.class)
+                .get(LifecycleControl.class)
+                .start();
     }
 
 
@@ -493,24 +496,23 @@ public class DefaultContainerTest implements Serializable {
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                final PicoContainer picoContainer = new DefaultPicoContainer()
+                new DefaultPicoContainer()
                         .addComponent(IBean.class, Bean.class)
-                        .addComponent(IBean2.class, Bean2.class);
-                picoContainer.getComponent(IBean.class);
+                        .addComponent(IBean2.class, Bean2.class)
+                        .getComponent(IBean.class);
             }
         }, threads).run(duration, primingRuns, "pico container creation");
 
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                final Injector injector = Guice.createInjector(new AbstractModule() {
+                Guice.createInjector(new AbstractModule() {
                     @Override
                     protected void configure() {
                         bind(IBean.class).to(Bean.class);
                         bind(IBean2.class).to(Bean2.class);
                     }
-                });
-                injector.getInstance(IBean.class);
+                }).getInstance(IBean.class);
             }
         }, threads).run(duration, primingRuns, "guice container creation");
 
@@ -611,7 +613,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatProxyTainer()
+        final Container container2 = Clarence.please().gimmeThatTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
@@ -665,7 +667,6 @@ public class DefaultContainerTest implements Serializable {
     public void testCyclicRefSpeed() throws Exception {
 
         final Container container = Clarence.please().gimmeThatProxyTainer()
-                .get(HotSwappableContainer.class)
                 .add(ICyclicRef.class, PCyclicTest.class)
                 .add(ICyclicRef2.class, CyclicTest2.class)
                 .add(ICyclicRef3.class, CyclicTest3.class);
