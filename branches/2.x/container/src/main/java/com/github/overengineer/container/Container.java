@@ -17,6 +17,8 @@ public interface Container extends Provider {
 
     Container addChild(Container container);
 
+    Container newEmptyClone();
+
     Container addListener(Class<? extends ComponentInitializationListener> listenerClass);
 
     <T> Container add(Class<T> componentType, Class<? extends T> implementationType);

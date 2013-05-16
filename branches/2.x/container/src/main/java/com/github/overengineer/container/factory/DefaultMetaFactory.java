@@ -53,12 +53,12 @@ public class DefaultMetaFactory implements MetaFactory {
         return proxy;
     }
 
-    static class DynamicManagedComponentFactory<T> implements InvocationHandler  {
+    static class DynamicManagedComponentFactory<T> implements InvocationHandler, Serializable  {
 
         private final Class<T> factoryInterface;
         private final SerializableKey producedTypeKey;
         private final Provider provider;
-        T proxy;
+        private T proxy;
 
         DynamicManagedComponentFactory(Class<T> factoryInterface, SerializableKey producedTypeKey, Provider provider) {
             this.factoryInterface = factoryInterface;
@@ -81,13 +81,13 @@ public class DefaultMetaFactory implements MetaFactory {
 
     }
 
-    static class DynamicNonManagedComponentFactory<T> implements InvocationHandler  {
+    static class DynamicNonManagedComponentFactory<T> implements InvocationHandler, Serializable  {
 
         private final Class<T> factoryInterface;
         private final Class concreteProducedType;
         private final Provider provider;
         private final Instantiator instantiator;
-        T proxy;
+        private T proxy;
 
         DynamicNonManagedComponentFactory(Class<T> factoryInterface, Class concreteProducedType, Provider provider, Instantiator instantiator) {
             this.factoryInterface = factoryInterface;

@@ -32,7 +32,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
         if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
-            return new SingletonComponentStrategy<T>(injector, instantiator, initializationListeners);
+            return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
         }
     }
 
@@ -51,7 +51,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
         if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
-            return new SingletonComponentStrategy<T>(injector, instantiator, initializationListeners);
+            return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
         }
     }
 
