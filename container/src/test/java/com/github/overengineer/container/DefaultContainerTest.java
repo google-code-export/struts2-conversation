@@ -12,8 +12,10 @@ import com.google.inject.Injector;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoBuilder;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.behaviors.Storing;
+import org.picocontainer.containers.TransientPicoContainer;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -496,7 +498,7 @@ public class DefaultContainerTest implements Serializable {
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                new DefaultPicoContainer()
+                new TransientPicoContainer()
                         .addComponent(IBean.class, Bean.class)
                         .addComponent(IBean2.class, Bean2.class)
                         .getComponent(IBean.class);
@@ -613,7 +615,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatTainer()
+        final Container container2 = Clarence.please().gimmeThatProxyTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 

@@ -24,14 +24,18 @@ public class InstanceStrategy<T> implements ComponentStrategy<T> {
     @Override
     public T get(Provider provider) {
         if (!initialized) {
-            injector.inject(instance, provider);
-            if (instance instanceof PostConstructable) {
-                ((PostConstructable) instance).init();
+            synchronized (this) {
+                if (!initialized) {
+                    injector.inject(instance, provider);
+                    if (instance instanceof PostConstructable) {
+                        ((PostConstructable) instance).init();
+                    }
+                    for (ComponentInitializationListener listener : initializationListeners) {
+                        instance = listener.onInitialization(instance);
+                    }
+                    initialized = true;
+                }
             }
-            for (ComponentInitializationListener listener : initializationListeners) {
-                instance = listener.onInitialization(instance);
-            }
-            initialized = true;
         }
         return instance;
     }

@@ -59,7 +59,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
     @Override
     public ConversationContext createContext(String conversationName, long maxIdleTimeMillis, int maxInstances) {
 
-        ConversationContext context = null;
+        ConversationContext context;
 
         synchronized (this.conversations) {
 
@@ -175,21 +175,19 @@ public class DefaultConversationContextManager implements ConversationContextMan
         String mostStaleId = null;
         long leastRemainingTime = defaultDuration;
 
-        synchronized (conversationContexts) {
-            for (Entry<String, ConversationContext> entry : conversationContexts.entrySet()) {
+        for (Entry<String, ConversationContext> entry : conversationContexts.entrySet()) {
 
-                long entryRemainingTime = entry.getValue().getRemainingTime();
+            long entryRemainingTime = entry.getValue().getRemainingTime();
 
-                if (entryRemainingTime <= leastRemainingTime) {
+            if (entryRemainingTime <= leastRemainingTime) {
 
-                    mostStaleId = entry.getKey();
-                    leastRemainingTime = entryRemainingTime;
+                mostStaleId = entry.getKey();
+                leastRemainingTime = entryRemainingTime;
 
-                }
             }
-
-            this.remove(conversationName, mostStaleId);
         }
+
+        this.remove(conversationName, mostStaleId);
 
 
         if (LOG.isDebugEnabled()) {

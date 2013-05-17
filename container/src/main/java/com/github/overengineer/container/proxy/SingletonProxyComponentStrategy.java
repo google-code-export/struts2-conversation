@@ -8,7 +8,7 @@ import com.github.overengineer.container.Provider;
  */
 public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStrategy<T> {
 
-    private ComponentProxyHandler<T> proxyHandler;
+    private volatile ComponentProxyHandler<T> proxyHandler;
     private final Class<?> type;
     private final ComponentStrategy<T> delegateStrategy;
     private final ProxyHandlerFactory handlerFactory;
@@ -22,15 +22,23 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     @Override
     public T get(Provider provider) {
 
-        if (proxyHandler != null) {
-            return proxyHandler.getProxy();
+        if (proxyHandler == null) {
+
+            synchronized (this) {
+
+                if (proxyHandler == null) {
+
+                    proxyHandler = handlerFactory.createProxy(type);
+
+                    T component = delegateStrategy.get(provider);
+
+                    proxyHandler.setComponent(component);
+
+                }
+
+            }
+
         }
-
-        proxyHandler = handlerFactory.createProxy(type);
-
-        T component = delegateStrategy.get(provider);
-
-        proxyHandler.setComponent(component);
 
         return proxyHandler.getProxy();
 

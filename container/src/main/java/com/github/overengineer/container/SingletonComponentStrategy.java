@@ -5,7 +5,7 @@ package com.github.overengineer.container;
  */
 public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
 
-    private T component;
+    private volatile T component;
     private final ComponentStrategy<T> delegateStrategy;
 
     public SingletonComponentStrategy(ComponentStrategy<T> delegateStrategy) {
@@ -15,9 +15,13 @@ public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
     @Override
     public T get(Provider provider) {
          if (component == null) {
-             component = delegateStrategy.get(provider);
+             synchronized (this) {
+                if (component == null) {
+                    component = delegateStrategy.get(provider);
+                }
+             }
          }
-        return component;
+         return component;
     }
 
 }
