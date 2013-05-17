@@ -4,17 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.scope.conversation.context.ConversationContext;
-import com.github.overengineer.scope.conversation.context.ConversationContextManager;
-import com.github.overengineer.scope.conversation.context.DefaultConversationContextManager;
 import com.github.overengineer.scope.testutil.SerializationTestingUtil;
 import com.github.overengineer.scope.testutil.thread.BasicTaskThread;
 import com.github.overengineer.scope.testutil.thread.TaskThread;
@@ -53,7 +49,6 @@ public class DefaultConversationContextManagerTest implements Serializable
     /**
      * test takes a long time, run manually
      */
-    @Ignore
     @Test
     public void testConcurrentModification() throws InterruptedException {
 
@@ -74,7 +69,7 @@ public class DefaultConversationContextManagerTest implements Serializable
 
         Thread.sleep(8000L);
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 12; i++) {
             BasicTaskThread.spawnInstance().addTask(new CollectionExpansionTask(manager, collectionContractionTask));
         }
 
@@ -108,26 +103,19 @@ public class DefaultConversationContextManagerTest implements Serializable
         public void doTask() {
             //this will create a new context
             LOG.info("Expanding...");
-            String id = getNextId();
-            this.manager.getContext(TEST_NAME, id);
-            this.removalTask.addId(id);
+            ConversationContext c = this.manager.createContext(TEST_NAME, 300L, 5);
+            this.removalTask.addId(c.getId());
             Thread.yield();
         }
 
-    }
-
-    static long id = 1L;
-
-    public static synchronized String getNextId() {
-        return String.valueOf(id++);
     }
 
     class CollectionContractionTask implements ThreadTask {
 
         private final Logger LOG = LoggerFactory.getLogger(CollectionContractionTask.class);
 
-        private ConversationContextManager manager;
-        private Collection<String> ids = Collections.synchronizedSet(new HashSet<String>());
+        private final ConversationContextManager manager;
+        private final Collection<String> ids = new CopyOnWriteArraySet<String>();
 
         CollectionContractionTask(ConversationContextManager manager) {
             this.manager = manager;
@@ -144,14 +132,12 @@ public class DefaultConversationContextManagerTest implements Serializable
 
         @Override
         public void doTask() {
-            synchronized (this.ids) {
-                for (String id : this.ids) {
-                    LOG.info("Contracting...");
-                    manager.remove(TEST_NAME, id);
-                    Thread.yield();
-                }
-                this.ids.clear();
+            for (String id : this.ids) {
+                LOG.info("Contracting...");
+                manager.remove(TEST_NAME, id);
+                Thread.yield();
             }
+            this.ids.clear();
             try {
                 Thread.sleep(1L);
             } catch (InterruptedException e) {
@@ -160,9 +146,7 @@ public class DefaultConversationContextManagerTest implements Serializable
         }
 
         public void addId(String id) {
-            synchronized (this.ids) {
-                this.ids.add(id);
-            }
+            this.ids.add(id);
         }
 
     }

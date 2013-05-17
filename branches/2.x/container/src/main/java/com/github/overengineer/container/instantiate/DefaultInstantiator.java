@@ -4,7 +4,6 @@ import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.inject.InjectionException;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 
 /**
  * @author rees.byars
@@ -15,7 +14,7 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private final ConstructorResolver constructorResolver;
     private final ParameterProxyProvider parameterProxyProvider;
     private final Class[] trailingArgsTypes;
-    private transient Constructor<T> constructor;
+    private volatile transient Constructor<T> constructor;
     private transient Object[] parameters;
 
     public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterProxyProvider parameterProxyProvider, Class ... trailingArgTypes) {
