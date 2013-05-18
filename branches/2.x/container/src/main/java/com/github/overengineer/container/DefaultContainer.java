@@ -102,18 +102,12 @@ public class DefaultContainer implements Container {
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
     protected final MetaFactory metaFactory;
-    protected final Container thisGuy;
     private final SerializableKey initializationListenersKey = new GenericKey<List<ComponentInitializationListener>>() {};
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         this.strategyFactory = strategyFactory;
         this.keyRepository = keyRepository;
         this.metaFactory = metaFactory;
-        addInstance(Container.class, this);
-        addInstance(Provider.class, this);
-        addInstance(ComponentProvider.class, this);
-        addInstance(PropertyProvider.class, this);
-        thisGuy = get(Container.class);
     }
 
     @Override
@@ -163,7 +157,7 @@ public class DefaultContainer implements Container {
         for (Map.Entry<SerializableKey, Class> entry : module.getNonManagedComponentFactories().entrySet()) {
             registerNonManagedComponentFactory(entry.getKey(), entry.getValue());
         }
-        return thisGuy;
+        return this;
     }
 
     @Override
@@ -184,7 +178,7 @@ public class DefaultContainer implements Container {
         for (Container child : children) {
             child.addCascadingContainer(container);
         }
-        return thisGuy;
+        return this;
     }
 
     @Override
@@ -205,43 +199,43 @@ public class DefaultContainer implements Container {
         for (Container cascadingContainer : cascadingContainers) {
             child.addCascadingContainer(cascadingContainer);
         }
-        return thisGuy;
+        return this;
     }
 
     @Override
     public Container newEmptyClone() {
-        return strategyFactory.create(this.getClass()).get(thisGuy);
+        return strategyFactory.create(this.getClass()).get(this);
     }
 
     @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
         ComponentStrategy strategy = strategyFactory.create(listenerClass);
         getInitializationListeners().add((ComponentInitializationListener) strategy.get(this));
-        return thisGuy;
+        return this;
     }
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
         add(keyRepository.retrieveKey(componentType), implementationType);
-        return thisGuy;
+        return this;
     }
 
     @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
         addMapping(key, implementationType);
-        return thisGuy;
+        return this;
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
         addInstance(keyRepository.retrieveKey(componentType), implementation);
-        return thisGuy;
+        return this;
     }
 
     @Override
     public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
         addMapping(key, implementation);
-        return thisGuy;
+        return this;
     }
 
     @Override
@@ -249,20 +243,20 @@ public class DefaultContainer implements Container {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = keyRepository.retrieveKey(producedType);
-        addInstance(factoryKey, metaFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, thisGuy));
-        return thisGuy;
+        addInstance(factoryKey, metaFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
+        return this;
     }
 
     @Override
     public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
-        addInstance(factoryKey, metaFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, thisGuy));
-        return thisGuy;
+        addInstance(factoryKey, metaFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
+        return this;
     }
 
     @Override
     public Container addProperty(String propertyName, Object propertyValue) {
         properties.put(propertyName, propertyValue);
-        return thisGuy;
+        return this;
     }
 
     @Override
@@ -275,7 +269,7 @@ public class DefaultContainer implements Container {
         List<Object> components = new LinkedList<Object>();
         components.addAll(getInitializationListeners());
         for (ComponentStrategy strategy : strategies.values()) {
-            components.add(strategy.get(thisGuy));
+            components.add(strategy.get(this));
         }
         for (Container child : children) {
             components.addAll(child.getAllComponents());
@@ -306,6 +300,15 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container getReal() {
+        return this;
+    }
+
+    @Override
+    public Container makeInjectable() {
+        addInstance(Container.class, this);
+        addInstance(Provider.class, this);
+        addInstance(ComponentProvider.class, this);
+        addInstance(PropertyProvider.class, this);
         return this;
     }
 

@@ -45,4 +45,6 @@ public interface Container extends Provider {
 
     Container getReal();
 
+    Container makeInjectable();
+
 }

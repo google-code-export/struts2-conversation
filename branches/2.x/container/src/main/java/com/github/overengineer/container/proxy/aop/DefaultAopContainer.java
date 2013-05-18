@@ -19,7 +19,6 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         super(strategyFactory, keyRepository, metaFactory);
-        addInstance(AopContainer.class, this);
     }
 
     @Override
@@ -51,6 +50,12 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
             }
         }
         return components;
+    }
+
+    @Override
+    public Container makeInjectable() {
+        addInstance(AopContainer.class, this);
+        return super.makeInjectable();
     }
 
 }
