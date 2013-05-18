@@ -2,8 +2,6 @@ package com.github.overengineer.container.proxy.aop;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.factory.MetaFactory;
-import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
 import com.github.overengineer.container.key.KeyRepository;
 
@@ -15,10 +13,11 @@ import java.util.List;
  */
 public class DefaultAopContainer extends DefaultHotSwappableContainer implements AopContainer {
 
-    protected final SerializableKey aspectsKey = new GenericKey<List<Aspect>>() {};
+    private final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
-        super(strategyFactory, keyRepository, metaFactory);
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
+        super(strategyFactory, keyRepository, metaFactory, componentInitializationListeners);
+        this.aspects = aspects;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     @Override
     public List<Aspect> getAspects() {
-        return get(aspectsKey);
+        return aspects;
     }
 
     @Override

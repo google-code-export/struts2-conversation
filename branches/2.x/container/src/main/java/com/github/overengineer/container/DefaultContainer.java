@@ -17,7 +17,6 @@ import java.util.*;
  * TODO then combine this with a check on existing strategies for this type and handling it appropriately
  * TODO messaging/eventing
  * TODO named containers
- * TODO child container impl that uses same strategy factory as parent and can remove itself from parent? makeBabay()
  * TODO for scoped proxies - new proxy that uses a provider to obtain it's component on each request -
  * TODO       new ThreadLocalContainer interface and DelegatingThreadLocalContainer impl
  * TODO       new ThreadLocalContainerStrategy, so new DelegatingThreadLocalContainer(threadLocalStrategy);
@@ -77,15 +76,8 @@ import java.util.*;
  *
  * TODO Tech debt:
  * TODO cleanup interceptor impl, move from extensions to decorations
- * TODO throw decorationexception if a defaultinstantiator tries to reference
  * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement,
  * TODO then the aop container can just interface with its cache and that of its children
- *
- *
- * TODO - Naming schemes
- * TODO cascading container = heirloom (it's passed down from parent to child to child to child, etc.)
- * TODO addChild = adopt - nest
- * TODO makeChild = makeBaby
  *
  *
  * @author rees.byars
@@ -102,12 +94,13 @@ public class DefaultContainer implements Container {
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
     protected final MetaFactory metaFactory;
-    private final SerializableKey initializationListenersKey = new GenericKey<List<ComponentInitializationListener>>() {};
+    private final List<ComponentInitializationListener> componentInitializationListeners;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
         this.strategyFactory = strategyFactory;
         this.keyRepository = keyRepository;
         this.metaFactory = metaFactory;
+        this.componentInitializationListeners = componentInitializationListeners;
     }
 
     @Override
@@ -133,20 +126,22 @@ public class DefaultContainer implements Container {
     public Container loadModule(Class<? extends Module> moduleClass) {
         Module module = strategyFactory.create(moduleClass).get(this);
         for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
-            for (Class<?> cls : componentEntry.getValue()) {
-                addMapping(keyRepository.retrieveKey(componentEntry.getKey()), cls);
+            Class<?> implementationType = componentEntry.getKey();
+            for (Class<?> targetInterface : componentEntry.getValue()) {
+                add(keyRepository.retrieveKey(targetInterface), implementationType);
             }
         }
         for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            addMapping(keyRepository.retrieveKey(componentEntry.getKey()), componentEntry.getValue());
+            addInstance(keyRepository.retrieveKey(componentEntry.getKey()), componentEntry.getValue());
         }
-        for (Map.Entry<SerializableKey, List<Class<?>>> componentEntry : module.getGenericTypeMappings().entrySet()) {
-            for (Class<?> cls : componentEntry.getValue()) {
-                addMapping(componentEntry.getKey(), cls);
+        for (Map.Entry<Class<?>, List<SerializableKey>> componentEntry : module.getGenericTypeMappings().entrySet()) {
+            Class<?> implementationType = componentEntry.getKey();
+            for (SerializableKey targetGeneric : componentEntry.getValue()) {
+                add(targetGeneric, implementationType);
             }
         }
         for (Map.Entry<SerializableKey, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
-            addMapping(componentEntry.getKey(), componentEntry.getValue());
+            addInstance(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
             addProperty(propertyEntry.getKey(), propertyEntry.getValue());
@@ -261,7 +256,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public List<ComponentInitializationListener> getInitializationListeners() {
-        return get(initializationListenersKey);
+        return componentInitializationListeners;
     }
 
     @Override
