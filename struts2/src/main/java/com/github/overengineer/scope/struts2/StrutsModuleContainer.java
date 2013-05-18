@@ -142,6 +142,11 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public Container makeInjectable() {
+        return delegate.makeInjectable();
+    }
+
+    @Override
     public <T> T get(Class<T> clazz) {
         return delegate.get(clazz);
     }

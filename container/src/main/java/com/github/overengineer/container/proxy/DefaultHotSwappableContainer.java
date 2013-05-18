@@ -12,7 +12,6 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
     public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
         super(strategyFactory, keyRepository, metaFactory);
-        addInstance(HotSwappableContainer.class, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,5 +76,11 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
             }
         }
 
+    }
+
+    @Override
+    public Container makeInjectable() {
+        addInstance(HotSwappableContainer.class, this);
+        return super.makeInjectable();
     }
 }

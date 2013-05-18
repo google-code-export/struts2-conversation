@@ -332,7 +332,7 @@ public class DefaultContainerTest implements Serializable {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testLifecycle() {
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer().makeInjectable()
                 .loadModule(CommonModule.class)
                 .add(LifecycleControl.class, DefaultLifecycleControl.class)
                 .get(LifecycleControl.class)
@@ -430,14 +430,13 @@ public class DefaultContainerTest implements Serializable {
     @Test(expected = Assertion.class)
     public void testIntercept() throws HotSwapException {
 
-        AopContainer c = Clarence.please().gimmeThatAopTainer();
+        AopContainer c = Clarence.please().gimmeThatAopTainer().makeInjectable().get(AopContainer.class);
 
         c.loadModule(CommonModule.class);
 
-        c.addAspect(TestAspect.class)
-                .addAspect(Metaceptor.class)
-                .addInstance(SchedulerProvider.class, new DefaultSchedulerProvider())
-                .add(ICyclicRef3.class, CyclicTest3.class);
+        c.addAspect(TestAspect.class).addAspect(Metaceptor.class);
+        c.addInstance(SchedulerProvider.class, new DefaultSchedulerProvider());
+        c.add(ICyclicRef3.class, CyclicTest3.class);
     }
 
     @Pointcut(
@@ -488,20 +487,22 @@ public class DefaultContainerTest implements Serializable {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                Clarence.please().gimmeThatTainer()
+                Container container =  Clarence.please().gimmeThatTainer()
                         .add(IBean.class, Bean.class)
                         .add(IBean2.class, Bean2.class)
-                        .get(IBean.class);
+                        .add(ISingleton.class, Singleton.class);
+                container.get(IBean.class);
             }
         }, threads).run(duration, primingRuns, "my container creation");
 
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                new TransientPicoContainer()
+                PicoContainer container = new TransientPicoContainer()
                         .addComponent(IBean.class, Bean.class)
                         .addComponent(IBean2.class, Bean2.class)
-                        .getComponent(IBean.class);
+                        .addComponent(ISingleton.class, Singleton.class);
+                container.getComponent(IBean.class);
             }
         }, threads).run(duration, primingRuns, "pico container creation");
 

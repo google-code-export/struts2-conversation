@@ -45,13 +45,11 @@ public class Clarence implements Serializable {
     }
 
     public HotSwappableContainer gimmeThatProxyTainer() {
-        makeYourStuffInjectable();
-        return (HotSwappableContainer) builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class).addCascadingContainer(builder);
+        return (HotSwappableContainer) makeYourStuffInjectable().builder.loadModule(ProxyModule.class).get(HotSwappableContainer.class).addCascadingContainer(builder);
     }
 
     public AopContainer gimmeThatAopTainer() {
-        makeYourStuffInjectable();
-        return (AopContainer) builder.loadModule(AopModule.class).get(AopContainer.class).addCascadingContainer(builder);
+        return (AopContainer) makeYourStuffInjectable().builder.loadModule(AopModule.class).get(AopContainer.class).addCascadingContainer(builder);
     }
 
     public Container gimmeThatTainer() {
