@@ -479,30 +479,33 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 100000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
 
+        final Container container = Clarence.please().makeYourStuffInjectable().gimmeThatTainer();
+
+        System.out.println(container.newEmptyClone().getAllComponents());
+        System.out.println(container.newEmptyClone());
+
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                Container container =  Clarence.please().gimmeThatTainer()
+                Clarence.please().gimmeThatTainer()
                         .add(IBean.class, Bean.class)
                         .add(IBean2.class, Bean2.class)
-                        .add(ISingleton.class, Singleton.class);
-                container.get(IBean.class);
+                        .get(IBean.class);
             }
         }, threads).run(duration, primingRuns, "my container creation");
 
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                PicoContainer container = new TransientPicoContainer()
+                new TransientPicoContainer()
                         .addComponent(IBean.class, Bean.class)
                         .addComponent(IBean2.class, Bean2.class)
-                        .addComponent(ISingleton.class, Singleton.class);
-                container.getComponent(IBean.class);
+                        .getComponent(IBean.class);
             }
         }, threads).run(duration, primingRuns, "pico container creation");
 

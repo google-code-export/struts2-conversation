@@ -13,7 +13,7 @@ public abstract class BaseModule implements Module {
 
     private final Map<Class<?>, List<Class<?>>> typeMappings = new LinkedHashMap<Class<?>, List<Class<?>>>();
     private final Map<Class<?>, Object> instanceMappings = new LinkedHashMap<Class<?>, Object>();
-    private final Map<SerializableKey, List<Class<?>>> genericTypeMappings = new LinkedHashMap<SerializableKey, List<Class<?>>>();
+    private final Map<Class<?>, List<SerializableKey>> genericTypeMappings = new LinkedHashMap<Class<?>, List<SerializableKey>>();
     private final Map<SerializableKey, Object> genericInstanceMappings = new LinkedHashMap<SerializableKey, Object>();
     private final Set<SerializableKey> managedComponentFactories = new LinkedHashSet<SerializableKey>();
     private final Map<SerializableKey, Class> nonManagedComponentFactories = new HashMap<SerializableKey, Class>();
@@ -34,7 +34,7 @@ public abstract class BaseModule implements Module {
     }
 
     @Override
-    public Map<SerializableKey, List<Class<?>>> getGenericTypeMappings() {
+    public Map<Class<?>, List<SerializableKey>> getGenericTypeMappings() {
         return genericTypeMappings;
     }
 
@@ -85,26 +85,26 @@ public abstract class BaseModule implements Module {
     }
 
     public class TypeMapper<V> {
-        private final Class<V> value;
-        public TypeMapper(Class<V> value) {
-            this.value = value;
+        private final Class<V> implementationType;
+        public TypeMapper(Class<V> implementationType) {
+            this.implementationType = implementationType;
         }
-        public TypeMapper<V> forType(Class<? super V> key) {
-            List<Class<?>> mappings = typeMappings.get(key);
+        public TypeMapper<V> forType(Class<? super V> targetInterface) {
+            List<Class<?>> mappings = typeMappings.get(implementationType);
             if (mappings == null) {
                 mappings = new LinkedList<Class<?>>();
-                typeMappings.put(key, mappings);
+                typeMappings.put(implementationType, mappings);
             }
-            mappings.add(value);
+            mappings.add(targetInterface);
             return this;
         }
-        public TypeMapper<V> forGeneric(GenericKey key) {
-            List<Class<?>> mappings = genericTypeMappings.get(key);
+        public TypeMapper<V> forGeneric(GenericKey targetGeneric) {
+            List<SerializableKey> mappings = genericTypeMappings.get(implementationType);
             if (mappings == null) {
-                mappings = new LinkedList<Class<?>>();
-                genericTypeMappings.put(key, mappings);
+                mappings = new LinkedList<SerializableKey>();
+                genericTypeMappings.put(implementationType, mappings);
             }
-            mappings.add(value);
+            mappings.add(targetGeneric);
             return this;
         }
     }

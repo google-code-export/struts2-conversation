@@ -16,7 +16,7 @@ public interface Module extends Serializable {
 
     Map<Class<?>, Object> getInstanceMappings();
 
-    Map<SerializableKey, List<Class<?>>> getGenericTypeMappings();
+    Map<Class<?>, List<SerializableKey>> getGenericTypeMappings();
 
     Map<SerializableKey, Object> getGenericInstanceMappings();
 

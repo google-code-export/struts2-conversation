@@ -5,13 +5,15 @@ import com.github.overengineer.container.factory.MetaFactory;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.SerializableKey;
 
+import java.util.List;
+
 /**
  * @author rees.byars
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory) {
-        super(strategyFactory, keyRepository, metaFactory);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
+        super(strategyFactory, keyRepository, metaFactory, componentInitializationListeners);
     }
 
     @SuppressWarnings("unchecked")
