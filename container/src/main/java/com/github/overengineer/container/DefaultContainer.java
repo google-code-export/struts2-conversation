@@ -235,6 +235,46 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public Container addCustomProvider(Class providedType, Class customProviderType) {
+        addCustomProvider(keyRepository.retrieveKey(providedType), customProviderType);
+        return this;
+    }
+
+    @Override
+    public Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType) {
+        SerializableKey providerKey = keyRepository.retrieveKey(customProviderType);
+        ComponentStrategy providerStrategy = strategies.get(providerKey);
+        if (providerStrategy == null) {
+            providerStrategy = strategyFactory.create(customProviderType);
+        }
+        keyRepository.addKey(providerKey);
+        keyRepository.addKey(providedTypeKey);
+        strategies.put(providerKey, providerStrategy);
+        strategies.put(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        return this;
+    }
+
+    @Override
+    public Container addCustomProvider(Class providedType, Object customProvider) {
+        addCustomProvider(keyRepository.retrieveKey(providedType), customProvider);
+        return this;
+    }
+
+    @Override
+    public Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider) {
+        SerializableKey providerKey = keyRepository.retrieveKey(customProvider.getClass());
+        ComponentStrategy providerStrategy = strategies.get(providerKey);
+        if (providerStrategy == null) {
+            providerStrategy = strategyFactory.createInstanceStrategy(customProvider);
+        }
+        keyRepository.addKey(providerKey);
+        keyRepository.addKey(providedTypeKey);
+        strategies.put(providerKey, providerStrategy);
+        strategies.put(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        return this;
+    }
+
+    @Override
     public Container registerManagedComponentFactory(SerializableKey factoryKey) {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];

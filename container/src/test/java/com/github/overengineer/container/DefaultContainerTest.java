@@ -502,6 +502,25 @@ public class DefaultContainerTest implements Serializable {
         }
     }
 
+    @Test
+    public void testAddCustomProvider() {
+        final Container container = Clarence.please().gimmeThatTainer()
+                .addCustomProvider(ProvidedType.class, Provider.class);
+
+        assert container.get(ProvidedType.class) != null;
+    }
+
+    public static class Provider {
+        ProvidedType get(Provider provider) {
+            System.out.println("i got myself");
+            return new ProvidedType();
+        }
+    }
+
+    public static class ProvidedType {
+
+    }
+
 
     int threads = 4;
     long duration = 5000;

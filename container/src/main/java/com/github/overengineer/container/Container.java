@@ -29,6 +29,14 @@ public interface Container extends Provider {
 
     <T, I extends T> Container addInstance(SerializableKey key, I implementation);
 
+    Container addCustomProvider(Class providedType, Class<?> customProviderType);
+
+    Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType);
+
+    Container addCustomProvider(Class providedType, Object customProvider);
+
+    Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider);
+
     Container registerManagedComponentFactory(SerializableKey factoryKey);
 
     Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType);

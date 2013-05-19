@@ -86,10 +86,15 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
     @Override
     public Method getCustomProviderMethod(Class<?> cls) {
         try {
-            return cls.getMethod("get");
-        } catch (NoSuchMethodException e) {
-            throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get] with 0 parameters.", e);
+            for (Method method : cls.getDeclaredMethods()) {
+                if (method.getName().equals("get")) {
+                    return method;
+                }
+            }
+        } catch (Exception e) {
+            throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get].", e);
         }
+        throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get].", new IllegalArgumentException("There is no method named [get]"));
     }
 
 }
