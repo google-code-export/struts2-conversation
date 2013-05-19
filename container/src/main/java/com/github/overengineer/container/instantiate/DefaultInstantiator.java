@@ -55,4 +55,9 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
             throw new InjectionException("Could not create new instance of type [" + type.getName() + "]", e);
         }
     }
+
+    @Override
+    public Class getProducedType() {
+        return type;
+    }
 }

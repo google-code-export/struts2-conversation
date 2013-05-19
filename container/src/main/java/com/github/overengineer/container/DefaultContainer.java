@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -75,9 +76,11 @@ import java.util.*;
  *
  *
  * TODO Tech debt:
- * TODO cleanup interceptor impl, move from extensions to decorations
- * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement,
- * TODO then the aop container can just interface with its cache and that of its children
+ * TODO cleanup interceptor impl, move from extensions to decorations?
+ * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement?
+ * TODO then the aop container can just interface with its cache and that of its children?
+ * TODO add a getProducedType method to the ComponentStrategy interface, leverage to move to single map lookup - look into
+ * TODO accomplishing by also adding to the Instantiator interface, then we can get via either instantiator.get, delegate.get, or instance.get
  *
  *
  * @author rees.byars
@@ -86,8 +89,7 @@ public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    protected final Map<SerializableKey, Class<?>> mappings = new HashMap<SerializableKey, Class<?>>();
-    protected final Map<Class<?>, ComponentStrategy<?>> strategies = new HashMap<Class<?>, ComponentStrategy<?>>();
+    protected final Map<SerializableKey, ComponentStrategy<?>> strategies = new HashMap<SerializableKey, ComponentStrategy<?>>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
@@ -107,8 +109,8 @@ public class DefaultContainer implements Container {
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (SerializableKey componentType : mappings.keySet()) {
-                get(componentType);
+            for (SerializableKey key : strategies.keySet()) {
+                get(key);
             }
         } catch (Exception e) {
             throw new WiringException("An exception occurred while verifying the container", e);
@@ -319,8 +321,11 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(SerializableKey key) {
-        Class<?> implementationType = mappings.get(key);
-        if (implementationType == null) {
+
+        @SuppressWarnings("unchecked")
+        ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(key);
+
+        if (strategy == null) {
             for (Container child : children) {
                 try {
                     return child.get(key);
@@ -337,8 +342,7 @@ public class DefaultContainer implements Container {
             }
             throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
         }
-        @SuppressWarnings("unchecked")
-        ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(implementationType);
+
         return strategy.get(this);
     }
 
@@ -366,32 +370,44 @@ public class DefaultContainer implements Container {
         return (T) property;
     }
 
-    protected void addMapping(SerializableKey key, Class<?> implementationType) {
+    protected synchronized void addMapping(SerializableKey key, Class<?> implementationType) {
 
         if (!key.getTargetClass().isInterface()) {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
         }
 
-        Class<?> existing = mappings.get(key);
+        ComponentStrategy existing = strategies.get(key);
+        ComponentStrategy newStrategy;
+
         if (existing != null) {
-            strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, existing, strategies.get(existing)));
+            newStrategy = strategyFactory.createDecoratorStrategy(implementationType, existing);
+            strategies.remove(keyRepository.retrieveKey(existing.getProvidedType()));
         } else {
             keyRepository.addKey(key);
-            strategies.put(implementationType, strategyFactory.create(implementationType));
+            newStrategy = strategyFactory.create(implementationType);
         }
 
-        mappings.put(key, implementationType);
+        strategies.put(key, newStrategy);
+        strategies.put(keyRepository.retrieveKey(implementationType), newStrategy);
+
     }
 
-    protected void addMapping(SerializableKey key, Object implementation) {
+    protected synchronized void addMapping(SerializableKey key, Object implementation) {
 
         if (!key.getTargetClass().isInterface()) {
             throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
+        }
+
+        ComponentStrategy existing = strategies.get(key);
+
+        if (existing != null) {
+            strategies.remove(keyRepository.retrieveKey(existing.getProvidedType()));
         }
 
         keyRepository.addKey(key);
-        strategies.put(implementation.getClass(), strategyFactory.createInstanceStrategy(implementation));
-        mappings.put(key, implementation.getClass());
+        ComponentStrategy strategy = strategyFactory.createInstanceStrategy(implementation);
+        strategies.put(keyRepository.retrieveKey(implementation.getClass()), strategy);
+        strategies.put(key, strategy);
     }
 
     protected boolean isTargetCascaderOfThis(Container target) {

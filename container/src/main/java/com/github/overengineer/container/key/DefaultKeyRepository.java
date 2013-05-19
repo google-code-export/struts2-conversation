@@ -42,7 +42,7 @@ public class DefaultKeyRepository implements KeyRepository {
 
     public class LazyDelegatingKey extends DelegatingSerializableKey {
 
-        private SerializableKey key;
+        private volatile SerializableKey key;
         private transient Type type;
 
         private LazyDelegatingKey(Type type) {
@@ -52,7 +52,11 @@ public class DefaultKeyRepository implements KeyRepository {
         @Override
         protected SerializableKey getDelegateKey() {
             if (key == null) {
-                key = keys.get(new TempKey(type));
+                synchronized (this) {
+                    if (key == null) {
+                        key = keys.get(new TempKey(type));
+                    }
+                }
             }
             return key;
         }

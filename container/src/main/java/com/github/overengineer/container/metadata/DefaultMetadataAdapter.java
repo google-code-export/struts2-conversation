@@ -78,4 +78,16 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Method getCustomProviderMethod(Class<?> cls) {
+        try {
+            return cls.getMethod("get");
+        } catch (NoSuchMethodException e) {
+            throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get] with 0 parameters.", e);
+        }
+    }
+
 }

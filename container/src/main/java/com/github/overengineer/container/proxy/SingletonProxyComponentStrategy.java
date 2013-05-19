@@ -45,6 +45,11 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     }
 
     @Override
+    public Class getProvidedType() {
+        return delegateStrategy.getProvidedType();
+    }
+
+    @Override
     public ComponentProxyHandler<T> getProxyHandler() {
         return proxyHandler;
     }

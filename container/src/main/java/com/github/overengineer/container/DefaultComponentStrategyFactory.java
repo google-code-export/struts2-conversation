@@ -45,9 +45,9 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     }
 
     @Override
-    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
+    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> delegateStrategy) {
         CompositeInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateClass, delegateStrategy);
+        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateStrategy.getProvidedType(), delegateStrategy);  //TODO dont need to pass class
         if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
