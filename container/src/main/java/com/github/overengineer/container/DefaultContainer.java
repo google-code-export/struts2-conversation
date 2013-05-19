@@ -156,7 +156,7 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container addCascadingContainer(Container container) {
+    public synchronized Container addCascadingContainer(Container container) {
         if (this == container.getReal()) {
             throw new CircularReferenceException("Cannot add a container as a cascading container of itself");
         }
@@ -177,7 +177,7 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container addChild(Container child) {
+    public synchronized Container addChild(Container child) {
         if (this == child.getReal()) {
             throw new CircularReferenceException("Cannot add a container as a child of itself");
         }
