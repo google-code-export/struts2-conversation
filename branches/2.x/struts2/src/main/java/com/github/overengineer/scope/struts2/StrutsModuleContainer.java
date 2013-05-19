@@ -102,6 +102,26 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public Container addCustomProvider(Class providedType, Class<?> customProviderType) {
+        return delegate.addCustomProvider(providedType, customProviderType);
+    }
+
+    @Override
+    public Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType) {
+        return delegate.addCustomProvider(providedTypeKey, customProviderType);
+    }
+
+    @Override
+    public Container addCustomProvider(Class providedType, Object customProvider) {
+        return delegate.addCustomProvider(providedType, customProvider);
+    }
+
+    @Override
+    public Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider) {
+        return delegate.addCustomProvider(providedTypeKey, customProvider);
+    }
+
+    @Override
     public Container registerManagedComponentFactory(SerializableKey factoryKey) {
         return delegate.registerManagedComponentFactory(factoryKey);
     }

@@ -17,11 +17,12 @@ public class DefaultMethodInjector<T> implements MethodInjector<T> {
     private final Class[] parameterTypes;
     private final ParameterProxy[] parameterProxies;
 
-    public DefaultMethodInjector(Method setter, ParameterProxy[] parameterProxies) {
-        methodRef = new SoftReference<Method>(setter);
-        methodName = setter.getName();
-        methodDeclarer = setter.getDeclaringClass();
-        parameterTypes = setter.getParameterTypes();
+    public DefaultMethodInjector(Method method, ParameterProxy[] parameterProxies) {
+        method.setAccessible(true);
+        methodRef = new SoftReference<Method>(method);
+        methodName = method.getName();
+        methodDeclarer = method.getDeclaringClass();
+        parameterTypes = method.getParameterTypes();
         this.parameterProxies = parameterProxies;
     }
 
@@ -33,6 +34,7 @@ public class DefaultMethodInjector<T> implements MethodInjector<T> {
                 if (method == null) {
                     try {
                         method = methodDeclarer.getDeclaredMethod(methodName, parameterTypes);
+                        method.setAccessible(true);
                         methodRef = new SoftReference<Method>(method);
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException(e);
