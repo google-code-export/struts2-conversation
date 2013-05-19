@@ -1,4 +1,4 @@
-package com.github.overengineer.container.instantiate;
+package com.github.overengineer.container.parameter;
 
 import com.github.overengineer.container.Provider;
 import org.slf4j.Logger;

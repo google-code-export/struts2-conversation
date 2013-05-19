@@ -7,6 +7,6 @@ import java.io.Serializable;
 /**
  * @author rees.byars
  */
-public interface ComponentInjector<T> extends Serializable {
-    void inject(T component, Provider provider);
+public interface MethodInjector<T> extends Serializable {
+    Object inject(T component, Provider provider);
 }

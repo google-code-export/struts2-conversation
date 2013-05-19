@@ -1,6 +1,7 @@
 package com.github.overengineer.container.instantiate;
 
 import com.github.overengineer.container.ComponentStrategy;
+import com.github.overengineer.container.parameter.ParameterProxyFactory;
 
 /**
  * @author rees.byars

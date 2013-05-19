@@ -2,6 +2,7 @@ package com.github.overengineer.container.instantiate;
 
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.inject.InjectionException;
+import com.github.overengineer.container.parameter.ParameterProxy;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;

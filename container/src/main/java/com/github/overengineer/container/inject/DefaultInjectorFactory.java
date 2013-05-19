@@ -1,12 +1,10 @@
 package com.github.overengineer.container.inject;
 
 import com.github.overengineer.container.Provider;
-import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.MetadataAdapter;
-import com.github.overengineer.container.util.ReflectionUtil;
+import com.github.overengineer.container.parameter.ParameterProxyFactory;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,36 +14,37 @@ import java.util.Set;
 public class DefaultInjectorFactory implements InjectorFactory {
 
     private final MetadataAdapter metadataAdapter;
-    private final KeyRepository keyRepository;
+    private final ParameterProxyFactory parameterProxyFactory;
 
-    public DefaultInjectorFactory(MetadataAdapter metadataAdapter, KeyRepository keyRepository) {
+    public DefaultInjectorFactory(MetadataAdapter metadataAdapter, ParameterProxyFactory parameterProxyFactory) {
         this.metadataAdapter = metadataAdapter;
-        this.keyRepository = keyRepository;
+        this.parameterProxyFactory = parameterProxyFactory;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> CompositeInjector<T> create(Class<T> implementationType) {
-        Set<Injector<T>> injectors = new HashSet<Injector<T>>();
+    public <T> ComponentInjector<T> create(Class<T> implementationType) {
+        Set<MethodInjector<T>> injectors = new HashSet<MethodInjector<T>>();
         for (Method method : implementationType.getMethods()) {
-            if (ReflectionUtil.isPublicSetter(method)) {
-                Type type = method.getGenericParameterTypes()[0];
-                Class cls = method.getParameterTypes()[0];
-                String propertyName = metadataAdapter.getPropertyName(method);
-                if (propertyName != null) {
-                    injectors.add(new PropertyInjector<T>(method, propertyName, cls));
-                } else if (metadataAdapter.isComponentSetter(method)) {
-                    injectors.add(new ComponentInjector<T>(method, cls, keyRepository.retrieveKey(type)));
-                }
+            if (metadataAdapter.isSetter(method)) {
+                MethodInjector<T> setterInjector = create(method);
+                injectors.add(setterInjector);
             }
         }
         if (injectors.size() == 0) {
             return new EmptyInjector<T>();
         } else {
-            return new DefaultCompositeInjector<T>(injectors);
+            return new DefaultComponentInjector<T>(injectors);
         }
     }
 
-    static class EmptyInjector<T> implements CompositeInjector<T> {
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> MethodInjector<T> create(Method method) {
+        return new DefaultMethodInjector(method, parameterProxyFactory.create(method));
+    }
+
+    static class EmptyInjector<T> implements ComponentInjector<T> {
         @Override
         public void inject(T component, Provider provider) {}
     }

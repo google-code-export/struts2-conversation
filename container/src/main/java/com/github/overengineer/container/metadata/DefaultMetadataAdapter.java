@@ -1,5 +1,7 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.util.ReflectionUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -50,8 +52,8 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      * {@inheritDoc}
      */
     @Override
-    public boolean isComponentSetter(Method method) {
-        return method.isAnnotationPresent(Component.class);
+    public boolean isSetter(Method method) {
+        return ReflectionUtil.isPublicSetter(method) && (method.isAnnotationPresent(Component.class) || method.isAnnotationPresent(Property.class));
     }
 
     /**

@@ -10,6 +10,8 @@ import com.github.overengineer.container.key.GenericKey;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
+import com.github.overengineer.container.parameter.DefaultParameterProxyFactory;
+import com.github.overengineer.container.parameter.ParameterProxyFactory;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.AopContainer;
@@ -26,8 +28,8 @@ public class Clarence implements Serializable {
 
     private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
     private KeyRepository keyRepository = new DefaultKeyRepository();
-    private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, keyRepository);
     private ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
+    private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterProxyFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver();
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
@@ -66,7 +68,8 @@ public class Clarence implements Serializable {
                 .addInstance(KeyRepository.class, keyRepository)
                 .addInstance(MetaFactory.class, metaFactory)
                 .addInstance(ComponentStrategyFactory.class, strategyFactory)
-                .addInstance(new GenericKey<List<ComponentInitializationListener>>(){}, initializationListeners);
+                .addInstance(new GenericKey<List<ComponentInitializationListener>>() {
+                }, initializationListeners);
         return this;
     }
 
