@@ -2,6 +2,8 @@ package com.github.overengineer.container.instantiate;
 
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.key.KeyUtil;
+import com.github.overengineer.container.parameter.ParameterProxy;
+import com.github.overengineer.container.parameter.ParameterProxyFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

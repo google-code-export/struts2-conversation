@@ -18,7 +18,7 @@ public interface MetadataAdapter extends Serializable {
 
     void notifyStoppedIfEligible(Object component);
 
-    boolean isComponentSetter(Method method);
+    boolean isSetter(Method method);
 
     String getPropertyName(Method method);
 

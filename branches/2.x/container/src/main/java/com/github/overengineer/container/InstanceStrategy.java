@@ -1,6 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.inject.CompositeInjector;
+import com.github.overengineer.container.inject.ComponentInjector;
 import com.github.overengineer.container.metadata.PostConstructable;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 public class InstanceStrategy<T> implements ComponentStrategy<T> {
 
     private T instance;
-    private final CompositeInjector<T> injector;
+    private final ComponentInjector<T> injector;
     private final List<ComponentInitializationListener> initializationListeners;
     private boolean initialized = false;
 
-    public InstanceStrategy(T instance, CompositeInjector<T> injector, List<ComponentInitializationListener> initializationListeners) {
+    public InstanceStrategy(T instance, ComponentInjector<T> injector, List<ComponentInitializationListener> initializationListeners) {
         this.instance = instance;
         this.injector = injector;
         this.initializationListeners = initializationListeners;

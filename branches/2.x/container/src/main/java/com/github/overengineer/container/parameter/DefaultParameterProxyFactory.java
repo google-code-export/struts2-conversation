@@ -1,10 +1,11 @@
-package com.github.overengineer.container.instantiate;
+package com.github.overengineer.container.parameter;
 
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.KeyUtil;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -33,4 +34,26 @@ public class DefaultParameterProxyFactory implements ParameterProxyFactory {
         return new PropertyParameterProxy<T>(KeyUtil.getClass(type), propertyName);
 
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public ParameterProxy[] create(Method method) {
+
+        String propertyName = metadataAdapter.getPropertyName(method);
+
+        if (propertyName != null) {
+            return new ParameterProxy[]{new PropertyParameterProxy(method.getParameterTypes()[0], propertyName)};
+        }
+
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        Annotation[][] annotations = method.getParameterAnnotations();
+
+        ParameterProxy[] parameterProxies = new ParameterProxy[genericParameterTypes.length];
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            parameterProxies[i] = create(genericParameterTypes[i], annotations[i]);
+        }
+
+        return parameterProxies;
+    }
+
 }
