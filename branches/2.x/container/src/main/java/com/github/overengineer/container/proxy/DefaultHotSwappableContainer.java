@@ -18,24 +18,22 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
+    public synchronized  <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
 
         SerializableKey targetKey = keyRepository.retrieveKey(target);
 
-        Class<?> currentImplementationType = mappings.get(targetKey);
-
-        ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(currentImplementationType);
+        ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(targetKey);
 
         if (!(currentStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentImplementationType, implementationType);
+            throw new HotSwapException(target, currentStrategy.getProvidedType(), implementationType);
         }
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
 
-        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, currentImplementationType, currentStrategy);
+        ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, currentStrategy);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentImplementationType, implementationType);
+            throw new HotSwapException(target, newStrategy.getProvidedType(), implementationType);
         }
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
@@ -50,16 +48,14 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
+    public synchronized  <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
 
         SerializableKey targetKey = keyRepository.retrieveKey(target);
 
-        Class<?> currentImplementationType = mappings.get(targetKey);
-
-        ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(currentImplementationType);
+        ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(targetKey);
 
         if (!(currentStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentImplementationType, implementation.getClass());
+            throw new HotSwapException(target, currentStrategy.getProvidedType(), implementation.getClass());
         }
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
@@ -67,7 +63,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createInstanceStrategy(implementation);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentImplementationType, implementation.getClass());
+            throw new HotSwapException(target, newStrategy.getProvidedType(), implementation.getClass());
         }
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);

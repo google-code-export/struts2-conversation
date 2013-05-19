@@ -20,4 +20,9 @@ public class ProviderStrategy<T> implements ComponentStrategy<T> {
     public T get(Provider provider) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public Class getProvidedType() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

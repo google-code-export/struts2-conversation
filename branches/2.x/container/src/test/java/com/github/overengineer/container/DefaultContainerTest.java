@@ -1,6 +1,7 @@
 package com.github.overengineer.container;
 
 import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
@@ -171,6 +172,14 @@ public class DefaultContainerTest implements Serializable {
 
     }
 
+    @Pointcut(classes = {IBean.class, ISingleton.class})
+    public static class TestInterceptor2 implements Aspect {
+        @Override
+        public Object advise(JoinPointInvocation invocation) throws Throwable {
+            return invocation.invoke();
+        }
+    }
+
     @Test
     public void testAddAndGetComponent() {
 
@@ -315,7 +324,7 @@ public class DefaultContainerTest implements Serializable {
         T create();
     }
 
-    public static class FactoryTest implements IConstructorTest, Factory {
+    public static class FactoryTest implements IConstructorTest, Factory, Serializable {
 
         Factory<TimeoutMonitor> timeoutMonitorFactory;
 
@@ -498,6 +507,10 @@ public class DefaultContainerTest implements Serializable {
     long duration = 5000;
     long primingRuns = 10000;
 
+    private void printComparison(long mine, long theirs, String theirName) {
+        System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);
+    }
+
     @Test
     public void testContainerCreationSpeed() throws Exception {
 
@@ -562,14 +575,6 @@ public class DefaultContainerTest implements Serializable {
         printComparison(mines, springs, "spring");
     }
 
-    @Pointcut(classes = {IBean.class, ISingleton.class})
-    public static class TestInterceptor2 implements Aspect {
-        @Override
-        public Object advise(JoinPointInvocation invocation) throws Throwable {
-            return invocation.invoke();
-        }
-    }
-
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
@@ -624,10 +629,6 @@ public class DefaultContainerTest implements Serializable {
         printComparison(mines, springs, "spring");
     }
 
-    private void printComparison(long mine, long theirs, String theirName) {
-        System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);
-    }
-
     @Test
     public void testSingletonSpeed() throws Exception {
 
@@ -642,7 +643,7 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "my singleton");
 
-        final PicoContainer picoContainer3 = new DefaultPicoContainer(new Storing())
+        final PicoContainer picoContainer3 = new TransientPicoContainer()
                 .addComponent(ISingleton.class, Singleton.class);
 
         long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {

@@ -24,4 +24,6 @@ public interface MetadataAdapter extends Serializable {
 
     String getPropertyName(Type type, Annotation[] annotations);
 
+    Method getCustomProviderMethod(Class<?> cls);
+
 }

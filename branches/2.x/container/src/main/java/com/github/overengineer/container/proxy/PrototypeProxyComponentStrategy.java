@@ -55,6 +55,11 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
 
     }
 
+    @Override
+    public Class getProvidedType() {
+        return delegateStrategy.getProvidedType();
+    }
+
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         handlerHolder = new ThreadLocal<ProxyHandlerHolder>();

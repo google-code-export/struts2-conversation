@@ -72,7 +72,7 @@ public class DefaultComponentStrategyCache implements ComponentStrategyCache {
 
         Class<?> existing = mappings.get(key);
         if (existing != null) {
-            strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, existing, strategies.get(existing)));
+            strategies.put(implementationType, strategyFactory.createDecoratorStrategy(implementationType, strategies.get(existing)));
         } else {
             keyRepository.addKey(key);
             strategies.put(implementationType, strategyFactory.create(implementationType));

@@ -33,4 +33,9 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
         }
         return component;
     }
+
+    @Override
+    public Class getProvidedType() {
+        return instantiator.getProducedType();
+    }
 }

@@ -11,4 +11,6 @@ public interface Instantiator<T> extends Serializable {
 
     T getInstance(Provider provider, Object ... trailingParams);
 
+    Class getProducedType();
+
 }
