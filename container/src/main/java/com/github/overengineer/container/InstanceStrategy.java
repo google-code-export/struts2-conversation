@@ -13,7 +13,7 @@ public class InstanceStrategy<T> implements ComponentStrategy<T> {
     private T instance;
     private final CompositeInjector<T> injector;
     private final List<ComponentInitializationListener> initializationListeners;
-    private boolean initialized = false;
+    private volatile boolean initialized = false;
 
     public InstanceStrategy(T instance, CompositeInjector<T> injector, List<ComponentInitializationListener> initializationListeners) {
         this.instance = instance;

@@ -10,7 +10,7 @@ import com.github.overengineer.container.key.SerializableKey;
  */
 public final class ComponentInjector<T> extends BaseInjector<T> {
 
-    private final SerializableKey key;   //TODO test order - bet it breaks if key not already regsiterd
+    private final SerializableKey key;
 
     public ComponentInjector(Method setter, Class targetClass, SerializableKey key) {
         super(setter, targetClass);
@@ -20,9 +20,9 @@ public final class ComponentInjector<T> extends BaseInjector<T> {
     public void inject(T component, Provider provider) {
         try {
             Object dependency = provider.get(key);
-            setter.invoke(component, dependency);
+            getSetter().invoke(component, dependency);
         } catch (Exception e) {
-            throw new InjectionException("Could not set component of type [" + key.getType() + "] on component of type [" + component.getClass().getName() + "] using setter [" + setter.getName() + "]", e);
+            throw new InjectionException("Could not set component of type [" + key.getType() + "] on component of type [" + component.getClass().getName() + "] using setter [" + getSetter().getName() + "]", e);
         }
     }
 
