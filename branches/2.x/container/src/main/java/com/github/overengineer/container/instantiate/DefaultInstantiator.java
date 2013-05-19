@@ -3,6 +3,7 @@ package com.github.overengineer.container.instantiate;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.inject.InjectionException;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 
 /**
@@ -14,7 +15,7 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private final ConstructorResolver constructorResolver;
     private final ParameterProxyProvider parameterProxyProvider;
     private final Class[] trailingArgsTypes;
-    private volatile transient Constructor<T> constructor;
+    private transient volatile SoftReference<Constructor<T>> constructorRef;
     private transient Object[] parameters;
 
     public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterProxyProvider parameterProxyProvider, Class ... trailingArgTypes) {
@@ -26,9 +27,16 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
 
     @Override
     public T getInstance(Provider provider, Object ... trailingParams) {
+        Constructor<T> constructor = constructorRef == null ? null : constructorRef.get();
         if (constructor == null) {
-            constructor = constructorResolver.resolveConstructor(type, parameterProxyProvider, trailingArgsTypes);
-            parameters = new Object[parameterProxyProvider.getParameterProxies().length + trailingParams.length];
+            synchronized (this) {
+                constructor = constructorRef == null ? null : constructorRef.get();
+                if (constructor == null) {
+                    constructor = constructorResolver.resolveConstructor(type, parameterProxyProvider, trailingArgsTypes);
+                    parameters = new Object[parameterProxyProvider.getParameterProxies().length + trailingParams.length];
+                    constructorRef = new SoftReference<Constructor<T>>(constructor);
+                }
+            }
         }
         ParameterProxy[] parameterProxies = parameterProxyProvider.getParameterProxies();
         try {

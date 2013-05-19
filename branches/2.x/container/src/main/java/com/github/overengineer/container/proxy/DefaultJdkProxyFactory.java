@@ -1,6 +1,5 @@
 package com.github.overengineer.container.proxy;
 
-import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -18,7 +17,7 @@ public class DefaultJdkProxyFactory implements JdkProxyFactory {
 
     private final Class<?> targetClass;
     private final Class[] interfaces;
-    private transient Reference<Constructor> constructorReference;
+    private transient volatile SoftReference<Constructor> constructorReference;
 
     public DefaultJdkProxyFactory(Class targetClass) {
         this.targetClass = targetClass;
@@ -36,18 +35,22 @@ public class DefaultJdkProxyFactory implements JdkProxyFactory {
         }
     }
 
-    private synchronized Constructor getConstructor() {
+    private Constructor getConstructor() {
 
         Constructor constructor = constructorReference == null ? null : constructorReference.get();
 
         if (constructor == null) {
-            try {
-                constructor = Proxy.getProxyClass(getClass().getClassLoader(), interfaces).getConstructor(new Class[]{InvocationHandler.class});
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("There was an unexpected error proxying the class [" + targetClass.getName() + "]", e);
+            synchronized (this) {
+                constructor = constructorReference == null ? null : constructorReference.get();
+                if (constructor == null) {
+                    try {
+                        constructor = Proxy.getProxyClass(getClass().getClassLoader(), interfaces).getConstructor(new Class[]{InvocationHandler.class});
+                        constructorReference = new SoftReference<Constructor>(constructor);
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException("There was an unexpected error proxying the class [" + targetClass.getName() + "]", e);
+                    }
+                }
             }
-
-            constructorReference = new SoftReference<Constructor>(constructor);
         }
 
         return constructor;

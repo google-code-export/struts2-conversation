@@ -37,7 +37,6 @@ public class Clarence implements Serializable {
 
     {
         builder = new DefaultContainer(strategyFactory, keyRepository, metaFactory, initializationListeners);
-        builder.addInstance(new GenericKey<List<ComponentInitializationListener>>(){}, initializationListeners);
     }
 
     public static Clarence please() {
@@ -66,7 +65,8 @@ public class Clarence implements Serializable {
                 .addInstance(InstantiatorFactory.class, instantiatorFactory)
                 .addInstance(KeyRepository.class, keyRepository)
                 .addInstance(MetaFactory.class, metaFactory)
-                .addInstance(ComponentStrategyFactory.class, strategyFactory);
+                .addInstance(ComponentStrategyFactory.class, strategyFactory)
+                .addInstance(new GenericKey<List<ComponentInitializationListener>>(){}, initializationListeners);
         return this;
     }
 

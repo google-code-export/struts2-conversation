@@ -477,17 +477,29 @@ public class DefaultContainerTest implements Serializable {
     }
 
 
+
+    @Test
+    public void testNewEmptyClone() {
+        final Container container = Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .addListener(L.class);
+
+        assert container.newEmptyClone().getAllComponents().size() == 1;
+    }
+
+    public static class L implements ComponentInitializationListener {
+        @Override
+        public <T> T onInitialization(T component) {
+            return component;
+        }
+    }
+
+
     int threads = 4;
     long duration = 5000;
-    long primingRuns = 100000;
+    long primingRuns = 10000;
 
     @Test
     public void testContainerCreationSpeed() throws Exception {
-
-        final Container container = Clarence.please().makeYourStuffInjectable().gimmeThatTainer();
-
-        System.out.println(container.newEmptyClone().getAllComponents());
-        System.out.println(container.newEmptyClone());
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -619,7 +631,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        final Container container2 = Clarence.please().gimmeThatProxyTainer()
+        final Container container2 = Clarence.please().gimmeThatTainer()
                 .add(ISingleton.class, Singleton.class)
                 .getReal();
 
