@@ -17,7 +17,6 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private final ParameterProxyProvider parameterProxyProvider;
     private final Class[] trailingArgsTypes;
     private transient volatile SoftReference<Constructor<T>> constructorRef;
-    private transient Object[] parameters;
 
     public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterProxyProvider parameterProxyProvider, Class ... trailingArgTypes) {
         this.type = type;
@@ -34,12 +33,12 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
                 constructor = constructorRef == null ? null : constructorRef.get();
                 if (constructor == null) {
                     constructor = constructorResolver.resolveConstructor(type, parameterProxyProvider, trailingArgsTypes);
-                    parameters = new Object[parameterProxyProvider.getParameterProxies().length + trailingParams.length];
                     constructorRef = new SoftReference<Constructor<T>>(constructor);
                 }
             }
         }
         ParameterProxy[] parameterProxies = parameterProxyProvider.getParameterProxies();
+        Object[] parameters = new Object[parameterProxies.length + trailingParams.length];
         try {
             for (int i = 0; i < parameterProxies.length; i++) {
                 parameters[i] = parameterProxies[i].get(provider);
