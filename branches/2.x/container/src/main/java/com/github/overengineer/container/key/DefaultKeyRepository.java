@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class DefaultKeyRepository implements KeyRepository {
 
-    private final Map<Key, SerializableKey> keys = new HashMap<Key, SerializableKey>();
+    private final Map<Object, SerializableKey> keys = new HashMap<Object, SerializableKey>();
 
     @Override
     public void addKey(SerializableKey key) {
@@ -21,13 +21,17 @@ public class DefaultKeyRepository implements KeyRepository {
 
     @Override
     public SerializableKey retrieveKey(Class cls) {
-        return new ClassKey(cls);
+        SerializableKey key = keys.get(cls);
+        if (key == null) {
+            key = new ClassKey(cls);
+            keys.put(cls, key);
+        }
+        return key;
     }
 
     @Override
     public SerializableKey retrieveKey(final Type type) {
-        Key temp = new TempKey(type);
-        SerializableKey key = keys.get(temp);
+        SerializableKey key = keys.get(type);
         if (key != null) {
             return key;
         }

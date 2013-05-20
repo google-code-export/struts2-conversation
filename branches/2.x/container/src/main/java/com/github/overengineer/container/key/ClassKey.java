@@ -8,9 +8,11 @@ import java.lang.reflect.Type;
 public class ClassKey implements SerializableKey {
 
     private final Class targetClass;
+    private final int hash;
 
     public ClassKey(Class targetClass) {
         this.targetClass = targetClass;
+        this.hash = targetClass.hashCode();
     }
 
     @Override
@@ -25,12 +27,12 @@ public class ClassKey implements SerializableKey {
 
     @Override
     public int hashCode() {
-        return targetClass.hashCode();
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && targetClass.equals(((Key) object).getType());
+        return object instanceof Key && targetClass == ((Key) object).getType();
     }
 
 }
