@@ -505,16 +505,23 @@ public class DefaultContainerTest implements Serializable {
     }
 
     @Test
-    public void testAddCustomProvider() {
+    public void testAddCustomProvider() throws Exception {
         final Container container = Clarence.please().gimmeThatTainer()
                 .addCustomProvider(ProvidedType.class, Provider.class);
 
         assert container.get(ProvidedType.class) != null;
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container.get(ProvidedType.class);
+            }
+        }, threads).run(duration, primingRuns, "my container creation");
     }
 
     public static class Provider {
         ProvidedType get(Provider provider) {
-            System.out.println("i got myself");
+            //System.out.println("i got myself");
             return new ProvidedType();
         }
     }
@@ -524,7 +531,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
 
-    int threads = 50;
+    int threads = 8;
     long duration = 5000;
     long primingRuns = 10000;
 
