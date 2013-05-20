@@ -1,5 +1,6 @@
 package com.github.overengineer.container;
 
+import com.github.overengineer.container.key.ClassKey;
 import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.Prototype;
@@ -15,6 +16,7 @@ import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.behaviors.Caching;
 import org.picocontainer.behaviors.Storing;
 import org.picocontainer.containers.TransientPicoContainer;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -522,7 +524,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
 
-    int threads = 4;
+    int threads = 50;
     long duration = 5000;
     long primingRuns = 10000;
 
@@ -651,26 +653,60 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
+
+
+
+
+        final PicoContainer picoContainer3 = new DefaultPicoContainer(new Caching())
+                .addComponent(ISingleton.class, Singleton.class)
+                .addComponent(ISingleton2.class, Singleton2.class);
+
+        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                picoContainer3.getComponent(ISingleton.class).yo();
+                picoContainer3.getComponent(ISingleton2.class).yo();
+                picoContainer3.getComponent(ISingleton.class).yo();
+                picoContainer3.getComponent(ISingleton2.class).yo();
+                picoContainer3.getComponent(ISingleton.class).yo();
+                picoContainer3.getComponent(ISingleton2.class).yo();
+                picoContainer3.getComponent(ISingleton.class).yo();
+                picoContainer3.getComponent(ISingleton2.class).yo();
+            }
+        }, threads).run(duration, primingRuns, "pico singleton");
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                picoContainer3.getComponent(ISingleton.class).yo();
+            }
+        }, threads).run(duration, primingRuns, "pico singleton");
+
         final Container container2 = Clarence.please().gimmeThatTainer()
                 .add(ISingleton.class, Singleton.class)
+                .add(ISingleton2.class, Singleton2.class)
                 .getReal();
 
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
             }
         }, threads).run(duration, primingRuns, "my singleton");
 
-        final PicoContainer picoContainer3 = new TransientPicoContainer()
-                .addComponent(ISingleton.class, Singleton.class);
-
-        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                picoContainer3.getComponent(ISingleton.class).yo();
+                container2.get(ISingleton.class).yo();
             }
-        }, threads).run(duration, primingRuns, "pico singleton");
+        }, threads).run(duration, primingRuns, "my singleton");
 
         final Injector injector3 = Guice.createInjector(new AbstractModule() {
             @Override
@@ -851,6 +887,14 @@ public class DefaultContainerTest implements Serializable {
     public interface ISingleton{void yo();}
 
     public static class Singleton implements ISingleton {
+        @Override
+        public void yo() {
+        }
+    }
+
+    public interface ISingleton2{void yo();}
+
+    public static class Singleton2 implements ISingleton2 {
         @Override
         public void yo() {
         }
