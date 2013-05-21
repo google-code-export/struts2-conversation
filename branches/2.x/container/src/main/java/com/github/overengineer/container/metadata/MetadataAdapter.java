@@ -12,7 +12,7 @@ public interface MetadataAdapter extends Serializable {
 
     Scope getScope(Class cls);
 
-    void initIfEligible(Object component);
+    Method getInitMethod(Class<?> cls);
 
     void notifyStartedIfEligible(Object component);
 

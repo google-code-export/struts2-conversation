@@ -26,10 +26,24 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      * {@inheritDoc}
      */
     @Override
-    public void initIfEligible(Object component) {
-        if (component instanceof PostConstructable) {
-            ((PostConstructable) component).init();
+    public Method getInitMethod(Class<?> cls) {
+        if (PostConstructable.class.isAssignableFrom(cls)) {
+            try {
+                return cls.getMethod("init");
+            } catch (NoSuchMethodException e) {
+                throw new MetadataException("An exception occurred obtaining init method from type [" + cls.getName() + "]", e);
+            }
         }
+        try {
+            for (Method method : cls.getDeclaredMethods()) {
+                if (method.getName().equals("postConstruct")) {
+                    return method;
+                }
+            }
+        } catch (Exception e) {
+            throw new MetadataException("An exception occurred obtaining postConstruct method from type [" + cls.getName() + "]", e);
+        }
+        return null;
     }
 
     /**

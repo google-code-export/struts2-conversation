@@ -2,7 +2,6 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.inject.ComponentInjector;
 import com.github.overengineer.container.instantiate.Instantiator;
-import com.github.overengineer.container.metadata.PostConstructable;
 
 import java.util.List;
 
@@ -25,9 +24,6 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
     public T get(Provider provider) {
         T component = instantiator.getInstance(provider);
         injector.inject(component, provider);
-        if (component instanceof PostConstructable) {
-            ((PostConstructable) component).init();
-        }
         for (ComponentInitializationListener listener : initializationListeners) {
             component = listener.onInitialization(component);
         }

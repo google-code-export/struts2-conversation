@@ -2,16 +2,16 @@ package com.github.overengineer.container.inject;
 
 import com.github.overengineer.container.Provider;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author rees.byars
  */
 public class DefaultComponentInjector<T> implements ComponentInjector<T> {
 
-    private final Set<MethodInjector<T>> injectors;
+    private final List<MethodInjector<T>> injectors;
 
-    public DefaultComponentInjector(Set<MethodInjector<T>> injectors) {
+    public DefaultComponentInjector(List<MethodInjector<T>> injectors) {
          this.injectors = injectors;
     }
 
