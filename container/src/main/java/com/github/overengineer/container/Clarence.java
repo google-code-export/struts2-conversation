@@ -30,7 +30,7 @@ public class Clarence implements Serializable {
     private KeyRepository keyRepository = new DefaultKeyRepository();
     private ParameterProxyFactory parameterProxyFactory = new DefaultParameterProxyFactory(metadataAdapter, keyRepository);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterProxyFactory);
-    private ConstructorResolver constructorResolver = new DefaultConstructorResolver();
+    private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
     private ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(metadataAdapter, injectorFactory, instantiatorFactory, initializationListeners);

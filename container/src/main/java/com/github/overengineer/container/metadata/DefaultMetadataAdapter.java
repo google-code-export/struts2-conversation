@@ -3,6 +3,7 @@ package com.github.overengineer.container.metadata;
 import com.github.overengineer.container.util.ReflectionUtil;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -10,6 +11,14 @@ import java.lang.reflect.Type;
  * @author rees.byars
  */
 public class DefaultMetadataAdapter implements MetadataAdapter {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValidConstructor(Constructor constructor) {
+        return true;
+    }
 
     /**
      * {@inheritDoc}
