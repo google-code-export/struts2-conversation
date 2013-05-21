@@ -354,7 +354,8 @@ public class DefaultContainerTest implements Serializable {
     @Test(expected = Assertion.class)
     public void testAddListener() {
 
-        Container container = Clarence.please().gimmeThatTainer().addListener(Listener.class)
+        Container container = Clarence.please().gimmeThatTainer().makeInjectable()
+                .addListener(Listener.class)
                 .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
                 .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
@@ -363,6 +364,11 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static class Listener implements ComponentInitializationListener {
+
+        public void postConstruct(Container container) {
+            System.out.println("what up" + container);
+        }
+
         @Override
         public <T> T onInitialization(T component) {
             throw new Assertion();

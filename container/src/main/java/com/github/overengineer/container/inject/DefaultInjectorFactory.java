@@ -5,8 +5,8 @@ import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.parameter.ParameterProxyFactory;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author rees.byars
@@ -24,12 +24,17 @@ public class DefaultInjectorFactory implements InjectorFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> ComponentInjector<T> create(Class<T> implementationType) {
-        Set<MethodInjector<T>> injectors = new HashSet<MethodInjector<T>>();
+        List<MethodInjector<T>> injectors = new ArrayList<MethodInjector<T>>();
         for (Method method : implementationType.getMethods()) {
             if (metadataAdapter.isSetter(method)) {
                 MethodInjector<T> setterInjector = create(method);
                 injectors.add(setterInjector);
             }
+        }
+        Method initMethod = metadataAdapter.getInitMethod(implementationType);
+        if (initMethod != null) {
+            MethodInjector<T> initInjector = create(initMethod);
+            injectors.add(initInjector);
         }
         if (injectors.size() == 0) {
             return new EmptyInjector<T>();

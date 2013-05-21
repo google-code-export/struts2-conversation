@@ -1,7 +1,6 @@
 package com.github.overengineer.container;
 
 import com.github.overengineer.container.inject.ComponentInjector;
-import com.github.overengineer.container.metadata.PostConstructable;
 
 import java.util.List;
 
@@ -27,9 +26,6 @@ public class InstanceStrategy<T> implements ComponentStrategy<T> {
             synchronized (this) {
                 if (!initialized) {
                     injector.inject(instance, provider);
-                    if (instance instanceof PostConstructable) {
-                        ((PostConstructable) instance).init();
-                    }
                     for (ComponentInitializationListener listener : initializationListeners) {
                         instance = listener.onInitialization(instance);
                     }
