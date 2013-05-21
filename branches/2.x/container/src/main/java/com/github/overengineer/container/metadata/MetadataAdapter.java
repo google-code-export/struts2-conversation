@@ -2,6 +2,7 @@ package com.github.overengineer.container.metadata;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -9,6 +10,8 @@ import java.lang.reflect.Type;
  * @author rees.byars
  */
 public interface MetadataAdapter extends Serializable {
+
+    boolean isValidConstructor(Constructor constructor);
 
     Scope getScope(Class cls);
 
