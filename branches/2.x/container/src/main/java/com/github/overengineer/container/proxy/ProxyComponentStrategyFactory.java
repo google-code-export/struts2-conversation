@@ -43,6 +43,6 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     @Override
     public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
         ComponentStrategy<T> customStrategy = delegateFactory.createCustomStrategy(providerStrategy);
-        return new SingletonProxyComponentStrategy<T>(customStrategy.getProvidedType(), customStrategy, handlerFactory);
+        return new SingletonProxyComponentStrategy<T>(customStrategy.getComponentType(), customStrategy, handlerFactory);
     }
 }

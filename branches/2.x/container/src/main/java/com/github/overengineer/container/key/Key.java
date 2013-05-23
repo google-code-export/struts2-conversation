@@ -13,6 +13,6 @@ import java.lang.reflect.Type;
 public interface Key {
 
     Type getType();
-    Class getTargetClass();
+    Class<?> getTargetClass();
 
 }

@@ -1,6 +1,7 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.MetaFactory;
+import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.factory.DynamicCompositeHandler;
 import com.github.overengineer.container.key.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,18 +90,19 @@ public class DefaultContainer implements Container {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
     protected final Map<SerializableKey, ComponentStrategy<?>> strategies = new HashMap<SerializableKey, ComponentStrategy<?>>();
+    private final Map<SerializableKey, DynamicCompositeHandler> compositeHandlers = new HashMap<SerializableKey, DynamicCompositeHandler>();
     protected final Map<String, Object> properties = new HashMap<String, Object>();
     protected final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
-    protected final MetaFactory metaFactory;
+    protected final DynamicComponentFactory dynamicComponentFactory;
     private final List<ComponentInitializationListener> componentInitializationListeners;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners) {
         this.strategyFactory = strategyFactory;
         this.keyRepository = keyRepository;
-        this.metaFactory = metaFactory;
+        this.dynamicComponentFactory = dynamicComponentFactory;
         this.componentInitializationListeners = componentInitializationListeners;
     }
 
@@ -279,13 +281,34 @@ public class DefaultContainer implements Container {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = keyRepository.retrieveKey(producedType);
-        addInstance(factoryKey, metaFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
+        addInstance(factoryKey, dynamicComponentFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
         return this;
     }
 
     @Override
     public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
-        addInstance(factoryKey, metaFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
+        addInstance(factoryKey, dynamicComponentFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
+        return this;
+    }
+
+    @Override
+    public synchronized Container registerCompositeTarget(Class<?> targetInterface) {
+        registerCompositeTarget(keyRepository.retrieveKey(targetInterface));
+        return this;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public synchronized Container registerCompositeTarget(SerializableKey targetKey) {
+        if (!compositeHandlers.containsKey(targetKey)) {
+            DynamicCompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass());
+            compositeHandlers.put(targetKey, handler);
+            ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(handler.getDynamicComposite());
+            ComponentStrategy existing = strategies.put(targetKey, compositeStrategy);
+            if (existing != null) {
+                handler.add(existing.get(this));  //TODO how to make sure all get added regardless of load order??? and what about decorators??
+            }
+        }
         return this;
     }
 
@@ -420,7 +443,7 @@ public class DefaultContainer implements Container {
 
         if (existing != null) {
             newStrategy = strategyFactory.createDecoratorStrategy(implementationType, existing);
-            strategies.remove(keyRepository.retrieveKey(existing.getProvidedType()));
+            strategies.remove(keyRepository.retrieveKey(existing.getComponentType()));
         } else {
             keyRepository.addKey(key);
             newStrategy = strategyFactory.create(implementationType);
@@ -440,7 +463,7 @@ public class DefaultContainer implements Container {
         ComponentStrategy existing = strategies.get(key);
 
         if (existing != null) {
-            strategies.remove(keyRepository.retrieveKey(existing.getProvidedType()));
+            strategies.remove(keyRepository.retrieveKey(existing.getComponentType()));
         }
 
         keyRepository.addKey(key);

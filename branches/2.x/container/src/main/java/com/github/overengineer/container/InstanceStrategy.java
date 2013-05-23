@@ -37,7 +37,7 @@ public class InstanceStrategy<T> implements ComponentStrategy<T> {
     }
 
     @Override
-    public Class getProvidedType() {
+    public Class getComponentType() {
         return instance.getClass();
     }
 }

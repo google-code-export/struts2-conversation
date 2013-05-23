@@ -41,6 +41,10 @@ public interface Container extends Provider {
 
     Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType);
 
+    Container registerCompositeTarget(Class<?> targetInterface);
+
+    Container registerCompositeTarget(SerializableKey targetKey);
+
     Container addProperty(String propertyName, Object propertyValue);
 
     List<ComponentInitializationListener> getInitializationListeners();

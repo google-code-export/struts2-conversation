@@ -9,6 +9,6 @@ public interface ComponentStrategy<T> extends Serializable {
 
     T get(Provider provider);
 
-    Class getProvidedType();
+    Class getComponentType();
 
 }

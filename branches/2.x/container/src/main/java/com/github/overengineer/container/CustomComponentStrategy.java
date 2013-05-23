@@ -24,7 +24,7 @@ public class CustomComponentStrategy<T> implements ComponentStrategy<T> {
     }
 
     @Override
-    public Class getProvidedType() {
+    public Class getComponentType() {
         return providedType;
     }
 }

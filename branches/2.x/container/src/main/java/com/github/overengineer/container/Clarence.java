@@ -1,7 +1,7 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.DefaultMetaFactory;
-import com.github.overengineer.container.factory.MetaFactory;
+import com.github.overengineer.container.factory.DefaultDynamicComponentFactory;
+import com.github.overengineer.container.factory.DynamicComponentFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
@@ -34,11 +34,11 @@ public class Clarence implements Serializable {
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterProxyFactory);
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
     private ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(metadataAdapter, injectorFactory, instantiatorFactory, initializationListeners);
-    private MetaFactory metaFactory = new DefaultMetaFactory(instantiatorFactory);
+    private DynamicComponentFactory dynamicComponentFactory = new DefaultDynamicComponentFactory(instantiatorFactory);
     private Container builder;
 
     {
-        builder = new DefaultContainer(strategyFactory, keyRepository, metaFactory, initializationListeners);
+        builder = new DefaultContainer(strategyFactory, keyRepository, dynamicComponentFactory, initializationListeners);
     }
 
     public static Clarence please() {
@@ -66,7 +66,7 @@ public class Clarence implements Serializable {
                 .addInstance(ConstructorResolver.class, constructorResolver)
                 .addInstance(InstantiatorFactory.class, instantiatorFactory)
                 .addInstance(KeyRepository.class, keyRepository)
-                .addInstance(MetaFactory.class, metaFactory)
+                .addInstance(DynamicComponentFactory.class, dynamicComponentFactory)
                 .addInstance(ComponentStrategyFactory.class, strategyFactory)
                 .addInstance(new GenericKey<List<ComponentInitializationListener>>() {
                 }, initializationListeners);

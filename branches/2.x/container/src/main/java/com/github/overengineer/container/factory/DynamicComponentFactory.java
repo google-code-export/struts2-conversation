@@ -10,7 +10,8 @@ import java.io.Serializable;
  *
  * @author rees.byars
  */
-public interface MetaFactory extends Serializable {
+public interface DynamicComponentFactory extends Serializable {
     <T> T createManagedComponentFactory(Class factoryInterface, SerializableKey producedTypeKey, Provider provider);
     <T> T createNonManagedComponentFactory(Class factoryInterface, Class concreteProducedType, Provider provider);
+    <T> DynamicCompositeHandler<T> createCompositeHandler(Class<T> targetInterface);
 }
