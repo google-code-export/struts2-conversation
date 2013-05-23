@@ -522,7 +522,7 @@ public class DefaultContainerTest implements Serializable {
             public void execute() throws HotSwapException {
                 container.get(ProvidedType.class);
             }
-        }, threads).run(duration, primingRuns, "my container creation");
+        }, threads).run(duration, primingRuns, "custom provider gets");
     }
 
     public static class Provider {
@@ -539,7 +539,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 8;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 1000000;
 
     private void printComparison(long mine, long theirs, String theirName) {
         System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);

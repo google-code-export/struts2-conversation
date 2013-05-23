@@ -49,7 +49,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     @Override
     public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> delegateStrategy) {
         ComponentInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateStrategy.getProvidedType(), delegateStrategy);  //TODO dont need to pass class
+        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateStrategy.getComponentType(), delegateStrategy);  //TODO dont need to pass class
         if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
@@ -59,7 +59,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
 
     @Override
     public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
-        Method providerMethod = metadataAdapter.getCustomProviderMethod(providerStrategy.getProvidedType());
+        Method providerMethod = metadataAdapter.getCustomProviderMethod(providerStrategy.getComponentType());
         MethodInjector<T> methodInjector = injectorFactory.create(providerMethod);
         return new CustomComponentStrategy<T>(providerStrategy, methodInjector, providerMethod.getReturnType());
     }

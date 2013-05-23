@@ -1,7 +1,7 @@
 package com.github.overengineer.container.proxy;
 
 import com.github.overengineer.container.*;
-import com.github.overengineer.container.factory.MetaFactory;
+import com.github.overengineer.container.factory.DynamicComponentFactory;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.SerializableKey;
 
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, MetaFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
         super(strategyFactory, keyRepository, metaFactory, componentInitializationListeners);
     }
 
@@ -25,7 +25,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(targetKey);
 
         if (!(currentStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentStrategy.getProvidedType(), implementationType);
+            throw new HotSwapException(target, currentStrategy.getComponentType(), implementationType);
         }
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
@@ -33,7 +33,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createDecoratorStrategy(implementationType, currentStrategy);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, newStrategy.getProvidedType(), implementationType);
+            throw new HotSwapException(target, newStrategy.getComponentType(), implementationType);
         }
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);
@@ -55,7 +55,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) strategies.get(targetKey);
 
         if (!(currentStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, currentStrategy.getProvidedType(), implementation.getClass());
+            throw new HotSwapException(target, currentStrategy.getComponentType(), implementation.getClass());
         }
 
         ComponentProxyHandler<T> proxyHandler = ((HotSwappableProxyStrategy) currentStrategy).getProxyHandler();
@@ -63,7 +63,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
         ComponentStrategy<T> newStrategy = (ComponentStrategy<T>) strategyFactory.createInstanceStrategy(implementation);
 
         if (!(newStrategy instanceof HotSwappableProxyStrategy)) {
-            throw new HotSwapException(target, newStrategy.getProvidedType(), implementation.getClass());
+            throw new HotSwapException(target, newStrategy.getComponentType(), implementation.getClass());
         }
 
         ((HotSwappableProxyStrategy) newStrategy).swap(proxyHandler, this);

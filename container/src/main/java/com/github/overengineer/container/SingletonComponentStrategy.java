@@ -25,8 +25,8 @@ public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
     }
 
     @Override
-    public Class getProvidedType() {
-        return delegateStrategy.getProvidedType();
+    public Class getComponentType() {
+        return delegateStrategy.getComponentType();
     }
 
 }

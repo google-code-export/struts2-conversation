@@ -56,8 +56,8 @@ public class PrototypeProxyComponentStrategy<T> implements ComponentStrategy<T> 
     }
 
     @Override
-    public Class getProvidedType() {
-        return delegateStrategy.getProvidedType();
+    public Class getComponentType() {
+        return delegateStrategy.getComponentType();
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
