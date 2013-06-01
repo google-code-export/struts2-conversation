@@ -1,7 +1,7 @@
 package com.github.overengineer.container;
 
+import com.github.overengineer.container.factory.CompositeHandler;
 import com.github.overengineer.container.factory.DynamicComponentFactory;
-import com.github.overengineer.container.factory.DynamicCompositeHandler;
 import com.github.overengineer.container.key.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,13 +90,12 @@ public class DefaultContainer implements Container {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
     protected final Map<SerializableKey, ComponentStrategy<?>> strategies = new HashMap<SerializableKey, ComponentStrategy<?>>();
-    private final Map<SerializableKey, DynamicCompositeHandler> compositeHandlers = new HashMap<SerializableKey, DynamicCompositeHandler>();
-    protected final Map<String, Object> properties = new HashMap<String, Object>();
-    protected final List<Container> cascadingContainers = new ArrayList<Container>();
+    private final Map<SerializableKey, CompositeHandler> compositeHandlers = new HashMap<SerializableKey, CompositeHandler>();
+    private final List<Container> cascadingContainers = new ArrayList<Container>();
     protected final List<Container> children = new ArrayList<Container>();
     protected final ComponentStrategyFactory strategyFactory;
     protected final KeyRepository keyRepository;
-    protected final DynamicComponentFactory dynamicComponentFactory;
+    private final DynamicComponentFactory dynamicComponentFactory;
     private final List<ComponentInitializationListener> componentInitializationListeners;
 
     public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners) {
@@ -147,7 +146,7 @@ public class DefaultContainer implements Container {
             addInstance(componentEntry.getKey(), componentEntry.getValue());
         }
         for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
-            addProperty(propertyEntry.getKey(), propertyEntry.getValue());
+            addInstance(keyRepository.retrieveKey(propertyEntry.getValue().getClass(), propertyEntry.getKey()), propertyEntry.getValue());
         }
         for (SerializableKey factoryKey : module.getManagedComponentFactories()) {
             registerManagedComponentFactory(factoryKey);
@@ -219,6 +218,12 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType) {
+        add(keyRepository.retrieveKey(componentType, name), implementationType);
+        return this;
+    }
+
+    @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
         addMapping(key, implementationType);
         return this;
@@ -227,6 +232,12 @@ public class DefaultContainer implements Container {
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
         addInstance(keyRepository.retrieveKey(componentType), implementation);
+        return this;
+    }
+
+    @Override
+    public <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation) {
+        addInstance(keyRepository.retrieveKey(componentType, name), implementation);
         return this;
     }
 
@@ -301,20 +312,14 @@ public class DefaultContainer implements Container {
     @SuppressWarnings("unchecked")
     public synchronized Container registerCompositeTarget(SerializableKey targetKey) {
         if (!compositeHandlers.containsKey(targetKey)) {
-            DynamicCompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass());
+            CompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass());
             compositeHandlers.put(targetKey, handler);
-            ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(handler.getDynamicComposite());
+            ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(handler.getComposite());
             ComponentStrategy existing = strategies.put(targetKey, compositeStrategy);
             if (existing != null) {
                 handler.add(existing.get(this));  //TODO how to make sure all get added regardless of load order??? and what about decorators??
             }
         }
-        return this;
-    }
-
-    @Override
-    public Container addProperty(String propertyName, Object propertyValue) {
-        properties.put(propertyName, propertyValue);
         return this;
     }
 
@@ -366,8 +371,6 @@ public class DefaultContainer implements Container {
     public Container makeInjectable() {
         addInstance(Container.class, this);
         addInstance(Provider.class, this);
-        addInstance(ComponentProvider.class, this);
-        addInstance(PropertyProvider.class, this);
         return this;
     }
 
@@ -376,9 +379,10 @@ public class DefaultContainer implements Container {
         return get(keyRepository.retrieveKey(clazz));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Type type) {
-        return get(keyRepository.retrieveKey(type));
+    public <T> T get(Class<T> clazz, String name) {
+        return (T) get(keyRepository.retrieveKey(clazz, name));
     }
 
     @Override
@@ -408,35 +412,7 @@ public class DefaultContainer implements Container {
         return strategy.get(this);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getProperty(Class<T> clazz, String name) {
-        Object property = properties.get(name);
-        if (property == null) {
-            for (Container child : children) {
-                try {
-                    return child.getProperty(clazz, name);
-                } catch (MissingDependencyException e) {
-                    //ignore
-                }
-            }
-            for (Container container : cascadingContainers) {
-                try {
-                    return container.getProperty(clazz, name);
-                } catch (MissingDependencyException e) {
-                    //ignore
-                }
-            }
-            throw new MissingDependencyException("No property of name [" + name + "] has been registered with the container");
-        }
-        return (T) property;
-    }
-
     protected synchronized void addMapping(SerializableKey key, Class<?> implementationType) {
-
-        if (!key.getTargetClass().isInterface()) {
-            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
-        }
 
         ComponentStrategy existing = strategies.get(key);
         ComponentStrategy newStrategy;
@@ -455,10 +431,6 @@ public class DefaultContainer implements Container {
     }
 
     protected synchronized void addMapping(SerializableKey key, Object implementation) {
-
-        if (!key.getTargetClass().isInterface()) {
-            throw new BadDesignException("We force you to map dependencies only to interfaces. The type [" + key.getTargetClass().getName() + "] is not an interface.  Don't like it?  I don't give a shit.");
-        }
 
         ComponentStrategy existing = strategies.get(key);
 

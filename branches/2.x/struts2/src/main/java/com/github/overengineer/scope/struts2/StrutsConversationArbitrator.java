@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.overengineer.container.metadata.Property;
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.ConversationController;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -61,12 +61,12 @@ public class StrutsConversationArbitrator extends DefaultConversationArbitrator 
     protected boolean usePackageNesting;
     protected ActionProvider actionProvider;
 
-    @Property(Properties.CONVERSATION_PACKAGE_NESTING)
-    public void setUsePackageNesting(boolean usePackageNesting) {
+    @Inject
+    public void setUsePackageNesting(@Named(Properties.CONVERSATION_PACKAGE_NESTING) Boolean usePackageNesting) {
         this.usePackageNesting = usePackageNesting;
     }
 
-    @Component
+    @Inject
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
     }

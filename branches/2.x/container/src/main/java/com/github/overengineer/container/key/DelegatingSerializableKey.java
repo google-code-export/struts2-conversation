@@ -15,6 +15,11 @@ public abstract class DelegatingSerializableKey implements SerializableKey {
     }
 
     @Override
+    public String getName() {
+        return getDelegateKey().getName();
+    }
+
+    @Override
     public Type getType() {
         return getDelegateKey().getType();
     }

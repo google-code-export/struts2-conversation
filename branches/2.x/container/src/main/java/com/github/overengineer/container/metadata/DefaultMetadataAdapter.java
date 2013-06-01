@@ -1,5 +1,6 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.key.KeyUtil;
 import com.github.overengineer.container.util.ReflectionUtil;
 
 import java.lang.annotation.Annotation;
@@ -76,31 +77,20 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      */
     @Override
     public boolean isSetter(Method method) {
-        return ReflectionUtil.isPublicSetter(method) && (method.isAnnotationPresent(Component.class) || method.isAnnotationPresent(Property.class));
+        return ReflectionUtil.isPublicSetter(method) && (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Named.class));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getPropertyName(Method method) {
-        if (method.isAnnotationPresent(Property.class)) {
-            return method.getAnnotation(Property.class).value();
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPropertyName(Type type, Annotation[] annotations) {
+    public String getName(Type type, Annotation[] annotations) {
         for (Annotation annotation : annotations) {
-            if (annotation instanceof Property) {
-                return ((Property) annotation).value();
+            if (annotation instanceof Named) {
+                return ((Named) annotation).value();
             }
         }
-        return null;
+        return KeyUtil.getClass(type).getName();
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.github.overengineer.container.parameter;
 
 import com.github.overengineer.container.key.KeyRepository;
-import com.github.overengineer.container.key.KeyUtil;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 
 import java.lang.annotation.Annotation;
@@ -25,25 +24,13 @@ public class DefaultParameterProxyFactory implements ParameterProxyFactory {
     @Override
     public <T> ParameterProxy<T> create(Type type, Annotation[] annotations) {
 
-        String propertyName = metadataAdapter.getPropertyName(type, annotations);
-
-        if (propertyName == null) {
-            return new ComponentParameterProxy<T>(keyRepository.retrieveKey(type));
-        }
-
-        return new PropertyParameterProxy<T>(KeyUtil.getClass(type), propertyName);
+        return new ComponentParameterProxy<T>(keyRepository.retrieveKey(type, metadataAdapter.getName(type, annotations)));
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public ParameterProxy[] create(Method method) {
-
-        String propertyName = metadataAdapter.getPropertyName(method);
-
-        if (propertyName != null) {
-            return new ParameterProxy[]{new PropertyParameterProxy(method.getParameterTypes()[0], propertyName)};
-        }
 
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();

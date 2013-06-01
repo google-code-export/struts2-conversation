@@ -3,6 +3,7 @@ package com.github.overengineer.container.proxy;
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.ComponentStrategyFactory;
 import com.github.overengineer.container.PrototypeComponentStrategy;
+import com.github.overengineer.container.util.ReflectionUtil;
 
 /**
  * @author rees.byars
@@ -28,7 +29,11 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
 
     @Override
     public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
-        return new SingletonProxyComponentStrategy<T>(implementation.getClass(), delegateFactory.createInstanceStrategy(implementation), handlerFactory);
+        ComponentStrategy<T> delegateStrategy = delegateFactory.createInstanceStrategy(implementation);
+        if (ReflectionUtil.isPropertyType(implementation.getClass())) {
+            return delegateStrategy;
+        }
+        return new SingletonProxyComponentStrategy<T>(implementation.getClass(), delegateStrategy, handlerFactory);
     }
 
     @Override

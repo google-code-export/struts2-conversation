@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class DefaultHotSwappableContainer extends DefaultContainer implements HotSwappableContainer {
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners) {
-        super(strategyFactory, keyRepository, metaFactory, componentInitializationListeners);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners) {
+        super(strategyFactory, keyRepository, dynamicComponentFactory, componentInitializationListeners);
     }
 
     @SuppressWarnings("unchecked")

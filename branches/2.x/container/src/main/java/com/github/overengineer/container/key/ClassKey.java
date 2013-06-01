@@ -7,12 +7,25 @@ import java.lang.reflect.Type;
  */
 public class ClassKey implements SerializableKey {
 
+    private final String name;
     private final Class targetClass;
     private final int hash;
 
     public ClassKey(Class targetClass) {
+        this.name = targetClass.getName();
         this.targetClass = targetClass;
-        this.hash = targetClass.hashCode();
+        this.hash = targetClass.hashCode() * 31 + name.hashCode();
+    }
+
+    public ClassKey(Class targetClass, String name) {
+        this.name = name;
+        this.targetClass = targetClass;
+        this.hash = targetClass.hashCode() * 31 + name.hashCode();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -32,7 +45,7 @@ public class ClassKey implements SerializableKey {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && targetClass == ((Key) object).getType();
+        return object instanceof Key && targetClass == ((Key) object).getType() && name.equals(((Key) object).getName());
     }
 
 }

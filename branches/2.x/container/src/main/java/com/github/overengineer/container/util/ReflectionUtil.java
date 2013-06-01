@@ -10,4 +10,8 @@ public class ReflectionUtil {
         return method.getName().startsWith("set") && method.getParameterTypes().length == 1 && method.getReturnType() == Void.TYPE;
     }
 
+    public static boolean isPropertyType(Class cls) {
+        return cls.isPrimitive() || String.class.isAssignableFrom(cls) || Number.class.isAssignableFrom(cls);
+    }
+
 }

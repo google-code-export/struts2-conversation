@@ -29,10 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.overengineer.container.metadata.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.overengineer.container.metadata.Component;
 
 /**
  * The default implementation of the {@link ConversationContextManager}.
@@ -48,7 +47,7 @@ public class DefaultConversationContextManager implements ConversationContextMan
     protected final Map<String, Map<String, ConversationContext>> conversations = Collections.synchronizedMap(new HashMap<String, Map<String, ConversationContext>>());
     protected AtomicLong nextId = new AtomicLong();
 
-    @Component
+    @Inject
     public void setContextFactory(ConversationContextFactory contextFactory) {
         this.contextFactory = contextFactory;
     }

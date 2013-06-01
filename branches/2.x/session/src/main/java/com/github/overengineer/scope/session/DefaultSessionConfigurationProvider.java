@@ -28,12 +28,12 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.overengineer.container.metadata.Inject;
 import com.github.overengineer.scope.bijection.BijectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.PostConstructable;
 import com.github.overengineer.scope.util.ReflectionUtil;
 
@@ -51,12 +51,12 @@ public class DefaultSessionConfigurationProvider implements SessionConfiguration
     protected ActionProvider actionProvider;
     protected BijectorFactory bijectorFactory;
 
-    @Component
+    @Inject
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
     }
 
-    @Component
+    @Inject
     public void setBijectorFactory(BijectorFactory bijectorFactory) {
         this.bijectorFactory = bijectorFactory;
     }

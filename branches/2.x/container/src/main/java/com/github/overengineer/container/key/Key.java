@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
  */
 public interface Key {
 
+    String getName();
     Type getType();
     Class<?> getTargetClass();
 

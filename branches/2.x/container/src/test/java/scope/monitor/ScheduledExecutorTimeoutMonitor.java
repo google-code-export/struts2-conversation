@@ -24,9 +24,9 @@
  **********************************************************************************************************************/
 package scope.monitor;
 
-import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.container.metadata.PostConstructable;
-import com.github.overengineer.container.metadata.Property;
 import com.github.overengineer.container.metadata.Prototype;
 import scope.CommonConstants;
 
@@ -71,15 +71,15 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
     protected long monitoringFrequency;
     protected SchedulerProvider schedulerProvider;
 
-    @Property(CommonConstants.Properties.MONITORING_FREQUENCY)
-    public void setMonitoringFrequency(long monitoringFrequency) {
+    @Inject
+    public void setMonitoringFrequency(@Named(CommonConstants.Properties.MONITORING_FREQUENCY) Long monitoringFrequency) {
         this.monitoringFrequency = monitoringFrequency;
     }
 
     /**
      * sets the scheduler to be used
      */
-    @Component
+    @Inject
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         this.schedulerProvider = schedulerProvider;
     }
