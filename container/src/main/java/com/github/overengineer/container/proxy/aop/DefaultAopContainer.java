@@ -15,8 +15,8 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     private final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory metaFactory, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
-        super(strategyFactory, keyRepository, metaFactory, componentInitializationListeners);
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
+        super(strategyFactory, keyRepository, dynamicComponentFactory, componentInitializationListeners);
         this.aspects = aspects;
     }
 

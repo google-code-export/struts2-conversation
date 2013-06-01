@@ -32,14 +32,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.scope.bijection.BijectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.PostConstructable;
-import com.github.overengineer.container.metadata.Property;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.annotations.BeginConversation;
 import com.github.overengineer.scope.conversation.annotations.EndConversation;
@@ -63,27 +63,27 @@ public class DefaultConversationConfigurationProvider implements ConversationCon
     protected long maxIdleTimeMillis;
     protected int maxInstances;
 
-    @Property(Properties.CONVERSATION_IDLE_TIMEOUT)
-    public void setDefaultMaxIdleTime(long maxIdleTimeMillis) {
+    @Inject
+    public void setDefaultMaxIdleTime(@Named(Properties.CONVERSATION_IDLE_TIMEOUT) Long maxIdleTimeMillis) {
         this.maxIdleTimeMillis = maxIdleTimeMillis;
     }
 
-    @Property(Properties.CONVERSATION_MAX_INSTANCES)
-    public void setDefaultMaxInstances(int maxInstances) {
+    @Inject
+    public void setDefaultMaxInstances(@Named(Properties.CONVERSATION_MAX_INSTANCES) Integer maxInstances) {
         this.maxInstances = maxInstances;
     }
 
-    @Component
+    @Inject
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
 
-    @Component
+    @Inject
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
     }
 
-    @Component
+    @Inject
     public void setBijectorFactory(BijectorFactory bijectorFactory) {
         this.bijectorFactory = bijectorFactory;
     }

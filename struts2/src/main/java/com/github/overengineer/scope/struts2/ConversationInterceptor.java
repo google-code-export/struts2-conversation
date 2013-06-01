@@ -30,7 +30,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.overengineer.container.ComponentProvider;
+import com.github.overengineer.container.Provider;
 import org.apache.struts2.StrutsStatics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class ConversationInterceptor extends MethodFilterInterceptor {
 
     protected JeeConversationContextManagerProvider contextManagerProvider;
     protected ConversationProcessor processor;
-    protected ComponentProvider componentProvider;
+    protected Provider componentProvider;
     protected Set<String> shortCircuitResults = Collections.emptySet();
 
     public void setShortCircuitResults(String shortCircuitResults) {

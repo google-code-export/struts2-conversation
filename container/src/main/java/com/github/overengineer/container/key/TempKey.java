@@ -7,12 +7,28 @@ import java.lang.reflect.Type;
  */
 public class TempKey implements Key {
 
+    private final String name;
     private final Type type;
     private final Class targetClass;
+    private final int hash;
 
     public TempKey(Type type) {
         this.type = type;
         targetClass = KeyUtil.getClass(type);
+        this.name = targetClass.getName();
+        this.hash = type.hashCode() * 31 + name.hashCode();
+    }
+
+    public TempKey(Type type, String name) {
+        this.type = type;
+        targetClass = KeyUtil.getClass(type);
+        this.name = name;
+        this.hash = type.hashCode() * 31 + name.hashCode();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -27,11 +43,11 @@ public class TempKey implements Key {
 
     @Override
     public int hashCode() {
-        return type.hashCode();
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && type.equals(((Key) object).getType());
+        return object instanceof Key && type.equals(((Key) object).getType()) && name.equals(((Key) object).getName());
     }
 }

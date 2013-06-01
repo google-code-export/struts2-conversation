@@ -57,8 +57,8 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> DynamicCompositeHandler<T> createCompositeHandler(Class<T> targetInterface) {
-        DefaultDynamicCompositeHandler<T> handler = new DefaultDynamicCompositeHandler<T>(targetInterface);
+    public <T> CompositeHandler<T> createCompositeHandler(Class<T> targetInterface) {
+        DynamicCompositeHandler<T> handler = new DynamicCompositeHandler<T>(targetInterface);
         handler.proxy = (T) Proxy.newProxyInstance(
                 this.getClass().getClassLoader(),
                 new Class[]{targetInterface, Serializable.class},
@@ -125,13 +125,13 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
 
     }
 
-    static class DefaultDynamicCompositeHandler<T> implements InvocationHandler, DynamicCompositeHandler<T> {
+    static class DynamicCompositeHandler<T> implements InvocationHandler, CompositeHandler<T> {
 
         private List<T> components = new ArrayList<T>();
         private T proxy;
         private Class<T> componentInterface;
 
-        DefaultDynamicCompositeHandler(Class<T> componentInterface) {
+        DynamicCompositeHandler(Class<T> componentInterface) {
             this.componentInterface = componentInterface;
         }
 
@@ -152,12 +152,12 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
         }
 
         @Override
-        public T getDynamicComposite() {
+        public T getComposite() {
             return proxy;
         }
 
         @Override
-        public DynamicCompositeHandler<T> add(T component) {
+        public CompositeHandler<T> add(T component) {
             components.add(component);
             return this;
         }

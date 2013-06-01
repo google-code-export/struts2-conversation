@@ -1,6 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.Inject;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class Bean3 implements IBean {
 
-    @Component
+    @Inject
     public void setAspects(List<Integer> integers) {
         System.out.println(integers);
     }
 
-    @Component
+    @Inject
     public void setIBean2(IBean2 iBean2) {
         System.out.println(iBean2);
     }

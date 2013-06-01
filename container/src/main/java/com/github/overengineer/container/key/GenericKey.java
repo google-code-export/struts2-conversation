@@ -11,11 +11,21 @@ import java.lang.reflect.Type;
  */
 public abstract class GenericKey<T> implements SerializableKey {
 
+    private final String name;
     private transient Type type;
     private transient Class targetClass;
+    private final int hash;
 
     public GenericKey() {
         init();
+        this.name = targetClass.getName();
+        this.hash = type.hashCode() * 31 + name.hashCode();
+    }
+
+    public GenericKey(String name) {
+        init();
+        this.name = name;
+        this.hash = type.hashCode() * 31 + name.hashCode();
     }
 
     private void init() {
@@ -30,7 +40,12 @@ public abstract class GenericKey<T> implements SerializableKey {
 
     @Override
     public int hashCode() {
-        return type.hashCode();
+        return hash;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -45,7 +60,7 @@ public abstract class GenericKey<T> implements SerializableKey {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && type.equals(((Key) object).getType());
+        return object instanceof Key && type.equals(((Key) object).getType()) && name.equals(((Key) object).getName());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

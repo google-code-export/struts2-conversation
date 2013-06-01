@@ -134,8 +134,8 @@ public abstract class ProgrammaticModelDrivenConversationSupport<T extends Seria
      */
     protected void beginConversations() {
         ProgrammaticModelDrivenConversationUtil.begin(this,
-                scopeContainer.getProperty(long.class, ConversationConstants.Properties.CONVERSATION_IDLE_TIMEOUT),
-                scopeContainer.getProperty(int.class, ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES));
+                scopeContainer.get(Long.class, ConversationConstants.Properties.CONVERSATION_IDLE_TIMEOUT),
+                scopeContainer.get(Integer.class, ConversationConstants.Properties.CONVERSATION_MAX_INSTANCES));
     }
 
     /**

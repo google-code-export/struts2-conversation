@@ -1,7 +1,8 @@
 package scope.monitor;
 
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.container.metadata.PostConstructable;
-import com.github.overengineer.container.metadata.Property;
 import scope.CommonConstants;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,8 +17,8 @@ public class DefaultSchedulerProvider implements SchedulerProvider, PostConstruc
     protected transient ScheduledExecutorService scheduler;
     protected Lock schedulerGuard = new ReentrantLock();
 
-    @Property(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE)
-    public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
+    @Inject
+    public void setMonitoringThreadPoolSize(@Named(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE) Integer monitoringThreadPoolSize) {
         this.monitoringThreadPoolSize = monitoringThreadPoolSize;
     }
 

@@ -26,7 +26,7 @@ package com.github.overengineer.scope.session;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.overengineer.container.metadata.Component;
+import com.github.overengineer.container.metadata.Inject;
 import com.github.overengineer.scope.bijection.Bijector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class DefaultSessionManager implements SessionManager, SessionPostProcess
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSessionManager.class);
     protected SessionConfigurationProvider configurationProvider;
 
-    @Component
+    @Inject
     public void setConfigurationProvider(SessionConfigurationProvider configurationProvider) {
         this.configurationProvider = configurationProvider;
     }

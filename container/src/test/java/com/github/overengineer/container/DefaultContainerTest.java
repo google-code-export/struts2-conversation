@@ -1,12 +1,11 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.key.ClassKey;
+import com.github.overengineer.container.factory.CompositeHandler;
+import com.github.overengineer.container.factory.DynamicComponentFactory;
 import com.github.overengineer.container.key.SerializableKey;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
-import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.*;
 import com.github.overengineer.container.key.GenericKey;
 import com.google.inject.*;
@@ -14,12 +13,12 @@ import com.google.inject.Injector;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.PicoBuilder;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.behaviors.Caching;
-import org.picocontainer.behaviors.Storing;
 import org.picocontainer.containers.TransientPicoContainer;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +29,11 @@ import scope.monitor.DefaultSchedulerProvider;
 import scope.monitor.ScheduledExecutorTimeoutMonitor;
 import scope.monitor.SchedulerProvider;
 import scope.monitor.TimeoutMonitor;
+import se.jbee.inject.Dependency;
+import se.jbee.inject.bind.BinderModule;
+import se.jbee.inject.bootstrap.*;
+import se.jbee.inject.bootstrap.Module;
+import se.jbee.inject.util.Scoped;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -69,7 +73,8 @@ public class DefaultContainerTest implements Serializable {
 
         container.loadModule(CommonModule.class);
 
-        container.addAspect(TestAspect.class)
+        container
+                .addAspect(TestAspect.class)
                 .addAspect(Metaceptor.class);
 
         List<String> strings = new ArrayList<String>();
@@ -107,7 +112,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.add(TimeoutMonitor.class, ScheduledExecutorTimeoutMonitor.class);
 
-        container.addProperty(CommonConstants.Properties.MONITORING_FREQUENCY, 4L);
+        container.addInstance(Long.class, CommonConstants.Properties.MONITORING_FREQUENCY, 4L);
 
         container.verify();
 
@@ -189,7 +194,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
-        container.addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
+        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_FREQUENCY, 4);
 
         SchedulerProvider provider = container.get(SchedulerProvider.class);
 
@@ -210,7 +215,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.addInstance(SchedulerProvider.class, given);
 
-        container.addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
+        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_FREQUENCY, 4);
 
         SchedulerProvider received = container.get(SchedulerProvider.class);
 
@@ -223,9 +228,9 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatAopTainer();
 
-        container.addProperty("test", 69L);
+        container.addInstance(Long.class, "test", 69L);
 
-        assertEquals((Long) 69L, container.getProperty(Long.TYPE, "test"));
+        assertEquals((Long) 69L, container.get(Long.class, "test"));
 
         container.get(ComponentStrategyFactory.class);
 
@@ -236,15 +241,15 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatTainer();
 
-        List<String> strings = new ArrayList<String>();
+        List<? extends String> strings = new ArrayList<String>();
 
         List<Integer> integers = new ArrayList<Integer>();
 
-        container.addInstance(new GenericKey<List<String>>(){}, strings);
+        container.addInstance(new GenericKey<List<? extends String>>("strings"){}, strings);
 
         container.addInstance(new GenericKey<List<Integer>>(){}, integers);
 
-        assertEquals(strings, container.get(new GenericKey<List<String>>() {
+        assertEquals(strings, container.get(new GenericKey<List<? extends String>>("strings") {
         }));
 
         assertEquals(integers, container.get(new GenericKey<List<Integer>>(){}));
@@ -352,14 +357,19 @@ public class DefaultContainerTest implements Serializable {
 
 
     @Test(expected = Assertion.class)
-    public void testAddListener() {
+    public void testAddListener() throws Throwable {
 
         Container container = Clarence.please().gimmeThatTainer().makeInjectable()
                 .addListener(Listener.class)
                 .add(SchedulerProvider.class, DefaultSchedulerProvider.class)
-                .addProperty(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
+                .addInstance(Integer.class, CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
-        container.get(SchedulerProvider.class);
+        try {
+            container.get(SchedulerProvider.class);
+        } catch (Exception e) {
+            throw e.getCause();
+        }
+
 
     }
 
@@ -539,7 +549,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 8;
     long duration = 5000;
-    long primingRuns = 1000000;
+    long primingRuns = 10000;
 
     private void printComparison(long mine, long theirs, String theirName) {
         System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);
@@ -585,7 +595,7 @@ public class DefaultContainerTest implements Serializable {
             @Override
             public void execute() throws HotSwapException {
 
-                final GenericApplicationContext applicationContext = new GenericApplicationContext();
+                DefaultListableBeanFactory applicationContext = new DefaultListableBeanFactory();
 
                 GenericBeanDefinition beanDefinition2 = new GenericBeanDefinition();
                 beanDefinition2.setBeanClass(Bean2.class);
@@ -604,9 +614,25 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "spring container creation");
 
+        long silks = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                Bootstrap.injector(PrototypeSilkBeans.class).resolve(Dependency.dependency(IBean.class));
+            }
+        }, threads).run(duration, primingRuns, "silk container creation");
+
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
         printComparison(mines, springs, "spring");
+        printComparison(mines, silks, "silks");
+    }
+
+    public static class PrototypeSilkBeans extends BinderModule {
+        @Override
+        protected void declare() {
+            per(Scoped.INJECTION).bind(IBean.class).to(Bean.class);
+            per(Scoped.INJECTION).bind(IBean2.class).to(Bean2.class);
+        }
     }
 
     @Test
@@ -658,23 +684,48 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "spring plain prototypes");
 
+        final se.jbee.inject.Injector silk = Bootstrap.injector(PrototypeSilkBeans.class);
+        final Dependency<IBean> iBeanDependency = Dependency.dependency(IBean.class);
+
+        long silks = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                silk.resolve(iBeanDependency).stuff();
+            }
+        }, threads).run(duration, primingRuns, "silk container creation");
+
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
         printComparison(mines, springs, "spring");
+        printComparison(mines, silks, "silks");
+    }
+
+    public static class SingletonSilkBeans extends BinderModule {
+        @Override
+        protected void declare() {
+            per(Scoped.APPLICATION).bind(ISingleton.class).to(Singleton.class);
+            per(Scoped.APPLICATION).bind(ISingleton2.class).to(Singleton2.class);
+        }
     }
 
     @Test
     public void testSingletonSpeed() throws Exception {
 
 
+        DynamicComponentFactory factory = Clarence.please().makeYourStuffInjectable().gimmeThatTainer().get(DynamicComponentFactory.class);
 
+        CompositeHandler<Container> handler = factory.createCompositeHandler(Container.class);
+
+        handler.add(Clarence.please().gimmeThatTainer());
+
+        handler.getComposite().makeInjectable();
 
 
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Caching())
                 .addComponent(ISingleton.class, Singleton.class)
                 .addComponent(ISingleton2.class, Singleton2.class);
 
-        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 picoContainer3.getComponent(ISingleton.class).yo();
@@ -688,7 +739,7 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "pico singleton");
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long picos = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 picoContainer3.getComponent(ISingleton.class).yo();
@@ -700,7 +751,7 @@ public class DefaultContainerTest implements Serializable {
                 .add(ISingleton2.class, Singleton2.class)
                 .getReal();
 
-        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container2.get(ISingleton.class).yo();
@@ -714,7 +765,7 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "my singleton");
 
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
                 container2.get(ISingleton.class).yo();
@@ -744,9 +795,20 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "spring singleton");
 
+        final se.jbee.inject.Injector silk = Bootstrap.injector(SingletonSilkBeans.class);
+        final Dependency<ISingleton> iSingletonDependency = Dependency.dependency(ISingleton.class);
+
+        long silks = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                silk.resolve(iSingletonDependency).yo();
+            }
+        }, threads).run(duration, primingRuns, "silk container creation");
+
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");
         printComparison(mines, springs, "spring");
+        printComparison(mines, silks, "silks");
 
     }
 

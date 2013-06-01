@@ -25,10 +25,10 @@ package com.github.overengineer.scope.conversation.processing;
 
 import java.util.Collection;
 
+import com.github.overengineer.container.metadata.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.scope.conversation.ConversationAdapter;
 import com.github.overengineer.scope.conversation.ConversationUtil;
 import com.github.overengineer.scope.conversation.annotations.ConversationField;
@@ -53,7 +53,7 @@ public class SimpleConversationProcessor implements ConversationProcessor {
 
     protected ConversationConfigurationProvider configurationProvider;
 
-    @Component
+    @Inject
     public void setConfigurationProvider(ConversationConfigurationProvider configurationProvider) {
         this.configurationProvider = configurationProvider;
     }

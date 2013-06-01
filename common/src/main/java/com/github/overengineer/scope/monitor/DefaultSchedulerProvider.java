@@ -7,9 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.scope.CommonConstants.Properties;
 import com.github.overengineer.container.metadata.PostConstructable;
-import com.github.overengineer.container.metadata.Property;
 
 public class DefaultSchedulerProvider implements SchedulerProvider, PostConstructable {
 
@@ -19,8 +20,8 @@ public class DefaultSchedulerProvider implements SchedulerProvider, PostConstruc
     protected transient ScheduledExecutorService scheduler;
     protected Lock schedulerGuard = new ReentrantLock();
 
-    @Property(Properties.MONITORING_THREAD_POOL_SIZE)
-    public void setMonitoringThreadPoolSize(int monitoringThreadPoolSize) {
+    @Inject
+    public void setMonitoringThreadPoolSize(@Named(Properties.MONITORING_THREAD_POOL_SIZE) Integer monitoringThreadPoolSize) {
         this.monitoringThreadPoolSize = monitoringThreadPoolSize;
     }
 

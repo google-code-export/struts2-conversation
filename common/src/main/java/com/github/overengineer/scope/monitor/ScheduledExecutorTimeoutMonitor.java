@@ -35,10 +35,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.scope.CommonConstants.Properties;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.PostConstructable;
-import com.github.overengineer.container.metadata.Property;
 import com.github.overengineer.container.metadata.Prototype;
 
 /**
@@ -71,15 +71,15 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
     protected long monitoringFrequency;
     protected SchedulerProvider schedulerProvider;
 
-    @Property(Properties.MONITORING_FREQUENCY)
-    public void setMonitoringFrequency(long monitoringFrequency) {
+    @Inject
+    public void setMonitoringFrequency(@Named(Properties.MONITORING_FREQUENCY) Long monitoringFrequency) {
         this.monitoringFrequency = monitoringFrequency;
     }
 
     /**
      * sets the scheduler to be used
      */
-    @Component
+    @Inject
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         this.schedulerProvider = schedulerProvider;
     }

@@ -23,9 +23,13 @@ public interface Container extends Provider {
 
     <T> Container add(Class<T> componentType, Class<? extends T> implementationType);
 
+    <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType);
+
     <T> Container add(SerializableKey key, Class<? extends T> implementationType);
 
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
+
+    <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation);
 
     <T, I extends T> Container addInstance(SerializableKey key, I implementation);
 
@@ -44,8 +48,6 @@ public interface Container extends Provider {
     Container registerCompositeTarget(Class<?> targetInterface);
 
     Container registerCompositeTarget(SerializableKey targetKey);
-
-    Container addProperty(String propertyName, Object propertyValue);
 
     List<ComponentInitializationListener> getInitializationListeners();
 

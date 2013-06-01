@@ -1,6 +1,7 @@
 package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.container.*;
+import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
@@ -9,7 +10,6 @@ import com.github.overengineer.scope.conversation.configuration.ConversationArbi
 import com.github.overengineer.scope.session.SessionModule;
 import com.opensymphony.xwork2.inject.Inject;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class StrutsModuleContainer implements Container {
@@ -17,7 +17,8 @@ public class StrutsModuleContainer implements Container {
     private static final long serialVersionUID = 3180479652636319036L;
 
     private com.opensymphony.xwork2.inject.Container container;
-    private Container delegate = Clarence.please().gimmeThatTainer();
+    private Container delegate = Clarence.please().makeYourStuffInjectable().gimmeThatTainer();
+    private KeyRepository keyRepository = delegate.get(KeyRepository.class);
 
     @Inject
     public void setContainer(com.opensymphony.xwork2.inject.Container container) {
@@ -35,20 +36,6 @@ public class StrutsModuleContainer implements Container {
 
     protected <T> void addStrutsInstance(Class<T> clazz) {
         addInstance(clazz, container.getInstance(clazz, container.getInstance(String.class, clazz.getName())));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getProperty(Class<T> clazz, String name) {
-        String string = container.getInstance(String.class, name);
-        if (clazz == long.class) {
-            return (T) Long.valueOf(string);
-        } else if (clazz == int.class) {
-            return (T) Integer.valueOf(string);
-        } else if (clazz == boolean.class) {
-            return (T) (Boolean) "true".equals(string);
-        }
-        return (T) string;
     }
 
     @Override
@@ -87,6 +74,11 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType) {
+        return delegate.add(componentType, name, implementationType);
+    }
+
+    @Override
     public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
         return delegate.add(key, implementationType);
     }
@@ -94,6 +86,11 @@ public class StrutsModuleContainer implements Container {
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
         return delegate.addInstance(componentType, implementation);
+    }
+
+    @Override
+    public <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation) {
+        return delegate.addInstance(componentType, name, implementation);
     }
 
     @Override
@@ -132,8 +129,13 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container addProperty(String propertyName, Object propertyValue) {
-        return delegate.addProperty(propertyName, propertyValue);
+    public Container registerCompositeTarget(Class<?> targetInterface) {
+        return delegate.registerCompositeTarget(targetInterface);
+    }
+
+    @Override
+    public Container registerCompositeTarget(SerializableKey targetKey) {
+        return delegate.registerCompositeTarget(targetKey);
     }
 
     @Override
@@ -168,16 +170,30 @@ public class StrutsModuleContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz) {
-        return delegate.get(clazz);
+        return get(keyRepository.retrieveKey(clazz));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Type type) {
-        return delegate.get(type);
+    public <T> T get(Class<T> clazz, String name) {
+        return (T) get(keyRepository.retrieveKey(clazz, name));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T get(SerializableKey key) {
+        String string = container.getInstance(String.class, key.getName());
+        if (string != null) {
+            Class clazz = key.getTargetClass();
+            if (clazz == long.class) {
+                return (T) Long.valueOf(string);
+            } else if (clazz == int.class) {
+                return (T) Integer.valueOf(string);
+            } else if (clazz == boolean.class) {
+                return (T) (Boolean) "true".equals(string);
+            }
+            return (T) string;
+        }
         return delegate.get(key);
     }
 }

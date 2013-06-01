@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.github.overengineer.container.metadata.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.overengineer.scope.ActionProvider;
-import com.github.overengineer.container.metadata.Component;
 import com.github.overengineer.container.metadata.PostConstructable;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
 import com.github.overengineer.scope.conversation.expression.annotations.Eval;
@@ -29,12 +29,12 @@ public class DefaultExpressionConfigurationProvider implements ExpressionConfigu
     protected ActionProvider actionProvider;
     protected ConcurrentMap<Class<?>, ExpressionConfiguration> expressionConfigurations = new ConcurrentHashMap<Class<?>, ExpressionConfiguration>();
 
-    @Component
+    @Inject
     public void setArbitrator(ConversationArbitrator arbitrator) {
         this.arbitrator = arbitrator;
     }
 
-    @Component
+    @Inject
     public void setActionProvider(ActionProvider actionProvider) {
         this.actionProvider = actionProvider;
     }
