@@ -36,12 +36,12 @@ public class DefaultKeyRepository implements KeyRepository {
 
     @Override
     public SerializableKey retrieveKey(Type type, String name) {
+        if (type instanceof Class) {
+            return retrieveKey((Class) type, name);
+        }
         SerializableKey key = keys.get(new TempKey(type, name));
         if (key != null) {
             return key;
-        }
-        if (type instanceof Class) {
-            return retrieveKey((Class) type, name);
         }
         if (type instanceof ParameterizedType) {
             return new LazyDelegatingKey(type, name);
