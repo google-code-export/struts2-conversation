@@ -1,7 +1,7 @@
 package com.github.overengineer.scope;
 
 import com.github.overengineer.scope.bijection.BijectorImplFactory;
-import com.github.overengineer.container.BaseModule;
+import com.github.overengineer.container.module.BaseModule;
 import com.github.overengineer.scope.monitor.DefaultSchedulerProvider;
 import com.github.overengineer.scope.monitor.SchedulerProvider;
 import com.github.overengineer.scope.bijection.BijectorFactory;
@@ -23,8 +23,7 @@ public class CommonModule extends BaseModule {
 
         use(BijectorImplFactory.class).forType(BijectorFactory.class);
 
-        set(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE)
-                .to(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE);
+        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withName(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
     }
 
     public static class EmptyActionProvider implements ActionProvider {

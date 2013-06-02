@@ -3,6 +3,9 @@ package com.github.overengineer.container;
 import com.github.overengineer.container.factory.CompositeHandler;
 import com.github.overengineer.container.factory.DynamicComponentFactory;
 import com.github.overengineer.container.key.*;
+import com.github.overengineer.container.module.InstanceMapping;
+import com.github.overengineer.container.module.Mapping;
+import com.github.overengineer.container.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,26 +130,25 @@ public class DefaultContainer implements Container {
     @Override
     public Container loadModule(Class<? extends Module> moduleClass) {
         Module module = strategyFactory.create(moduleClass).get(this);
-        for (Map.Entry<Class<?>, List<Class<?>>> componentEntry : module.getTypeMappings().entrySet()) {
-            Class<?> implementationType = componentEntry.getKey();
-            for (Class<?> targetInterface : componentEntry.getValue()) {
-                add(keyRepository.retrieveKey(targetInterface), implementationType);
+        for (Mapping<?> mapping : module.getMappings()) {
+            Class<?> implementationType = mapping.getImplementationType();
+            if (mapping instanceof InstanceMapping) {
+                InstanceMapping instanceMapping = (InstanceMapping) mapping;
+                Object instance = instanceMapping.getInstance();
+                for (Class<?> target : mapping.getTargetClasses()) {
+                    addInstance(keyRepository.retrieveKey(target), instance);
+                }
+                for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
+                    addInstance(targetGeneric, instance);
+                }
+            } else {
+                for (Class<?> target : mapping.getTargetClasses()) {
+                    add(keyRepository.retrieveKey(target), implementationType);
+                }
+                for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
+                    add(targetGeneric, implementationType);
+                }
             }
-        }
-        for (Map.Entry<Class<?>, Object> componentEntry : module.getInstanceMappings().entrySet()) {
-            addInstance(keyRepository.retrieveKey(componentEntry.getKey()), componentEntry.getValue());
-        }
-        for (Map.Entry<Class<?>, List<SerializableKey>> componentEntry : module.getGenericTypeMappings().entrySet()) {
-            Class<?> implementationType = componentEntry.getKey();
-            for (SerializableKey targetGeneric : componentEntry.getValue()) {
-                add(targetGeneric, implementationType);
-            }
-        }
-        for (Map.Entry<SerializableKey, Object> componentEntry : module.getGenericInstanceMappings().entrySet()) {
-            addInstance(componentEntry.getKey(), componentEntry.getValue());
-        }
-        for (Map.Entry<String, Object> propertyEntry : module.getProperties().entrySet()) {
-            addInstance(keyRepository.retrieveKey(propertyEntry.getValue().getClass(), propertyEntry.getKey()), propertyEntry.getValue());
         }
         for (SerializableKey factoryKey : module.getManagedComponentFactories()) {
             registerManagedComponentFactory(factoryKey);

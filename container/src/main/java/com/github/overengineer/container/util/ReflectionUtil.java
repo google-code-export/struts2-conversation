@@ -11,7 +11,11 @@ public class ReflectionUtil {
     }
 
     public static boolean isPropertyType(Class cls) {
-        return cls.isPrimitive() || String.class.isAssignableFrom(cls) || Number.class.isAssignableFrom(cls);
+        return
+                cls.isPrimitive() ||
+                String.class.isAssignableFrom(cls) ||
+                Number.class.isAssignableFrom(cls) ||
+                Boolean.class.isAssignableFrom(cls);
     }
 
 }

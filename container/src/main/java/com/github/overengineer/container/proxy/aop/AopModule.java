@@ -1,14 +1,9 @@
 package com.github.overengineer.container.proxy.aop;
 
 import com.github.overengineer.container.*;
-import com.github.overengineer.container.inject.DefaultInjectorFactory;
-import com.github.overengineer.container.inject.InjectorFactory;
-import com.github.overengineer.container.key.DefaultKeyRepository;
-import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
-import com.github.overengineer.container.metadata.MetadataAdapter;
+import com.github.overengineer.container.module.BaseModule;
 import com.github.overengineer.container.proxy.*;
 import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.key.KeyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +21,6 @@ public class AopModule extends BaseModule {
         use(AdvisedInvocationFactory.class).forType(JoinPointInvocationFactory.class);
         use(DefaultPointcutInterpreter.class).forType(PointcutInterpreter.class);
         use(DefaultAopContainer.class).forType(AopContainer.class);
-        useInstance(new ArrayList<Aspect>()).forGeneric(new GenericKey<List<Aspect>>(){});
+        use(new ArrayList<Aspect>()).forType(new GenericKey<List<Aspect>>(){});
     }
 }

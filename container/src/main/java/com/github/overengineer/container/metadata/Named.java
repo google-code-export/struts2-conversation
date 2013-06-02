@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * @author rees.byars
  */
-@Target({ElementType.METHOD, ElementType.PARAMETER})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Named {

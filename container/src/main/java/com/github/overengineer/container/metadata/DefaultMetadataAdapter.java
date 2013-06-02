@@ -27,9 +27,9 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
     @Override
     public Scope getScope(Class cls) {
         if (cls.isAnnotationPresent(Prototype.class)) {
-            return NativeScope.PROTOTYPE;
+            return Scopes.PROTOTYPE;
         }
-        return NativeScope.SINGLETON;
+        return Scopes.SINGLETON;
     }
 
     /**
@@ -77,7 +77,7 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      */
     @Override
     public boolean isSetter(Method method) {
-        return ReflectionUtil.isPublicSetter(method) && (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Named.class));
+        return ReflectionUtil.isPublicSetter(method) && method.isAnnotationPresent(Inject.class);
     }
 
     /**

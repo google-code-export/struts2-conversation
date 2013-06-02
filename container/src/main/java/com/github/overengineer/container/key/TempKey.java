@@ -12,13 +12,6 @@ public class TempKey implements Key {
     private final Class targetClass;
     private final int hash;
 
-    public TempKey(Type type) {
-        this.type = type;
-        targetClass = KeyUtil.getClass(type);
-        this.name = targetClass.getName();
-        this.hash = type.hashCode() * 31 + name.hashCode();
-    }
-
     public TempKey(Type type, String name) {
         this.type = type;
         targetClass = KeyUtil.getClass(type);

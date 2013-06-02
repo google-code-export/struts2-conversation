@@ -5,7 +5,7 @@ import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.inject.MethodInjector;
 import com.github.overengineer.container.instantiate.*;
 import com.github.overengineer.container.metadata.MetadataAdapter;
-import com.github.overengineer.container.metadata.NativeScope;
+import com.github.overengineer.container.metadata.Scopes;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -31,7 +31,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     public <T> ComponentStrategy<T> create(Class<T> implementationType) {
         ComponentInjector<T> injector = injectorFactory.create(implementationType);
         Instantiator<T> instantiator = instantiatorFactory.create(implementationType);
-        if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
+        if (Scopes.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
             return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
@@ -50,7 +50,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> delegateStrategy) {
         ComponentInjector<T> injector = injectorFactory.create(implementationType);
         Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateStrategy.getComponentType(), delegateStrategy);  //TODO dont need to pass class
-        if (NativeScope.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
+        if (Scopes.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
             return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
         } else {
             return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
