@@ -1,6 +1,7 @@
 package com.github.overengineer.container;
 
 import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.module.Module;
 
 import java.util.List;
 

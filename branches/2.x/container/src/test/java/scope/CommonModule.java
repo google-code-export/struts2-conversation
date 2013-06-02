@@ -1,10 +1,8 @@
 package scope;
 
-import com.github.overengineer.container.BaseModule;
-import scope.monitor.DefaultSchedulerProvider;
-import scope.monitor.ScheduledExecutorTimeoutMonitor;
-import scope.monitor.SchedulerProvider;
-import scope.monitor.TimeoutMonitor;
+import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.container.module.BaseModule;
+import scope.monitor.*;
 
 import java.util.Collections;
 import java.util.Set;
@@ -19,15 +17,44 @@ public class CommonModule extends BaseModule {
 
         use(EmptyActionProvider.class).forType(ActionProvider.class);
 
-        use(ScheduledExecutorTimeoutMonitor.class).forType(TimeoutMonitor.class);
+        use(new GenericKey<ScheduledExecutorTimeoutMonitor<FakeTimeoutable>>(){})
+                .forType(TimeoutMonitor.class)
+                .forType(new GenericKey<TimeoutMonitor<FakeTimeoutable>>() {});
 
         use(DefaultSchedulerProvider.class).forType(SchedulerProvider.class);
 
-        set(CommonConstants.Properties.MONITORING_FREQUENCY)
-                .to(CommonConstants.Defaults.MONITORING_FREQUENCY);
+        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withName(CommonConstants.Properties.MONITORING_FREQUENCY);
 
-        set(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE)
-                .to(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE);
+        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withName(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
+    }
+
+    public static class FakeTimeoutable implements Timeoutable<FakeTimeoutable> {
+
+        @Override
+        public void setMaxIdleTime(long maxIdleTime) {
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public long getRemainingTime() {
+            return 0;
+        }
+
+        @Override
+        public void timeout() {
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public void addTimeoutListener(TimeoutListener timeoutListener) {
+        }
     }
 
     public static class EmptyActionProvider implements ActionProvider {

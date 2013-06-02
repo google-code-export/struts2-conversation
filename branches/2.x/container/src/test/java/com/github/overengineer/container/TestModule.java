@@ -1,5 +1,7 @@
 package com.github.overengineer.container;
 
+import com.github.overengineer.container.module.BaseModule;
+
 /**
  */
 public class TestModule extends BaseModule {

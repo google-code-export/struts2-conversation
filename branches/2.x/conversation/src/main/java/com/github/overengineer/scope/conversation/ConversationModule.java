@@ -1,6 +1,6 @@
 package com.github.overengineer.scope.conversation;
 
-import com.github.overengineer.container.BaseModule;
+import com.github.overengineer.container.module.BaseModule;
 import com.github.overengineer.container.key.GenericKey;
 import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.Factory;
@@ -27,15 +27,16 @@ public class ConversationModule extends BaseModule {
         use(DefaultJeeConversationContextManagerProvider.class).forType(JeeConversationContextManagerProvider.class);
         use(TimeoutConversationContextManager.class).forType(ConversationContextManager.class);
 
-        use(ScheduledExecutorTimeoutMonitor.class).forGeneric(new GenericKey<TimeoutMonitor<ConversationContext>>() {});
+        use(new GenericKey<ScheduledExecutorTimeoutMonitor<ConversationContext>>() {})
+                .forType(new GenericKey<TimeoutMonitor<ConversationContext>>() {});
 
         registerManagedComponentFactory(new GenericKey<Factory<ConversationContextManager>>() {});
         registerNonManagedComponentFactory(ConversationContextFactory.class).toProduce(DefaultConversationContext.class);
 
-        set(Properties.CONVERSATION_IDLE_TIMEOUT).to(Defaults.CONVERSATION_IDLE_TIMEOUT);
-        set(Properties.CONVERSATION_MAX_INSTANCES).to(Defaults.CONVERSATION_MAX_INSTANCES);
-        set(Properties.CONVERSATION_PACKAGE_NESTING).to(true);
-        set(CommonConstants.Properties.MONITORING_FREQUENCY).to(CommonConstants.Defaults.MONITORING_FREQUENCY);
+        use(Defaults.CONVERSATION_IDLE_TIMEOUT).withName(Properties.CONVERSATION_IDLE_TIMEOUT);
+        use(Defaults.CONVERSATION_MAX_INSTANCES).withName(Properties.CONVERSATION_MAX_INSTANCES);
+        use(true).withName(Properties.CONVERSATION_PACKAGE_NESTING);
+        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withName(CommonConstants.Properties.MONITORING_FREQUENCY);
 
     }
 

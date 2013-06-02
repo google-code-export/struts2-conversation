@@ -1,6 +1,6 @@
 package com.github.overengineer.container.proxy;
 
-import com.github.overengineer.container.BaseModule;
+import com.github.overengineer.container.module.BaseModule;
 import com.github.overengineer.container.ComponentStrategyFactory;
 import com.github.overengineer.container.DefaultComponentStrategyFactory;
 

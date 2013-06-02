@@ -1,4 +1,4 @@
-package com.github.overengineer.container;
+package com.github.overengineer.container.module;
 
 import com.github.overengineer.container.key.SerializableKey;
 
@@ -12,18 +12,10 @@ import java.util.Set;
  */
 public interface Module extends Serializable {
 
-    Map<Class<?>, List<Class<?>>> getTypeMappings();
-
-    Map<Class<?>, Object> getInstanceMappings();
-
-    Map<Class<?>, List<SerializableKey>> getGenericTypeMappings();
-
-    Map<SerializableKey, Object> getGenericInstanceMappings();
+    List<Mapping<?>> getMappings();
 
     Set<SerializableKey> getManagedComponentFactories();
 
     Map<SerializableKey, Class> getNonManagedComponentFactories();
-
-    Map<String, Object> getProperties();
 
 }

@@ -3,6 +3,7 @@ package com.github.overengineer.scope.struts2;
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.module.Module;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
 import com.github.overengineer.scope.conversation.ConversationModule;
