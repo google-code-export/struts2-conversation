@@ -15,8 +15,8 @@ public class TempKey implements Key {
     public TempKey(Type type, String name) {
         this.type = type;
         targetClass = KeyUtil.getClass(type);
-        this.name = name;
-        this.hash = type.hashCode() * 31 + name.hashCode();
+        this.name = name == null ? "" : name;
+        this.hash = type.hashCode();
     }
 
     @Override

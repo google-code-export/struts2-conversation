@@ -21,7 +21,6 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
 
     public TypeMapping(Class<T> implementationType) {
         this.implementationType = implementationType;
-        this.name = implementationType.getName();
         targetClasses.add(implementationType);
     }
 

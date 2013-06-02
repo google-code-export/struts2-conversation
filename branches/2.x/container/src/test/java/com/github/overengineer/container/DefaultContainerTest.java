@@ -194,7 +194,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
 
-        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_FREQUENCY, 4);
+        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
         SchedulerProvider provider = container.get(SchedulerProvider.class);
 
@@ -215,7 +215,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.addInstance(SchedulerProvider.class, given);
 
-        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_FREQUENCY, 4);
+        container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
         SchedulerProvider received = container.get(SchedulerProvider.class);
 
@@ -776,8 +776,23 @@ public class DefaultContainerTest implements Serializable {
             @Override
             protected void configure() {
                 bind(ISingleton.class).to(Singleton.class).in(Scopes.SINGLETON);
+                bind(ISingleton2.class).to(Singleton2.class).in(Scopes.SINGLETON);
             }
         });
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                injector3.getInstance(ISingleton.class).yo();
+                injector3.getInstance(ISingleton2.class).yo();
+                injector3.getInstance(ISingleton.class).yo();
+                injector3.getInstance(ISingleton2.class).yo();
+                injector3.getInstance(ISingleton.class).yo();
+                injector3.getInstance(ISingleton2.class).yo();
+                injector3.getInstance(ISingleton.class).yo();
+                injector3.getInstance(ISingleton2.class).yo();
+            }
+        }, threads).run(duration, primingRuns, "guice singleton");
 
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override

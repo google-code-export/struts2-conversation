@@ -18,14 +18,14 @@ public abstract class GenericKey<T> implements SerializableKey {
 
     public GenericKey() {
         init();
-        this.name = targetClass.getName();
-        this.hash = type.hashCode() * 31 + name.hashCode();
+        this.name = "";
+        this.hash = type.hashCode();
     }
 
     public GenericKey(String name) {
         init();
         this.name = name;
-        this.hash = type.hashCode() * 31 + name.hashCode();
+        this.hash = type.hashCode();
     }
 
     private void init() {
