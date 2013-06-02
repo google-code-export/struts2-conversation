@@ -21,27 +21,22 @@ public class DefaultKeyRepository implements KeyRepository {
 
     @Override
     public SerializableKey retrieveKey(Class cls) {
-        return retrieveKey(cls, cls.getName());
+        return new ClassKey(cls);
     }
 
     @Override
     public SerializableKey retrieveKey(Class cls, String name) {
-        SerializableKey key = keys.get(cls);
-        if (key == null) {
-            key = new ClassKey(cls, name);
-            keys.put(cls, key);
-        }
-        return key;
+        return new ClassKey(cls, name);
     }
 
     @Override
     public SerializableKey retrieveKey(final Type type) {
-        return retrieveKey(type, KeyUtil.getClass(type).getName());
+        return retrieveKey(type, null);
     }
 
     @Override
     public SerializableKey retrieveKey(Type type, String name) {
-        SerializableKey key = keys.get(type);
+        SerializableKey key = keys.get(new TempKey(type, name));
         if (key != null) {
             return key;
         }

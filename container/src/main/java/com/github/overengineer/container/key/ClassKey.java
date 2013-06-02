@@ -12,15 +12,15 @@ public class ClassKey implements SerializableKey {
     private final int hash;
 
     public ClassKey(Class targetClass) {
-        this.name = targetClass.getName();
+        this.name = "";
         this.targetClass = targetClass;
-        this.hash = targetClass.hashCode() * 31 + name.hashCode();
+        this.hash = targetClass.hashCode();
     }
 
     public ClassKey(Class targetClass, String name) {
-        this.name = name;
+        this.name = name == null ? "" : name;
         this.targetClass = targetClass;
-        this.hash = targetClass.hashCode() * 31 + name.hashCode();
+        this.hash = targetClass.hashCode();
     }
 
     @Override

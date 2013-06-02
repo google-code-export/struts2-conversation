@@ -90,7 +90,7 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
                 return ((Named) annotation).value();
             }
         }
-        return KeyUtil.getClass(type).getName();
+        return null;
     }
 
     /**

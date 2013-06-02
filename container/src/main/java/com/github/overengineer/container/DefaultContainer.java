@@ -82,8 +82,6 @@ import java.util.*;
  * TODO cleanup interceptor impl, move from extensions to decorations?
  * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement?
  * TODO then the aop container can just interface with its cache and that of its children?
- * TODO add a getProducedType method to the ComponentStrategy interface, leverage to move to single map lookup - look into
- * TODO accomplishing by also adding to the Instantiator interface, then we can get via either instantiator.get, delegate.get, or instance.get
  *
  *
  * @author rees.byars
@@ -132,18 +130,19 @@ public class DefaultContainer implements Container {
         Module module = strategyFactory.create(moduleClass).get(this);
         for (Mapping<?> mapping : module.getMappings()) {
             Class<?> implementationType = mapping.getImplementationType();
+            String name = mapping.getName();
             if (mapping instanceof InstanceMapping) {
                 InstanceMapping instanceMapping = (InstanceMapping) mapping;
                 Object instance = instanceMapping.getInstance();
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addInstance(keyRepository.retrieveKey(target), instance);
+                    addInstance(keyRepository.retrieveKey(target, name), instance);
                 }
                 for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
                     addInstance(targetGeneric, instance);
                 }
             } else {
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    add(keyRepository.retrieveKey(target), implementationType);
+                    add(keyRepository.retrieveKey(target, name), implementationType);
                 }
                 for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
                     add(targetGeneric, implementationType);
