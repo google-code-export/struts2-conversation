@@ -8,5 +8,5 @@ import java.io.Serializable;
  * @author rees.byars
  */
 public interface MethodInjector<T> extends Serializable {
-    Object inject(T component, Provider provider);
+    Object inject(T component, Provider provider, Object ... trailingArgs);
 }

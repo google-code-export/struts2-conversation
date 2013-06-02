@@ -549,7 +549,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 8;
     long duration = 5000;
-    long primingRuns = 10000;
+    long primingRuns = 1000000;
 
     private void printComparison(long mine, long theirs, String theirName) {
         System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);

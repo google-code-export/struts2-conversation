@@ -1,6 +1,5 @@
 package com.github.overengineer.container.metadata;
 
-import com.github.overengineer.container.key.KeyUtil;
 import com.github.overengineer.container.util.ReflectionUtil;
 
 import java.lang.annotation.Annotation;

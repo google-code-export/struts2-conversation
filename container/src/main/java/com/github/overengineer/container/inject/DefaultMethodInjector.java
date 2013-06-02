@@ -46,11 +46,18 @@ public class DefaultMethodInjector<T> implements MethodInjector<T> {
     }
 
     @Override
-    public Object inject(T component, Provider provider) {
+    public Object inject(T component, Provider provider, Object ... trailingArgs) {
         try {
-            Object[] parameters = new Object[parameterProxies.length];
+            Object[] parameters = new Object[parameterProxies.length + trailingArgs.length];
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = parameterProxies[i].get(provider);
+            }
+            if (trailingArgs.length > 0) {
+                if (parameterProxies.length > 0) {
+                    System.arraycopy(trailingArgs, 0, parameters, parameterProxies.length, trailingArgs.length + parameterProxies.length - 1);
+                } else {
+                    parameters = trailingArgs;
+                }
             }
             return getMethod().invoke(component, parameters);
         } catch (Exception e) {
