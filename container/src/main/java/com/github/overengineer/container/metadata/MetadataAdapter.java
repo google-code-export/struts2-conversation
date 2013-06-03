@@ -1,5 +1,7 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.scope.Scope;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -16,10 +18,6 @@ public interface MetadataAdapter extends Serializable {
     Scope getScope(Class cls);
 
     Method getInitMethod(Class<?> cls);
-
-    void notifyStartedIfEligible(Object component);
-
-    void notifyStoppedIfEligible(Object component);
 
     boolean isSetter(Method method);
 

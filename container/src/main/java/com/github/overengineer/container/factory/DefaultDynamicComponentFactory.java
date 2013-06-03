@@ -1,6 +1,7 @@
 package com.github.overengineer.container.factory;
 
 import com.github.overengineer.container.Provider;
+import com.github.overengineer.container.SelectionAdvisor;
 import com.github.overengineer.container.instantiate.Instantiator;
 import com.github.overengineer.container.instantiate.InstantiatorFactory;
 import com.github.overengineer.container.key.SerializableKey;
@@ -9,7 +10,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,8 +57,8 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> CompositeHandler<T> createCompositeHandler(Class<T> targetInterface) {
-        DynamicCompositeHandler<T> handler = new DynamicCompositeHandler<T>(targetInterface);
+    public <T> CompositeHandler<T> createCompositeHandler(Class<T> targetInterface, final Provider provider) {
+        DynamicCompositeHandler<T> handler = new DynamicCompositeHandler<T>(targetInterface, provider);
         handler.proxy = (T) Proxy.newProxyInstance(
                 this.getClass().getClassLoader(),
                 new Class[]{targetInterface, Serializable.class},
@@ -127,12 +127,14 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
 
     static class DynamicCompositeHandler<T> implements InvocationHandler, CompositeHandler<T> {
 
-        private List<T> components = new ArrayList<T>();
+        private List<T> components;
         private T proxy;
-        private Class<T> componentInterface;
+        private final Class<T> componentInterface;
+        private final Provider provider;
 
-        DynamicCompositeHandler(Class<T> componentInterface) {
+        DynamicCompositeHandler(Class<T> componentInterface, final Provider provider) {
             this.componentInterface = componentInterface;
+            this.provider = provider;
         }
 
         @Override
@@ -145,6 +147,14 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
             } else if ("toString".equals(methodName)) {
                 return proxy.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(this)) + "$DynamicComposite$[" + componentInterface.getName() + "]";
             }
+            if (components == null) {
+                components = provider.getAll(componentInterface, new SelectionAdvisor() {
+                    @Override
+                    public boolean validSelection(Class<?> candidateClass) {
+                        return candidateClass != proxy.getClass();
+                    }
+                });
+            }
             for (T component : components) {
                 method.invoke(component, objects);
             }
@@ -154,12 +164,6 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
         @Override
         public T getComposite() {
             return proxy;
-        }
-
-        @Override
-        public CompositeHandler<T> add(T component) {
-            components.add(component);
-            return this;
         }
 
     }

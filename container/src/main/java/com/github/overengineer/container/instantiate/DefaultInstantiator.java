@@ -67,4 +67,5 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     public Class getProducedType() {
         return type;
     }
+
 }

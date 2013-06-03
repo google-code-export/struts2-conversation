@@ -5,7 +5,7 @@ import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.inject.MethodInjector;
 import com.github.overengineer.container.instantiate.*;
 import com.github.overengineer.container.metadata.MetadataAdapter;
-import com.github.overengineer.container.metadata.Scopes;
+import com.github.overengineer.container.scope.Scopes;
 
 import java.lang.reflect.Method;
 import java.util.List;

@@ -346,16 +346,6 @@ public class DefaultContainerTest implements Serializable {
     }
 
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testLifecycle() {
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer().makeInjectable()
-                .loadModule(CommonModule.class)
-                .add(LifecycleControl.class, DefaultLifecycleControl.class)
-                .get(LifecycleControl.class)
-                .start();
-    }
-
-
     @Test(expected = Assertion.class)
     public void testAddListener() throws Throwable {
 
@@ -537,7 +527,7 @@ public class DefaultContainerTest implements Serializable {
 
     public static class Provider {
         ProvidedType get(Container container) {
-            //System.out.println("i got myself");
+            //System.out.println(container);
             return new ProvidedType();
         }
     }
@@ -711,14 +701,8 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-
-        DynamicComponentFactory factory = Clarence.please().makeYourStuffInjectable().gimmeThatTainer().get(DynamicComponentFactory.class);
-
-        CompositeHandler<Container> handler = factory.createCompositeHandler(Container.class);
-
-        handler.add(Clarence.please().gimmeThatTainer());
-
-        handler.getComposite().makeInjectable();
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .registerCompositeTarget(Container.class).get(Container.class).makeInjectable();
 
 
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Caching())

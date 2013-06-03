@@ -2,8 +2,8 @@ package com.github.overengineer.container.module;
 
 import com.github.overengineer.container.key.GenericKey;
 import com.github.overengineer.container.key.SerializableKey;
-import com.github.overengineer.container.metadata.Scope;
-import com.github.overengineer.container.metadata.Scopes;
+import com.github.overengineer.container.scope.Scope;
+import com.github.overengineer.container.scope.Scopes;
 
 import java.util.LinkedList;
 import java.util.List;
