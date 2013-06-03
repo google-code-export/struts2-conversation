@@ -62,6 +62,8 @@ public interface Container extends Provider {
 
     ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors);
 
+    <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey key, SelectionAdvisor... advisors);
+
     Container makeInjectable();
 
 }

@@ -1,5 +1,7 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.scope.Scope;
+import com.github.overengineer.container.scope.Scopes;
 import com.github.overengineer.container.util.ReflectionUtil;
 
 import java.lang.annotation.Annotation;
@@ -53,22 +55,6 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
             throw new MetadataException("An exception occurred obtaining postConstruct method from type [" + cls.getName() + "]", e);
         }
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void notifyStartedIfEligible(Object component) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void notifyStoppedIfEligible(Object component) {
-        throw new UnsupportedOperationException();
     }
 
     /**

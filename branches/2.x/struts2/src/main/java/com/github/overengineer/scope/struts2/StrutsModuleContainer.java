@@ -170,6 +170,11 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey key, SelectionAdvisor... advisors) {
+        return delegate.getAllStrategies(key, advisors);
+    }
+
+    @Override
     public Container makeInjectable() {
         return delegate.makeInjectable();
     }
@@ -201,5 +206,20 @@ public class StrutsModuleContainer implements Container {
             return (T) string;
         }
         return delegate.get(key);
+    }
+
+    @Override
+    public <T> List<T> getAll(Class<T> clazz, SelectionAdvisor... advisors) {
+        return delegate.getAll(clazz, advisors);
+    }
+
+    @Override
+    public <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor... advisors) {
+        return delegate.getAll(clazz, name, advisors);
+    }
+
+    @Override
+    public <T> List<T> getAll(SerializableKey key, SelectionAdvisor... advisors) {
+        return delegate.getAll(key, advisors);
     }
 }

@@ -7,5 +7,4 @@ import java.io.Serializable;
  */
 public interface CompositeHandler<T> extends Serializable {
     T getComposite();
-    CompositeHandler<T> add(T component);
 }

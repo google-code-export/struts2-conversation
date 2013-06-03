@@ -17,9 +17,6 @@ import java.util.*;
  *
  * TODO Features:
  * TODO scoped containers and proxies, factories, enhance interceptor rules (@OR, @AND, @NOT)
- * TODO consider a sort of decorator placeholder strategy to handle decorator being added before delegate that throws decoration exception if invoked
- * TODO then combine this with a check on existing strategies for this type and handling it appropriately
- * TODO messaging/eventing
  * TODO named containers
  * TODO for scoped proxies - new proxy that uses a provider to obtain it's component on each request -
  * TODO       new ThreadLocalContainer interface and DelegatingThreadLocalContainer impl
@@ -91,7 +88,6 @@ public class DefaultContainer implements Container {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
     private final Map<SerializableKey, SortedSet<ComponentStrategy<?>>> strategies = new HashMap<SerializableKey, SortedSet<ComponentStrategy<?>>>();
-    private final Map<SerializableKey, CompositeHandler> compositeHandlers = new HashMap<SerializableKey, CompositeHandler>();
     private final List<Container> cascadingContainers = new ArrayList<Container>();
     private final List<Container> children = new ArrayList<Container>();
     private final ComponentStrategyFactory strategyFactory;
@@ -312,17 +308,10 @@ public class DefaultContainer implements Container {
     @Override
     @SuppressWarnings("unchecked")
     public synchronized Container registerCompositeTarget(SerializableKey targetKey) {
-        if (!compositeHandlers.containsKey(targetKey)) {
-            CompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass());
-            compositeHandlers.put(targetKey, handler);
-            ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(handler.getComposite());
-            /*  TODO
-            ComponentStrategy existing = strategies.put(targetKey, compositeStrategy);
-            if (existing != null) {
-                handler.add(existing.get(this));  //TODO how to make sure all get added regardless of load order??? and what about decorators??
-            }
-            */
-        }
+        CompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass(), this);
+        ComponentStrategy compositeStrategy = new TopLevelStrategy(strategyFactory.createInstanceStrategy(handler.getComposite()));
+        SortedSet<ComponentStrategy<?>> componentStrategies = strategies.get(targetKey);
+        componentStrategies.add(compositeStrategy);
         return this;
     }
 
@@ -404,6 +393,26 @@ public class DefaultContainer implements Container {
 
     }
 
+    @Override
+    public <T> List<T> getAll(Class<T> clazz, SelectionAdvisor... advisors) {
+        return getAll(keyRepository.retrieveKey(clazz), advisors);
+    }
+
+    @Override
+    public <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor... advisors) {
+        return getAll(keyRepository.retrieveKey(clazz, name), advisors);
+    }
+
+    @Override
+    public <T> List<T> getAll(SerializableKey key, SelectionAdvisor... advisors) {
+        List<T> components = new LinkedList<T>();
+        List<ComponentStrategy<T>> componentStrategies = getAllStrategies(key, advisors);
+        for (ComponentStrategy<T> strategy : componentStrategies) {
+            components.add(strategy.get(this));
+        }
+        return components;
+    }
+
     protected synchronized void addMapping(SerializableKey key, Class<?> implementationType) {
 
         ComponentStrategy newStrategy = strategyFactory.create(implementationType);
@@ -423,7 +432,7 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors) {
+     public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors) {
         SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
         if (strategySet != null) {
             for (ComponentStrategy<?> strategy : strategySet) {
@@ -454,13 +463,44 @@ public class DefaultContainer implements Container {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey key, SelectionAdvisor... advisors) {
+
+        List<ComponentStrategy<T>> allStrategies = new LinkedList<ComponentStrategy<T>>();
+
+        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+        if (strategySet != null) {
+            for (ComponentStrategy<?> strategy : strategySet) {
+                for (SelectionAdvisor advisor : advisors) {
+                    if (advisor.validSelection(strategy.getComponentType())) {
+                        allStrategies.add((ComponentStrategy<T>) strategy);
+                    }
+                }
+            }
+        }
+        for (Container child : children) {
+            List<ComponentStrategy<T>> childAllStrategies = child.getAllStrategies(key, advisors);
+            allStrategies.addAll(childAllStrategies);
+        }
+        for (Container container : cascadingContainers) {
+            List<ComponentStrategy<T>> containerAllStrategies = container.getAllStrategies(key, advisors);
+            allStrategies.addAll(containerAllStrategies);
+        }
+        return allStrategies;
+    }
+
     protected void putStrategy(SerializableKey key, ComponentStrategy<?> strategy) {
         SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
         if (strategySet == null) {
             strategySet = new TreeSet<ComponentStrategy<?>>(new StrategyComparator() {
                 @Override
                 public int compare(ComponentStrategy<?> strategy, ComponentStrategy<?> strategy2) {
-                    if (strategy.isDecorator()) {
+                    if (strategy instanceof TopLevelStrategy) {
+                        return -1;
+                    } else if (strategy2 instanceof TopLevelStrategy) {
+                        return 0;
+                    } else if (strategy.isDecorator()) {
                         return -1;
                     } else if (strategy2.isDecorator()) {
                         return 0;

@@ -1,7 +1,7 @@
 package com.github.overengineer.container.module;
 
 import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.metadata.Scope;
+import com.github.overengineer.container.scope.Scope;
 
 import java.io.Serializable;
 
