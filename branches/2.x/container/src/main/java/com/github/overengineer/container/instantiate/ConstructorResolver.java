@@ -1,19 +1,13 @@
 package com.github.overengineer.container.instantiate;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 
 /**
  * @author rees.byars
  */
 public interface ConstructorResolver extends Serializable {
 
-    <T> Constructor<T> resolveConstructor(Class<T> type, Callback callback, Class ... trailingArgs);
-
-    interface Callback extends Serializable {
-        void onResolution(Type[] genericParameterTypes, Annotation[][] annotations);
-    }
+    <T> Constructor<T> resolveConstructor(Class<T> type, Class ... trailingArgs);
 
 }

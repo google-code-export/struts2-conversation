@@ -64,4 +64,9 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
         proxyHandler.setComponent(component);
 
     }
+
+    @Override
+    public boolean isDecorator() {
+        return delegateStrategy.isDecorator();
+    }
 }

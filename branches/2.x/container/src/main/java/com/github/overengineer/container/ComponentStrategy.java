@@ -11,4 +11,6 @@ public interface ComponentStrategy<T> extends Serializable {
 
     Class getComponentType();
 
+    boolean isDecorator();
+
 }

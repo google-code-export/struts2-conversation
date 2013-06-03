@@ -13,10 +13,12 @@ import java.util.List;
  */
 public class DefaultAopContainer extends DefaultHotSwappableContainer implements AopContainer {
 
+    private final ComponentStrategyFactory strategyFactory;
     private final List<Aspect> aspects;
 
     public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
         super(strategyFactory, keyRepository, dynamicComponentFactory, componentInitializationListeners);
+        this.strategyFactory = strategyFactory;
         this.aspects = aspects;
     }
 

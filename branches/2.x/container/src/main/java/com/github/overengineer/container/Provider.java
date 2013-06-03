@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author rees.byars
  */
 public interface Provider extends Serializable {
-    <T> T get(Class<T> clazz);
-    <T> T get(Class<T> clazz, String name);
-    <T> T get(SerializableKey key);
+    <T> T get(Class<T> clazz, SelectionAdvisor ... advisors);
+    <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors);
+    <T> T get(SerializableKey key, SelectionAdvisor ... advisors);
 }
