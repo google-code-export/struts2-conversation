@@ -29,4 +29,8 @@ public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
         return delegateStrategy.getComponentType();
     }
 
+    @Override
+    public boolean isDecorator() {
+        return delegateStrategy.isDecorator();
+    }
 }

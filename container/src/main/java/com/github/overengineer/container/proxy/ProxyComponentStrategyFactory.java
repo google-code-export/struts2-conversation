@@ -37,15 +37,6 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> decoratorDelegateStrategy) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.createDecoratorStrategy(implementationType, decoratorDelegateStrategy);
-        if (delegateStrategy instanceof PrototypeComponentStrategy) {
-            return new PrototypeProxyComponentStrategy<T>(implementationType, delegateStrategy, handlerFactory);
-        }
-        return new SingletonProxyComponentStrategy<T>(implementationType, delegateStrategy, handlerFactory);
-    }
-
-    @Override
     public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
         ComponentStrategy<T> customStrategy = delegateFactory.createCustomStrategy(providerStrategy);
         return new SingletonProxyComponentStrategy<T>(customStrategy.getComponentType(), customStrategy, handlerFactory);

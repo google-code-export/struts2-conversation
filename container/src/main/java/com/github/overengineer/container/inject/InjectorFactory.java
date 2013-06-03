@@ -8,5 +8,5 @@ import java.lang.reflect.Method;
  */
 public interface InjectorFactory extends Serializable {
     <T> ComponentInjector<T> create(Class<T> implementationType);
-    <T> MethodInjector<T> create(Method method);
+    <T> MethodInjector<T> create(Class<T> injectionTarget, Method method, Class ... trailingArgs);
 }

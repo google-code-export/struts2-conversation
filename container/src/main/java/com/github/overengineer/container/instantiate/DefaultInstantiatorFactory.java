@@ -1,7 +1,6 @@
 package com.github.overengineer.container.instantiate;
 
-import com.github.overengineer.container.ComponentStrategy;
-import com.github.overengineer.container.parameter.ParameterProxyFactory;
+import com.github.overengineer.container.parameter.ParameterBuilderFactory;
 
 /**
  * @author rees.byars
@@ -9,21 +8,16 @@ import com.github.overengineer.container.parameter.ParameterProxyFactory;
 public class DefaultInstantiatorFactory implements InstantiatorFactory {
 
     private final ConstructorResolver constructorResolver;
-    private final ParameterProxyFactory parameterProxyFactory;
+    private final ParameterBuilderFactory parameterBuilderFactory;
 
-    public DefaultInstantiatorFactory(ConstructorResolver constructorResolver, ParameterProxyFactory parameterProxyFactory) {
+    public DefaultInstantiatorFactory(ConstructorResolver constructorResolver, ParameterBuilderFactory parameterBuilderFactory) {
         this.constructorResolver = constructorResolver;
-        this.parameterProxyFactory = parameterProxyFactory;
+        this.parameterBuilderFactory = parameterBuilderFactory;
     }
 
     @Override
     public <T> Instantiator<T> create(Class<T> implementationType, Class ... trailingParamTypes) {
-        return new DefaultInstantiator<T>(implementationType, constructorResolver, new DefaultParameterProvider(parameterProxyFactory), trailingParamTypes);
-    }
-
-    @Override
-    public <T> Instantiator<T> create(Class<T> implementationType, Class<?> delegateClass, ComponentStrategy<?> delegateStrategy) {
-        return new DefaultInstantiator<T>(implementationType, constructorResolver, new DecoratorParameterProvider(parameterProxyFactory, delegateClass, delegateStrategy));
+        return new DefaultInstantiator<T>(implementationType, constructorResolver, parameterBuilderFactory, trailingParamTypes);
     }
 
 }

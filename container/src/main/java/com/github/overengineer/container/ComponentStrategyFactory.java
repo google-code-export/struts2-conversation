@@ -11,8 +11,6 @@ public interface ComponentStrategyFactory extends Serializable {
 
     <T> ComponentStrategy<T> createInstanceStrategy(T implementation);
 
-    <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> delegateStrategy);
-
     <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy);
 
 }

@@ -47,20 +47,10 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     }
 
     @Override
-    public <T> ComponentStrategy<T> createDecoratorStrategy(Class<T> implementationType, ComponentStrategy<?> delegateStrategy) {
-        ComponentInjector<T> injector = injectorFactory.create(implementationType);
-        Instantiator<T> instantiator = instantiatorFactory.create(implementationType, delegateStrategy.getComponentType(), delegateStrategy);  //TODO dont need to pass class
-        if (Scopes.PROTOTYPE.equals(metadataAdapter.getScope(implementationType))) {
-            return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
-        } else {
-            return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
-        }
-    }
-
-    @Override
     public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
         Method providerMethod = metadataAdapter.getCustomProviderMethod(providerStrategy.getComponentType());
-        MethodInjector<T> methodInjector = injectorFactory.create(providerMethod);
+        @SuppressWarnings("unchecked")
+        MethodInjector<T> methodInjector = injectorFactory.create(providerStrategy.getComponentType(), providerMethod);
         return new CustomComponentStrategy<T>(providerStrategy, methodInjector, providerMethod.getReturnType());
     }
 

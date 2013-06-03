@@ -40,4 +40,9 @@ public class InstanceStrategy<T> implements ComponentStrategy<T> {
     public Class getComponentType() {
         return instance.getClass();
     }
+
+    @Override
+    public boolean isDecorator() {
+        return false;
+    }
 }

@@ -522,7 +522,7 @@ public class DefaultContainerTest implements Serializable {
 
     @Test
     public void testAddCustomProvider() throws Exception {
-        final Container container = Clarence.please().gimmeThatTainer()
+        final Container container = Clarence.please().gimmeThatTainer().makeInjectable()
                 .addCustomProvider(ProvidedType.class, Provider.class);
 
         assert container.get(ProvidedType.class) != null;
@@ -536,7 +536,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static class Provider {
-        ProvidedType get(Provider provider) {
+        ProvidedType get(Container container) {
             //System.out.println("i got myself");
             return new ProvidedType();
         }
@@ -549,7 +549,7 @@ public class DefaultContainerTest implements Serializable {
 
     int threads = 8;
     long duration = 5000;
-    long primingRuns = 1000000;
+    long primingRuns = 10000;
 
     private void printComparison(long mine, long theirs, String theirName) {
         System.out.println(mine/(theirs * 1.0d) + " times faster than " + theirName);
@@ -912,7 +912,7 @@ public class DefaultContainerTest implements Serializable {
     @Prototype
     public static class PCyclicTest extends CyclicTest {
         @Inject
-        public PCyclicTest(ICyclicRef3 cyclicTest3, ICyclicRef self) {
+        public PCyclicTest(ICyclicRef3 cyclicTest3) {
             super(cyclicTest3);
         }
         @Override
@@ -923,7 +923,7 @@ public class DefaultContainerTest implements Serializable {
 
     public static class CyclicTestHot extends CyclicTest {
         @Inject
-        public CyclicTestHot(ICyclicRef3 cyclicTest3, ICyclicRef self) {
+        public CyclicTestHot(ICyclicRef3 cyclicTest3) {
             super(cyclicTest3);
         }
         @Override

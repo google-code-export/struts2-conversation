@@ -90,12 +90,12 @@ public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    protected final Map<SerializableKey, ComponentStrategy<?>> strategies = new HashMap<SerializableKey, ComponentStrategy<?>>();
+    private final Map<SerializableKey, SortedSet<ComponentStrategy<?>>> strategies = new HashMap<SerializableKey, SortedSet<ComponentStrategy<?>>>();
     private final Map<SerializableKey, CompositeHandler> compositeHandlers = new HashMap<SerializableKey, CompositeHandler>();
     private final List<Container> cascadingContainers = new ArrayList<Container>();
-    protected final List<Container> children = new ArrayList<Container>();
-    protected final ComponentStrategyFactory strategyFactory;
-    protected final KeyRepository keyRepository;
+    private final List<Container> children = new ArrayList<Container>();
+    private final ComponentStrategyFactory strategyFactory;
+    private final KeyRepository keyRepository;
     private final DynamicComponentFactory dynamicComponentFactory;
     private final List<ComponentInitializationListener> componentInitializationListeners;
 
@@ -257,14 +257,14 @@ public class DefaultContainer implements Container {
     @Override
     public Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType) {
         SerializableKey providerKey = keyRepository.retrieveKey(customProviderType);
-        ComponentStrategy providerStrategy = strategies.get(providerKey);
+        ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
             providerStrategy = strategyFactory.create(customProviderType);
         }
         keyRepository.addKey(providerKey);
         keyRepository.addKey(providedTypeKey);
-        strategies.put(providerKey, providerStrategy);
-        strategies.put(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        putStrategy(providerKey, providerStrategy);
+        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
         return this;
     }
 
@@ -277,14 +277,14 @@ public class DefaultContainer implements Container {
     @Override
     public Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider) {
         SerializableKey providerKey = keyRepository.retrieveKey(customProvider.getClass());
-        ComponentStrategy providerStrategy = strategies.get(providerKey);
+        ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
             providerStrategy = strategyFactory.createInstanceStrategy(customProvider);
         }
         keyRepository.addKey(providerKey);
         keyRepository.addKey(providedTypeKey);
-        strategies.put(providerKey, providerStrategy);
-        strategies.put(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        putStrategy(providerKey, providerStrategy);
+        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
         return this;
     }
 
@@ -316,10 +316,12 @@ public class DefaultContainer implements Container {
             CompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass());
             compositeHandlers.put(targetKey, handler);
             ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(handler.getComposite());
+            /*  TODO
             ComponentStrategy existing = strategies.put(targetKey, compositeStrategy);
             if (existing != null) {
                 handler.add(existing.get(this));  //TODO how to make sure all get added regardless of load order??? and what about decorators??
             }
+            */
         }
         return this;
     }
@@ -333,8 +335,10 @@ public class DefaultContainer implements Container {
     public List<Object> getAllComponents() {
         List<Object> components = new LinkedList<Object>();
         components.addAll(getInitializationListeners());
-        for (ComponentStrategy strategy : strategies.values()) {
-            components.add(strategy.get(this));
+        for (SortedSet<ComponentStrategy<?>> strategySet : strategies.values()) {
+            for (ComponentStrategy<?> strategy : strategySet) {
+                components.add(strategy.get(this));
+            }
         }
         for (Container child : children) {
             components.addAll(child.getAllComponents());
@@ -376,73 +380,97 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> T get(Class<T> clazz) {
-        return get(keyRepository.retrieveKey(clazz));
+    public <T> T get(Class<T> clazz, SelectionAdvisor ... advisors) {
+        return get(keyRepository.retrieveKey(clazz), advisors);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Class<T> clazz, String name) {
-        return (T) get(keyRepository.retrieveKey(clazz, name));
+    public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
+        return (T) get(keyRepository.retrieveKey(clazz, name), advisors);
     }
 
     @Override
-    public <T> T get(SerializableKey key) {
+    public <T> T get(SerializableKey key, SelectionAdvisor ... advisors) {
 
         @SuppressWarnings("unchecked")
-        ComponentStrategy<T> strategy = (ComponentStrategy<T>) strategies.get(key);
+        ComponentStrategy<T> strategy = (ComponentStrategy<T>) getStrategy(key, advisors);
 
         if (strategy == null) {
-            for (Container child : children) {
-                try {
-                    return child.get(key);
-                } catch (MissingDependencyException e) {
-                    //ignore
-                }
-            }
-            for (Container container : cascadingContainers) {
-                try {
-                    return container.get(key);
-                } catch (MissingDependencyException e) {
-                    //ignore
-                }
-            }
             throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
         }
 
         return strategy.get(this);
+
     }
 
     protected synchronized void addMapping(SerializableKey key, Class<?> implementationType) {
 
-        ComponentStrategy existing = strategies.get(key);
-        ComponentStrategy newStrategy;
-
-        if (existing != null) {
-            newStrategy = strategyFactory.createDecoratorStrategy(implementationType, existing);
-            strategies.remove(keyRepository.retrieveKey(existing.getComponentType()));
-        } else {
-            keyRepository.addKey(key);
-            newStrategy = strategyFactory.create(implementationType);
-        }
-
-        strategies.put(key, newStrategy);
-        strategies.put(keyRepository.retrieveKey(implementationType), newStrategy);
+        ComponentStrategy newStrategy = strategyFactory.create(implementationType);
+        keyRepository.addKey(key);
+        putStrategy(key, newStrategy);
+        putStrategy(keyRepository.retrieveKey(implementationType), newStrategy);
 
     }
 
     protected synchronized void addMapping(SerializableKey key, Object implementation) {
 
-        ComponentStrategy existing = strategies.get(key);
-
-        if (existing != null) {
-            strategies.remove(keyRepository.retrieveKey(existing.getComponentType()));
-        }
-
+        ComponentStrategy newStrategy = strategyFactory.createInstanceStrategy(implementation);
         keyRepository.addKey(key);
-        ComponentStrategy strategy = strategyFactory.createInstanceStrategy(implementation);
-        strategies.put(keyRepository.retrieveKey(implementation.getClass()), strategy);
-        strategies.put(key, strategy);
+        putStrategy(key, newStrategy);
+        putStrategy(keyRepository.retrieveKey(implementation.getClass()), newStrategy);
+
+    }
+
+    @Override
+    public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors) {
+        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+        if (strategySet != null) {
+            for (ComponentStrategy<?> strategy : strategySet) {
+                boolean valid = true;
+                for (SelectionAdvisor advisor : advisors) {
+                    if (!advisor.validSelection(strategy.getComponentType())) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) {
+                    return strategy;
+                }
+            }
+        }
+        for (Container child : children) {
+            ComponentStrategy strategy = child.getStrategy(key);
+            if (strategy != null) {
+                return strategy;
+            }
+        }
+        for (Container container : cascadingContainers) {
+            ComponentStrategy strategy = container.getStrategy(key);
+            if (strategy != null) {
+                return strategy;
+            }
+        }
+        return null;
+    }
+
+    protected void putStrategy(SerializableKey key, ComponentStrategy<?> strategy) {
+        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+        if (strategySet == null) {
+            strategySet = new TreeSet<ComponentStrategy<?>>(new StrategyComparator() {
+                @Override
+                public int compare(ComponentStrategy<?> strategy, ComponentStrategy<?> strategy2) {
+                    if (strategy.isDecorator()) {
+                        return -1;
+                    } else if (strategy2.isDecorator()) {
+                        return 0;
+                    }
+                    return -1;
+                }
+            });
+            strategies.put(key, strategySet);
+        }
+        strategySet.add(strategy);
     }
 
     protected boolean isTargetCascaderOfThis(Container target) {

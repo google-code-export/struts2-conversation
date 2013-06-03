@@ -2,7 +2,7 @@ package com.github.overengineer.container.inject;
 
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.metadata.MetadataAdapter;
-import com.github.overengineer.container.parameter.ParameterProxyFactory;
+import com.github.overengineer.container.parameter.ParameterBuilderFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import java.util.List;
 public class DefaultInjectorFactory implements InjectorFactory {
 
     private final MetadataAdapter metadataAdapter;
-    private final ParameterProxyFactory parameterProxyFactory;
+    private final ParameterBuilderFactory parameterBuilderFactory;
 
-    public DefaultInjectorFactory(MetadataAdapter metadataAdapter, ParameterProxyFactory parameterProxyFactory) {
+    public DefaultInjectorFactory(MetadataAdapter metadataAdapter, ParameterBuilderFactory parameterBuilderFactory) {
         this.metadataAdapter = metadataAdapter;
-        this.parameterProxyFactory = parameterProxyFactory;
+        this.parameterBuilderFactory = parameterBuilderFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -27,13 +27,13 @@ public class DefaultInjectorFactory implements InjectorFactory {
         List<MethodInjector<T>> injectors = new ArrayList<MethodInjector<T>>();
         for (Method method : implementationType.getMethods()) {
             if (metadataAdapter.isSetter(method)) {
-                MethodInjector<T> setterInjector = create(method);
+                MethodInjector<T> setterInjector = create(implementationType, method);
                 injectors.add(setterInjector);
             }
         }
         Method initMethod = metadataAdapter.getInitMethod(implementationType);
         if (initMethod != null) {
-            MethodInjector<T> initInjector = create(initMethod);
+            MethodInjector<T> initInjector = create(implementationType, initMethod);
             injectors.add(initInjector);
         }
         if (injectors.size() == 0) {
@@ -45,8 +45,8 @@ public class DefaultInjectorFactory implements InjectorFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> MethodInjector<T> create(Method method) {
-        return new DefaultMethodInjector(method, parameterProxyFactory.create(method));
+    public <T> MethodInjector<T> create(Class<T> injectionTarget, Method method, Class ... trailingArgs) {
+        return new DefaultMethodInjector(method, parameterBuilderFactory.create(injectionTarget, method, trailingArgs));
     }
 
     static class EmptyInjector<T> implements ComponentInjector<T> {

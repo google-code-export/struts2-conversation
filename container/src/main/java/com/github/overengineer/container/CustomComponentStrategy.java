@@ -7,7 +7,7 @@ import com.github.overengineer.container.inject.MethodInjector;
  */
 public class CustomComponentStrategy<T> implements ComponentStrategy<T> {
 
-    private final ComponentStrategy providerStrategy;
+    private final ComponentStrategy<?> providerStrategy;
     private final MethodInjector methodInjector;
     private final Class providedType;
 
@@ -26,5 +26,10 @@ public class CustomComponentStrategy<T> implements ComponentStrategy<T> {
     @Override
     public Class getComponentType() {
         return providedType;
+    }
+
+    @Override
+    public boolean isDecorator() {
+        return false;
     }
 }

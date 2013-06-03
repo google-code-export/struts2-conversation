@@ -165,24 +165,29 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
+    public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor... advisors) {
+        return delegate.getStrategy(key, advisors);
+    }
+
+    @Override
     public Container makeInjectable() {
         return delegate.makeInjectable();
     }
 
     @Override
-    public <T> T get(Class<T> clazz) {
+    public <T> T get(Class<T> clazz, SelectionAdvisor ... advisors) {
         return get(keyRepository.retrieveKey(clazz));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Class<T> clazz, String name) {
+    public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
         return (T) get(keyRepository.retrieveKey(clazz, name));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(SerializableKey key) {
+    public <T> T get(SerializableKey key, SelectionAdvisor ... advisors) {
         String string = container.getInstance(String.class, key.getName());
         if (string != null) {
             Class clazz = key.getTargetClass();

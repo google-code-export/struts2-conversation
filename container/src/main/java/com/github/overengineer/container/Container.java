@@ -60,6 +60,8 @@ public interface Container extends Provider {
 
     Container getReal();
 
+    ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors);
+
     Container makeInjectable();
 
 }

@@ -34,4 +34,10 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
     public Class getComponentType() {
         return instantiator.getProducedType();
     }
+
+    @Override
+    public boolean isDecorator() {
+        return instantiator.isDecorator();
+    }
+
 }

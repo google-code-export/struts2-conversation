@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public interface Instantiator<T> extends Serializable {
 
+    boolean isDecorator();
+
     T getInstance(Provider provider, Object ... trailingParams);
 
     Class getProducedType();
