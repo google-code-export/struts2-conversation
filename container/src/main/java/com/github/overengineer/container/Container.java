@@ -1,6 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.module.Module;
 
 import java.util.List;
@@ -26,29 +26,29 @@ public interface Container extends Provider {
 
     <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType);
 
-    <T> Container add(SerializableKey<T> key, Class<? extends T> implementationType);
+    <T> Container add(Key<T> key, Class<? extends T> implementationType);
 
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
 
     <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation);
 
-    <T, I extends T> Container addInstance(SerializableKey<T> key, I implementation);
+    <T, I extends T> Container addInstance(Key<T> key, I implementation);
 
     Container addCustomProvider(Class<?> providedType, Class<?> customProviderType);
 
-    Container addCustomProvider(SerializableKey<?> providedTypeKey, Class<?> customProviderType);
+    Container addCustomProvider(Key<?> providedTypeKey, Class<?> customProviderType);
 
     Container addCustomProvider(Class<?> providedType, Object customProvider);
 
-    Container addCustomProvider(SerializableKey<?> providedTypeKey, Object customProvider);
+    Container addCustomProvider(Key<?> providedTypeKey, Object customProvider);
 
-    Container registerManagedComponentFactory(SerializableKey<?> factoryKey);
+    Container registerManagedComponentFactory(Key<?> factoryKey);
 
-    Container registerNonManagedComponentFactory(SerializableKey<?> factoryKey, Class producedType);
+    Container registerNonManagedComponentFactory(Key<?> factoryKey, Class producedType);
 
     Container registerCompositeTarget(Class<?> targetInterface);
 
-    Container registerCompositeTarget(SerializableKey<?> targetKey);
+    Container registerCompositeTarget(Key<?> targetKey);
 
     List<ComponentInitializationListener> getInitializationListeners();
 
@@ -60,9 +60,9 @@ public interface Container extends Provider {
 
     Container getReal();
 
-    <T> ComponentStrategy<T> getStrategy(SerializableKey<T> key, SelectionAdvisor ... advisors);
+    <T> ComponentStrategy<T> getStrategy(Key<T> key, SelectionAdvisor ... advisors);
 
-    <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey<T> key, SelectionAdvisor... advisors);
+    <T> List<ComponentStrategy<T>> getAllStrategies(Key<T> key, SelectionAdvisor... advisors);
 
     Container makeInjectable();
 

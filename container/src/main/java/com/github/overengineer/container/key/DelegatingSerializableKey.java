@@ -5,9 +5,9 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public abstract class DelegatingSerializableKey<T> implements SerializableKey<T> {
+public abstract class DelegatingSerializableKey<T> implements Key<T> {
 
-    protected abstract SerializableKey<T> getDelegateKey();
+    protected abstract Key<T> getDelegateKey();
 
     @Override
     public int hashCode() {
@@ -31,7 +31,7 @@ public abstract class DelegatingSerializableKey<T> implements SerializableKey<T>
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && getDelegateKey().equals(object);
+        return object instanceof BasicKey && getDelegateKey().equals(object);
     }
 
 }

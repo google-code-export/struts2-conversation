@@ -2,8 +2,8 @@ package com.github.overengineer.container.proxy;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
-import com.github.overengineer.container.key.SerializableKey;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public synchronized  <T> void swap(Class<T> target, Class<? extends T> implementationType) throws HotSwapException {
 
-        SerializableKey targetKey = keyRepository.retrieveKey(target);
+        Key targetKey = keyRepository.retrieveKey(target);
 
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) getStrategy(targetKey);
 
@@ -55,7 +55,7 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     @Override
     public synchronized  <T, I extends T> void swap(Class<T> target, I implementation) throws HotSwapException {
 
-        SerializableKey targetKey = keyRepository.retrieveKey(target);
+        Key targetKey = keyRepository.retrieveKey(target);
 
         ComponentStrategy<T> currentStrategy = (ComponentStrategy<T>) getStrategy(targetKey);
 

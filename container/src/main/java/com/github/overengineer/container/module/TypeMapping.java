@@ -1,7 +1,7 @@
 package com.github.overengineer.container.module;
 
-import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Generic;
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
 
@@ -17,7 +17,7 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
     private Scope scope = Scopes.SINGLETON;
     private String name;
     private List<Class<?>> targetClasses = new LinkedList<Class<?>>();
-    private List<SerializableKey> targetKeys = new LinkedList<SerializableKey>();
+    private List<Key> targetKeys = new LinkedList<Key>();
 
     public TypeMapping(Class<T> implementationType) {
         this.implementationType = implementationType;
@@ -31,7 +31,7 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
     }
 
     @Override
-    public MutableMapping<T> forType(GenericKey<? super T> targetKey) {
+    public MutableMapping<T> forType(Generic<? super T> targetKey) {
         targetKeys.add(targetKey);
         return this;
     }
@@ -59,7 +59,7 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
     }
 
     @Override
-    public List<SerializableKey> getTargetKeys() {
+    public List<Key> getTargetKeys() {
         return targetKeys;
     }
 

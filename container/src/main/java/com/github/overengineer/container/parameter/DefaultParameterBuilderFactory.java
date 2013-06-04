@@ -1,8 +1,8 @@
 package com.github.overengineer.container.parameter;
 
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.key.KeyUtil;
-import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 
 import java.lang.annotation.Annotation;
@@ -56,7 +56,7 @@ public class DefaultParameterBuilderFactory implements ParameterBuilderFactory {
     @SuppressWarnings("unchecked")
     protected  <T> ParameterProxy<T> createProxy(Class<?> injectionTarget, Type parameterType, Annotation[] annotations) {
 
-        SerializableKey key = keyRepository.retrieveKey(parameterType, metadataAdapter.getName(parameterType, annotations));
+        Key key = keyRepository.retrieveKey(parameterType, metadataAdapter.getName(parameterType, annotations));
 
         if (KeyUtil.getClass(parameterType).isAssignableFrom(injectionTarget)) {
             return new DecoratorParameterProxy<T>(key, injectionTarget);

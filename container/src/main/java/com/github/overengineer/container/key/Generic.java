@@ -9,20 +9,20 @@ import java.lang.reflect.Type;
  *
  * @author rees.byars
  */
-public abstract class GenericKey<T> implements SerializableKey<T> {
+public abstract class Generic<T> implements Key<T> {
 
     private final String name;
     private transient Type type;
     private transient Class<? super T> targetClass;
     private final int hash;
 
-    public GenericKey() {
+    public Generic() {
         init();
         this.name = "";
         this.hash = type.hashCode();
     }
 
-    public GenericKey(String name) {
+    public Generic(String name) {
         init();
         this.name = name;
         this.hash = type.hashCode();
@@ -60,7 +60,7 @@ public abstract class GenericKey<T> implements SerializableKey<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && type.equals(((Key) object).getType()) && name.equals(((Key) object).getName());
+        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && name.equals(((BasicKey) object).getName());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

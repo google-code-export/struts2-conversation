@@ -1,6 +1,6 @@
 package com.github.overengineer.container.module;
 
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Key;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,8 +14,8 @@ public interface Module extends Serializable {
 
     List<Mapping<?>> getMappings();
 
-    Set<SerializableKey> getManagedComponentFactories();
+    Set<Key> getManagedComponentFactories();
 
-    Map<SerializableKey, Class> getNonManagedComponentFactories();
+    Map<Key, Class> getNonManagedComponentFactories();
 
 }
