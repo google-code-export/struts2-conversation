@@ -9,7 +9,7 @@ public class GenericMapping<T> extends TypeMapping<T> {
 
     @SuppressWarnings("unchecked")
     public GenericMapping(GenericKey<? extends T> genericKey) {
-        super(genericKey.getTargetClass());
+        super((Class<T>) genericKey.getTargetClass());
     }
 
 }

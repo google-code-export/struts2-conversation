@@ -20,38 +20,39 @@ public class DefaultKeyRepository implements KeyRepository {
     }
 
     @Override
-    public SerializableKey retrieveKey(Class cls) {
-        return new ClassKey(cls);
+    public <T> SerializableKey<T> retrieveKey(Class<T> cls) {
+        return new ClassKey<T>(cls);
     }
 
     @Override
-    public SerializableKey retrieveKey(Class cls, String name) {
-        return new ClassKey(cls, name);
+    public <T> SerializableKey<T> retrieveKey(Class<T> cls, String name) {
+        return new ClassKey<T>(cls, name);
     }
 
     @Override
-    public SerializableKey retrieveKey(final Type type) {
+    public <T> SerializableKey<T> retrieveKey(final Type type) {
         return retrieveKey(type, null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public SerializableKey retrieveKey(Type type, String name) {
+    public <T> SerializableKey<T> retrieveKey(Type type, String name) {
         if (type instanceof Class) {
             return retrieveKey((Class) type, name);
         }
-        SerializableKey key = keys.get(new TempKey(type, name));
+        SerializableKey<T> key = (SerializableKey<T>) keys.get(new TempKey<T>(type, name));
         if (key != null) {
             return key;
         }
         if (type instanceof ParameterizedType) {
-            return new LazyDelegatingKey(type, name);
+            return new LazyDelegatingKey<T>(type, name);
         }
         throw new UnsupportedOperationException("Unsupported injection type [" + type + "]");
     }
 
-    public class LazyDelegatingKey extends DelegatingSerializableKey {
+    public class LazyDelegatingKey<T> extends DelegatingSerializableKey<T> {
 
-        private volatile SerializableKey key;
+        private volatile SerializableKey<T> key;
         private transient Type type;
         private String name;
 
@@ -61,11 +62,11 @@ public class DefaultKeyRepository implements KeyRepository {
         }
 
         @Override
-        protected SerializableKey getDelegateKey() {
+        protected SerializableKey<T> getDelegateKey() {
             if (key == null) {
                 synchronized (this) {
                     if (key == null) {
-                        key = keys.get(new TempKey(type, name));
+                        key = retrieveKey(type, name);
                     }
                 }
             }

@@ -10,10 +10,10 @@ import java.lang.reflect.Type;
  * @author rees.byars
  *
  */
-public interface Key {
+public interface Key<T> {
 
     String getName();
     Type getType();
-    Class<?> getTargetClass();
+    Class<? super T> getTargetClass();
 
 }

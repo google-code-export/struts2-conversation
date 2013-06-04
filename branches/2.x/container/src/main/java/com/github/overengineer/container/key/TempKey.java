@@ -5,11 +5,11 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public class TempKey implements Key {
+public class TempKey<T> implements Key<T> {
 
     private final String name;
     private final Type type;
-    private final Class targetClass;
+    private final Class<? super T> targetClass;
     private final int hash;
 
     public TempKey(Type type, String name) {
@@ -30,7 +30,7 @@ public class TempKey implements Key {
     }
 
     @Override
-    public Class getTargetClass() {
+    public Class<? super T> getTargetClass() {
         return targetClass;
     }
 

@@ -2,6 +2,7 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.factory.CompositeHandler;
 import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.key.ClassKey;
 import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
@@ -294,7 +295,7 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatTainer();
 
-        SerializableKey factoryKey = new GenericKey<NonManagedComponentFactory<NamedComponent>>() {};
+        SerializableKey<NonManagedComponentFactory<NamedComponent>> factoryKey = new GenericKey<NonManagedComponentFactory<NamedComponent>>() {};
 
         container.registerNonManagedComponentFactory(factoryKey, NonManagedComponent.class);
 
@@ -331,7 +332,7 @@ public class DefaultContainerTest implements Serializable {
         T create();
     }
 
-    public static class FactoryTest implements IConstructorTest, Factory, Serializable {
+    public static class FactoryTest implements IConstructorTest, Factory<TimeoutMonitor>, Serializable {
 
         Factory<TimeoutMonitor> timeoutMonitorFactory;
 
@@ -340,7 +341,7 @@ public class DefaultContainerTest implements Serializable {
         }
 
         @Override
-        public Object create() {
+        public TimeoutMonitor create() {
             return timeoutMonitorFactory.create();
         }
     }
@@ -628,6 +629,8 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
+        final SerializableKey<IBean> key = new ClassKey<IBean>(IBean.class);
+
         final Container container3 = Clarence.please().gimmeThatTainer()
                 .add(IBean.class, Bean.class)
                 .add(IBean2.class, Bean2.class);
@@ -635,7 +638,7 @@ public class DefaultContainerTest implements Serializable {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                container3.get(IBean.class).stuff();
+                container3.get(key).stuff();
             }
         }, threads).run(duration, primingRuns, "my plain prototype");
 
@@ -650,6 +653,8 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "pico plain prototype");
 
+
+
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
@@ -658,10 +663,12 @@ public class DefaultContainerTest implements Serializable {
             }
         });
 
+        final Key<IBean> gKey = injector.getBinding(IBean.class).getKey();
+
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                injector.getInstance(IBean.class).stuff();
+                injector.getInstance(gKey).stuff();
             }
         }, threads).run(duration, primingRuns, "guice plain prototypes");
 
@@ -730,6 +737,9 @@ public class DefaultContainerTest implements Serializable {
             }
         }, threads).run(duration, primingRuns, "pico singleton");
 
+
+        final SerializableKey<ISingleton> key = new ClassKey<ISingleton>(ISingleton.class);
+
         final Container container2 = Clarence.please().gimmeThatTainer()
                 .add(ISingleton.class, Singleton.class)
                 .add(ISingleton2.class, Singleton2.class)
@@ -752,7 +762,7 @@ public class DefaultContainerTest implements Serializable {
         long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
             public void execute() throws HotSwapException {
-                container2.get(ISingleton.class).yo();
+                container2.get(key).yo();
             }
         }, threads).run(duration, primingRuns, "my singleton");
 

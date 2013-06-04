@@ -9,11 +9,11 @@ import java.lang.reflect.Type;
  *
  * @author rees.byars
  */
-public abstract class GenericKey<T> implements SerializableKey {
+public abstract class GenericKey<T> implements SerializableKey<T> {
 
     private final String name;
     private transient Type type;
-    private transient Class targetClass;
+    private transient Class<? super T> targetClass;
     private final int hash;
 
     public GenericKey() {
@@ -32,7 +32,7 @@ public abstract class GenericKey<T> implements SerializableKey {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         type = parameterizedType.getActualTypeArguments()[0];
         if (type instanceof ParameterizedType) {
-            targetClass = (Class) ((ParameterizedType) type).getRawType();
+            targetClass = KeyUtil.getClass(type);
         } else {
             throw new UnsupportedOperationException("The GenericKey is invalid [" + type + "]");
         }
@@ -54,7 +54,7 @@ public abstract class GenericKey<T> implements SerializableKey {
     }
 
     @Override
-    public Class getTargetClass() {
+    public Class<? super T> getTargetClass() {
         return targetClass;
     }
 

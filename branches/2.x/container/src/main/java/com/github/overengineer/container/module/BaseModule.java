@@ -58,7 +58,7 @@ public abstract class BaseModule implements Module {
         managedComponentFactories.add(factoryKey);
     }
 
-    protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(Class factoryType) {
+    protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(Class<?> factoryType) {
         return new NonManagedComponentFactoryMapper(factoryType);
     }
 
@@ -67,9 +67,9 @@ public abstract class BaseModule implements Module {
     }
 
     public class NonManagedComponentFactoryMapper {
-        private final SerializableKey key;
-        public NonManagedComponentFactoryMapper(Class key) {
-            this.key = new ClassKey(key);
+        private final SerializableKey<?> key;
+        public <T> NonManagedComponentFactoryMapper(Class<T> key) {
+            this.key = new ClassKey<T>(key);
         }
         public NonManagedComponentFactoryMapper(SerializableKey key) {
             this.key = key;

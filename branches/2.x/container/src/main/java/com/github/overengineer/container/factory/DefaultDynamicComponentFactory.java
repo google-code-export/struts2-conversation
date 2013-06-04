@@ -70,7 +70,7 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
     static class DynamicManagedComponentFactory<T> implements InvocationHandler, Serializable  {
 
         private final Class<T> factoryInterface;
-        private final SerializableKey producedTypeKey;
+        private final SerializableKey<?> producedTypeKey;
         private final Provider provider;
         private T proxy;
 

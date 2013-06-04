@@ -8,8 +8,8 @@ import java.lang.reflect.Type;
  */
 public interface KeyRepository extends Serializable {
     void addKey(SerializableKey key);
-    SerializableKey retrieveKey(Class cls);
-    SerializableKey retrieveKey(Class cls, String name);
-    SerializableKey retrieveKey(Type type);
-    SerializableKey retrieveKey(Type type, String name);
+    <T> SerializableKey<T> retrieveKey(Class<T> cls);
+    <T> SerializableKey<T> retrieveKey(Class<T> cls, String name);
+    <T> SerializableKey<T> retrieveKey(Type type);
+    <T> SerializableKey<T> retrieveKey(Type type, String name);
 }

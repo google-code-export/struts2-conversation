@@ -5,5 +5,5 @@ import java.io.Serializable;
 /**
  * @author rees.byars
  */
-public interface SerializableKey extends Key, Serializable {
+public interface SerializableKey<T> extends Key<T>, Serializable {
 }
