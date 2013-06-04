@@ -1,14 +1,11 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.CompositeHandler;
-import com.github.overengineer.container.factory.DynamicComponentFactory;
-import com.github.overengineer.container.key.ClassKey;
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.*;
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.aop.*;
-import com.github.overengineer.container.key.GenericKey;
 import com.google.inject.*;
 import com.google.inject.Injector;
 import org.junit.Test;
@@ -17,13 +14,11 @@ import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.behaviors.Caching;
 import org.picocontainer.containers.TransientPicoContainer;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import scope.CommonConstants;
 import scope.CommonModule;
 import scope.monitor.DefaultSchedulerProvider;
@@ -33,7 +28,6 @@ import scope.monitor.TimeoutMonitor;
 import se.jbee.inject.Dependency;
 import se.jbee.inject.bind.BinderModule;
 import se.jbee.inject.bootstrap.*;
-import se.jbee.inject.bootstrap.Module;
 import se.jbee.inject.util.Scoped;
 
 import java.io.Serializable;
@@ -70,7 +64,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.add(IBean2.class, Bean2.class);
 
-        container.addInstance(new GenericKey<List<Integer>>() {}, new ArrayList<Integer>());
+        container.addInstance(new Generic<List<Integer>>() {}, new ArrayList<Integer>());
 
         container.loadModule(CommonModule.class);
 
@@ -80,7 +74,7 @@ public class DefaultContainerTest implements Serializable {
 
         List<String> strings = new ArrayList<String>();
 
-        container.addInstance(new GenericKey<List<String>>() {}, strings);
+        container.addInstance(new Generic<List<String>>() {}, strings);
 
         container = SerializationTestingUtil.getSerializedCopy(container);
 
@@ -88,7 +82,7 @@ public class DefaultContainerTest implements Serializable {
 
         assertNotNull(monitor);
 
-        assertEquals(strings, container.get(new GenericKey<List<String>>(){}));
+        assertEquals(strings, container.get(new Generic<List<String>>(){}));
 
         assertNotNull(container.get(IBean.class));
     }
@@ -246,14 +240,14 @@ public class DefaultContainerTest implements Serializable {
 
         List<Integer> integers = new ArrayList<Integer>();
 
-        container.addInstance(new GenericKey<List<? extends String>>("strings"){}, strings);
+        container.addInstance(new Generic<List<? extends String>>("strings"){}, strings);
 
-        container.addInstance(new GenericKey<List<Integer>>(){}, integers);
+        container.addInstance(new Generic<List<Integer>>(){}, integers);
 
-        assertEquals(strings, container.get(new GenericKey<List<? extends String>>("strings") {
+        assertEquals(strings, container.get(new Generic<List<? extends String>>("strings") {
         }));
 
-        assertEquals(integers, container.get(new GenericKey<List<Integer>>(){}));
+        assertEquals(integers, container.get(new Generic<List<Integer>>(){}));
 
     }
 
@@ -264,9 +258,9 @@ public class DefaultContainerTest implements Serializable {
 
         container.loadModule(CommonModule.class);
 
-        container.registerManagedComponentFactory(new GenericKey<Factory<TimeoutMonitor>>() {});
+        container.registerManagedComponentFactory(new Generic<Factory<TimeoutMonitor>>() {});
 
-        Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
+        Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new Generic<Factory<TimeoutMonitor>>(){});
 
         assert timeoutMonitorFactory.create() != null;
 
@@ -278,11 +272,11 @@ public class DefaultContainerTest implements Serializable {
 
         System.out.println(timeoutMonitorFactory);
 
-        container.add(new GenericKey<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
+        container.add(new Generic<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
 
         container = SerializationTestingUtil.getSerializedCopy(container);
 
-        timeoutMonitorFactory = container.get(new GenericKey<Factory<TimeoutMonitor>>(){});
+        timeoutMonitorFactory = container.get(new Generic<Factory<TimeoutMonitor>>(){});
 
         assert timeoutMonitorFactory.create() != null;
 
@@ -295,7 +289,7 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatTainer();
 
-        SerializableKey<NonManagedComponentFactory<NamedComponent>> factoryKey = new GenericKey<NonManagedComponentFactory<NamedComponent>>() {};
+        com.github.overengineer.container.key.Key<NonManagedComponentFactory<NamedComponent>> factoryKey = new Generic<NonManagedComponentFactory<NamedComponent>>() {};
 
         container.registerNonManagedComponentFactory(factoryKey, NonManagedComponent.class);
 
@@ -455,6 +449,7 @@ public class DefaultContainerTest implements Serializable {
         c.addAspect(TestAspect.class).addAspect(Metaceptor.class);
         c.addInstance(SchedulerProvider.class, new DefaultSchedulerProvider());
         c.add(ICyclicRef3.class, CyclicTest3.class);
+        c.get(ComponentStrategyFactory.class);
     }
 
     @Pointcut(
@@ -535,6 +530,38 @@ public class DefaultContainerTest implements Serializable {
 
     public static class ProvidedType {
 
+    }
+
+    @Test
+    public void testComposite() {
+
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .addInstance(StartListener.class, new StartListener() {
+                    @Override
+                    public void onStart(String processName) {
+                        System.out.println("1 got " + processName);
+                    }
+                })
+                .registerCompositeTarget(StartListener.class)
+                .addInstance(StartListener.class, new StartListener() {
+                    @Override
+                    public void onStart(String processName) {
+                        System.out.println("2 got " + processName);
+                    }
+                })
+                .addInstance(StartListener.class, new StartListener() {
+                    @Override
+                    public void onStart(String processName) {
+                        System.out.println("3 got " + processName);
+                    }
+                })
+                .get(StartListener.class)
+                .onStart("what up");
+
+    }
+
+    public static interface StartListener {
+        void onStart(String processName);
     }
 
 
@@ -629,7 +656,7 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testPlainPrototypingSpeed() throws Exception {
 
-        final SerializableKey<IBean> key = new ClassKey<IBean>(IBean.class);
+        final Key<IBean> key = new ClassKey<IBean>(IBean.class);
 
         final Container container3 = Clarence.please().gimmeThatTainer()
                 .add(IBean.class, Bean.class)
@@ -663,7 +690,7 @@ public class DefaultContainerTest implements Serializable {
             }
         });
 
-        final Key<IBean> gKey = injector.getBinding(IBean.class).getKey();
+        final com.google.inject.Key<IBean> gKey = injector.getBinding(IBean.class).getKey();
 
         long guices = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
             @Override
@@ -708,8 +735,6 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testSingletonSpeed() throws Exception {
 
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
-                .registerCompositeTarget(Container.class).get(Container.class).makeInjectable();
 
 
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Caching())
@@ -738,7 +763,7 @@ public class DefaultContainerTest implements Serializable {
         }, threads).run(duration, primingRuns, "pico singleton");
 
 
-        final SerializableKey<ISingleton> key = new ClassKey<ISingleton>(ISingleton.class);
+        final com.github.overengineer.container.key.Key<ISingleton> key = new ClassKey<ISingleton>(ISingleton.class);
 
         final Container container2 = Clarence.please().gimmeThatTainer()
                 .add(ISingleton.class, Singleton.class)

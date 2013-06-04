@@ -1,6 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Key;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,8 +11,8 @@ import java.util.List;
 public interface Provider extends Serializable {
     <T> T get(Class<T> clazz, SelectionAdvisor ... advisors);
     <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors);
-    <T> T get(SerializableKey<T> key, SelectionAdvisor ... advisors);
+    <T> T get(Key<T> key, SelectionAdvisor ... advisors);
     <T> List<T> getAll(Class<T> clazz, SelectionAdvisor ... advisors);
     <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor ... advisors);
-    <T> List<T> getAll(SerializableKey<T> key, SelectionAdvisor ... advisors);
+    <T> List<T> getAll(Key<T> key, SelectionAdvisor ... advisors);
 }

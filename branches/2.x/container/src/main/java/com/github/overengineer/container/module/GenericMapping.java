@@ -1,6 +1,6 @@
 package com.github.overengineer.container.module;
 
-import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.container.key.Generic;
 
 /**
  * @author rees.byars
@@ -8,7 +8,7 @@ import com.github.overengineer.container.key.GenericKey;
 public class GenericMapping<T> extends TypeMapping<T> {
 
     @SuppressWarnings("unchecked")
-    public GenericMapping(GenericKey<? extends T> genericKey) {
+    public GenericMapping(Generic<? extends T> genericKey) {
         super((Class<T>) genericKey.getTargetClass());
     }
 

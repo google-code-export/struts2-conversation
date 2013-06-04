@@ -1,7 +1,7 @@
 package com.github.overengineer.scope.conversation;
 
+import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.module.BaseModule;
-import com.github.overengineer.container.key.GenericKey;
 import com.github.overengineer.scope.CommonConstants;
 import com.github.overengineer.scope.Factory;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
@@ -27,10 +27,10 @@ public class ConversationModule extends BaseModule {
         use(DefaultJeeConversationContextManagerProvider.class).forType(JeeConversationContextManagerProvider.class);
         use(TimeoutConversationContextManager.class).forType(ConversationContextManager.class);
 
-        use(new GenericKey<ScheduledExecutorTimeoutMonitor<ConversationContext>>() {})
-                .forType(new GenericKey<TimeoutMonitor<ConversationContext>>() {});
+        use(new Generic<ScheduledExecutorTimeoutMonitor<ConversationContext>>() {})
+                .forType(new Generic<TimeoutMonitor<ConversationContext>>() {});
 
-        registerManagedComponentFactory(new GenericKey<Factory<ConversationContextManager>>() {});
+        registerManagedComponentFactory(new Generic<Factory<ConversationContextManager>>() {});
         registerNonManagedComponentFactory(ConversationContextFactory.class).toProduce(DefaultConversationContext.class);
 
         use(Defaults.CONVERSATION_IDLE_TIMEOUT).withName(Properties.CONVERSATION_IDLE_TIMEOUT);

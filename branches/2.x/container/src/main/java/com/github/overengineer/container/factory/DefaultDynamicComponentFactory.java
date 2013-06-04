@@ -4,7 +4,7 @@ import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.SelectionAdvisor;
 import com.github.overengineer.container.instantiate.Instantiator;
 import com.github.overengineer.container.instantiate.InstantiatorFactory;
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Key;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -25,7 +25,7 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T createManagedComponentFactory(final Class factoryInterface, final SerializableKey producedTypeKey, final Provider provider) {
+    public <T> T createManagedComponentFactory(final Class factoryInterface, final Key producedTypeKey, final Provider provider) {
         DynamicManagedComponentFactory<T> dynamicFactory = new DynamicManagedComponentFactory<T>(factoryInterface, producedTypeKey, provider);
         T proxy = (T) Proxy.newProxyInstance(
                 provider.getClass().getClassLoader(),
@@ -70,11 +70,11 @@ public class DefaultDynamicComponentFactory implements DynamicComponentFactory {
     static class DynamicManagedComponentFactory<T> implements InvocationHandler, Serializable  {
 
         private final Class<T> factoryInterface;
-        private final SerializableKey<?> producedTypeKey;
+        private final Key<?> producedTypeKey;
         private final Provider provider;
         private T proxy;
 
-        DynamicManagedComponentFactory(Class<T> factoryInterface, SerializableKey producedTypeKey, Provider provider) {
+        DynamicManagedComponentFactory(Class<T> factoryInterface, Key producedTypeKey, Provider provider) {
             this.factoryInterface = factoryInterface;
             this.producedTypeKey = producedTypeKey;
             this.provider = provider;

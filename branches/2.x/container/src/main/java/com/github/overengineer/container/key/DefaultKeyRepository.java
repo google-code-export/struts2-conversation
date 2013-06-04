@@ -12,35 +12,35 @@ import java.util.Map;
  */
 public class DefaultKeyRepository implements KeyRepository {
 
-    private final Map<Object, SerializableKey> keys = new HashMap<Object, SerializableKey>();
+    private final Map<Object, Key> keys = new HashMap<Object, Key>();
 
     @Override
-    public void addKey(SerializableKey key) {
+    public void addKey(Key key) {
         keys.put(key, key);
     }
 
     @Override
-    public <T> SerializableKey<T> retrieveKey(Class<T> cls) {
+    public <T> Key<T> retrieveKey(Class<T> cls) {
         return new ClassKey<T>(cls);
     }
 
     @Override
-    public <T> SerializableKey<T> retrieveKey(Class<T> cls, String name) {
+    public <T> Key<T> retrieveKey(Class<T> cls, String name) {
         return new ClassKey<T>(cls, name);
     }
 
     @Override
-    public <T> SerializableKey<T> retrieveKey(final Type type) {
+    public <T> Key<T> retrieveKey(final Type type) {
         return retrieveKey(type, null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> SerializableKey<T> retrieveKey(Type type, String name) {
+    public <T> Key<T> retrieveKey(Type type, String name) {
         if (type instanceof Class) {
             return retrieveKey((Class) type, name);
         }
-        SerializableKey<T> key = (SerializableKey<T>) keys.get(new TempKey<T>(type, name));
+        Key<T> key = (Key<T>) keys.get(new TempKey<T>(type, name));
         if (key != null) {
             return key;
         }
@@ -52,7 +52,7 @@ public class DefaultKeyRepository implements KeyRepository {
 
     public class LazyDelegatingKey<T> extends DelegatingSerializableKey<T> {
 
-        private volatile SerializableKey<T> key;
+        private volatile Key<T> key;
         private transient Type type;
         private String name;
 
@@ -62,7 +62,7 @@ public class DefaultKeyRepository implements KeyRepository {
         }
 
         @Override
-        protected SerializableKey<T> getDelegateKey() {
+        protected Key<T> getDelegateKey() {
             if (key == null) {
                 synchronized (this) {
                     if (key == null) {

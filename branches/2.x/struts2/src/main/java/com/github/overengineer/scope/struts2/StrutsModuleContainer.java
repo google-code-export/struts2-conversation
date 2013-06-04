@@ -1,8 +1,8 @@
 package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.container.*;
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
-import com.github.overengineer.container.key.SerializableKey;
 import com.github.overengineer.container.module.Module;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
@@ -80,7 +80,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> Container add(SerializableKey<T> key, Class<? extends T> implementationType) {
+    public <T> Container add(Key<T> key, Class<? extends T> implementationType) {
         return delegate.add(key, implementationType);
     }
 
@@ -95,7 +95,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T, I extends T> Container addInstance(SerializableKey<T> key, I implementation) {
+    public <T, I extends T> Container addInstance(Key<T> key, I implementation) {
         return delegate.addInstance(key, implementation);
     }
 
@@ -105,7 +105,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container addCustomProvider(SerializableKey<?> providedTypeKey, Class<?> customProviderType) {
+    public Container addCustomProvider(Key<?> providedTypeKey, Class<?> customProviderType) {
         return delegate.addCustomProvider(providedTypeKey, customProviderType);
     }
 
@@ -115,17 +115,17 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider) {
+    public Container addCustomProvider(Key providedTypeKey, Object customProvider) {
         return delegate.addCustomProvider(providedTypeKey, customProvider);
     }
 
     @Override
-    public Container registerManagedComponentFactory(SerializableKey factoryKey) {
+    public Container registerManagedComponentFactory(Key factoryKey) {
         return delegate.registerManagedComponentFactory(factoryKey);
     }
 
     @Override
-    public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
+    public Container registerNonManagedComponentFactory(Key factoryKey, Class producedType) {
         return delegate.registerNonManagedComponentFactory(factoryKey, producedType);
     }
 
@@ -135,7 +135,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container registerCompositeTarget(SerializableKey targetKey) {
+    public Container registerCompositeTarget(Key targetKey) {
         return delegate.registerCompositeTarget(targetKey);
     }
 
@@ -165,12 +165,12 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> ComponentStrategy<T> getStrategy(SerializableKey<T> key, SelectionAdvisor... advisors) {
+    public <T> ComponentStrategy<T> getStrategy(Key<T> key, SelectionAdvisor... advisors) {
         return delegate.getStrategy(key, advisors);
     }
 
     @Override
-    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey<T> key, SelectionAdvisor... advisors) {
+    public <T> List<ComponentStrategy<T>> getAllStrategies(Key<T> key, SelectionAdvisor... advisors) {
         return delegate.getAllStrategies(key, advisors);
     }
 
@@ -192,7 +192,7 @@ public class StrutsModuleContainer implements Container {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(SerializableKey<T> key, SelectionAdvisor ... advisors) {
+    public <T> T get(Key<T> key, SelectionAdvisor ... advisors) {
         String string = container.getInstance(String.class, key.getName());
         if (string != null) {
             Class clazz = key.getTargetClass();
@@ -219,7 +219,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> List<T> getAll(SerializableKey<T> key, SelectionAdvisor... advisors) {
+    public <T> List<T> getAll(Key<T> key, SelectionAdvisor... advisors) {
         return delegate.getAll(key, advisors);
     }
 }

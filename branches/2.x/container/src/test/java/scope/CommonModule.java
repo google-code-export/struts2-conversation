@@ -1,6 +1,6 @@
 package scope;
 
-import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.module.BaseModule;
 import scope.monitor.*;
 
@@ -17,9 +17,9 @@ public class CommonModule extends BaseModule {
 
         use(EmptyActionProvider.class).forType(ActionProvider.class);
 
-        use(new GenericKey<ScheduledExecutorTimeoutMonitor<FakeTimeoutable>>(){})
+        use(new Generic<ScheduledExecutorTimeoutMonitor<FakeTimeoutable>>(){})
                 .forType(TimeoutMonitor.class)
-                .forType(new GenericKey<TimeoutMonitor<FakeTimeoutable>>() {});
+                .forType(new Generic<TimeoutMonitor<FakeTimeoutable>>() {});
 
         use(DefaultSchedulerProvider.class).forType(SchedulerProvider.class);
 

@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public class ClassKey<T> implements SerializableKey<T> {
+public class ClassKey<T> implements Key<T> {
 
     private final String name;
     private final Class<T> targetClass;
@@ -45,7 +45,7 @@ public class ClassKey<T> implements SerializableKey<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && targetClass == ((Key) object).getType() && name.equals(((Key) object).getName());
+        return object instanceof BasicKey && targetClass == ((BasicKey) object).getType() && name.equals(((BasicKey) object).getName());
     }
 
 }

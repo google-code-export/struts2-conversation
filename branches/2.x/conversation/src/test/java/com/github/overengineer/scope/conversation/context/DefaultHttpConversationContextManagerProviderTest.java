@@ -6,10 +6,7 @@ import static org.junit.Assert.assertNotSame;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Type;
 
-import com.github.overengineer.container.key.Key;
-import com.github.overengineer.container.Provider;
 import com.github.overengineer.scope.Factory;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

@@ -1,8 +1,8 @@
 package com.github.overengineer.container.module;
 
 import com.github.overengineer.container.key.ClassKey;
-import com.github.overengineer.container.key.GenericKey;
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Generic;
+import com.github.overengineer.container.key.Key;
 
 import java.util.*;
 
@@ -12,8 +12,8 @@ import java.util.*;
 public abstract class BaseModule implements Module {
 
     private final List<Mapping<?>> mappings = new LinkedList<Mapping<?>>();
-    private final Set<SerializableKey> managedComponentFactories = new LinkedHashSet<SerializableKey>();
-    private final Map<SerializableKey, Class> nonManagedComponentFactories = new HashMap<SerializableKey, Class>();
+    private final Set<Key> managedComponentFactories = new LinkedHashSet<Key>();
+    private final Map<Key, Class> nonManagedComponentFactories = new HashMap<Key, Class>();
 
     public BaseModule() {
         configure();
@@ -25,12 +25,12 @@ public abstract class BaseModule implements Module {
     }
 
     @Override
-    public Set<SerializableKey> getManagedComponentFactories() {
+    public Set<Key> getManagedComponentFactories() {
         return managedComponentFactories;
     }
 
     @Override
-    public Map<SerializableKey, Class> getNonManagedComponentFactories() {
+    public Map<Key, Class> getNonManagedComponentFactories() {
         return nonManagedComponentFactories;
     }
 
@@ -42,7 +42,7 @@ public abstract class BaseModule implements Module {
         return mapping;
     }
 
-    protected  <V> MutableMapping<V> use(GenericKey<V> implementationGeneric) {
+    protected  <V> MutableMapping<V> use(Generic<V> implementationGeneric) {
         TypeMapping<V> mapping = new GenericMapping<V>(implementationGeneric);
         mappings.add(mapping);
         return mapping;
@@ -54,7 +54,7 @@ public abstract class BaseModule implements Module {
         return mapping;
     }
 
-    protected void registerManagedComponentFactory(GenericKey factoryKey) {
+    protected void registerManagedComponentFactory(Generic factoryKey) {
         managedComponentFactories.add(factoryKey);
     }
 
@@ -62,16 +62,16 @@ public abstract class BaseModule implements Module {
         return new NonManagedComponentFactoryMapper(factoryType);
     }
 
-    protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(GenericKey factoryKey) {
+    protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(Generic factoryKey) {
         return new NonManagedComponentFactoryMapper(factoryKey);
     }
 
     public class NonManagedComponentFactoryMapper {
-        private final SerializableKey<?> key;
+        private final Key<?> key;
         public <T> NonManagedComponentFactoryMapper(Class<T> key) {
             this.key = new ClassKey<T>(key);
         }
-        public NonManagedComponentFactoryMapper(SerializableKey key) {
+        public NonManagedComponentFactoryMapper(Key key) {
             this.key = key;
         }
         public void toProduce(Class value) {

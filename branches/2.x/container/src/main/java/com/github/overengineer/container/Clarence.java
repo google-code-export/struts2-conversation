@@ -6,7 +6,7 @@ import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
 import com.github.overengineer.container.key.DefaultKeyRepository;
-import com.github.overengineer.container.key.GenericKey;
+import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
@@ -68,7 +68,7 @@ public class Clarence implements Serializable {
                 .addInstance(KeyRepository.class, keyRepository)
                 .addInstance(DynamicComponentFactory.class, dynamicComponentFactory)
                 .addInstance(ComponentStrategyFactory.class, strategyFactory)
-                .addInstance(new GenericKey<List<ComponentInitializationListener>>() {
+                .addInstance(new Generic<List<ComponentInitializationListener>>() {
                 }, initializationListeners);
         return this;
     }

@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public class TempKey<T> implements Key<T> {
+public class TempKey<T> implements BasicKey<T> {
 
     private final String name;
     private final Type type;
@@ -41,6 +41,6 @@ public class TempKey<T> implements Key<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof Key && type.equals(((Key) object).getType()) && name.equals(((Key) object).getName());
+        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && name.equals(((BasicKey) object).getName());
     }
 }

@@ -2,17 +2,17 @@ package com.github.overengineer.container.parameter;
 
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.SelectionAdvisor;
-import com.github.overengineer.container.key.SerializableKey;
+import com.github.overengineer.container.key.Key;
 
 /**
  * @author rees.byars
  */
 public class DecoratorParameterProxy<T> implements ParameterProxy<T> {
 
-    private final SerializableKey<T> key;
+    private final Key<T> key;
     private final Class<?> injectionTarget;
 
-    public DecoratorParameterProxy(SerializableKey<T> key, Class<?> injectionTarget) {
+    public DecoratorParameterProxy(Key<T> key, Class<?> injectionTarget) {
         this.key = key;
         this.injectionTarget = injectionTarget;
     }
