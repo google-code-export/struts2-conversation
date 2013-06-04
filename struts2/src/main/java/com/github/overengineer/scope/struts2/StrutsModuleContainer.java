@@ -80,7 +80,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
+    public <T> Container add(SerializableKey<T> key, Class<? extends T> implementationType) {
         return delegate.add(key, implementationType);
     }
 
@@ -95,17 +95,17 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
+    public <T, I extends T> Container addInstance(SerializableKey<T> key, I implementation) {
         return delegate.addInstance(key, implementation);
     }
 
     @Override
-    public Container addCustomProvider(Class providedType, Class<?> customProviderType) {
+    public Container addCustomProvider(Class<?> providedType, Class<?> customProviderType) {
         return delegate.addCustomProvider(providedType, customProviderType);
     }
 
     @Override
-    public Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType) {
+    public Container addCustomProvider(SerializableKey<?> providedTypeKey, Class<?> customProviderType) {
         return delegate.addCustomProvider(providedTypeKey, customProviderType);
     }
 
@@ -165,12 +165,12 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor... advisors) {
+    public <T> ComponentStrategy<T> getStrategy(SerializableKey<T> key, SelectionAdvisor... advisors) {
         return delegate.getStrategy(key, advisors);
     }
 
     @Override
-    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey key, SelectionAdvisor... advisors) {
+    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey<T> key, SelectionAdvisor... advisors) {
         return delegate.getAllStrategies(key, advisors);
     }
 
@@ -187,12 +187,12 @@ public class StrutsModuleContainer implements Container {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
-        return (T) get(keyRepository.retrieveKey(clazz, name));
+        return get(keyRepository.retrieveKey(clazz, name));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(SerializableKey key, SelectionAdvisor ... advisors) {
+    public <T> T get(SerializableKey<T> key, SelectionAdvisor ... advisors) {
         String string = container.getInstance(String.class, key.getName());
         if (string != null) {
             Class clazz = key.getTargetClass();
@@ -219,7 +219,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> List<T> getAll(SerializableKey key, SelectionAdvisor... advisors) {
+    public <T> List<T> getAll(SerializableKey<T> key, SelectionAdvisor... advisors) {
         return delegate.getAll(key, advisors);
     }
 }

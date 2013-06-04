@@ -8,9 +8,9 @@ import com.github.overengineer.container.key.SerializableKey;
  */
 public class ComponentParameterProxy<T> implements ParameterProxy<T> {
 
-    private final SerializableKey key;
+    private final SerializableKey<T> key;
 
-    public ComponentParameterProxy(SerializableKey key) {
+    public ComponentParameterProxy(SerializableKey<T> key) {
         this.key = key;
     }
 

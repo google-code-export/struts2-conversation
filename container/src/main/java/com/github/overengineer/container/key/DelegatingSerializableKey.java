@@ -5,9 +5,9 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public abstract class DelegatingSerializableKey implements SerializableKey {
+public abstract class DelegatingSerializableKey<T> implements SerializableKey<T> {
 
-    protected abstract SerializableKey getDelegateKey();
+    protected abstract SerializableKey<T> getDelegateKey();
 
     @Override
     public int hashCode() {
@@ -25,7 +25,7 @@ public abstract class DelegatingSerializableKey implements SerializableKey {
     }
 
     @Override
-    public Class getTargetClass() {
+    public Class<? super T> getTargetClass() {
         return getDelegateKey().getTargetClass();
     }
 

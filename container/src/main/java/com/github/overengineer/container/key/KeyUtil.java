@@ -9,7 +9,8 @@ import java.util.Set;
  */
 public class KeyUtil {
 
-    public static Class getClass(Type type) {
+    @SuppressWarnings("unchecked")
+    public static <T> Class<? super T> getClass(Type type) {
         if (type instanceof Class) {
             return (Class) type;
         } else if (type instanceof ParameterizedType) {

@@ -5,19 +5,19 @@ import java.lang.reflect.Type;
 /**
  * @author rees.byars
  */
-public class ClassKey implements SerializableKey {
+public class ClassKey<T> implements SerializableKey<T> {
 
     private final String name;
-    private final Class targetClass;
+    private final Class<T> targetClass;
     private final int hash;
 
-    public ClassKey(Class targetClass) {
+    public ClassKey(Class<T> targetClass) {
         this.name = "";
         this.targetClass = targetClass;
         this.hash = targetClass.hashCode();
     }
 
-    public ClassKey(Class targetClass, String name) {
+    public ClassKey(Class<T> targetClass, String name) {
         this.name = name == null ? "" : name;
         this.targetClass = targetClass;
         this.hash = targetClass.hashCode();
@@ -34,7 +34,7 @@ public class ClassKey implements SerializableKey {
     }
 
     @Override
-    public Class getTargetClass() {
+    public Class<T> getTargetClass() {
         return targetClass;
     }
 

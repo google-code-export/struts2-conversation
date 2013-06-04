@@ -87,7 +87,7 @@ public class DefaultContainer implements Container {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContainer.class);
 
-    private final Map<SerializableKey, SortedSet<ComponentStrategy<?>>> strategies = new HashMap<SerializableKey, SortedSet<ComponentStrategy<?>>>();
+    private final Map<SerializableKey<?>, SortedSet<ComponentStrategy<?>>> strategies = new HashMap<SerializableKey<?>, SortedSet<ComponentStrategy<?>>>();
     private final List<Container> cascadingContainers = new ArrayList<Container>();
     private final List<Container> children = new ArrayList<Container>();
     private final ComponentStrategyFactory strategyFactory;
@@ -106,7 +106,7 @@ public class DefaultContainer implements Container {
     public void verify() throws WiringException {
         LOG.info("Verifying container.");
         try {
-            for (SerializableKey key : strategies.keySet()) {
+            for (SerializableKey<?> key : strategies.keySet()) {
                 get(key);
             }
         } catch (Exception e) {
@@ -128,20 +128,20 @@ public class DefaultContainer implements Container {
             Class<?> implementationType = mapping.getImplementationType();
             String name = mapping.getName();
             if (mapping instanceof InstanceMapping) {
-                InstanceMapping instanceMapping = (InstanceMapping) mapping;
+                InstanceMapping<?> instanceMapping = (InstanceMapping) mapping;
                 Object instance = instanceMapping.getInstance();
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addInstance(keyRepository.retrieveKey(target, name), instance);
+                    addMapping(keyRepository.retrieveKey(target, name), instance);
                 }
-                for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
-                    addInstance(targetGeneric, instance);
+                for (SerializableKey<?> targetGeneric : mapping.getTargetKeys()) {
+                    addMapping(targetGeneric, instance);
                 }
             } else {
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    add(keyRepository.retrieveKey(target, name), implementationType);
+                    addMapping(keyRepository.retrieveKey(target, name), implementationType);
                 }
-                for (SerializableKey targetGeneric : mapping.getTargetKeys()) {
-                    add(targetGeneric, implementationType);
+                for (SerializableKey<?> targetGeneric : mapping.getTargetKeys()) {
+                    addMapping(targetGeneric, implementationType);
                 }
             }
         }
@@ -221,7 +221,7 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> Container add(SerializableKey key, Class<? extends T> implementationType) {
+    public <T> Container add(SerializableKey<T> key, Class<? extends T> implementationType) {
         addMapping(key, implementationType);
         return this;
     }
@@ -239,20 +239,20 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T, I extends T> Container addInstance(SerializableKey key, I implementation) {
+    public <T, I extends T> Container addInstance(SerializableKey<T> key, I implementation) {
         addMapping(key, implementation);
         return this;
     }
 
     @Override
-    public Container addCustomProvider(Class providedType, Class customProviderType) {
+    public Container addCustomProvider(Class<?> providedType, Class<?> customProviderType) {
         addCustomProvider(keyRepository.retrieveKey(providedType), customProviderType);
         return this;
     }
 
     @Override
-    public Container addCustomProvider(SerializableKey providedTypeKey, Class<?> customProviderType) {
-        SerializableKey providerKey = keyRepository.retrieveKey(customProviderType);
+    public Container addCustomProvider(SerializableKey<?> providedTypeKey, Class<?> customProviderType) {
+        SerializableKey<?> providerKey = keyRepository.retrieveKey(customProviderType);
         ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
             providerStrategy = strategyFactory.create(customProviderType);
@@ -265,14 +265,14 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container addCustomProvider(Class providedType, Object customProvider) {
+    public Container addCustomProvider(Class<?> providedType, Object customProvider) {
         addCustomProvider(keyRepository.retrieveKey(providedType), customProvider);
         return this;
     }
 
     @Override
-    public Container addCustomProvider(SerializableKey providedTypeKey, Object customProvider) {
-        SerializableKey providerKey = keyRepository.retrieveKey(customProvider.getClass());
+    public Container addCustomProvider(SerializableKey<?> providedTypeKey, Object customProvider) {
+        SerializableKey<?> providerKey = keyRepository.retrieveKey(customProvider.getClass());
         ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
             providerStrategy = strategyFactory.createInstanceStrategy(customProvider);
@@ -285,17 +285,17 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerManagedComponentFactory(SerializableKey factoryKey) {
+    public Container registerManagedComponentFactory(SerializableKey<?> factoryKey) {
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
         SerializableKey targetKey = keyRepository.retrieveKey(producedType);
-        addInstance(factoryKey, dynamicComponentFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
+        addMapping(factoryKey, dynamicComponentFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
         return this;
     }
 
     @Override
-    public Container registerNonManagedComponentFactory(SerializableKey factoryKey, Class producedType) {
-        addInstance(factoryKey, dynamicComponentFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
+    public Container registerNonManagedComponentFactory(SerializableKey<?> factoryKey, Class producedType) {
+        addMapping(factoryKey, dynamicComponentFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
         return this;
     }
 
@@ -376,14 +376,14 @@ public class DefaultContainer implements Container {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
-        return (T) get(keyRepository.retrieveKey(clazz, name), advisors);
+        return get(keyRepository.retrieveKey(clazz, name), advisors);
     }
 
     @Override
-    public <T> T get(SerializableKey key, SelectionAdvisor ... advisors) {
+    public <T> T get(SerializableKey<T> key, SelectionAdvisor ... advisors) {
 
         @SuppressWarnings("unchecked")
-        ComponentStrategy<T> strategy = (ComponentStrategy<T>) getStrategy(key, advisors);
+        ComponentStrategy<T> strategy = getStrategy(key, advisors);
 
         if (strategy == null) {
             throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
@@ -404,7 +404,7 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> List<T> getAll(SerializableKey key, SelectionAdvisor... advisors) {
+    public <T> List<T> getAll(SerializableKey<T> key, SelectionAdvisor... advisors) {
         List<T> components = new LinkedList<T>();
         List<ComponentStrategy<T>> componentStrategies = getAllStrategies(key, advisors);
         for (ComponentStrategy<T> strategy : componentStrategies) {
@@ -432,10 +432,11 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-     public ComponentStrategy<?> getStrategy(SerializableKey key, SelectionAdvisor ... advisors) {
-        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+     public <T> ComponentStrategy<T> getStrategy(SerializableKey<T> key, SelectionAdvisor ... advisors) {
+
+        SortedSet<ComponentStrategy<T>> strategySet = getStrategySet(key);
         if (strategySet != null) {
-            for (ComponentStrategy<?> strategy : strategySet) {
+            for (ComponentStrategy<T> strategy : strategySet) {
                 boolean valid = true;
                 for (SelectionAdvisor advisor : advisors) {
                     if (!advisor.validSelection(strategy.getComponentType())) {
@@ -449,13 +450,13 @@ public class DefaultContainer implements Container {
             }
         }
         for (Container child : children) {
-            ComponentStrategy strategy = child.getStrategy(key);
+            ComponentStrategy<T> strategy = child.getStrategy(key);
             if (strategy != null) {
                 return strategy;
             }
         }
         for (Container container : cascadingContainers) {
-            ComponentStrategy strategy = container.getStrategy(key);
+            ComponentStrategy<T> strategy = container.getStrategy(key);
             if (strategy != null) {
                 return strategy;
             }
@@ -463,18 +464,17 @@ public class DefaultContainer implements Container {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey key, SelectionAdvisor... advisors) {
+    public <T> List<ComponentStrategy<T>> getAllStrategies(SerializableKey<T> key, SelectionAdvisor... advisors) {
 
         List<ComponentStrategy<T>> allStrategies = new LinkedList<ComponentStrategy<T>>();
 
-        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+        SortedSet<ComponentStrategy<T>> strategySet = getStrategySet(key);
         if (strategySet != null) {
-            for (ComponentStrategy<?> strategy : strategySet) {
+            for (ComponentStrategy<T> strategy : strategySet) {
                 for (SelectionAdvisor advisor : advisors) {
                     if (advisor.validSelection(strategy.getComponentType())) {
-                        allStrategies.add((ComponentStrategy<T>) strategy);
+                        allStrategies.add(strategy);
                     }
                 }
             }
@@ -488,6 +488,12 @@ public class DefaultContainer implements Container {
             allStrategies.addAll(containerAllStrategies);
         }
         return allStrategies;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> SortedSet<ComponentStrategy<T>> getStrategySet(SerializableKey<T> key) {
+        SortedSet<ComponentStrategy<?>> strategySet = strategies.get(key);
+        return (SortedSet<ComponentStrategy<T>>) (SortedSet) strategySet;
     }
 
     protected void putStrategy(SerializableKey key, ComponentStrategy<?> strategy) {

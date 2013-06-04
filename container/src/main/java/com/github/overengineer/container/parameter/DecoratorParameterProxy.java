@@ -9,10 +9,10 @@ import com.github.overengineer.container.key.SerializableKey;
  */
 public class DecoratorParameterProxy<T> implements ParameterProxy<T> {
 
-    private final SerializableKey key;
+    private final SerializableKey<T> key;
     private final Class<?> injectionTarget;
 
-    public DecoratorParameterProxy(SerializableKey key, Class<?> injectionTarget) {
+    public DecoratorParameterProxy(SerializableKey<T> key, Class<?> injectionTarget) {
         this.key = key;
         this.injectionTarget = injectionTarget;
     }
