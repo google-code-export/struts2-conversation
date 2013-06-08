@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -334,8 +335,8 @@ public class DefaultContainer implements Container {
     @Override
     public Container registerDelegatingService(Key<?> targetKey) {
         Object delegatingService = dynamicComponentFactory.createDelegatingService(targetKey.getTargetClass(), this);
-        ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(delegatingService);
-        putStrategy(targetKey, compositeStrategy);
+        ComponentStrategy strategy = strategyFactory.createInstanceStrategy(delegatingService);
+        putStrategy(targetKey, strategy);
         return this;
     }
 
@@ -530,7 +531,10 @@ public class DefaultContainer implements Container {
             strategySet = new TreeSet<ComponentStrategy<?>>(new StrategyComparator() {
                 @Override
                 public int compare(ComponentStrategy<?> strategy, ComponentStrategy<?> strategy2) {
-                    if (strategy.equals(strategy2) || strategy.getComponentType().equals(strategy2.getComponentType())) {
+                    if (strategy.equals(strategy2) ||
+                            //TODO need a better way to ensure only one composite/delegating service etc is allowed
+                            (strategy.getComponentType().equals(strategy2.getComponentType()) &&
+                                    !Proxy.isProxyClass(strategy.getComponentType()))) {
                         return 0;
                     } else if (strategy instanceof TopLevelStrategy) {
                         return -1;
