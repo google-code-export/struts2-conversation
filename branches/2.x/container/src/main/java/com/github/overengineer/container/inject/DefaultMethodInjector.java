@@ -20,9 +20,9 @@ public class DefaultMethodInjector<T> implements MethodInjector<T> {
     }
 
     @Override
-    public Object inject(T component, Provider provider, Object ... trailingArgs) {
+    public Object inject(T component, Provider provider, Object ... providedArgs) {
         try {
-            return methodRef.getMethod().invoke(component, parameterBuilder.buildParameters(provider, trailingArgs));
+            return methodRef.getMethod().invoke(component, parameterBuilder.buildParameters(provider, providedArgs));
         } catch (Exception e) {
             throw new InjectionException("Could not inject method [" + methodRef.getMethod().getName() + "] on component of type [" + component.getClass().getName() + "].", e);
         }

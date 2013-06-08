@@ -447,7 +447,7 @@ public class DefaultContainer implements Container {
         ComponentStrategy newStrategy = strategyFactory.create(implementationType);
         keyRepository.addKey(key);
         putStrategy(key, newStrategy);
-        putStrategy(keyRepository.retrieveKey(implementationType), newStrategy);
+        putStrategy(keyRepository.retrieveKey(implementationType, key.getName()), newStrategy);
 
     }
 

@@ -16,15 +16,15 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     private final Class<T> type;
     private final ConstructorResolver constructorResolver;
     private final ParameterBuilderFactory parameterBuilderFactory;
-    private final Class[] trailingArgsTypes;
+    private final Class[] providedArgTypes;
     private ParameterBuilder<T> parameterBuilder;
     private transient volatile SoftReference<Constructor<T>> constructorRef;
 
-    public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterBuilderFactory parameterBuilderFactory, Class ... trailingArgTypes) {
+    public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterBuilderFactory parameterBuilderFactory, Class ... providedArgTypes) {
         this.type = type;
         this.constructorResolver = constructorResolver;
         this.parameterBuilderFactory = parameterBuilderFactory;
-        this.trailingArgsTypes = trailingArgTypes;
+        this.providedArgTypes = providedArgTypes;
     }
 
     @Override
@@ -34,9 +34,9 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
             synchronized (this) {
                 Constructor<T> constructor = constructorRef == null ? null : constructorRef.get();
                 if (constructor == null) {
-                    constructor = constructorResolver.resolveConstructor(type, trailingArgsTypes);
+                    constructor = constructorResolver.resolveConstructor(type, providedArgTypes);
                     constructorRef = new SoftReference<Constructor<T>>(constructor);
-                    parameterBuilder = parameterBuilderFactory.create(type, constructor, trailingArgsTypes);
+                    parameterBuilder = parameterBuilderFactory.create(type, constructor, providedArgTypes);
                 }
             }
         }
@@ -44,20 +44,20 @@ public class DefaultInstantiator<T> implements Instantiator<T> {
     }
 
     @Override
-    public T getInstance(Provider provider, Object ... trailingParams) {
+    public T getInstance(Provider provider, Object ... providedArgs) {
         Constructor<T> constructor = constructorRef == null ? null : constructorRef.get();
         if (constructor == null) {
             synchronized (this) {
                 constructor = constructorRef == null ? null : constructorRef.get();
                 if (constructor == null) {
-                    constructor = constructorResolver.resolveConstructor(type, trailingArgsTypes);
+                    constructor = constructorResolver.resolveConstructor(type, providedArgTypes);
                     constructorRef = new SoftReference<Constructor<T>>(constructor);
-                    parameterBuilder = parameterBuilderFactory.create(type, constructor, trailingArgsTypes);
+                    parameterBuilder = parameterBuilderFactory.create(type, constructor, providedArgTypes);
                 }
             }
         }
         try {
-            return constructor.newInstance(parameterBuilder.buildParameters(provider, trailingParams));
+            return constructor.newInstance(parameterBuilder.buildParameters(provider, providedArgs));
         } catch (Exception e) {
             throw new InjectionException("Could not create new instance of type [" + type.getName() + "]", e);
         }

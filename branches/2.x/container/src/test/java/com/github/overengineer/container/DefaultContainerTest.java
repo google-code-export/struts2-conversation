@@ -320,7 +320,7 @@ public class DefaultContainerTest implements Serializable {
 
     public static class NonManagedComponent implements NamedComponent {
         String name;
-        public NonManagedComponent(TimeoutMonitor timeoutMonitor, String name) {
+        public NonManagedComponent(String name, TimeoutMonitor timeoutMonitor) {
             this.name = name;
         }
         @Override
@@ -571,8 +571,8 @@ public class DefaultContainerTest implements Serializable {
                         calls.incrementAndGet();
                     }
                 })
-                .registerDelegatingService(StartListener.class)
-                .add(StartDelegate.class, StartDelegate.class)
+                .registerDelegatingService(StartListener.class, "dan")
+                .add(StartDelegate.class, "sandy", StartDelegate.class)
                 .addInstance(StartListener.class, "bro", new StartListener() {
                     @Override
                     public void onStart(String processName) {
@@ -599,22 +599,25 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static interface StartListener {
-        @Delegate(StartDelegate.class)
+        @Delegate(value = StartDelegate.class, name = "sandy")
         void onStart(String processName);
     }
 
     @Test
     public void testServiceDelegate() {
         Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
-                .registerDelegatingService(StartListener.class)
-                .add(StartDelegate.class, StartDelegate.class)
-                .get(StartListener.class)
+                .registerDelegatingService(StartListener.class, "dan")
+                .add(StartDelegate.class, "sandy", StartDelegate.class)
+                .get(StartListener.class, "dan")
                 .onStart("yo");
     }
 
     public static class StartDelegate {
-        public void onStart(DynamicComponentFactory dynamicComponentFactory, String processName) {
-            System.out.println(processName + dynamicComponentFactory);
+        public void onStart(String processName, @Named("dan") StartListener listener) {
+            System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
+            if (processName.equals("yo")) {
+                listener.onStart("shit");
+            }
         }
     }
 

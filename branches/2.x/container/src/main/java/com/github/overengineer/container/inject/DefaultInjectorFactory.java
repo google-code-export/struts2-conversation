@@ -45,8 +45,8 @@ public class DefaultInjectorFactory implements InjectorFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> MethodInjector<T> create(Class<T> injectionTarget, Method method, Class ... trailingArgs) {
-        return new DefaultMethodInjector(method, parameterBuilderFactory.create(injectionTarget, method, trailingArgs));
+    public <T> MethodInjector<T> create(Class<T> injectionTarget, Method method, Class ... providedArgs) {
+        return new DefaultMethodInjector(method, parameterBuilderFactory.create(injectionTarget, method, providedArgs));
     }
 
     static class EmptyInjector<T> implements ComponentInjector<T> {

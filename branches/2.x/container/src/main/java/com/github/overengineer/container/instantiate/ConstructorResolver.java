@@ -8,6 +8,6 @@ import java.lang.reflect.Constructor;
  */
 public interface ConstructorResolver extends Serializable {
 
-    <T> Constructor<T> resolveConstructor(Class<T> type, Class ... trailingArgs);
+    <T> Constructor<T> resolveConstructor(Class<T> type, Class ... providedArgs);
 
 }

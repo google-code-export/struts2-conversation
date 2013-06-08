@@ -5,12 +5,12 @@ import com.github.overengineer.container.Provider;
 /**
  * @author rees.byars
  */
-public class DefaultParameterBuilder<T> implements ParameterBuilder<T> {
+public class TrailingArgsParameterBuilder<T> implements ParameterBuilder<T> {
 
     private final ParameterProxy[] proxies;
     private final boolean decorator;
 
-    public DefaultParameterBuilder(ParameterProxy[] proxies, boolean decorator) {
+    public TrailingArgsParameterBuilder(ParameterProxy[] proxies, boolean decorator) {
         this.proxies = proxies;
         this.decorator = decorator;
     }
