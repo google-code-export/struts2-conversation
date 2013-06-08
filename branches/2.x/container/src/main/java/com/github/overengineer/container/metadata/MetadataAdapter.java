@@ -1,5 +1,6 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.scope.Scope;
 
 import java.io.Serializable;
@@ -24,5 +25,7 @@ public interface MetadataAdapter extends Serializable {
     String getName(Type type, Annotation[] annotations);
 
     Method getCustomProviderMethod(Class<?> cls);
+
+    Key<?> getDelegateKey(Method method);
 
 }

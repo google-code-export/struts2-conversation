@@ -48,7 +48,15 @@ public interface Container extends Provider {
 
     Container registerCompositeTarget(Class<?> targetInterface);
 
+    Container registerCompositeTarget(Class<?> targetInterface, String name);
+
     Container registerCompositeTarget(Key<?> targetKey);
+
+    Container registerDelegatingService(Class<?> targetInterface);
+
+    Container registerDelegatingService(Class<?> targetInterface, String name);
+
+    Container registerDelegatingService(Key<?> targetKey);
 
     List<ComponentInitializationListener> getInitializationListeners();
 

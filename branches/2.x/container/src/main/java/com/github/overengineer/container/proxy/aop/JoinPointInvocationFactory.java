@@ -8,6 +8,6 @@ import java.lang.reflect.Method;
  */
 public interface JoinPointInvocationFactory extends Serializable {
 
-    <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters);
+    <T> JoinPoint<T> create(T target, Method method, Object[] parameters);
 
 }

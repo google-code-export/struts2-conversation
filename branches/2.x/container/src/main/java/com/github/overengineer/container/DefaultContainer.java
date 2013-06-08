@@ -1,7 +1,6 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.CompositeHandler;
-import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.module.InstanceMapping;
 import com.github.overengineer.container.module.Mapping;
@@ -306,12 +305,37 @@ public class DefaultContainer implements Container {
     }
 
     @Override
+    public Container registerCompositeTarget(Class<?> targetInterface, String name) {
+        registerCompositeTarget(keyRepository.retrieveKey(targetInterface, name));
+        return this;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public synchronized Container registerCompositeTarget(Key targetKey) {
-        CompositeHandler handler = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass(), this);
-        ComponentStrategy compositeStrategy = new TopLevelStrategy(strategyFactory.createInstanceStrategy(handler.getComposite()));
-        SortedSet<ComponentStrategy<?>> componentStrategies = strategies.get(targetKey);
-        componentStrategies.add(compositeStrategy);
+        Object composite = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass(), this);
+        ComponentStrategy compositeStrategy = new TopLevelStrategy(strategyFactory.createInstanceStrategy(composite));
+        putStrategy(targetKey, compositeStrategy);
+        return this;
+    }
+
+    @Override
+    public Container registerDelegatingService(Class<?> targetInterface) {
+        registerDelegatingService(keyRepository.retrieveKey(targetInterface));
+        return this;
+    }
+
+    @Override
+    public Container registerDelegatingService(Class<?> targetInterface, String name) {
+        registerDelegatingService(keyRepository.retrieveKey(targetInterface, name));
+        return this;
+    }
+
+    @Override
+    public Container registerDelegatingService(Key<?> targetKey) {
+        Object delegatingService = dynamicComponentFactory.createDelegatingService(targetKey.getTargetClass(), this);
+        ComponentStrategy compositeStrategy = strategyFactory.createInstanceStrategy(delegatingService);
+        putStrategy(targetKey, compositeStrategy);
         return this;
     }
 
@@ -386,6 +410,10 @@ public class DefaultContainer implements Container {
         ComponentStrategy<T> strategy = getStrategy(key, advisors);
 
         if (strategy == null) {
+            String name = key.getName();
+            if (name != null) {
+                throw new MissingDependencyException("No components of type [" + key.getType() + "] with name [" + name + "] have been registered with the container");
+            }
             throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
         }
 

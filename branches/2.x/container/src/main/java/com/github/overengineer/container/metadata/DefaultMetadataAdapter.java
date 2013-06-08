@@ -1,5 +1,7 @@
 package com.github.overengineer.container.metadata;
 
+import com.github.overengineer.container.key.Key;
+import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
 import com.github.overengineer.container.util.ReflectionUtil;
@@ -13,6 +15,12 @@ import java.lang.reflect.Type;
  * @author rees.byars
  */
 public class DefaultMetadataAdapter implements MetadataAdapter {
+
+    private final KeyRepository keyRepository;
+
+    public DefaultMetadataAdapter(KeyRepository keyRepository) {
+        this.keyRepository = keyRepository;
+    }
 
     /**
      * {@inheritDoc}
@@ -93,6 +101,18 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
             throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get].", e);
         }
         throw new MetadataException("Could not obtain provider method named [get] from type [" + cls.getName() + "].  Make sure the class has a method named [get].", new IllegalArgumentException("There is no method named [get]"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Key<?> getDelegateKey(Method method) {
+        if (!method.isAnnotationPresent(Delegate.class)) {
+            throw new MetadataException("There was an exception creating a delegated service", new IllegalArgumentException("The method [" + method.getName() + "] of class [" + method.getDeclaringClass() + "] must be annotated with an @Delegate annotation"));
+        }
+        Delegate delegate = method.getAnnotation(Delegate.class);
+        return keyRepository.retrieveKey(delegate.value(), delegate.name());
     }
 
 }

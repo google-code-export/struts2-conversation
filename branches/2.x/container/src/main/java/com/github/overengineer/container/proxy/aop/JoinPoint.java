@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @author rees.byars
  */
-public interface JoinPointInvocation<T> {
+public interface JoinPoint<T> {
 
     T getTarget();
 
@@ -13,6 +13,6 @@ public interface JoinPointInvocation<T> {
 
     Method getMethod();
 
-    Object invoke() throws Throwable;
+    Object join() throws Throwable;
 
 }

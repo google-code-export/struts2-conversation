@@ -7,6 +7,6 @@ import java.io.Serializable;
  */
 public interface Aspect<T> extends Serializable {
 
-    Object advise(JoinPointInvocation<T> invocation) throws Throwable;
+    Object advise(JoinPoint<T> invocation) throws Throwable;
 
 }

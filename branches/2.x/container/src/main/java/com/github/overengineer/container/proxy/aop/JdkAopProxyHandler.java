@@ -19,7 +19,7 @@ public class JdkAopProxyHandler<T> extends JdkComponentProxyHandler<T> implement
 
     @Override
     public Object invoke(Object o, Method method, Object[] parameters) throws Throwable {
-        return invocationFactory.create(component, method, parameters).invoke();
+        return invocationFactory.create(component, method, parameters).join();
     }
 
 }

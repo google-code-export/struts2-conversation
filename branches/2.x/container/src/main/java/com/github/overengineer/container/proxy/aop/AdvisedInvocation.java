@@ -7,7 +7,7 @@ import java.util.Iterator;
 /**
  * @author rees.byars
  */
-public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
+public class AdvisedInvocation<T> implements JoinPoint<T> {
 
     private final Iterator<Aspect> aspectIterator;
     private final T target;
@@ -38,7 +38,7 @@ public class AdvisedInvocation<T> implements JoinPointInvocation<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke() throws Throwable {
+    public Object join() throws Throwable {
         if (aspectIterator.hasNext()) {
             return aspectIterator.next().advise(this);
         }
