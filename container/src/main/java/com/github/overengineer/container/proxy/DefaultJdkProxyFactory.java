@@ -1,11 +1,12 @@
 package com.github.overengineer.container.proxy;
 
+import com.github.overengineer.container.util.ReflectionUtil;
+
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -63,21 +64,8 @@ public class DefaultJdkProxyFactory implements JdkProxyFactory {
         }
 
         LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<Class<?>>();
-        getAllInterfaces(cls, interfacesFound);
+        ReflectionUtil.getAllInterfaces(cls, interfacesFound);
         return new ArrayList<Class<?>>(interfacesFound);
     }
 
-    private static void getAllInterfaces(Class<?> cls, HashSet<Class<?>> interfacesFound) {
-        while (cls != null) {
-            Class<?>[] interfaces = cls.getInterfaces();
-
-            for (Class<?> i : interfaces) {
-                if (interfacesFound.add(i)) {
-                    getAllInterfaces(i, interfacesFound);
-                }
-            }
-
-            cls = cls.getSuperclass();
-        }
-    }
 }

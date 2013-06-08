@@ -5,6 +5,8 @@ import com.github.overengineer.container.SelectionAdvisor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -36,9 +38,14 @@ public class DynamicComposite<T> implements InvocationHandler {
             components = provider.getAll(componentInterface, new SelectionAdvisor() {
                 @Override
                 public boolean validSelection(Class<?> candidateClass) {
-                    return candidateClass != proxy.getClass();
+                    return candidateClass != proxy.getClass() || Proxy.isProxyClass(candidateClass);
                 }
             });
+            for (Iterator<T> i = components.iterator(); i.hasNext();) {
+                if (i.next().toString().equals(proxy.toString())) {
+                    i.remove();
+                }
+            }
         }
         for (T component : components) {
             method.invoke(component, objects);

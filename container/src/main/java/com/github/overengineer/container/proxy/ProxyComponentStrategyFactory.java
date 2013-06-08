@@ -21,6 +21,9 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     @Override
     public <T> ComponentStrategy<T> create(Class<T> implementationType) {
         ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType);
+        if (ReflectionUtil.getAllInterfaces(implementationType).size() == 0) {
+            return delegateStrategy;
+        }
         if (delegateStrategy instanceof PrototypeComponentStrategy) {
             return new PrototypeProxyComponentStrategy<T>(implementationType, delegateStrategy, handlerFactory);
         }
@@ -30,7 +33,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     @Override
     public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
         ComponentStrategy<T> delegateStrategy = delegateFactory.createInstanceStrategy(implementation);
-        if (ReflectionUtil.isPropertyType(implementation.getClass())) {
+        Class<?> implementationType = implementation.getClass();
+        if (ReflectionUtil.getAllInterfaces(implementationType).size() == 0 || ReflectionUtil.isPropertyType(implementationType)) {
             return delegateStrategy;
         }
         return new SingletonProxyComponentStrategy<T>(implementation.getClass(), delegateStrategy, handlerFactory);
@@ -39,6 +43,9 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     @Override
     public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
         ComponentStrategy<T> customStrategy = delegateFactory.createCustomStrategy(providerStrategy);
+        if (ReflectionUtil.getAllInterfaces(customStrategy.getComponentType()).size() == 0) {
+            return customStrategy;
+        }
         return new SingletonProxyComponentStrategy<T>(customStrategy.getComponentType(), customStrategy, handlerFactory);
     }
 }

@@ -571,6 +571,8 @@ public class DefaultContainerTest implements Serializable {
                         calls.incrementAndGet();
                     }
                 })
+                .registerDelegatingService(StartListener.class)
+                .add(StartDelegate.class, StartDelegate.class)
                 .addInstance(StartListener.class, "bro", new StartListener() {
                     @Override
                     public void onStart(String processName) {
