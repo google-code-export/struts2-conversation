@@ -1,7 +1,7 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.factory.DefaultDynamicComponentFactory;
-import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.dynamic.DefaultDynamicComponentFactory;
+import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
@@ -26,15 +26,15 @@ import java.util.List;
  */
 public class Clarence implements Serializable {
 
-    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
     private KeyRepository keyRepository = new DefaultKeyRepository();
+    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter(keyRepository);
     private ParameterBuilderFactory parameterBuilderFactory = new DefaultParameterBuilderFactory(metadataAdapter, keyRepository);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterBuilderFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterBuilderFactory);
     private List<ComponentInitializationListener> initializationListeners = new ArrayList<ComponentInitializationListener>();
     private ComponentStrategyFactory strategyFactory = new DefaultComponentStrategyFactory(metadataAdapter, injectorFactory, instantiatorFactory, initializationListeners);
-    private DynamicComponentFactory dynamicComponentFactory = new DefaultDynamicComponentFactory(instantiatorFactory);
+    private DynamicComponentFactory dynamicComponentFactory = new DefaultDynamicComponentFactory(instantiatorFactory, injectorFactory, metadataAdapter);
     private Container builder;
 
     {

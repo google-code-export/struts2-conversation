@@ -1,11 +1,10 @@
 package com.github.overengineer.container.proxy.aop;
 
 import com.github.overengineer.container.*;
-import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
 import com.github.overengineer.container.key.KeyRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -38,19 +37,6 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
     @Override
     public List<Aspect> getAspects() {
         return aspects;
-    }
-
-    @Override
-    public List<Object> getAllComponents() {
-        List<Object> components = new LinkedList<Object>();
-        components.addAll(super.getAllComponents());
-        components.addAll(getAspects());
-        for (Container container : getChildren()) {
-            if (container instanceof AopContainer) {
-                components.addAll(((AopContainer) container).getAspects());
-            }
-        }
-        return components;
     }
 
     @Override

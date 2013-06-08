@@ -1,13 +1,19 @@
 package com.github.overengineer.container;
 
+import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.key.Key;
+import com.github.overengineer.container.metadata.Delegate;
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Named;
 import com.github.overengineer.container.metadata.Prototype;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.aop.*;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Scopes;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
@@ -33,6 +39,7 @@ import se.jbee.inject.util.Scoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -177,8 +184,8 @@ public class DefaultContainerTest implements Serializable {
     @Pointcut(classes = {IBean.class, ISingleton.class})
     public static class TestInterceptor2 implements Aspect {
         @Override
-        public Object advise(JoinPointInvocation invocation) throws Throwable {
-            return invocation.invoke();
+        public Object advise(JoinPoint invocation) throws Throwable {
+            return invocation.join();
         }
     }
 
@@ -469,11 +476,11 @@ public class DefaultContainerTest implements Serializable {
         int i = 0;
 
         @Override
-        public Object advise(JoinPointInvocation invocation) throws Throwable {
+        public Object advise(JoinPoint invocation) throws Throwable {
             System.out.println(this);
             if (i > 0) throw new Assertion();
             i++;
-            Object result = invocation.invoke();
+            Object result = invocation.join();
             System.out.println(this);
             return result;
         }
@@ -483,9 +490,9 @@ public class DefaultContainerTest implements Serializable {
     public static class Metaceptor implements Aspect {
 
         @Override
-        public Object advise(JoinPointInvocation invocation) throws Throwable {
+        public Object advise(JoinPoint invocation) throws Throwable {
             System.out.println("METACEPTOR, ATTACK!!!!");
-            return invocation.invoke();
+            return invocation.join();
         }
     }
 
@@ -496,7 +503,7 @@ public class DefaultContainerTest implements Serializable {
         final Container container = Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
                 .addListener(L.class);
 
-        assert container.newEmptyClone().getAllComponents().size() == 1;
+        //assert container.newEmptyClone().getAllComponents().size() == 1;
     }
 
     public static class L implements ComponentInitializationListener {
@@ -535,11 +542,25 @@ public class DefaultContainerTest implements Serializable {
     @Test
     public void testComposite() {
 
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+        final AtomicInteger calls = new AtomicInteger();
+
+        Clarence.please().gimmeThatAopTainer()
+                .addAspect(StartAspect.class)
                 .addInstance(StartListener.class, new StartListener() {
+
+                    StartListener bro;
+
+                    @Inject
+                    public void setMaster(@Named("bro") StartListener bro) {
+                        System.out.println("bro " + bro);
+                        this.bro = bro;
+                    }
+
                     @Override
                     public void onStart(String processName) {
                         System.out.println("1 got " + processName);
+                        bro.onStart(processName);
+                        calls.incrementAndGet();
                     }
                 })
                 .registerCompositeTarget(StartListener.class)
@@ -547,25 +568,56 @@ public class DefaultContainerTest implements Serializable {
                     @Override
                     public void onStart(String processName) {
                         System.out.println("2 got " + processName);
+                        calls.incrementAndGet();
                     }
                 })
-                .addInstance(StartListener.class, new StartListener() {
+                .addInstance(StartListener.class, "bro", new StartListener() {
                     @Override
                     public void onStart(String processName) {
                         System.out.println("3 got " + processName);
+                        calls.incrementAndGet();
+                        assert processName.equals("what up");
                     }
                 })
                 .get(StartListener.class)
                 .onStart("what up");
 
+        assert calls.get() == 3;
+    }
+
+    @Pointcut(classes = StartListener.class, methodNameExpression = "onStart")
+    public static class StartAspect implements Aspect {
+        @Override
+        public Object advise(JoinPoint joinPoint) throws Throwable {
+            System.out.println("start advice started!!!" + joinPoint.getParameters()[0]);
+            Object result = joinPoint.join();
+            System.out.println("start advice done!!!");
+            return result;
+        }
     }
 
     public static interface StartListener {
+        @Delegate(StartDelegate.class)
         void onStart(String processName);
     }
 
+    @Test
+    public void testServiceDelegate() {
+        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
+                .registerDelegatingService(StartListener.class)
+                .add(StartDelegate.class, StartDelegate.class)
+                .get(StartListener.class)
+                .onStart("yo");
+    }
 
-    int threads = 8;
+    public static class StartDelegate {
+        public void onStart(DynamicComponentFactory dynamicComponentFactory, String processName) {
+            System.out.println(processName + dynamicComponentFactory);
+        }
+    }
+
+
+    int threads = 4;
     long duration = 5000;
     long primingRuns = 10000;
 
@@ -736,6 +788,34 @@ public class DefaultContainerTest implements Serializable {
     public void testSingletonSpeed() throws Exception {
 
 
+        final Key<ISingleton> key = new ClassKey<ISingleton>(ISingleton.class);
+
+        final Container container2 = Clarence.please().gimmeThatTainer()
+                .add(ISingleton.class, Singleton.class)
+                .add(ISingleton2.class, Singleton2.class)
+                .getReal();
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+                container2.get(ISingleton.class).yo();
+                container2.get(ISingleton2.class).yo();
+            }
+        }, threads).run(duration, primingRuns, "my singleton");
+
+        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() throws HotSwapException {
+                container2.get(key).yo();
+            }
+        }, threads).run(duration, primingRuns, "my singleton");
+
 
         final PicoContainer picoContainer3 = new DefaultPicoContainer(new Caching())
                 .addComponent(ISingleton.class, Singleton.class)
@@ -763,33 +843,7 @@ public class DefaultContainerTest implements Serializable {
         }, threads).run(duration, primingRuns, "pico singleton");
 
 
-        final com.github.overengineer.container.key.Key<ISingleton> key = new ClassKey<ISingleton>(ISingleton.class);
 
-        final Container container2 = Clarence.please().gimmeThatTainer()
-                .add(ISingleton.class, Singleton.class)
-                .add(ISingleton2.class, Singleton2.class)
-                .getReal();
-
-        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                container2.get(ISingleton.class).yo();
-                container2.get(ISingleton2.class).yo();
-                container2.get(ISingleton.class).yo();
-                container2.get(ISingleton2.class).yo();
-                container2.get(ISingleton.class).yo();
-                container2.get(ISingleton2.class).yo();
-                container2.get(ISingleton.class).yo();
-                container2.get(ISingleton2.class).yo();
-            }
-        }, threads).run(duration, primingRuns, "my singleton");
-
-        long mines = new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
-            @Override
-            public void execute() throws HotSwapException {
-                container2.get(key).yo();
-            }
-        }, threads).run(duration, primingRuns, "my singleton");
 
         final Injector injector3 = Guice.createInjector(new AbstractModule() {
             @Override
@@ -910,7 +964,7 @@ public class DefaultContainerTest implements Serializable {
     public static class CyclicTest implements ICyclicRef {
         ICyclicRef3 cyclicTest3;
         int calls = 0;
-        @Inject
+        @com.google.inject.Inject
         public CyclicTest(ICyclicRef3 cyclicTest3) {
             cyclicTest3.calls();
             this.cyclicTest3 = cyclicTest3;
@@ -930,7 +984,7 @@ public class DefaultContainerTest implements Serializable {
 
     @Prototype
     public static class PCyclicTest extends CyclicTest {
-        @Inject
+        @com.google.inject.Inject
         public PCyclicTest(ICyclicRef3 cyclicTest3) {
             super(cyclicTest3);
         }
@@ -941,7 +995,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static class CyclicTestHot extends CyclicTest {
-        @Inject
+        @com.google.inject.Inject
         public CyclicTestHot(ICyclicRef3 cyclicTest3) {
             super(cyclicTest3);
         }
@@ -955,7 +1009,7 @@ public class DefaultContainerTest implements Serializable {
     public static class CyclicTest2 implements ICyclicRef2 {
         ICyclicRef cyclicTest;
         int calls = 0;
-        @Inject
+        @com.google.inject.Inject
         public CyclicTest2(ICyclicRef cyclicTest) {
             this.cyclicTest = cyclicTest;
         }
@@ -976,7 +1030,7 @@ public class DefaultContainerTest implements Serializable {
     public static class CyclicTest3 implements ICyclicRef3 {
         ICyclicRef2 cyclicTest;
         int calls = 0;
-        @Inject
+        @com.google.inject.Inject
         public CyclicTest3(ICyclicRef2 cyclicTest) {
             this.cyclicTest = cyclicTest;
         }

@@ -1,7 +1,7 @@
 package com.github.overengineer.container.proxy;
 
 import com.github.overengineer.container.*;
-import com.github.overengineer.container.factory.DynamicComponentFactory;
+import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
 

@@ -24,7 +24,7 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> JoinPointInvocation<T> create(T target, Method method, Object[] parameters) {
+    public <T> JoinPoint<T> create(T target, Method method, Object[] parameters) {
         AspectCacheKey cacheKey = new AspectCacheKey(target.getClass(), method);
         List<Aspect> methodAspects = cache.get(cacheKey);
         if (methodAspects == null) {
@@ -68,7 +68,7 @@ public class AdvisedInvocationFactory implements JoinPointInvocationFactory {
 
         @Override
         public int hashCode() {
-            return method.hashCode() * 29 + (targetClass != null ? targetClass.hashCode() : 0);
+            return method.hashCode() * 29 + targetClass.hashCode();
         }
 
     }
