@@ -9,5 +9,5 @@ import java.io.Serializable;
  */
 public interface ParameterBuilder<T> extends Serializable {
     boolean isDecorator();
-    Object[] buildParameters(Provider provider, Object[] trailingArgs);
+    Object[] buildParameters(Provider provider, Object[] providedArgs);
 }

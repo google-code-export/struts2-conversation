@@ -10,8 +10,8 @@ import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
-import com.github.overengineer.container.parameter.DefaultParameterBuilderFactory;
 import com.github.overengineer.container.parameter.ParameterBuilderFactory;
+import com.github.overengineer.container.parameter.PrecedingArgsParameterBuilderFactory;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.ProxyModule;
 import com.github.overengineer.container.proxy.aop.AopContainer;
@@ -28,7 +28,7 @@ public class Clarence implements Serializable {
 
     private KeyRepository keyRepository = new DefaultKeyRepository();
     private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter(keyRepository);
-    private ParameterBuilderFactory parameterBuilderFactory = new DefaultParameterBuilderFactory(metadataAdapter, keyRepository);
+    private ParameterBuilderFactory parameterBuilderFactory = new PrecedingArgsParameterBuilderFactory(metadataAdapter, keyRepository);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterBuilderFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterBuilderFactory);
