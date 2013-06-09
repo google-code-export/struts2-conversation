@@ -3,6 +3,7 @@ package com.github.overengineer.container.dynamic;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.SelectionAdvisor;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * @author rees.byars
  */
-public class DynamicComposite<T> implements InvocationHandler {
+public class DynamicComposite<T> implements InvocationHandler, Serializable {
 
     private List<T> components;
     T proxy;
@@ -34,6 +35,8 @@ public class DynamicComposite<T> implements InvocationHandler {
         } else if ("toString".equals(methodName)) {
             return proxy.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(this)) + "$DynamicComposite$[" + componentInterface.getName() + "]";
         }
+
+        //TODO add double-check locking
         if (components == null) {
             components = provider.getAll(componentInterface, new SelectionAdvisor() {
                 @Override
