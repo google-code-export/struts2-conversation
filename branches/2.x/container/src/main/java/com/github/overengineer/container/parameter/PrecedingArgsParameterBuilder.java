@@ -28,7 +28,7 @@ public class PrecedingArgsParameterBuilder<T> implements ParameterBuilder<T> {
         }
         if (precedingArgs.length > 0) {
             if (proxies.length > 0) {
-                System.arraycopy(precedingArgs, 0, parameters, 0, precedingArgs.length + proxies.length - 1);
+                System.arraycopy(precedingArgs, 0, parameters, 0, precedingArgs.length);
             } else {
                 parameters = precedingArgs;
             }

@@ -73,6 +73,10 @@ public class DefaultContainerTest implements Serializable {
 
         container.addInstance(new Generic<List<Integer>>() {}, new ArrayList<Integer>());
 
+        container.registerDelegatingService(StartListener.class);
+
+        container.registerCompositeTarget(StartListener.class);
+
         container.loadModule(CommonModule.class);
 
         container
@@ -599,25 +603,34 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static interface StartListener {
-        @Delegate(value = StartDelegate.class, name = "sandy")
+        @Delegate(value = StartDelegate.class)
         void onStart(String processName);
     }
 
     @Test
-    public void testServiceDelegate() {
-        Clarence.please().makeYourStuffInjectable().gimmeThatTainer()
-                .registerDelegatingService(StartListener.class, "dan")
-                .add(StartDelegate.class, "sandy", StartDelegate.class)
-                .get(StartListener.class, "dan")
-                .onStart("yo");
+    public void testServiceDelegate() throws Exception {
+
+        final StartListener startListener = Clarence.please()
+                .makeYourStuffInjectable().gimmeThatTainer()
+                .registerDelegatingService(StartListener.class)
+                .add(StartDelegate.class, StartDelegate.class)
+                .get(StartListener.class);
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() {
+               startListener.onStart("yo");
+            }
+        }, threads).run(duration, primingRuns, "custom provider gets");
+
     }
 
     public static class StartDelegate {
-        public void onStart(String processName, @Named("dan") StartListener listener) {
-            System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
+        public void onStart(String processName, StartListener listener, StartListener listener2, StartListener listener3) {
+            /*System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
             if (processName.equals("yo")) {
                 listener.onStart("shit");
-            }
+            } */
         }
     }
 
