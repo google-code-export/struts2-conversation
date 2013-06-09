@@ -5,6 +5,8 @@ import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.module.InstanceMapping;
 import com.github.overengineer.container.module.Mapping;
 import com.github.overengineer.container.module.Module;
+import com.github.overengineer.container.scope.Scope;
+import com.github.overengineer.container.scope.Scopes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +125,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container loadModule(Class<? extends Module> moduleClass) {
-        Module module = strategyFactory.create(moduleClass).get(this);
+        Module module = strategyFactory.create(moduleClass, Scopes.PROTOTYPE).get(this);
         for (Mapping<?> mapping : module.getMappings()) {
             Class<?> implementationType = mapping.getImplementationType();
             String name = mapping.getName();
@@ -138,10 +140,10 @@ public class DefaultContainer implements Container {
                 }
             } else {
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addMapping(keyRepository.retrieveKey(target, name), implementationType);
+                    addMapping(keyRepository.retrieveKey(target, name), implementationType, mapping.getScope());
                 }
                 for (Key<?> targetGeneric : mapping.getTargetKeys()) {
-                    addMapping(targetGeneric, implementationType);
+                    addMapping(targetGeneric, implementationType, mapping.getScope());
                 }
             }
         }
@@ -198,12 +200,12 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container newEmptyClone() {
-        return strategyFactory.create(this.getClass()).get(this);
+        return strategyFactory.create(this.getClass(), Scopes.SINGLETON).get(this);
     }
 
     @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
-        ComponentStrategy strategy = strategyFactory.create(listenerClass);
+        ComponentStrategy strategy = strategyFactory.create(listenerClass, Scopes.SINGLETON);
         getInitializationListeners().add((ComponentInitializationListener) strategy.get(this));
         return this;
     }
@@ -222,7 +224,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Key<T> key, Class<? extends T> implementationType) {
-        addMapping(key, implementationType);
+        addMapping(key, implementationType, Scopes.SINGLETON);
         return this;
     }
 
@@ -255,7 +257,7 @@ public class DefaultContainer implements Container {
         Key<?> providerKey = keyRepository.retrieveKey(customProviderType);
         ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
-            providerStrategy = strategyFactory.create(customProviderType);
+            providerStrategy = strategyFactory.create(customProviderType, Scopes.SINGLETON);
         }
         keyRepository.addKey(providerKey);
         keyRepository.addKey(providedTypeKey);
@@ -321,19 +323,19 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerDelegatingService(Class<?> targetInterface) {
-        registerDelegatingService(keyRepository.retrieveKey(targetInterface));
+    public Container registerDeconstructedApi(Class<?> targetInterface) {
+        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface));
         return this;
     }
 
     @Override
-    public Container registerDelegatingService(Class<?> targetInterface, String name) {
-        registerDelegatingService(keyRepository.retrieveKey(targetInterface, name));
+    public Container registerDeconstructedApi(Class<?> targetInterface, String name) {
+        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface, name));
         return this;
     }
 
     @Override
-    public Container registerDelegatingService(Key<?> targetKey) {
+    public Container registerDeconstructedApi(Key<?> targetKey) {
         Object delegatingService = dynamicComponentFactory.createDelegatingService(targetKey.getTargetClass(), this);
         ComponentStrategy strategy = strategyFactory.createInstanceStrategy(delegatingService);
         putStrategy(targetKey, strategy);
@@ -442,9 +444,9 @@ public class DefaultContainer implements Container {
         return components;
     }
 
-    protected synchronized void addMapping(Key key, Class<?> implementationType) {
+    protected synchronized void addMapping(Key key, Class<?> implementationType, Scope scope) {
 
-        ComponentStrategy newStrategy = strategyFactory.create(implementationType);
+        ComponentStrategy newStrategy = strategyFactory.create(implementationType, scope);
         keyRepository.addKey(key);
         putStrategy(key, newStrategy);
         putStrategy(keyRepository.retrieveKey(implementationType, key.getName()), newStrategy);

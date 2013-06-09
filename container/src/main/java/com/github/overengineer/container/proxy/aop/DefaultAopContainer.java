@@ -4,6 +4,7 @@ import com.github.overengineer.container.*;
 import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
 import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.scope.Scopes;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
 
     @Override
     public <A extends Aspect<?>> AopContainer addAspect(Class<A> interceptorClass) {
-        ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass);
+        ComponentStrategy<A> strategy = strategyFactory.create(interceptorClass, Scopes.SINGLETON);
         Aspect aspect = strategy.get(this);
         getAspects().add(strategy.get(this));
         for (Container container : getChildren()) {

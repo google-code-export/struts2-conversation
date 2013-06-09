@@ -3,6 +3,7 @@ package com.github.overengineer.container.proxy;
 import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.ComponentStrategyFactory;
 import com.github.overengineer.container.PrototypeComponentStrategy;
+import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.util.ReflectionUtil;
 
 /**
@@ -19,8 +20,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> create(Class<T> implementationType) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType);
+    public <T> ComponentStrategy<T> create(Class<T> implementationType, Scope scope) {
+        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType, scope);
         if (ReflectionUtil.getAllInterfaces(implementationType).size() == 0) {
             return delegateStrategy;
         }

@@ -1,6 +1,5 @@
 package com.github.overengineer.container;
 
-import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.metadata.Delegate;
@@ -73,7 +72,7 @@ public class DefaultContainerTest implements Serializable {
 
         container.addInstance(new Generic<List<Integer>>() {}, new ArrayList<Integer>());
 
-        container.registerDelegatingService(StartListener.class);
+        container.registerDeconstructedApi(StartListener.class);
 
         container.registerCompositeTarget(StartListener.class);
 
@@ -575,8 +574,8 @@ public class DefaultContainerTest implements Serializable {
                         calls.incrementAndGet();
                     }
                 })
-                .registerDelegatingService(StartListener.class, "dan")
-                .add(StartDelegate.class, "sandy", StartDelegate.class)
+                .registerDeconstructedApi(StartListener.class)
+                .add(StartDelegate.class, StartDelegate.class)
                 .addInstance(StartListener.class, "bro", new StartListener() {
                     @Override
                     public void onStart(String processName) {
@@ -612,7 +611,7 @@ public class DefaultContainerTest implements Serializable {
 
         final StartListener startListener = Clarence.please()
                 .makeYourStuffInjectable().gimmeThatTainer()
-                .registerDelegatingService(StartListener.class)
+                .registerDeconstructedApi(StartListener.class)
                 .add(StartDelegate.class, StartDelegate.class)
                 .get(StartListener.class);
 
@@ -626,11 +625,11 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static class StartDelegate {
-        public void onStart(String processName, StartListener listener, StartListener listener2, StartListener listener3) {
+        public void onStart(String processName, StartListener listener, StartListener listener2, Container container) {
             /*System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
             if (processName.equals("yo")) {
                 listener.onStart("shit");
-            } */
+            }*/
         }
     }
 

@@ -38,7 +38,7 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
         if (cls.isAnnotationPresent(Prototype.class)) {
             return Scopes.PROTOTYPE;
         }
-        return Scopes.SINGLETON;
+        return null;
     }
 
     /**
