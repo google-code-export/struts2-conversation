@@ -145,18 +145,18 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container registerDelegatingService(Class<?> targetInterface) {
-        return delegate.registerDelegatingService(targetInterface);
+    public Container registerDeconstructedApi(Class<?> targetInterface) {
+        return delegate.registerDeconstructedApi(targetInterface);
     }
 
     @Override
-    public Container registerDelegatingService(Class<?> targetInterface, String name) {
-        return delegate.registerDelegatingService(targetInterface, name);
+    public Container registerDeconstructedApi(Class<?> targetInterface, String name) {
+        return delegate.registerDeconstructedApi(targetInterface, name);
     }
 
     @Override
-    public Container registerDelegatingService(Key<?> targetKey) {
-        return delegate.registerDelegatingService(targetKey);
+    public Container registerDeconstructedApi(Key<?> targetKey) {
+        return delegate.registerDeconstructedApi(targetKey);
     }
 
     @Override

@@ -52,11 +52,11 @@ public interface Container extends Provider {
 
     Container registerCompositeTarget(Key<?> targetKey);
 
-    Container registerDelegatingService(Class<?> targetInterface);
+    Container registerDeconstructedApi(Class<?> targetInterface);
 
-    Container registerDelegatingService(Class<?> targetInterface, String name);
+    Container registerDeconstructedApi(Class<?> targetInterface, String name);
 
-    Container registerDelegatingService(Key<?> targetKey);
+    Container registerDeconstructedApi(Key<?> targetKey);
 
     List<ComponentInitializationListener> getInitializationListeners();
 
