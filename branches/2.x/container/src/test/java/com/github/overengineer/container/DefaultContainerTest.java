@@ -2,10 +2,7 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.key.Key;
-import com.github.overengineer.container.metadata.Delegate;
-import com.github.overengineer.container.metadata.Inject;
-import com.github.overengineer.container.metadata.Named;
-import com.github.overengineer.container.metadata.Prototype;
+import com.github.overengineer.container.metadata.*;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.aop.*;
@@ -36,6 +33,7 @@ import se.jbee.inject.bootstrap.*;
 import se.jbee.inject.util.Scoped;
 
 import java.io.Serializable;
+import java.lang.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -542,6 +540,12 @@ public class DefaultContainerTest implements Serializable {
 
     }
 
+    @Target(ElementType.PARAMETER)
+    @Retention(RetentionPolicy.RUNTIME)
+    @com.github.overengineer.container.metadata.Qualifier
+    public @interface Bro {
+    }
+
     @Test
     public void testComposite() {
 
@@ -554,7 +558,7 @@ public class DefaultContainerTest implements Serializable {
                     StartListener bro;
 
                     @Inject
-                    public void setMaster(@Named("bro") StartListener bro) {
+                    public void setMaster(@Bro StartListener bro) {
                         System.out.println("bro " + bro);
                         this.bro = bro;
                     }
@@ -576,7 +580,7 @@ public class DefaultContainerTest implements Serializable {
                 })
                 .registerDeconstructedApi(StartListener.class)
                 .add(StartDelegate.class, StartDelegate.class)
-                .addInstance(StartListener.class, "bro", new StartListener() {
+                .addInstance(StartListener.class, Bro.class, new StartListener() {
                     @Override
                     public void onStart(String processName) {
                         System.out.println("3 got " + processName);
@@ -602,7 +606,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static interface StartListener {
-        @Delegate(value = StartDelegate.class)
+        @Delegate(StartDelegate.class)
         void onStart(String processName);
     }
 
@@ -626,10 +630,10 @@ public class DefaultContainerTest implements Serializable {
 
     public static class StartDelegate {
         public void onStart(String processName, StartListener listener, StartListener listener2, Container container) {
-            /*System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
+            System.out.println("delegate got name [" + processName + "] and even got it's momma - " + listener);
             if (processName.equals("yo")) {
                 listener.onStart("shit");
-            }*/
+            }
         }
     }
 
