@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 public interface KeyRepository extends Serializable {
     void addKey(Key key);
     <T> Key<T> retrieveKey(Class<T> cls);
-    <T> Key<T> retrieveKey(Class<T> cls, String name);
+    <T> Key<T> retrieveKey(Class<T> cls, Object qualifier);
     <T> Key<T> retrieveKey(Type type);
-    <T> Key<T> retrieveKey(Type type, String name);
+    <T> Key<T> retrieveKey(Type type, Object qualifier);
 }

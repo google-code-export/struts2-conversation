@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Qualifier
 public @interface Named {
     String value();
 }

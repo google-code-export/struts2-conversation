@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  */
 public interface BasicKey<T> {
 
-    String getName();
+    Object getQualifier();
     Type getType();
     Class<? super T> getTargetClass();
 

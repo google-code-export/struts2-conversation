@@ -25,8 +25,8 @@ public class DefaultKeyRepository implements KeyRepository {
     }
 
     @Override
-    public <T> Key<T> retrieveKey(Class<T> cls, String name) {
-        return new ClassKey<T>(cls, name);
+    public <T> Key<T> retrieveKey(Class<T> cls, Object qualifier) {
+        return new ClassKey<T>(cls, qualifier);
     }
 
     @Override
@@ -36,16 +36,16 @@ public class DefaultKeyRepository implements KeyRepository {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Key<T> retrieveKey(Type type, String name) {
+    public <T> Key<T> retrieveKey(Type type, Object qualifier) {
         if (type instanceof Class) {
-            return retrieveKey((Class) type, name);
+            return retrieveKey((Class) type, qualifier);
         }
-        Key<T> key = (Key<T>) keys.get(new TempKey<T>(type, name));
+        Key<T> key = (Key<T>) keys.get(new TempKey<T>(type, qualifier));
         if (key != null) {
             return key;
         }
         if (type instanceof ParameterizedType) {
-            return new LazyDelegatingKey<T>(type, name);
+            return new LazyDelegatingKey<T>(type, qualifier);
         }
         throw new UnsupportedOperationException("Unsupported injection type [" + type + "]");
     }
@@ -54,11 +54,11 @@ public class DefaultKeyRepository implements KeyRepository {
 
         private volatile Key<T> key;
         private transient Type type;
-        private String name;
+        private Object qualifier;
 
-        private LazyDelegatingKey(Type type, String name) {
+        private LazyDelegatingKey(Type type, Object qualifier) {
             this.type = type;
-            this.name = name;
+            this.qualifier = qualifier;
         }
 
         @Override
@@ -66,7 +66,7 @@ public class DefaultKeyRepository implements KeyRepository {
             if (key == null) {
                 synchronized (this) {
                     if (key == null) {
-                        key = retrieveKey(type, name);
+                        key = retrieveKey(type, qualifier);
                     }
                 }
             }

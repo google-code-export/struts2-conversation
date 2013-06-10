@@ -23,7 +23,7 @@ public class CommonModule extends BaseModule {
 
         use(BijectorImplFactory.class).forType(BijectorFactory.class);
 
-        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withName(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
+        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withQualifier(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
     }
 
     public static class EmptyActionProvider implements ActionProvider {

@@ -7,21 +7,21 @@ import java.lang.reflect.Type;
  */
 public class TempKey<T> implements BasicKey<T> {
 
-    private final String name;
+    private final Object qualifier;
     private final Type type;
     private final Class<? super T> targetClass;
     private final int hash;
 
-    public TempKey(Type type, String name) {
+    public TempKey(Type type, Object qualifier) {
         this.type = type;
         targetClass = KeyUtil.getClass(type);
-        this.name = name == null ? "" : name;
+        this.qualifier = qualifier == null ? Qualifier.NONE : qualifier;
         this.hash = type.hashCode();
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Object getQualifier() {
+        return qualifier;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class TempKey<T> implements BasicKey<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && name.equals(((BasicKey) object).getName());
+        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && qualifier.equals(((BasicKey) object).getQualifier());
     }
 }

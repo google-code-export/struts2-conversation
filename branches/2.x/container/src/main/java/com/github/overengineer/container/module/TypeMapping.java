@@ -2,6 +2,7 @@ package com.github.overengineer.container.module;
 
 import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.key.Key;
+import com.github.overengineer.container.key.Qualifier;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
 
@@ -15,7 +16,7 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
 
     private final Class<T> implementationType;
     private Scope scope = Scopes.SINGLETON;
-    private String name;
+    private Object qualifier = Qualifier.NONE;
     private List<Class<?>> targetClasses = new LinkedList<Class<?>>();
     private List<Key> targetKeys = new LinkedList<Key>();
 
@@ -43,8 +44,8 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
     }
 
     @Override
-    public MutableMapping<T> withName(String name) {
-        this.name = name;
+    public MutableMapping<T> withQualifier(Object qualifier) {
+        this.qualifier = qualifier;
         return this;
     }
 
@@ -69,8 +70,8 @@ public class TypeMapping<T> implements Mapping<T>, MutableMapping<T> {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Object getQualifier() {
+        return qualifier;
     }
 
 }

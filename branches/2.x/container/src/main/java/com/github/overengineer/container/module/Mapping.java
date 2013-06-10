@@ -14,5 +14,5 @@ public interface Mapping<T> extends Serializable {
     List<Class<?>> getTargetClasses();
     List<Key> getTargetKeys();
     Scope getScope();
-    String getName();
+    Object getQualifier();
 }

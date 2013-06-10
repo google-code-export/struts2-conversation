@@ -15,8 +15,8 @@ public abstract class DelegatingSerializableKey<T> implements Key<T> {
     }
 
     @Override
-    public String getName() {
-        return getDelegateKey().getName();
+    public Object getQualifier() {
+        return getDelegateKey().getQualifier();
     }
 
     @Override

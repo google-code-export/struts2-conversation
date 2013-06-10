@@ -24,13 +24,13 @@ public interface Container extends Provider {
 
     <T> Container add(Class<T> componentType, Class<? extends T> implementationType);
 
-    <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType);
+    <T> Container add(Class<T> componentType, Object qualifier, Class<? extends T> implementationType);
 
     <T> Container add(Key<T> key, Class<? extends T> implementationType);
 
     <T, I extends T> Container addInstance(Class<T> componentType, I implementation);
 
-    <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation);
+    <T, I extends T> Container addInstance(Class<T> componentType, Object qualifier, I implementation);
 
     <T, I extends T> Container addInstance(Key<T> key, I implementation);
 
@@ -48,13 +48,13 @@ public interface Container extends Provider {
 
     Container registerCompositeTarget(Class<?> targetInterface);
 
-    Container registerCompositeTarget(Class<?> targetInterface, String name);
+    Container registerCompositeTarget(Class<?> targetInterface, Object qualifier);
 
     Container registerCompositeTarget(Key<?> targetKey);
 
     Container registerDeconstructedApi(Class<?> targetInterface);
 
-    Container registerDeconstructedApi(Class<?> targetInterface, String name);
+    Container registerDeconstructedApi(Class<?> targetInterface, Object qualifier);
 
     Container registerDeconstructedApi(Key<?> targetKey);
 

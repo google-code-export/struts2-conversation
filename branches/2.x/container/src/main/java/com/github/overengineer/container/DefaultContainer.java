@@ -128,19 +128,19 @@ public class DefaultContainer implements Container {
         Module module = strategyFactory.create(moduleClass, Scopes.PROTOTYPE).get(this);
         for (Mapping<?> mapping : module.getMappings()) {
             Class<?> implementationType = mapping.getImplementationType();
-            String name = mapping.getName();
+            Object qualifier = mapping.getQualifier();
             if (mapping instanceof InstanceMapping) {
                 InstanceMapping<?> instanceMapping = (InstanceMapping) mapping;
                 Object instance = instanceMapping.getInstance();
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addMapping(keyRepository.retrieveKey(target, name), instance);
+                    addMapping(keyRepository.retrieveKey(target, qualifier), instance);
                 }
                 for (Key<?> targetGeneric : mapping.getTargetKeys()) {
                     addMapping(targetGeneric, instance);
                 }
             } else {
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addMapping(keyRepository.retrieveKey(target, name), implementationType, mapping.getScope());
+                    addMapping(keyRepository.retrieveKey(target, qualifier), implementationType, mapping.getScope());
                 }
                 for (Key<?> targetGeneric : mapping.getTargetKeys()) {
                     addMapping(targetGeneric, implementationType, mapping.getScope());
@@ -217,8 +217,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType) {
-        add(keyRepository.retrieveKey(componentType, name), implementationType);
+    public <T> Container add(Class<T> componentType, Object qualifier, Class<? extends T> implementationType) {
+        add(keyRepository.retrieveKey(componentType, qualifier), implementationType);
         return this;
     }
 
@@ -235,8 +235,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation) {
-        addInstance(keyRepository.retrieveKey(componentType, name), implementation);
+    public <T, I extends T> Container addInstance(Class<T> componentType, Object qualifier, I implementation) {
+        addInstance(keyRepository.retrieveKey(componentType, qualifier), implementation);
         return this;
     }
 
@@ -308,8 +308,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerCompositeTarget(Class<?> targetInterface, String name) {
-        registerCompositeTarget(keyRepository.retrieveKey(targetInterface, name));
+    public Container registerCompositeTarget(Class<?> targetInterface, Object qualifier) {
+        registerCompositeTarget(keyRepository.retrieveKey(targetInterface, qualifier));
         return this;
     }
 
@@ -329,8 +329,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerDeconstructedApi(Class<?> targetInterface, String name) {
-        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface, name));
+    public Container registerDeconstructedApi(Class<?> targetInterface, Object qualifier) {
+        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface, qualifier));
         return this;
     }
 
@@ -402,8 +402,8 @@ public class DefaultContainer implements Container {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz, name), advisors);
+    public <T> T get(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors) {
+        return get(keyRepository.retrieveKey(clazz, qualifier), advisors);
     }
 
     @Override
@@ -413,9 +413,9 @@ public class DefaultContainer implements Container {
         ComponentStrategy<T> strategy = getStrategy(key, advisors);
 
         if (strategy == null) {
-            String name = key.getName();
-            if (name != null) {
-                throw new MissingDependencyException("No components of type [" + key.getType() + "] with name [" + name + "] have been registered with the container");
+            Object qualifier = key.getQualifier();
+            if (qualifier != null) {
+                throw new MissingDependencyException("No components of type [" + key.getType() + "] with name [" + qualifier + "] have been registered with the container");
             }
             throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
         }
@@ -430,8 +430,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor... advisors) {
-        return getAll(keyRepository.retrieveKey(clazz, name), advisors);
+    public <T> List<T> getAll(Class<T> clazz, Object qualifier, SelectionAdvisor... advisors) {
+        return getAll(keyRepository.retrieveKey(clazz, qualifier), advisors);
     }
 
     @Override
@@ -449,7 +449,7 @@ public class DefaultContainer implements Container {
         ComponentStrategy newStrategy = strategyFactory.create(implementationType, scope);
         keyRepository.addKey(key);
         putStrategy(key, newStrategy);
-        putStrategy(keyRepository.retrieveKey(implementationType, key.getName()), newStrategy);
+        putStrategy(keyRepository.retrieveKey(implementationType, key.getQualifier()), newStrategy);
 
     }
 

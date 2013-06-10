@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface Provider extends Serializable {
     <T> T get(Class<T> clazz, SelectionAdvisor ... advisors);
-    <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors);
+    <T> T get(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors);
     <T> T get(Key<T> key, SelectionAdvisor ... advisors);
     <T> List<T> getAll(Class<T> clazz, SelectionAdvisor ... advisors);
-    <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor ... advisors);
+    <T> List<T> getAll(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors);
     <T> List<T> getAll(Key<T> key, SelectionAdvisor ... advisors);
 }
