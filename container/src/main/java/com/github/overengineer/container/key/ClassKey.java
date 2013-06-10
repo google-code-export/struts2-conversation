@@ -7,25 +7,25 @@ import java.lang.reflect.Type;
  */
 public class ClassKey<T> implements Key<T> {
 
-    private final String name;
+    private final Object qualifier;
     private final Class<T> targetClass;
     private final int hash;
 
     public ClassKey(Class<T> targetClass) {
-        this.name = "";
+        this.qualifier = Qualifier.NONE;
         this.targetClass = targetClass;
         this.hash = targetClass.hashCode();
     }
 
-    public ClassKey(Class<T> targetClass, String name) {
-        this.name = name == null ? "" : name;
+    public ClassKey(Class<T> targetClass, Object qualifier) {
+        this.qualifier = qualifier == null ? Qualifier.NONE : qualifier;
         this.targetClass = targetClass;
         this.hash = targetClass.hashCode();
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Object getQualifier() {
+        return qualifier;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ClassKey<T> implements Key<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof BasicKey && targetClass == ((BasicKey) object).getType() && name.equals(((BasicKey) object).getName());
+        return object instanceof BasicKey && targetClass == ((BasicKey) object).getType() && qualifier.equals(((BasicKey) object).getQualifier());
     }
 
 }

@@ -2,6 +2,7 @@ package com.github.overengineer.container.metadata;
 
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.key.Qualifier;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
 import com.github.overengineer.container.util.ReflectionUtil;
@@ -77,13 +78,13 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      * {@inheritDoc}
      */
     @Override
-    public String getName(Type type, Annotation[] annotations) {
+    public Object getQualifier(Type type, Annotation[] annotations) {
         for (Annotation annotation : annotations) {
             if (annotation instanceof Named) {
                 return ((Named) annotation).value();
             }
         }
-        return null;
+        return Qualifier.NONE;
     }
 
     /**
@@ -112,7 +113,11 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
             throw new MetadataException("There was an exception creating a delegated service", new IllegalArgumentException("The method [" + method.getName() + "] of class [" + method.getDeclaringClass() + "] must be annotated with an @Delegate annotation"));
         }
         Delegate delegate = method.getAnnotation(Delegate.class);
-        return keyRepository.retrieveKey(delegate.value(), delegate.name());
+        String name = delegate.name();
+        if ("".equals(name)) {
+            return keyRepository.retrieveKey(delegate.value(), Qualifier.NONE);
+        }
+        return keyRepository.retrieveKey(delegate.value(), name);
     }
 
 }

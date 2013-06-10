@@ -11,20 +11,20 @@ import java.lang.reflect.Type;
  */
 public abstract class Generic<T> implements Key<T> {
 
-    private final String name;
+    private final Object qualifier;
     private transient Type type;
     private transient Class<? super T> targetClass;
     private final int hash;
 
     public Generic() {
         init();
-        this.name = "";
+        this.qualifier = Qualifier.NONE;
         this.hash = type.hashCode();
     }
 
-    public Generic(String name) {
+    public Generic(Object qualifier) {
         init();
-        this.name = name;
+        this.qualifier = qualifier;
         this.hash = type.hashCode();
     }
 
@@ -44,8 +44,8 @@ public abstract class Generic<T> implements Key<T> {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Object getQualifier() {
+        return qualifier;
     }
 
     @Override
@@ -60,7 +60,7 @@ public abstract class Generic<T> implements Key<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && name.equals(((BasicKey) object).getName());
+        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && qualifier.equals(((BasicKey) object).getQualifier());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

@@ -56,7 +56,7 @@ public class TrailingsArgsParameterBuilderFactory implements ParameterBuilderFac
     @SuppressWarnings("unchecked")
     protected  <T> ParameterProxy<T> createProxy(Class<?> injectionTarget, Type parameterType, Annotation[] annotations) {
 
-        Key key = keyRepository.retrieveKey(parameterType, metadataAdapter.getName(parameterType, annotations));
+        Key key = keyRepository.retrieveKey(parameterType, metadataAdapter.getQualifier(parameterType, annotations));
 
         if (KeyUtil.getClass(parameterType).isAssignableFrom(injectionTarget)) {
             return new DecoratorParameterProxy<T>(key, injectionTarget);

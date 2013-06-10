@@ -23,9 +23,9 @@ public class CommonModule extends BaseModule {
 
         use(DefaultSchedulerProvider.class).forType(SchedulerProvider.class);
 
-        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withName(CommonConstants.Properties.MONITORING_FREQUENCY);
+        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withQualifier(CommonConstants.Properties.MONITORING_FREQUENCY);
 
-        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withName(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
+        use(CommonConstants.Defaults.MONITORING_THREAD_POOL_SIZE).withQualifier(CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE);
     }
 
     public static class FakeTimeoutable implements Timeoutable<FakeTimeoutable> {

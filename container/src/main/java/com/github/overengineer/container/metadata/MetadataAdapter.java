@@ -22,7 +22,7 @@ public interface MetadataAdapter extends Serializable {
 
     boolean isSetter(Method method);
 
-    String getName(Type type, Annotation[] annotations);
+    Object getQualifier(Type type, Annotation[] annotations);
 
     Method getCustomProviderMethod(Class<?> cls);
 

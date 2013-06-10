@@ -33,10 +33,10 @@ public class ConversationModule extends BaseModule {
         registerManagedComponentFactory(new Generic<Factory<ConversationContextManager>>() {});
         registerNonManagedComponentFactory(ConversationContextFactory.class).toProduce(DefaultConversationContext.class);
 
-        use(Defaults.CONVERSATION_IDLE_TIMEOUT).withName(Properties.CONVERSATION_IDLE_TIMEOUT);
-        use(Defaults.CONVERSATION_MAX_INSTANCES).withName(Properties.CONVERSATION_MAX_INSTANCES);
-        use(true).withName(Properties.CONVERSATION_PACKAGE_NESTING);
-        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withName(CommonConstants.Properties.MONITORING_FREQUENCY);
+        use(Defaults.CONVERSATION_IDLE_TIMEOUT).withQualifier(Properties.CONVERSATION_IDLE_TIMEOUT);
+        use(Defaults.CONVERSATION_MAX_INSTANCES).withQualifier(Properties.CONVERSATION_MAX_INSTANCES);
+        use(true).withQualifier(Properties.CONVERSATION_PACKAGE_NESTING);
+        use(CommonConstants.Defaults.MONITORING_FREQUENCY).withQualifier(CommonConstants.Properties.MONITORING_FREQUENCY);
 
     }
 

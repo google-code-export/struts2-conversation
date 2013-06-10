@@ -75,8 +75,8 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> Container add(Class<T> componentType, String name, Class<? extends T> implementationType) {
-        return delegate.add(componentType, name, implementationType);
+    public <T> Container add(Class<T> componentType, Object qualifier, Class<? extends T> implementationType) {
+        return delegate.add(componentType, qualifier, implementationType);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T, I extends T> Container addInstance(Class<T> componentType, String name, I implementation) {
-        return delegate.addInstance(componentType, name, implementation);
+    public <T, I extends T> Container addInstance(Class<T> componentType, Object qualifier, I implementation) {
+        return delegate.addInstance(componentType, qualifier, implementation);
     }
 
     @Override
@@ -135,8 +135,8 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container registerCompositeTarget(Class<?> targetInterface, String name) {
-        return delegate.registerCompositeTarget(targetInterface, name);
+    public Container registerCompositeTarget(Class<?> targetInterface, Object qualifier) {
+        return delegate.registerCompositeTarget(targetInterface, qualifier);
     }
 
     @Override
@@ -150,8 +150,8 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container registerDeconstructedApi(Class<?> targetInterface, String name) {
-        return delegate.registerDeconstructedApi(targetInterface, name);
+    public Container registerDeconstructedApi(Class<?> targetInterface, Object qualifier) {
+        return delegate.registerDeconstructedApi(targetInterface, qualifier);
     }
 
     @Override
@@ -206,25 +206,28 @@ public class StrutsModuleContainer implements Container {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(Class<T> clazz, String name, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz, name));
+    public <T> T get(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors) {
+        return get(keyRepository.retrieveKey(clazz, qualifier));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(Key<T> key, SelectionAdvisor ... advisors) {
-        String string = container.getInstance(String.class, key.getName());
-        if (string != null) {
-            Class clazz = key.getTargetClass();
-            if (clazz == long.class) {
-                return (T) Long.valueOf(string);
-            } else if (clazz == int.class) {
-                return (T) Integer.valueOf(string);
-            } else if (clazz == boolean.class) {
-                return (T) (Boolean) "true".equals(string);
+        if (key.getQualifier() instanceof String) {
+            String string = container.getInstance(String.class, (String) key.getQualifier());
+            if (string != null) {
+                Class clazz = key.getTargetClass();
+                if (clazz == long.class) {
+                    return (T) Long.valueOf(string);
+                } else if (clazz == int.class) {
+                    return (T) Integer.valueOf(string);
+                } else if (clazz == boolean.class) {
+                    return (T) (Boolean) "true".equals(string);
+                }
+                return (T) string;
             }
-            return (T) string;
         }
+
         return delegate.get(key);
     }
 
@@ -234,8 +237,8 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public <T> List<T> getAll(Class<T> clazz, String name, SelectionAdvisor... advisors) {
-        return delegate.getAll(clazz, name, advisors);
+    public <T> List<T> getAll(Class<T> clazz, Object qualifier, SelectionAdvisor... advisors) {
+        return delegate.getAll(clazz, qualifier, advisors);
     }
 
     @Override
