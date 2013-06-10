@@ -80,8 +80,18 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
     @Override
     public Object getQualifier(Type type, Annotation[] annotations) {
         for (Annotation annotation : annotations) {
-            if (annotation instanceof Named) {
-                return ((Named) annotation).value();
+            Class annotationType = annotation.annotationType();
+            if (annotationType.isAnnotationPresent(com.github.overengineer.container.metadata.Qualifier.class)) {
+                for (Method method : annotationType.getMethods()) {
+                    if (method.getName().equals("value")) {
+                        try {
+                            return method.invoke(annotation);
+                        } catch (Exception e) {
+                            throw new MetadataException("There was an exception attempting to obtain the value of a qualifier", e);
+                        }
+                    }
+                }
+                return annotationType;
             }
         }
         return Qualifier.NONE;
