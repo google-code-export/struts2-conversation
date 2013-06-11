@@ -38,7 +38,7 @@ public class Clarence implements Serializable {
     private Container builder;
 
     {
-        builder = new DefaultContainer(strategyFactory, keyRepository, dynamicComponentFactory, initializationListeners);
+        builder = new DefaultContainer(strategyFactory, keyRepository, dynamicComponentFactory, metadataAdapter, initializationListeners);
     }
 
     public static Clarence please() {
