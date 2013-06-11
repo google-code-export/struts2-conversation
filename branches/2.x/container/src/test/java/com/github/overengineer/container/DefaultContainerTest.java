@@ -540,10 +540,17 @@ public class DefaultContainerTest implements Serializable {
 
     }
 
-    @Target(ElementType.PARAMETER)
     @Retention(RetentionPolicy.RUNTIME)
     @com.github.overengineer.container.metadata.Qualifier
     public @interface Bro {
+    }
+
+    @Bro
+    public static class BroListener implements StartListener {
+        @Override
+        public void onStart(String processName) {
+            System.out.println("bro magic");
+        }
     }
 
     @Test
@@ -580,7 +587,7 @@ public class DefaultContainerTest implements Serializable {
                 })
                 .registerDeconstructedApi(StartListener.class)
                 .add(StartDelegate.class, StartDelegate.class)
-                .addInstance(StartListener.class, Bro.class, new StartListener() {
+                .addInstance(StartListener.class, new StartListener() {
                     @Override
                     public void onStart(String processName) {
                         System.out.println("3 got " + processName);
@@ -588,6 +595,7 @@ public class DefaultContainerTest implements Serializable {
                         assert processName.equals("what up");
                     }
                 })
+                .add(StartListener.class, BroListener.class)
                 .get(StartListener.class)
                 .onStart("what up");
 

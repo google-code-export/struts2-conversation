@@ -2,6 +2,7 @@ package com.github.overengineer.container;
 
 import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.*;
+import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.module.InstanceMapping;
 import com.github.overengineer.container.module.Mapping;
 import com.github.overengineer.container.module.Module;
@@ -95,12 +96,14 @@ public class DefaultContainer implements Container {
     private final ComponentStrategyFactory strategyFactory;
     private final KeyRepository keyRepository;
     private final DynamicComponentFactory dynamicComponentFactory;
+    private final MetadataAdapter metadataAdapter;
     private final List<ComponentInitializationListener> componentInitializationListeners;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, MetadataAdapter metadataAdapter, List<ComponentInitializationListener> componentInitializationListeners) {
         this.strategyFactory = strategyFactory;
         this.keyRepository = keyRepository;
         this.dynamicComponentFactory = dynamicComponentFactory;
+        this.metadataAdapter = metadataAdapter;
         this.componentInitializationListeners = componentInitializationListeners;
     }
 
@@ -129,6 +132,9 @@ public class DefaultContainer implements Container {
         for (Mapping<?> mapping : module.getMappings()) {
             Class<?> implementationType = mapping.getImplementationType();
             Object qualifier = mapping.getQualifier();
+            if (qualifier.equals(Qualifier.NONE)) {
+                qualifier = metadataAdapter.getQualifier(implementationType, implementationType.getAnnotations());
+            }
             if (mapping instanceof InstanceMapping) {
                 InstanceMapping<?> instanceMapping = (InstanceMapping) mapping;
                 Object instance = instanceMapping.getInstance();
@@ -212,7 +218,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        add(keyRepository.retrieveKey(componentType), implementationType);
+        add(keyRepository.retrieveKey(componentType, metadataAdapter.getQualifier(implementationType, implementationType.getAnnotations())), implementationType);
         return this;
     }
 
@@ -230,7 +236,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        addInstance(keyRepository.retrieveKey(componentType), implementation);
+        addInstance(keyRepository.retrieveKey(componentType, metadataAdapter.getQualifier(implementation.getClass(), implementation.getClass().getAnnotations())), implementation);
         return this;
     }
 
@@ -248,7 +254,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addCustomProvider(Class<?> providedType, Class<?> customProviderType) {
-        addCustomProvider(keyRepository.retrieveKey(providedType), customProviderType);
+        addCustomProvider(keyRepository.retrieveKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProviderType);
         return this;
     }
 
@@ -268,7 +274,7 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addCustomProvider(Class<?> providedType, Object customProvider) {
-        addCustomProvider(keyRepository.retrieveKey(providedType), customProvider);
+        addCustomProvider(keyRepository.retrieveKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProvider);
         return this;
     }
 

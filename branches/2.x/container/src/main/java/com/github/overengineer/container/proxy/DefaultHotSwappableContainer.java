@@ -4,6 +4,7 @@ import com.github.overengineer.container.*;
 import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.scope.Scopes;
 
 import java.util.List;
@@ -16,8 +17,8 @@ public class DefaultHotSwappableContainer extends DefaultContainer implements Ho
     private final ComponentStrategyFactory strategyFactory;
     private final KeyRepository keyRepository;
 
-    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners) {
-        super(strategyFactory, keyRepository, dynamicComponentFactory, componentInitializationListeners);
+    public DefaultHotSwappableContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, MetadataAdapter metadataAdapter, List<ComponentInitializationListener> componentInitializationListeners) {
+        super(strategyFactory, keyRepository, dynamicComponentFactory, metadataAdapter, componentInitializationListeners);
         this.strategyFactory = strategyFactory;
         this.keyRepository = keyRepository;
     }

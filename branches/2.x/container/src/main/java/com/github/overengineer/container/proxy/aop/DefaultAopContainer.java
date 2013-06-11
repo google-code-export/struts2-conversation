@@ -2,6 +2,7 @@ package com.github.overengineer.container.proxy.aop;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.dynamic.DynamicComponentFactory;
+import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.proxy.DefaultHotSwappableContainer;
 import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.scope.Scopes;
@@ -16,8 +17,8 @@ public class DefaultAopContainer extends DefaultHotSwappableContainer implements
     private final ComponentStrategyFactory strategyFactory;
     private final List<Aspect> aspects;
 
-    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
-        super(strategyFactory, keyRepository, dynamicComponentFactory, componentInitializationListeners);
+    public DefaultAopContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, MetadataAdapter metadataAdapter, List<ComponentInitializationListener> componentInitializationListeners, List<Aspect> aspects) {
+        super(strategyFactory, keyRepository, dynamicComponentFactory, metadataAdapter, componentInitializationListeners);
         this.strategyFactory = strategyFactory;
         this.aspects = aspects;
     }
