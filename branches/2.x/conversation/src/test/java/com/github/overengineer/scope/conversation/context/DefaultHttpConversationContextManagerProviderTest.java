@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.github.overengineer.scope.Factory;
+import com.github.overengineer.container.metadata.Provider;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
@@ -21,10 +21,10 @@ public class DefaultHttpConversationContextManagerProviderTest extends
     @Test
     public void testGetManager() throws IOException, ClassNotFoundException {
 
-        DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider(new Factory<ConversationContextManager>() {
+        DefaultJeeConversationContextManagerProvider managerProvider = new DefaultJeeConversationContextManagerProvider(new Provider<ConversationContextManager>() {
 
             @Override
-            public ConversationContextManager create() {
+            public ConversationContextManager get() {
                 return new DefaultConversationContextManager();
             }
         });

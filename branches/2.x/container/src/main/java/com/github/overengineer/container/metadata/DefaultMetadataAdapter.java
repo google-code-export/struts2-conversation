@@ -124,4 +124,9 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
         return Locksmith.makeKey(delegate.value(), name);
     }
 
+    @Override
+    public Class<?> getProviderClass() {
+        return Provider.class;
+    }
+
 }

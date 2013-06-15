@@ -12,7 +12,6 @@ import java.util.*;
 public abstract class BaseModule implements Module {
 
     private final List<Mapping<?>> mappings = new LinkedList<Mapping<?>>();
-    private final Set<Key> managedComponentFactories = new LinkedHashSet<Key>();
     private final Map<Key, Class> nonManagedComponentFactories = new HashMap<Key, Class>();
 
     public BaseModule() {
@@ -22,11 +21,6 @@ public abstract class BaseModule implements Module {
     @Override
     public final List<Mapping<?>> getMappings() {
         return mappings;
-    }
-
-    @Override
-    public Set<Key> getManagedComponentFactories() {
-        return managedComponentFactories;
     }
 
     @Override
@@ -54,16 +48,8 @@ public abstract class BaseModule implements Module {
         return mapping;
     }
 
-    protected void registerManagedComponentFactory(Generic factoryKey) {
-        managedComponentFactories.add(factoryKey);
-    }
-
     protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(Class<?> factoryType) {
         return new NonManagedComponentFactoryMapper(factoryType);
-    }
-
-    protected NonManagedComponentFactoryMapper registerNonManagedComponentFactory(Generic factoryKey) {
-        return new NonManagedComponentFactoryMapper(factoryKey);
     }
 
     public class NonManagedComponentFactoryMapper {

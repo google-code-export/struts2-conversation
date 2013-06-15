@@ -8,10 +8,13 @@ import com.github.overengineer.container.module.Mapping;
 import com.github.overengineer.container.module.Module;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
+import com.github.overengineer.container.util.ParameterRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -149,9 +152,6 @@ public class DefaultContainer implements Container {
                 }
             }
         }
-        for (Key factoryKey : module.getManagedComponentFactories()) {
-            registerManagedComponentFactory(factoryKey);
-        }
         for (Map.Entry<Key, Class> entry : module.getNonManagedComponentFactories().entrySet()) {
             registerNonManagedComponentFactory(entry.getKey(), entry.getValue());
         }
@@ -287,18 +287,6 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container registerManagedComponentFactory(Key<?> factoryKey) {
-        //TODO replace with jsr 330 provider impl
-        /*
-        //TODO perform checks and throw informative exceptions
-        Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
-        Key targetKey = Locksmith.makeKey(producedType);
-        addMapping(factoryKey, dynamicComponentFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
-        */
-        return this;
-    }
-
-    @Override
     public Container registerNonManagedComponentFactory(Key<?> factoryKey, Class producedType) {
         addMapping(factoryKey, dynamicComponentFactory.createNonManagedComponentFactory(factoryKey.getTargetClass(), producedType, this));
         return this;
@@ -410,17 +398,31 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> T get(Key<T> key, SelectionAdvisor ... advisors) {
+    public <T> T get(final Key<T> key, SelectionAdvisor ... advisors) {
 
         @SuppressWarnings("unchecked")
         ComponentStrategy<T> strategy = getStrategy(key, advisors);
 
         if (strategy == null) {
-            Object qualifier = key.getQualifier();
-            if (qualifier != null) {
-                throw new MissingDependencyException("No components of type [" + key.getType() + "] with name [" + qualifier + "] have been registered with the container");
+
+            if (metadataAdapter.getProviderClass().isAssignableFrom(key.getTargetClass())) {
+
+                //TODO this is slow, refactor to cache the type in the key and to reuse the strategy
+                Key targetKey = Locksmith.makeKey(new ParameterRef() {
+                    @Override
+                    public Type getType() {
+                        return ((ParameterizedType) key.getType()).getActualTypeArguments()[0];
+                    }
+                }, key.getQualifier());
+
+                T instance = dynamicComponentFactory.createManagedComponentFactory(metadataAdapter.getProviderClass(), targetKey, this);
+                strategy = strategyFactory.createInstanceStrategy(instance, Qualifier.NONE);
+                putStrategy(key, strategy);
+
+            } else {
+                throw new MissingDependencyException("No components of type [" + key.getType() + "] with qualifier [" + key.getQualifier() + "] have been registered with the container");
             }
-            throw new MissingDependencyException("No components of type [" + key.getType() + "] have been registered with the container");
+
         }
 
         return strategy.get(this);
@@ -560,8 +562,9 @@ public class DefaultContainer implements Container {
                 public int compare(ComponentStrategy<?> strategy, ComponentStrategy<?> strategy2) {
                     if (strategy.equals(strategy2) ||
                             //TODO need a better way to ensure only one composite/delegating service etc is allowed
-                            (strategy.getComponentType().equals(strategy2.getComponentType()) &&
-                                    !Proxy.isProxyClass(strategy.getComponentType()))) {
+                            (strategy.getComponentType().equals(strategy2.getComponentType())
+                                    && strategy.getQualifier().equals(strategy2.getQualifier()
+                            ) && !Proxy.isProxyClass(strategy.getComponentType()))) {
                         return 0;
                     } else if (strategy instanceof TopLevelStrategy) {
                         return -1;

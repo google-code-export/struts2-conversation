@@ -28,4 +28,6 @@ public interface MetadataAdapter extends Serializable {
 
     Key<?> getDelegateKey(Method method);
 
+    Class<?> getProviderClass();
+
 }

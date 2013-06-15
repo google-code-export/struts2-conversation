@@ -42,8 +42,6 @@ public interface Container extends Provider {
 
     Container addCustomProvider(Key<?> providedTypeKey, Object customProvider);
 
-    Container registerManagedComponentFactory(Key<?> factoryKey);
-
     Container registerNonManagedComponentFactory(Key<?> factoryKey, Class producedType);
 
     Container registerCompositeTarget(Class<?> targetInterface);
