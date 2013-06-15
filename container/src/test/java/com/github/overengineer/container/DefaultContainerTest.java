@@ -4,6 +4,7 @@ import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.metadata.*;
 import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Provider;
 import com.github.overengineer.container.metadata.Qualifier;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
@@ -275,7 +276,6 @@ public class DefaultContainerTest implements Serializable {
         }
     }
 
-    @Ignore
     @Test
     public void testRegisterFactory() {
 
@@ -283,11 +283,10 @@ public class DefaultContainerTest implements Serializable {
 
         container.loadModule(CommonModule.class);
 
-        container.registerManagedComponentFactory(new Generic<Factory<TimeoutMonitor>>() {});
+        com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory
+                = container.get(new Generic<com.github.overengineer.container.metadata.Provider<TimeoutMonitor>>(){});
 
-        Factory<TimeoutMonitor> timeoutMonitorFactory = container.get(new Generic<Factory<TimeoutMonitor>>(){});
-
-        assert timeoutMonitorFactory.create() != null;
+        assert timeoutMonitorFactory.get() != null;
 
         container.add(IConstructorTest.class, FactoryTest.class);
 
@@ -297,13 +296,13 @@ public class DefaultContainerTest implements Serializable {
 
         System.out.println(timeoutMonitorFactory);
 
-        container.add(new Generic<Factory<TimeoutMonitor>>(){}, FactoryTest.class);
+        container.add(new Generic<com.github.overengineer.container.metadata.Provider<TimeoutMonitor>>(){}, FactoryTest.class);
 
         container = SerializationTestingUtil.getSerializedCopy(container);
 
-        timeoutMonitorFactory = container.get(new Generic<Factory<TimeoutMonitor>>(){});
+        timeoutMonitorFactory = container.get(new Generic<com.github.overengineer.container.metadata.Provider<TimeoutMonitor>>(){});
 
-        assert timeoutMonitorFactory.create() != null;
+        assert timeoutMonitorFactory.get() != null;
 
         assert timeoutMonitorFactory instanceof FactoryTest;
 
@@ -314,7 +313,7 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatTainer();
 
-        com.github.overengineer.container.key.Key<NonManagedComponentFactory<NamedComponent>> factoryKey = new Generic<NonManagedComponentFactory<NamedComponent>>() {};
+        Key<NonManagedComponentFactory<NamedComponent>> factoryKey = new Generic<NonManagedComponentFactory<NamedComponent>>() {};
 
         container.registerNonManagedComponentFactory(factoryKey, NonManagedComponent.class);
 
@@ -351,17 +350,17 @@ public class DefaultContainerTest implements Serializable {
         T create();
     }
 
-    public static class FactoryTest implements IConstructorTest, Factory<TimeoutMonitor>, Serializable {
+    public static class FactoryTest implements IConstructorTest, com.github.overengineer.container.metadata.Provider<TimeoutMonitor>, Serializable {
 
-        Factory<TimeoutMonitor> timeoutMonitorFactory;
+        com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory;
 
-        public FactoryTest(Factory<TimeoutMonitor> timeoutMonitorFactory) {
+        public FactoryTest(com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory) {
             this.timeoutMonitorFactory = timeoutMonitorFactory;
         }
 
         @Override
-        public TimeoutMonitor create() {
-            return timeoutMonitorFactory.create();
+        public TimeoutMonitor get() {
+            return timeoutMonitorFactory.get();
         }
     }
 

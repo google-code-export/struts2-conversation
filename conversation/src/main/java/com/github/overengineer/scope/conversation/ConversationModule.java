@@ -3,7 +3,6 @@ package com.github.overengineer.scope.conversation;
 import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.module.BaseModule;
 import com.github.overengineer.scope.CommonConstants;
-import com.github.overengineer.scope.Factory;
 import com.github.overengineer.scope.conversation.ConversationConstants.Defaults;
 import com.github.overengineer.scope.conversation.ConversationConstants.Properties;
 import com.github.overengineer.scope.conversation.configuration.ConversationArbitrator;
@@ -30,7 +29,6 @@ public class ConversationModule extends BaseModule {
         use(new Generic<ScheduledExecutorTimeoutMonitor<ConversationContext>>() {})
                 .forType(new Generic<TimeoutMonitor<ConversationContext>>() {});
 
-        registerManagedComponentFactory(new Generic<Factory<ConversationContextManager>>() {});
         registerNonManagedComponentFactory(ConversationContextFactory.class).toProduce(DefaultConversationContext.class);
 
         use(Defaults.CONVERSATION_IDLE_TIMEOUT).withQualifier(Properties.CONVERSATION_IDLE_TIMEOUT);

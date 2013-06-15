@@ -2,7 +2,7 @@ package com.github.overengineer.scope.struts2;
 
 import com.github.overengineer.container.*;
 import com.github.overengineer.container.key.Key;
-import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.key.Locksmith;
 import com.github.overengineer.container.module.Module;
 import com.github.overengineer.scope.ActionProvider;
 import com.github.overengineer.scope.CommonModule;
@@ -19,7 +19,6 @@ public class StrutsModuleContainer implements Container {
 
     private com.opensymphony.xwork2.inject.Container container;
     private Container delegate = Clarence.please().makeYourStuffInjectable().gimmeThatTainer();
-    private KeyRepository keyRepository = delegate.get(KeyRepository.class);
 
     @Inject
     public void setContainer(com.opensymphony.xwork2.inject.Container container) {
@@ -45,7 +44,7 @@ public class StrutsModuleContainer implements Container {
     }
 
     @Override
-    public Container loadModule(Class<? extends Module> module) {
+    public <M extends Module> Container loadModule(Class<M> module) {
         return delegate.loadModule(module);
     }
 
@@ -117,11 +116,6 @@ public class StrutsModuleContainer implements Container {
     @Override
     public Container addCustomProvider(Key providedTypeKey, Object customProvider) {
         return delegate.addCustomProvider(providedTypeKey, customProvider);
-    }
-
-    @Override
-    public Container registerManagedComponentFactory(Key factoryKey) {
-        return delegate.registerManagedComponentFactory(factoryKey);
     }
 
     @Override
@@ -201,13 +195,13 @@ public class StrutsModuleContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz));
+        return get(Locksmith.makeKey(clazz));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz, qualifier));
+        return get(Locksmith.makeKey(clazz, qualifier));
     }
 
     @SuppressWarnings("unchecked")
