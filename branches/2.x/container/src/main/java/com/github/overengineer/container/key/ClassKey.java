@@ -45,7 +45,7 @@ public class ClassKey<T> implements Key<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof BasicKey && targetClass == ((BasicKey) object).getType() && qualifier.equals(((BasicKey) object).getQualifier());
+        return object instanceof Key && targetClass == ((Key) object).getType();
     }
 
 }

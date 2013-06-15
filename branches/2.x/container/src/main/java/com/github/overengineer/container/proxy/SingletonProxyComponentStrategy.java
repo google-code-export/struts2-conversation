@@ -69,4 +69,9 @@ public class SingletonProxyComponentStrategy<T> implements HotSwappableProxyStra
     public boolean isDecorator() {
         return delegateStrategy.isDecorator();
     }
+
+    @Override
+    public Object getQualifier() {
+        return delegateStrategy.getQualifier();
+    }
 }

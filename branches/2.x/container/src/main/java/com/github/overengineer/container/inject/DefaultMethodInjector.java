@@ -2,7 +2,7 @@ package com.github.overengineer.container.inject;
 
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.parameter.ParameterBuilder;
-import com.github.overengineer.container.util.MethodRef;
+import com.github.overengineer.container.util.MethodRefImpl;
 
 import java.lang.reflect.Method;
 
@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
  */
 public class DefaultMethodInjector<T> implements MethodInjector<T> {
 
-    private final MethodRef methodRef;
+    private final MethodRefImpl methodRef;
     private final ParameterBuilder parameterBuilder;
 
     public DefaultMethodInjector(Method method, ParameterBuilder<T> parameterBuilder) {
-        methodRef = new MethodRef(method);
+        methodRef = new MethodRefImpl(method);
         this.parameterBuilder = parameterBuilder;
     }
 

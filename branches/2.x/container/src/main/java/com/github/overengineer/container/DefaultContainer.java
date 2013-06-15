@@ -11,9 +11,7 @@ import com.github.overengineer.container.scope.Scopes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -94,14 +92,12 @@ public class DefaultContainer implements Container {
     private final List<Container> cascadingContainers = new ArrayList<Container>();
     private final List<Container> children = new ArrayList<Container>();
     private final ComponentStrategyFactory strategyFactory;
-    private final KeyRepository keyRepository;
     private final DynamicComponentFactory dynamicComponentFactory;
     private final MetadataAdapter metadataAdapter;
     private final List<ComponentInitializationListener> componentInitializationListeners;
 
-    public DefaultContainer(ComponentStrategyFactory strategyFactory, KeyRepository keyRepository, DynamicComponentFactory dynamicComponentFactory, MetadataAdapter metadataAdapter, List<ComponentInitializationListener> componentInitializationListeners) {
+    public DefaultContainer(ComponentStrategyFactory strategyFactory, DynamicComponentFactory dynamicComponentFactory, MetadataAdapter metadataAdapter, List<ComponentInitializationListener> componentInitializationListeners) {
         this.strategyFactory = strategyFactory;
-        this.keyRepository = keyRepository;
         this.dynamicComponentFactory = dynamicComponentFactory;
         this.metadataAdapter = metadataAdapter;
         this.componentInitializationListeners = componentInitializationListeners;
@@ -127,8 +123,8 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public Container loadModule(Class<? extends Module> moduleClass) {
-        Module module = strategyFactory.create(moduleClass, Scopes.PROTOTYPE).get(this);
+    public <M extends Module> Container loadModule(Class<M> moduleClass) {
+        Module module = strategyFactory.create(moduleClass, Qualifier.NONE, Scopes.PROTOTYPE).get(this);
         for (Mapping<?> mapping : module.getMappings()) {
             Class<?> implementationType = mapping.getImplementationType();
             Object qualifier = mapping.getQualifier();
@@ -139,14 +135,14 @@ public class DefaultContainer implements Container {
                 InstanceMapping<?> instanceMapping = (InstanceMapping) mapping;
                 Object instance = instanceMapping.getInstance();
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addMapping(keyRepository.retrieveKey(target, qualifier), instance);
+                    addMapping(Locksmith.makeKey(target, qualifier), instance);
                 }
                 for (Key<?> targetGeneric : mapping.getTargetKeys()) {
                     addMapping(targetGeneric, instance);
                 }
             } else {
                 for (Class<?> target : mapping.getTargetClasses()) {
-                    addMapping(keyRepository.retrieveKey(target, qualifier), implementationType, mapping.getScope());
+                    addMapping(Locksmith.makeKey(target, qualifier), implementationType, mapping.getScope());
                 }
                 for (Key<?> targetGeneric : mapping.getTargetKeys()) {
                     addMapping(targetGeneric, implementationType, mapping.getScope());
@@ -206,25 +202,25 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container newEmptyClone() {
-        return strategyFactory.create(this.getClass(), Scopes.SINGLETON).get(this);
+        return strategyFactory.create(this.getClass(), Qualifier.NONE, Scopes.SINGLETON).get(this);
     }
 
     @Override
     public Container addListener(Class<? extends ComponentInitializationListener> listenerClass) {
-        ComponentStrategy strategy = strategyFactory.create(listenerClass, Scopes.SINGLETON);
+        ComponentStrategy strategy = strategyFactory.create(listenerClass, Qualifier.NONE, Scopes.SINGLETON);
         getInitializationListeners().add((ComponentInitializationListener) strategy.get(this));
         return this;
     }
 
     @Override
     public <T> Container add(Class<T> componentType, Class<? extends T> implementationType) {
-        add(keyRepository.retrieveKey(componentType, metadataAdapter.getQualifier(implementationType, implementationType.getAnnotations())), implementationType);
+        add(Locksmith.makeKey(componentType, metadataAdapter.getQualifier(implementationType, implementationType.getAnnotations())), implementationType);
         return this;
     }
 
     @Override
     public <T> Container add(Class<T> componentType, Object qualifier, Class<? extends T> implementationType) {
-        add(keyRepository.retrieveKey(componentType, qualifier), implementationType);
+        add(Locksmith.makeKey(componentType, qualifier), implementationType);
         return this;
     }
 
@@ -236,13 +232,13 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, I implementation) {
-        addInstance(keyRepository.retrieveKey(componentType, metadataAdapter.getQualifier(implementation.getClass(), implementation.getClass().getAnnotations())), implementation);
+        addInstance(Locksmith.makeKey(componentType, metadataAdapter.getQualifier(implementation.getClass(), implementation.getClass().getAnnotations())), implementation);
         return this;
     }
 
     @Override
     public <T, I extends T> Container addInstance(Class<T> componentType, Object qualifier, I implementation) {
-        addInstance(keyRepository.retrieveKey(componentType, qualifier), implementation);
+        addInstance(Locksmith.makeKey(componentType, qualifier), implementation);
         return this;
     }
 
@@ -254,50 +250,51 @@ public class DefaultContainer implements Container {
 
     @Override
     public Container addCustomProvider(Class<?> providedType, Class<?> customProviderType) {
-        addCustomProvider(keyRepository.retrieveKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProviderType);
+        addCustomProvider(Locksmith.makeKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProviderType);
         return this;
     }
 
     @Override
     public Container addCustomProvider(Key<?> providedTypeKey, Class<?> customProviderType) {
-        Key<?> providerKey = keyRepository.retrieveKey(customProviderType);
+        Object qualifier = providedTypeKey.getQualifier();
+        Key<?> providerKey = Locksmith.makeKey(customProviderType, qualifier);
         ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
-            providerStrategy = strategyFactory.create(customProviderType, Scopes.SINGLETON);
+            providerStrategy = strategyFactory.create(customProviderType, qualifier, Scopes.SINGLETON);
         }
-        keyRepository.addKey(providerKey);
-        keyRepository.addKey(providedTypeKey);
         putStrategy(providerKey, providerStrategy);
-        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy, qualifier));
         return this;
     }
 
     @Override
     public Container addCustomProvider(Class<?> providedType, Object customProvider) {
-        addCustomProvider(keyRepository.retrieveKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProvider);
+        addCustomProvider(Locksmith.makeKey(providedType, metadataAdapter.getQualifier(providedType, providedType.getAnnotations())), customProvider);
         return this;
     }
 
     @Override
     public Container addCustomProvider(Key<?> providedTypeKey, Object customProvider) {
-        Key<?> providerKey = keyRepository.retrieveKey(customProvider.getClass());
+        Object qualifier = providedTypeKey.getQualifier();
+        Key<?> providerKey = Locksmith.makeKey(customProvider.getClass(), qualifier);
         ComponentStrategy providerStrategy = getStrategy(providerKey);
         if (providerStrategy == null) {
-            providerStrategy = strategyFactory.createInstanceStrategy(customProvider);
+            providerStrategy = strategyFactory.createInstanceStrategy(customProvider, qualifier);
         }
-        keyRepository.addKey(providerKey);
-        keyRepository.addKey(providedTypeKey);
         putStrategy(providerKey, providerStrategy);
-        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy));
+        putStrategy(providedTypeKey, strategyFactory.createCustomStrategy(providerStrategy, qualifier));
         return this;
     }
 
     @Override
     public Container registerManagedComponentFactory(Key<?> factoryKey) {
+        //TODO replace with jsr 330 provider impl
+        /*
         //TODO perform checks and throw informative exceptions
         Type producedType = ((ParameterizedType) factoryKey.getType()).getActualTypeArguments()[0];
-        Key targetKey = keyRepository.retrieveKey(producedType);
+        Key targetKey = Locksmith.makeKey(producedType);
         addMapping(factoryKey, dynamicComponentFactory.createManagedComponentFactory(factoryKey.getTargetClass(), targetKey, this));
+        */
         return this;
     }
 
@@ -309,13 +306,13 @@ public class DefaultContainer implements Container {
 
     @Override
     public synchronized Container registerCompositeTarget(Class<?> targetInterface) {
-        registerCompositeTarget(keyRepository.retrieveKey(targetInterface));
+        registerCompositeTarget(Locksmith.makeKey(targetInterface));
         return this;
     }
 
     @Override
     public Container registerCompositeTarget(Class<?> targetInterface, Object qualifier) {
-        registerCompositeTarget(keyRepository.retrieveKey(targetInterface, qualifier));
+        registerCompositeTarget(Locksmith.makeKey(targetInterface, qualifier));
         return this;
     }
 
@@ -323,27 +320,27 @@ public class DefaultContainer implements Container {
     @SuppressWarnings("unchecked")
     public synchronized Container registerCompositeTarget(Key targetKey) {
         Object composite = dynamicComponentFactory.createCompositeHandler(targetKey.getTargetClass(), this);
-        ComponentStrategy compositeStrategy = new TopLevelStrategy(strategyFactory.createInstanceStrategy(composite));
+        ComponentStrategy compositeStrategy = new TopLevelStrategy(strategyFactory.createInstanceStrategy(composite, targetKey.getQualifier()));
         putStrategy(targetKey, compositeStrategy);
         return this;
     }
 
     @Override
     public Container registerDeconstructedApi(Class<?> targetInterface) {
-        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface));
+        registerDeconstructedApi(Locksmith.makeKey(targetInterface));
         return this;
     }
 
     @Override
     public Container registerDeconstructedApi(Class<?> targetInterface, Object qualifier) {
-        registerDeconstructedApi(keyRepository.retrieveKey(targetInterface, qualifier));
+        registerDeconstructedApi(Locksmith.makeKey(targetInterface, qualifier));
         return this;
     }
 
     @Override
     public Container registerDeconstructedApi(Key<?> targetKey) {
         Object delegatingService = dynamicComponentFactory.createDelegatingService(targetKey.getTargetClass(), this);
-        ComponentStrategy strategy = strategyFactory.createInstanceStrategy(delegatingService);
+        ComponentStrategy strategy = strategyFactory.createInstanceStrategy(delegatingService, targetKey.getQualifier());
         putStrategy(targetKey, strategy);
         return this;
     }
@@ -403,13 +400,13 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> T get(Class<T> clazz, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz), advisors);
+        return get(Locksmith.makeKey(clazz), advisors);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(Class<T> clazz, Object qualifier, SelectionAdvisor ... advisors) {
-        return get(keyRepository.retrieveKey(clazz, qualifier), advisors);
+        return get(Locksmith.makeKey(clazz, qualifier), advisors);
     }
 
     @Override
@@ -432,12 +429,12 @@ public class DefaultContainer implements Container {
 
     @Override
     public <T> List<T> getAll(Class<T> clazz, SelectionAdvisor... advisors) {
-        return getAll(keyRepository.retrieveKey(clazz), advisors);
+        return getAll(Locksmith.makeKey(clazz), advisors);
     }
 
     @Override
     public <T> List<T> getAll(Class<T> clazz, Object qualifier, SelectionAdvisor... advisors) {
-        return getAll(keyRepository.retrieveKey(clazz, qualifier), advisors);
+        return getAll(Locksmith.makeKey(clazz, qualifier), advisors);
     }
 
     @Override
@@ -450,33 +447,49 @@ public class DefaultContainer implements Container {
         return components;
     }
 
-    protected synchronized void addMapping(Key key, Class<?> implementationType, Scope scope) {
+    protected synchronized void addMapping(Key key, final Class<?> implementationType, Scope scope) {
 
-        ComponentStrategy newStrategy = strategyFactory.create(implementationType, scope);
-        keyRepository.addKey(key);
-        putStrategy(key, newStrategy);
-        putStrategy(keyRepository.retrieveKey(implementationType, key.getQualifier()), newStrategy);
+        Key componentKey = Locksmith.makeKey(implementationType, key.getQualifier());
+
+        ComponentStrategy strategy = getStrategy(componentKey, new SelectionAdvisor() {
+            @Override
+            public boolean validSelection(ComponentStrategy<?> candidateStrategy) {
+                return candidateStrategy.getComponentType() == implementationType;
+            }
+        });
+
+        if (strategy == null) {
+            strategy = strategyFactory.create(implementationType, key.getQualifier(), scope);
+            putStrategy(componentKey, strategy);
+        }
+
+        putStrategy(key, strategy);
 
     }
 
     protected synchronized void addMapping(Key key, Object implementation) {
 
-        ComponentStrategy newStrategy = strategyFactory.createInstanceStrategy(implementation);
-        keyRepository.addKey(key);
+        ComponentStrategy newStrategy = strategyFactory.createInstanceStrategy(implementation, key.getQualifier());
         putStrategy(key, newStrategy);
-        putStrategy(keyRepository.retrieveKey(implementation.getClass()), newStrategy);
+        putStrategy(Locksmith.makeKey(implementation.getClass()), newStrategy);
 
     }
 
-    @Override
+     @Override
      public <T> ComponentStrategy<T> getStrategy(Key<T> key, SelectionAdvisor ... advisors) {
+
+        Object qualifier = key.getQualifier();
+        boolean qualified = !Qualifier.NONE.equals(qualifier);
 
         SortedSet<ComponentStrategy<T>> strategySet = getStrategySet(key);
         if (strategySet != null) {
             for (ComponentStrategy<T> strategy : strategySet) {
                 boolean valid = true;
+                if (qualified && !qualifier.equals(strategy.getQualifier())) {
+                    continue;
+                }
                 for (SelectionAdvisor advisor : advisors) {
-                    if (!advisor.validSelection(strategy.getComponentType())) {
+                    if (!advisor.validSelection(strategy)) {
                         valid = false;
                         break;
                     }
@@ -502,15 +515,21 @@ public class DefaultContainer implements Container {
     }
 
     @Override
-    public <T> List<ComponentStrategy<T>> getAllStrategies(Key<T> key, SelectionAdvisor... advisors) {
+    public <T> List<ComponentStrategy<T>> getAllStrategies(final Key<T> key, SelectionAdvisor... advisors) {
 
         List<ComponentStrategy<T>> allStrategies = new LinkedList<ComponentStrategy<T>>();
+
+        Object qualifier = key.getQualifier();
+        boolean qualified = !Qualifier.NONE.equals(qualifier);
 
         SortedSet<ComponentStrategy<T>> strategySet = getStrategySet(key);
         if (strategySet != null) {
             for (ComponentStrategy<T> strategy : strategySet) {
                 for (SelectionAdvisor advisor : advisors) {
-                    if (advisor.validSelection(strategy.getComponentType())) {
+                    if (qualified && !qualifier.equals(strategy.getQualifier())) {
+                        continue;
+                    }
+                    if (advisor.validSelection(strategy)) {
                         allStrategies.add(strategy);
                     }
                 }

@@ -3,10 +3,7 @@ package com.github.overengineer.container.instantiate;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.inject.InjectionException;
 import com.github.overengineer.container.parameter.ParameterBuilder;
-import com.github.overengineer.container.parameter.ParameterBuilderFactory;
-
-import java.lang.ref.SoftReference;
-import java.lang.reflect.Constructor;
+import com.github.overengineer.container.util.ConstructorRef;
 
 /**
  * @author rees.byars
@@ -14,50 +11,24 @@ import java.lang.reflect.Constructor;
 public class DefaultInstantiator<T> implements Instantiator<T> {
 
     private final Class<T> type;
-    private final ConstructorResolver constructorResolver;
-    private final ParameterBuilderFactory parameterBuilderFactory;
-    private final Class[] providedArgTypes;
-    private ParameterBuilder<T> parameterBuilder;
-    private transient volatile SoftReference<Constructor<T>> constructorRef;
+    private final ConstructorRef<T> constructorRef;
+    private final ParameterBuilder<T> parameterBuilder;
 
-    public DefaultInstantiator(Class<T> type, ConstructorResolver constructorResolver, ParameterBuilderFactory parameterBuilderFactory, Class ... providedArgTypes) {
+    public DefaultInstantiator(Class<T> type, ConstructorRef<T> constructorRef, ParameterBuilder<T> parameterBuilder) {
         this.type = type;
-        this.constructorResolver = constructorResolver;
-        this.parameterBuilderFactory = parameterBuilderFactory;
-        this.providedArgTypes = providedArgTypes;
+        this.constructorRef = constructorRef;
+        this.parameterBuilder = parameterBuilder;
     }
 
     @Override
     public boolean isDecorator() {
-        //TODO cleanup
-        if (parameterBuilder == null) {
-            synchronized (this) {
-                Constructor<T> constructor = constructorRef == null ? null : constructorRef.get();
-                if (constructor == null) {
-                    constructor = constructorResolver.resolveConstructor(type, providedArgTypes);
-                    constructorRef = new SoftReference<Constructor<T>>(constructor);
-                    parameterBuilder = parameterBuilderFactory.create(type, constructor, providedArgTypes);
-                }
-            }
-        }
         return parameterBuilder.isDecorator();
     }
 
     @Override
     public T getInstance(Provider provider, Object ... providedArgs) {
-        Constructor<T> constructor = constructorRef == null ? null : constructorRef.get();
-        if (constructor == null) {
-            synchronized (this) {
-                constructor = constructorRef == null ? null : constructorRef.get();
-                if (constructor == null) {
-                    constructor = constructorResolver.resolveConstructor(type, providedArgTypes);
-                    constructorRef = new SoftReference<Constructor<T>>(constructor);
-                    parameterBuilder = parameterBuilderFactory.create(type, constructor, providedArgTypes);
-                }
-            }
-        }
         try {
-            return constructor.newInstance(parameterBuilder.buildParameters(provider, providedArgs));
+            return constructorRef.getConstructor().newInstance(parameterBuilder.buildParameters(provider, providedArgs));
         } catch (Exception e) {
             throw new InjectionException("Could not create new instance of type [" + type.getName() + "]", e);
         }

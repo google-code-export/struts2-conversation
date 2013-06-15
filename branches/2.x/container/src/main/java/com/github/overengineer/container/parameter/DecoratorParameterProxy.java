@@ -1,5 +1,6 @@
 package com.github.overengineer.container.parameter;
 
+import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.SelectionAdvisor;
 import com.github.overengineer.container.key.Key;
@@ -21,7 +22,8 @@ public class DecoratorParameterProxy<T> implements ParameterProxy<T> {
     public T get(Provider provider) {
         return provider.get(key, new SelectionAdvisor() {
             @Override
-            public boolean validSelection(Class<?> candidateClass) {
+            public boolean validSelection(ComponentStrategy<?> candidateStrategy) {
+                Class<?> candidateClass = candidateStrategy.getComponentType();
                 return candidateClass != injectionTarget; //TODO this prevents self injection.  OK??
             }
         });

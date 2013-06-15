@@ -1,7 +1,7 @@
 package com.github.overengineer.container.metadata;
 
 import com.github.overengineer.container.key.Key;
-import com.github.overengineer.container.key.KeyRepository;
+import com.github.overengineer.container.key.Locksmith;
 import com.github.overengineer.container.key.Qualifier;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
@@ -16,12 +16,6 @@ import java.lang.reflect.Type;
  * @author rees.byars
  */
 public class DefaultMetadataAdapter implements MetadataAdapter {
-
-    private final KeyRepository keyRepository;
-
-    public DefaultMetadataAdapter(KeyRepository keyRepository) {
-        this.keyRepository = keyRepository;
-    }
 
     /**
      * {@inheritDoc}
@@ -119,15 +113,15 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      */
     @Override
     public Key<?> getDelegateKey(Method method) {
-        if (!method.isAnnotationPresent(Delegate.class)) {
+        if (!method.isAnnotationPresent(ImplementedBy.class)) {
             throw new MetadataException("There was an exception creating a delegated service", new IllegalArgumentException("The method [" + method.getName() + "] of class [" + method.getDeclaringClass() + "] must be annotated with an @Delegate annotation"));
         }
-        Delegate delegate = method.getAnnotation(Delegate.class);
+        ImplementedBy delegate = method.getAnnotation(ImplementedBy.class);
         String name = delegate.name();
         if ("".equals(name)) {
-            return keyRepository.retrieveKey(delegate.value(), Qualifier.NONE);
+            return Locksmith.makeKey(delegate.value(), Qualifier.NONE);
         }
-        return keyRepository.retrieveKey(delegate.value(), name);
+        return Locksmith.makeKey(delegate.value(), name);
     }
 
 }

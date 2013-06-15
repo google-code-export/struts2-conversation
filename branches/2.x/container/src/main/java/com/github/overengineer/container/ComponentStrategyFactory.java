@@ -9,10 +9,10 @@ import java.io.Serializable;
  */
 public interface ComponentStrategyFactory extends Serializable {
 
-    <T> ComponentStrategy<T> create(Class<T> implementationType, Scope scope);
+    <T> ComponentStrategy<T> create(Class<T> implementationType, Object qualifier, Scope scope);
 
-    <T> ComponentStrategy<T> createInstanceStrategy(T implementation);
+    <T> ComponentStrategy<T> createInstanceStrategy(T implementation, Object qualifier);
 
-    <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy);
+    <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy, Object qualifier);
 
 }

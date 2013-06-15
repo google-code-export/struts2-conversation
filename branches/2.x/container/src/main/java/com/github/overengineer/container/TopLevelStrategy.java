@@ -25,4 +25,9 @@ public class TopLevelStrategy<T> implements ComponentStrategy<T> {
     public boolean isDecorator() {
         return delegateStrategy.isDecorator();
     }
+
+    @Override
+    public Object getQualifier() {
+        return delegateStrategy.getQualifier();
+    }
 }

@@ -13,4 +13,6 @@ public interface ComponentStrategy<T> extends Serializable {
 
     boolean isDecorator();
 
+    Object getQualifier();
+
 }

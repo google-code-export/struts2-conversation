@@ -1,5 +1,6 @@
 package com.github.overengineer.container.dynamic;
 
+import com.github.overengineer.container.ComponentStrategy;
 import com.github.overengineer.container.Provider;
 import com.github.overengineer.container.SelectionAdvisor;
 
@@ -40,7 +41,8 @@ public class DynamicComposite<T> implements InvocationHandler, Serializable {
         if (components == null) {
             components = provider.getAll(componentInterface, new SelectionAdvisor() {
                 @Override
-                public boolean validSelection(Class<?> candidateClass) {
+                public boolean validSelection(ComponentStrategy<?> candidateStrategy) {
+                    Class<?> candidateClass = candidateStrategy.getComponentType();
                     return candidateClass != proxy.getClass() || Proxy.isProxyClass(candidateClass);
                 }
             });

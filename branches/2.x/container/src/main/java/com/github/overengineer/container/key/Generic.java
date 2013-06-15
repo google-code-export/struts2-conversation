@@ -60,7 +60,7 @@ public abstract class Generic<T> implements Key<T> {
 
     @Override
     public boolean equals(Object object) {
-        return object instanceof BasicKey && type.equals(((BasicKey) object).getType()) && qualifier.equals(((BasicKey) object).getQualifier());
+        return object instanceof Key && type.equals(((Key) object).getType());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

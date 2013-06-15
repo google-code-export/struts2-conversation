@@ -29,7 +29,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
     }
 
     @Override
-    public <T> ComponentStrategy<T> create(Class<T> implementationType, Scope scope) {
+    public <T> ComponentStrategy<T> create(Class<T> implementationType, Object qualifier, Scope scope) {
         ComponentInjector<T> injector = injectorFactory.create(implementationType);
         Instantiator<T> instantiator = instantiatorFactory.create(implementationType);
         Scope theScope = metadataAdapter.getScope(implementationType);
@@ -41,26 +41,26 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
             theScope = scope;
         }
         if (Scopes.PROTOTYPE.equals(theScope)) {
-            return new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners);
+            return new PrototypeComponentStrategy<T>(injector, instantiator, qualifier, initializationListeners);
         } else {
-            return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, initializationListeners));
+            return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, qualifier, initializationListeners));
         }
     }
 
     @Override
-    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
+    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation, Object qualifier) {
         @SuppressWarnings("unchecked")
         Class<T> clazz = (Class<T>) implementation.getClass();
         ComponentInjector<T> injector = injectorFactory.create(clazz);
-        return new InstanceStrategy<T>(implementation, injector, initializationListeners);
+        return new InstanceStrategy<T>(implementation, injector, qualifier, initializationListeners);
     }
 
     @Override
-    public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
+    public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy, Object qualifier) {
         Method providerMethod = metadataAdapter.getCustomProviderMethod(providerStrategy.getComponentType());
         @SuppressWarnings("unchecked")
         MethodInjector<T> methodInjector = injectorFactory.create(providerStrategy.getComponentType(), providerMethod);
-        return new CustomComponentStrategy<T>(providerStrategy, methodInjector, providerMethod.getReturnType());
+        return new CustomComponentStrategy<T>(providerStrategy, methodInjector, providerMethod.getReturnType(), qualifier);
     }
 
 }
