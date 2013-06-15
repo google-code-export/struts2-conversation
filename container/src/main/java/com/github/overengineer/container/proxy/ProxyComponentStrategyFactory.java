@@ -20,8 +20,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> create(Class<T> implementationType, Scope scope) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType, scope);
+    public <T> ComponentStrategy<T> create(Class<T> implementationType, Object qualifier, Scope scope) {
+        ComponentStrategy<T> delegateStrategy = delegateFactory.create(implementationType, qualifier, scope);
         if (ReflectionUtil.getAllInterfaces(implementationType).size() == 0) {
             return delegateStrategy;
         }
@@ -32,8 +32,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation) {
-        ComponentStrategy<T> delegateStrategy = delegateFactory.createInstanceStrategy(implementation);
+    public <T> ComponentStrategy<T> createInstanceStrategy(T implementation, Object qualifier) {
+        ComponentStrategy<T> delegateStrategy = delegateFactory.createInstanceStrategy(implementation, qualifier);
         Class<?> implementationType = implementation.getClass();
         if (ReflectionUtil.getAllInterfaces(implementationType).size() == 0 || ReflectionUtil.isPropertyType(implementationType)) {
             return delegateStrategy;
@@ -42,8 +42,8 @@ public class ProxyComponentStrategyFactory implements ComponentStrategyFactory {
     }
 
     @Override
-    public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy) {
-        ComponentStrategy<T> customStrategy = delegateFactory.createCustomStrategy(providerStrategy);
+    public <T> ComponentStrategy<T> createCustomStrategy(ComponentStrategy providerStrategy, Object qualifier) {
+        ComponentStrategy<T> customStrategy = delegateFactory.createCustomStrategy(providerStrategy, qualifier);
         if (ReflectionUtil.getAllInterfaces(customStrategy.getComponentType()).size() == 0) {
             return customStrategy;
         }

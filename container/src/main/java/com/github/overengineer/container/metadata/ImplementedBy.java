@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Delegate {
+public @interface ImplementedBy {
     Class<?> value();
     String name() default "";
 }

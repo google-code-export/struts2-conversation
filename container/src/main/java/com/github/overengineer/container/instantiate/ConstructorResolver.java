@@ -1,13 +1,14 @@
 package com.github.overengineer.container.instantiate;
 
+import com.github.overengineer.container.util.ConstructorRef;
+
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 
 /**
  * @author rees.byars
  */
 public interface ConstructorResolver extends Serializable {
 
-    <T> Constructor<T> resolveConstructor(Class<T> type, Class ... providedArgs);
+    <T> ConstructorRef<T> resolveConstructor(Class<T> type, Class ... providedArgs);
 
 }

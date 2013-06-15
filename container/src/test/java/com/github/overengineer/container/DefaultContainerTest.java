@@ -3,6 +3,8 @@ package com.github.overengineer.container;
 import com.github.overengineer.container.key.*;
 import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.metadata.*;
+import com.github.overengineer.container.metadata.Inject;
+import com.github.overengineer.container.metadata.Qualifier;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.aop.*;
@@ -10,6 +12,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Scopes;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
@@ -28,10 +31,13 @@ import scope.monitor.ScheduledExecutorTimeoutMonitor;
 import scope.monitor.SchedulerProvider;
 import scope.monitor.TimeoutMonitor;
 import se.jbee.inject.Dependency;
+import se.jbee.inject.Type;
 import se.jbee.inject.bind.BinderModule;
 import se.jbee.inject.bootstrap.*;
 import se.jbee.inject.util.Scoped;
 
+import javax.inject.*;
+import javax.inject.Named;
 import java.io.Serializable;
 import java.lang.annotation.*;
 import java.util.ArrayList;
@@ -195,7 +201,7 @@ public class DefaultContainerTest implements Serializable {
 
         Container container = Clarence.please().gimmeThatTainer();
 
-        container.add(SchedulerProvider.class, DefaultSchedulerProvider.class);
+        container.add(SchedulerProvider.class, Bro.class, DefaultSchedulerProvider.class);
 
         container.addInstance(Integer.class, CommonConstants.Properties.MONITORING_THREAD_POOL_SIZE, 4);
 
@@ -252,13 +258,24 @@ public class DefaultContainerTest implements Serializable {
 
         container.addInstance(new Generic<List<Integer>>(){}, integers);
 
+        container.add(ListBoy.class, ListBoy.class);
+
         assertEquals(strings, container.get(new Generic<List<? extends String>>("strings") {
         }));
 
         assertEquals(integers, container.get(new Generic<List<Integer>>(){}));
 
+        container.get(ListBoy.class);
+
     }
 
+    public static class ListBoy {
+        ListBoy(@com.github.overengineer.container.metadata.Named("strings") List<? extends String> strings) {
+            System.out.println(strings);
+        }
+    }
+
+    @Ignore
     @Test
     public void testRegisterFactory() {
 
@@ -614,7 +631,7 @@ public class DefaultContainerTest implements Serializable {
     }
 
     public static interface StartListener {
-        @Delegate(StartDelegate.class)
+        @ImplementedBy(StartDelegate.class)
         void onStart(String processName);
     }
 

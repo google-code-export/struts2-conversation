@@ -5,9 +5,7 @@ import com.github.overengineer.container.dynamic.DynamicComponentFactory;
 import com.github.overengineer.container.inject.DefaultInjectorFactory;
 import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
-import com.github.overengineer.container.key.DefaultKeyRepository;
 import com.github.overengineer.container.key.Generic;
-import com.github.overengineer.container.key.KeyRepository;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.parameter.ParameterBuilderFactory;
@@ -26,9 +24,8 @@ import java.util.List;
  */
 public class Clarence implements Serializable {
 
-    private KeyRepository keyRepository = new DefaultKeyRepository();
-    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter(keyRepository);
-    private ParameterBuilderFactory parameterBuilderFactory = new PrecedingArgsParameterBuilderFactory(metadataAdapter, keyRepository);
+    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+    private ParameterBuilderFactory parameterBuilderFactory = new PrecedingArgsParameterBuilderFactory(metadataAdapter);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterBuilderFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
     private InstantiatorFactory instantiatorFactory = new DefaultInstantiatorFactory(constructorResolver, parameterBuilderFactory);
@@ -38,7 +35,7 @@ public class Clarence implements Serializable {
     private Container builder;
 
     {
-        builder = new DefaultContainer(strategyFactory, keyRepository, dynamicComponentFactory, metadataAdapter, initializationListeners);
+        builder = new DefaultContainer(strategyFactory, dynamicComponentFactory, metadataAdapter, initializationListeners);
     }
 
     public static Clarence please() {
@@ -65,7 +62,6 @@ public class Clarence implements Serializable {
                 .addInstance(ParameterBuilderFactory.class, parameterBuilderFactory)
                 .addInstance(ConstructorResolver.class, constructorResolver)
                 .addInstance(InstantiatorFactory.class, instantiatorFactory)
-                .addInstance(KeyRepository.class, keyRepository)
                 .addInstance(DynamicComponentFactory.class, dynamicComponentFactory)
                 .addInstance(ComponentStrategyFactory.class, strategyFactory)
                 .addInstance(new Generic<List<ComponentInitializationListener>>() {

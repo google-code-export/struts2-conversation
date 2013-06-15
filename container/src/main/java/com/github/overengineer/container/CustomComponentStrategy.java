@@ -10,11 +10,13 @@ public class CustomComponentStrategy<T> implements ComponentStrategy<T> {
     private final ComponentStrategy<?> providerStrategy;
     private final MethodInjector methodInjector;
     private final Class providedType;
+    private final Object qualifier;
 
-    public CustomComponentStrategy(ComponentStrategy providerStrategy, MethodInjector methodInjector, Class providedType) {
+    public CustomComponentStrategy(ComponentStrategy providerStrategy, MethodInjector methodInjector, Class providedType, Object qualifier) {
         this.providerStrategy = providerStrategy;
         this.methodInjector = methodInjector;
         this.providedType = providedType;
+        this.qualifier = qualifier;
     }
 
     @SuppressWarnings("unchecked")
@@ -31,5 +33,10 @@ public class CustomComponentStrategy<T> implements ComponentStrategy<T> {
     @Override
     public boolean isDecorator() {
         return false;
+    }
+
+    @Override
+    public Object getQualifier() {
+        return qualifier;
     }
 }

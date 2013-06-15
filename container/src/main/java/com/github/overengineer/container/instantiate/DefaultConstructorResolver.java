@@ -1,6 +1,8 @@
 package com.github.overengineer.container.instantiate;
 
 import com.github.overengineer.container.metadata.MetadataAdapter;
+import com.github.overengineer.container.util.ConstructorRef;
+import com.github.overengineer.container.util.ConstructorRefImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -18,7 +20,7 @@ public class DefaultConstructorResolver implements ConstructorResolver {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Constructor<T> resolveConstructor(Class<T> type, Class ... providedArgs) {
+    public <T> ConstructorRef<T> resolveConstructor(Class<T> type, Class ... providedArgs) {
         Type[] genericParameterTypes = {};
         Constructor<T> constructor = null;
         for (Constructor candidateConstructor : type.getDeclaredConstructors()) {
@@ -32,7 +34,7 @@ public class DefaultConstructorResolver implements ConstructorResolver {
         }
         assert constructor != null;
         constructor.setAccessible(true);
-        return constructor;
+        return new ConstructorRefImpl<T>(constructor);
     }
 
 }

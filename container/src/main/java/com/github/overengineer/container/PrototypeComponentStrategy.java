@@ -12,11 +12,13 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
 
     private final ComponentInjector<T> injector;
     private final Instantiator<T> instantiator;
+    private final Object qualifier;
     private final List<ComponentInitializationListener> initializationListeners;
 
-    public PrototypeComponentStrategy(ComponentInjector<T> injector, Instantiator<T> instantiator, List<ComponentInitializationListener> initializationListeners) {
+    public PrototypeComponentStrategy(ComponentInjector<T> injector, Instantiator<T> instantiator, Object qualifier, List<ComponentInitializationListener> initializationListeners) {
         this.injector = injector;
         this.instantiator = instantiator;
+        this.qualifier = qualifier;
         this.initializationListeners = initializationListeners;
     }
 
@@ -38,6 +40,11 @@ public class PrototypeComponentStrategy<T> implements ComponentStrategy<T> {
     @Override
     public boolean isDecorator() {
         return instantiator.isDecorator();
+    }
+
+    @Override
+    public Object getQualifier() {
+        return qualifier;
     }
 
 }
