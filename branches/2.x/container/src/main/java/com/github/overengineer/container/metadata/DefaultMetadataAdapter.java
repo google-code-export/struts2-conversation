@@ -4,6 +4,7 @@ import com.github.overengineer.container.key.Key;
 import com.github.overengineer.container.key.Locksmith;
 import com.github.overengineer.container.key.Qualifier;
 import com.github.overengineer.container.scope.Scope;
+import com.github.overengineer.container.scope.ScopedComponentStrategyProvider;
 import com.github.overengineer.container.scope.Scopes;
 import com.github.overengineer.container.util.ReflectionUtil;
 
@@ -11,11 +12,38 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author rees.byars
  */
 public class DefaultMetadataAdapter implements MetadataAdapter {
+
+    private final Map<Class<? extends Annotation>, Scope> scopes = new HashMap<Class<? extends Annotation>, Scope>();
+    private final Map<Scope, ScopedComponentStrategyProvider> strategyProviders = new HashMap<Scope, ScopedComponentStrategyProvider>();
+
+    {
+        scopes.put(Prototype.class, Scopes.PROTOTYPE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetadataAdapter addScope(Scope scope, Class<? extends Annotation> scopeAnnotation, ScopedComponentStrategyProvider strategyProvider) {
+        scopes.put(scopeAnnotation, scope);
+        strategyProviders.put(scope, strategyProvider);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ScopedComponentStrategyProvider getStrategyProvider(Scope scope) {
+        return strategyProviders.get(scope);
+    }
 
     /**
      * {@inheritDoc}
@@ -30,8 +58,20 @@ public class DefaultMetadataAdapter implements MetadataAdapter {
      */
     @Override
     public Scope getScope(Class cls) {
-        if (cls.isAnnotationPresent(Prototype.class)) {
-            return Scopes.PROTOTYPE;
+        for (Annotation annotation : cls.getAnnotations()) {
+            Class annotationType = annotation.annotationType();
+            if (annotationType.isAnnotationPresent(com.github.overengineer.container.metadata.Scope.class)) {
+                for (Method method : annotationType.getMethods()) {
+                    if (method.getName().equals("value") && Scope.class.isAssignableFrom(method.getReturnType())) {
+                        try {
+                            return (Scope) method.invoke(annotation);
+                        } catch (Exception e) {
+                            throw new MetadataException("There was an exception attempting to obtain the value of a qualifier", e);
+                        }
+                    }
+                }
+                return scopes.get(annotationType);
+            }
         }
         return null;
     }

@@ -38,4 +38,5 @@ public class SingletonComponentStrategy<T> implements ComponentStrategy<T> {
     public Object getQualifier() {
         return delegateStrategy.getQualifier();
     }
+
 }
