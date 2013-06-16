@@ -346,10 +346,6 @@ public class DefaultContainerTest implements Serializable {
         }
     }
 
-    public static interface Factory<T>{
-        T create();
-    }
-
     public static class FactoryTest implements IConstructorTest, com.github.overengineer.container.metadata.Provider<TimeoutMonitor>, Serializable {
 
         com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory;

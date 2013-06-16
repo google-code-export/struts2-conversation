@@ -23,8 +23,7 @@ public class DecoratorParameterProxy<T> implements ParameterProxy<T> {
         return provider.get(key, new SelectionAdvisor() {
             @Override
             public boolean validSelection(ComponentStrategy<?> candidateStrategy) {
-                Class<?> candidateClass = candidateStrategy.getComponentType();
-                return candidateClass != injectionTarget; //TODO this prevents self injection.  OK??
+                return candidateStrategy.getComponentType() != injectionTarget; //TODO this prevents self injection.  OK??
             }
         });
     }
