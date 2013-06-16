@@ -45,7 +45,7 @@ public class DefaultComponentStrategyFactory implements ComponentStrategyFactory
         } else if (Scopes.SINGLETON.equals(theScope)) {
             return new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, qualifier, initializationListeners));
         } else {
-            return metadataAdapter.getStrategyProvider(theScope).get(implementationType, qualifier, new SingletonComponentStrategy<T>(new PrototypeComponentStrategy<T>(injector, instantiator, qualifier, initializationListeners)));
+            return metadataAdapter.getStrategyProvider(theScope).get(implementationType, qualifier, new PrototypeComponentStrategy<T>(injector, instantiator, qualifier, initializationListeners));
         }
     }
 

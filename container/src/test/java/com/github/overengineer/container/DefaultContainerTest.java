@@ -6,9 +6,11 @@ import com.github.overengineer.container.metadata.*;
 import com.github.overengineer.container.metadata.Inject;
 import com.github.overengineer.container.metadata.Provider;
 import com.github.overengineer.container.metadata.Qualifier;
+import com.github.overengineer.container.metadata.Scope;
 import com.github.overengineer.container.proxy.HotSwapException;
 import com.github.overengineer.container.proxy.HotSwappableContainer;
 import com.github.overengineer.container.proxy.aop.*;
+import com.github.overengineer.container.scope.ScopedComponentStrategyProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -42,7 +44,9 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.lang.annotation.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
@@ -657,6 +661,78 @@ public class DefaultContainerTest implements Serializable {
         }
     }
 
+    @Test
+    public void testScopeProvider() throws Exception {
+
+        final Container container = Clarence.please().makeYourStuffInjectable().gimmeThatTainer();
+
+        MetadataAdapter metadataAdapter = container.get(MetadataAdapter.class);
+
+        metadataAdapter.addScope(CustomScopes.Thread, ThreadScoped.class, new MemoryLeakingThreadStrategyProvider());
+
+        container.add(ThreadVar.class, ThreadVar.class);
+
+        final Set<ThreadVar> threadVars = new HashSet<ThreadVar>();
+
+        int numThreads = 7;
+
+        new ConcurrentExecutionAssistant.TestThreadGroup(new ConcurrentExecutionAssistant.Execution() {
+            @Override
+            public void execute() {
+                threadVars.add(container.get(ThreadVar.class));
+            }
+        }, numThreads).run(1000, 0, "custom scope shit");
+
+        assert threadVars.size() == numThreads;
+
+    }
+
+    @ThreadScoped
+    public static class ThreadVar {}
+
+    public static class MemoryLeakingThreadStrategyProvider implements ScopedComponentStrategyProvider {
+
+        @Override
+        public <T> ComponentStrategy<T> get(final Class<T> implementationType, final Object qualifier, final ComponentStrategy<T> delegateStrategy) {
+            return new ComponentStrategy<T>() {
+
+                ThreadLocal<T> threadLocal = new ThreadLocal<T>();
+
+                @Override
+                public T get(com.github.overengineer.container.Provider provider) {
+                    T t = threadLocal.get();
+                    if (t == null) {
+                        t = delegateStrategy.get(provider);
+                        threadLocal.set(t);
+                    }
+                    return t;
+                }
+
+                @Override
+                public Class getComponentType() {
+                    return implementationType;
+                }
+
+                @Override
+                public boolean isDecorator() {
+                    return delegateStrategy.isDecorator();
+                }
+
+                @Override
+                public Object getQualifier() {
+                    return qualifier;
+                }
+            };
+        }
+    }
+
+    public static enum CustomScopes implements com.github.overengineer.container.scope.Scope {
+        Thread
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Scope
+    public @interface ThreadScoped {}
 
     int threads = 4;
     long duration = 5000;
