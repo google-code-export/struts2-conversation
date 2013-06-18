@@ -8,7 +8,9 @@ import com.github.overengineer.container.module.Mapping;
 import com.github.overengineer.container.module.Module;
 import com.github.overengineer.container.scope.Scope;
 import com.github.overengineer.container.scope.Scopes;
+import com.github.overengineer.container.util.Order;
 import com.github.overengineer.container.util.ParameterRef;
+import com.github.overengineer.container.util.ParameterRefImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +86,10 @@ import java.util.*;
  * TODO move aspect list to invocation factory, create new "aspect cache" interface for factory to implement?
  * TODO then the aop container can just interface with its cache and that of its children?
  *
+ * TODO strategies keys become UnqualifiedDependencyKey
+ * TODO strategies hold reference to QualifiedImplementationKey
+ * TODO container takes requests for QualifiedDependencyRequest
+ * TODO component strategy becomes
  *
  * @author rees.byars
  */
@@ -403,29 +409,71 @@ public class DefaultContainer implements Container {
         @SuppressWarnings("unchecked")
         ComponentStrategy<T> strategy = getStrategy(key, advisors);
 
-        if (strategy == null) {
+        if (strategy != null) {
+            return strategy.get(this);
+        }
 
-            if (metadataAdapter.getProviderClass().isAssignableFrom(key.getTargetClass())) {
+        Class<?> targetClass = key.getTargetClass();
+        Type targetType = key.getType();
 
-                //TODO this is slow, refactor to cache the type in the key and to reuse the strategy
-                Key targetKey = Locksmith.makeKey(new ParameterRef() {
-                    @Override
-                    public Type getType() {
-                        return ((ParameterizedType) key.getType()).getActualTypeArguments()[0];
-                    }
-                }, key.getQualifier());
+        if (!(targetType instanceof ParameterizedType)) {
+            throw new MissingDependencyException(key);
+        }
 
-                T instance = dynamicComponentFactory.createManagedComponentFactory(metadataAdapter.getProviderClass(), targetKey, this);
-                strategy = strategyFactory.createInstanceStrategy(instance, Qualifier.NONE);
-                putStrategy(key, strategy);
+        if (((ParameterizedType) targetType).getActualTypeArguments().length > 1) {
+            throw new MissingDependencyException(key);
+        }
 
-            } else {
-                throw new MissingDependencyException("No components of type [" + key.getType() + "] with qualifier [" + key.getQualifier() + "] have been registered with the container");
+        //TODO this is slow, refactor to cache the type in the key and to reuse the strategy
+        Key parameterizedKey = Locksmith.makeKey(new ParameterRef() {
+            @Override
+            public Type getType() {
+                return ((ParameterizedType) key.getType()).getActualTypeArguments()[0];
             }
+        }, key.getQualifier());
+
+        if (metadataAdapter.getProviderClass().isAssignableFrom(targetClass)) {
+
+            T instance = dynamicComponentFactory.createManagedComponentFactory(metadataAdapter.getProviderClass(), parameterizedKey, this);
+            strategy = strategyFactory.createInstanceStrategy(instance, Qualifier.NONE);
+            putStrategy(key, strategy);
+
+            return strategy.get(this);
 
         }
 
-        return strategy.get(this);
+        if (!(Collection.class.isAssignableFrom(targetClass))) {
+            throw new MissingDependencyException(key);
+        }
+
+        //TODO store results in an instance strategy for better perf
+
+        if (List.class.isAssignableFrom(targetClass)) {
+
+            @SuppressWarnings("unchecked")
+            T t = (T) getAll(parameterizedKey);
+            return t;
+
+        }
+
+        if (Set.class.isAssignableFrom(targetClass)) {
+
+            @SuppressWarnings("unchecked")
+            T t = (T) new HashSet(getAll(parameterizedKey));
+            return t;
+
+        }
+
+        if (Collection.class == targetClass) {
+
+            @SuppressWarnings("unchecked")
+            T t = (T) getAll(parameterizedKey);
+            return t;
+
+        }
+
+        throw new MissingDependencyException(key);
+
 
     }
 
@@ -527,11 +575,15 @@ public class DefaultContainer implements Container {
         SortedSet<ComponentStrategy<T>> strategySet = getStrategySet(key);
         if (strategySet != null) {
             for (ComponentStrategy<T> strategy : strategySet) {
-                for (SelectionAdvisor advisor : advisors) {
-                    if (qualified && !qualifier.equals(strategy.getQualifier())) {
-                        continue;
+                if (!qualified || qualifier.equals(strategy.getQualifier())) {
+                    boolean valid = true;
+                    for (SelectionAdvisor advisor : advisors) {
+                        if (!advisor.validSelection(strategy)) {
+                            valid = false;
+                            break;
+                        }
                     }
-                    if (advisor.validSelection(strategy)) {
+                    if (valid) {
                         allStrategies.add(strategy);
                     }
                 }
@@ -565,17 +617,17 @@ public class DefaultContainer implements Container {
                             (strategy.getComponentType().equals(strategy2.getComponentType())
                                     && strategy.getQualifier().equals(strategy2.getQualifier()
                             ) && !Proxy.isProxyClass(strategy.getComponentType()))) {
-                        return 0;
+                        return Order.EXCLUDE;
                     } else if (strategy instanceof TopLevelStrategy) {
-                        return -1;
+                        return Order.PREPEND;
                     } else if (strategy2 instanceof TopLevelStrategy) {
-                        return 1;
+                        return Order.APPEND;
                     } else if (strategy.isDecorator()) {
-                        return -1;
+                        return Order.PREPEND;
                     } else if (strategy2.isDecorator()) {
-                        return 1;
+                        return Order.APPEND;
                     }
-                    return -1;
+                    return Order.PREPEND;
                 }
             });
             strategies.put(key, strategySet);
