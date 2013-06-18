@@ -681,9 +681,9 @@ public class DefaultContainerTest implements Serializable {
             public void execute() {
                 threadVars.add(container.get(ThreadVar.class));
             }
-        }, numThreads).run(1000, 0, "custom scope shit");
+        }, numThreads).run(5000, 1000000, "custom scope shit");
 
-        assert threadVars.size() == numThreads;
+        assert threadVars.size() == numThreads + 1;
 
     }
 
@@ -733,6 +733,45 @@ public class DefaultContainerTest implements Serializable {
     @Retention(RetentionPolicy.RUNTIME)
     @Scope
     public @interface ThreadScoped {}
+
+    @Test
+    public void testCollection() {
+
+        assert
+                Clarence.please().gimmeThatTainer()
+                    .addInstance(StartListener.class, new StartListener() {
+                        @Override
+                        public void onStart(String processName) {
+                            System.out.println("1 got " + processName);
+                        }
+                    })
+                    .addInstance(StartListener.class, "zippy", new StartListener() {
+                        @Override
+                        public void onStart(String processName) {
+                            System.out.println("2 got " + processName);
+                        }
+                    })
+                    .addInstance(StartListener.class, "zippy", new StartListener() {
+                        @Override
+                        public void onStart(String processName) {
+                            System.out.println("3 got " + processName);
+                        }
+                    })
+                    .add(ListenerHolder.class, ListenerHolder.class)
+                    .get(ListenerHolder.class).getListeners().size() == 2;
+
+    }
+
+    public static class ListenerHolder {
+        Set<StartListener> listeners;
+        ListenerHolder(@com.github.overengineer.container.metadata.Named("zippy") Set<StartListener> listeners) {
+            System.out.println(listeners.size());
+             this.listeners = listeners;
+        }
+        Set<StartListener> getListeners() {
+            return listeners;
+        }
+    }
 
     int threads = 4;
     long duration = 5000;
