@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class Clarence implements Serializable {
 
-    private MetadataAdapter metadataAdapter = new Jsr330MetadataAdapter();
+    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
     private ParameterBuilderFactory parameterBuilderFactory = new PrecedingArgsParameterBuilderFactory(metadataAdapter);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterBuilderFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
