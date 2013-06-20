@@ -341,7 +341,6 @@ public class DefaultContainerTest implements Serializable {
 
     public static class NonManagedComponent implements NamedComponent {
         String name;
-        @javax.inject.Inject
         public NonManagedComponent(String name, TimeoutMonitor timeoutMonitor) {
             this.name = name;
         }
@@ -353,10 +352,9 @@ public class DefaultContainerTest implements Serializable {
 
     public static class FactoryTest implements IConstructorTest, com.github.overengineer.container.metadata.Provider<TimeoutMonitor>, Serializable {
 
-        javax.inject.Provider<TimeoutMonitor> timeoutMonitorFactory;
+        com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory;
 
-        @javax.inject.Inject
-        public FactoryTest(javax.inject.Provider<TimeoutMonitor> timeoutMonitorFactory) {
+        public FactoryTest(com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory) {
             this.timeoutMonitorFactory = timeoutMonitorFactory;
         }
 
