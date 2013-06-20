@@ -15,6 +15,14 @@
     <artifactId>container</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- =========  TEST  ========= -->
         <dependency>
             <groupId>com.google.inject</groupId>

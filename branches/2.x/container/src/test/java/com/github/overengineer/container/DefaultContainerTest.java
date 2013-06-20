@@ -341,6 +341,7 @@ public class DefaultContainerTest implements Serializable {
 
     public static class NonManagedComponent implements NamedComponent {
         String name;
+        @javax.inject.Inject
         public NonManagedComponent(String name, TimeoutMonitor timeoutMonitor) {
             this.name = name;
         }
@@ -352,9 +353,10 @@ public class DefaultContainerTest implements Serializable {
 
     public static class FactoryTest implements IConstructorTest, com.github.overengineer.container.metadata.Provider<TimeoutMonitor>, Serializable {
 
-        com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory;
+        javax.inject.Provider<TimeoutMonitor> timeoutMonitorFactory;
 
-        public FactoryTest(com.github.overengineer.container.metadata.Provider<TimeoutMonitor> timeoutMonitorFactory) {
+        @javax.inject.Inject
+        public FactoryTest(javax.inject.Provider<TimeoutMonitor> timeoutMonitorFactory) {
             this.timeoutMonitorFactory = timeoutMonitorFactory;
         }
 
@@ -1047,7 +1049,7 @@ public class DefaultContainerTest implements Serializable {
             public void execute() throws HotSwapException {
                 silk.resolve(iSingletonDependency).yo();
             }
-        }, threads).run(duration, primingRuns, "silk container creation");
+        }, threads).run(duration, primingRuns, "silk singleton");
 
         printComparison(mines, picos, "pico");
         printComparison(mines, guices, "guice");

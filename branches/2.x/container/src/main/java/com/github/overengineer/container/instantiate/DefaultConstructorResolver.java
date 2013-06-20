@@ -32,8 +32,7 @@ public class DefaultConstructorResolver implements ConstructorResolver {
                 }
             }
         }
-        assert constructor != null;
-        constructor.setAccessible(true);
+        assert constructor != null : "Could not find a suitable constructor in [" + type + "]";
         return new ConstructorRefImpl<T>(constructor);
     }
 

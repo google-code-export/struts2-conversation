@@ -7,6 +7,7 @@ import com.github.overengineer.container.inject.InjectorFactory;
 import com.github.overengineer.container.instantiate.*;
 import com.github.overengineer.container.key.Generic;
 import com.github.overengineer.container.metadata.DefaultMetadataAdapter;
+import com.github.overengineer.container.metadata.Jsr330MetadataAdapter;
 import com.github.overengineer.container.metadata.MetadataAdapter;
 import com.github.overengineer.container.parameter.ParameterBuilderFactory;
 import com.github.overengineer.container.parameter.PrecedingArgsParameterBuilderFactory;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class Clarence implements Serializable {
 
-    private MetadataAdapter metadataAdapter = new DefaultMetadataAdapter();
+    private MetadataAdapter metadataAdapter = new Jsr330MetadataAdapter();
     private ParameterBuilderFactory parameterBuilderFactory = new PrecedingArgsParameterBuilderFactory(metadataAdapter);
     private InjectorFactory injectorFactory = new DefaultInjectorFactory(metadataAdapter, parameterBuilderFactory);
     private ConstructorResolver constructorResolver = new DefaultConstructorResolver(metadataAdapter);
@@ -52,6 +53,13 @@ public class Clarence implements Serializable {
 
     public Container gimmeThatTainer() {
         return builder;
+    }
+
+    public Clarence withJsr330() {
+        //TODO this is gross and error prone ;)
+        metadataAdapter = new Jsr330MetadataAdapter();
+        builder.addInstance(MetadataAdapter.class, metadataAdapter);
+        return this;
     }
 
     public Clarence makeYourStuffInjectable() {
