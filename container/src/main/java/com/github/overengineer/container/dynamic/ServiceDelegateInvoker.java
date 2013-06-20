@@ -21,7 +21,7 @@ public class ServiceDelegateInvoker<T> implements Serializable {
         this.provider = provider;
     }
 
-    public Object invoke(Object[] trailingsArgs) {
-        return methodInjector.inject(provider.get(serviceDelegateKey), provider, trailingsArgs);
+    public Object invoke(Object[] providedArgs) {
+        return methodInjector.inject(provider.get(serviceDelegateKey), provider, providedArgs);
     }
 }

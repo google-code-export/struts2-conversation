@@ -72,6 +72,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
     protected SchedulerProvider schedulerProvider;
 
     @Inject
+    @javax.inject.Inject
     public void setMonitoringFrequency(@Named(CommonConstants.Properties.MONITORING_FREQUENCY) Long monitoringFrequency) {
         this.monitoringFrequency = monitoringFrequency;
     }
@@ -80,6 +81,7 @@ public class ScheduledExecutorTimeoutMonitor<T extends Timeoutable<T>> implement
      * sets the scheduler to be used
      */
     @Inject
+    @javax.inject.Inject
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         this.schedulerProvider = schedulerProvider;
     }
